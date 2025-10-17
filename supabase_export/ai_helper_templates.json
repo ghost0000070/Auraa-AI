@@ -1,0 +1,32 @@
+[
+  {
+    "id": "ff909ea8-3721-4a3a-9dbb-313fd2b920f3",
+    "name": "Test AI Assistant",
+    "description": "A test AI assistant for development",
+    "category": "general",
+    "color_scheme": "blue",
+    "icon_name": "zap",
+    "prompt_template": "You are a helpful AI assistant.",
+    "capabilities": [
+      "chat",
+      "analysis"
+    ],
+    "tier_requirement": "basic",
+    "deployment_eligibility": {
+      "min_tier": "Premium",
+      "max_employees_per_tier": {
+        "Basic": 1,
+        "Premium": 3,
+        "Enterprise": 10
+      },
+      "requires_business_profile": true
+    },
+    "visibility_level": null,
+    "is_active": true,
+    "is_public": true,
+    "user_id": null,
+    "created_by": null,
+    "created_at": "2025-09-30T18:44:17.269179+00:00",
+    "updated_at": "2025-09-30T18:44:17.269179+00:00"
+  }
+]

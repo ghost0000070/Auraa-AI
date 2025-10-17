@@ -1,0 +1,47 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+# SPA fallback - fixes 404s on direct navigation/refresh
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security headers including CSP to block extension inline scripts
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Content Security Policy - blocks inline scripts from extensions
+    Content-Security-Policy = '''
+      default-src 'self';
+      script-src 'self' 'wasm-unsafe-eval';
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: https:;
+      font-src 'self' data:;
+      connect-src 'self' https://*.supabase.co;
+      frame-ancestors 'self';
+      base-uri 'self';
+      object-src 'none';
+    '''
+    # Other security headers
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Cache static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

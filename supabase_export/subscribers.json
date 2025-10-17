@@ -1,0 +1,15 @@
+[
+  {
+    "id": "4830c48f-f31d-4911-ab1a-699527362f7e",
+    "user_id": "967695ad-71e3-44cf-839d-4cfe0a1c9f83",
+    "email": "ghostspooks@icloud.com",
+    "subscribed": true,
+    "subscription_tier": "Enterprise",
+    "subscription_end": null,
+    "stripe_customer_id": null,
+    "stripe_subscription_id": null,
+    "subscription_status": "active",
+    "created_at": "2025-09-30T19:06:05.17845+00:00",
+    "updated_at": "2025-09-30T19:06:05.17845+00:00"
+  }
+]

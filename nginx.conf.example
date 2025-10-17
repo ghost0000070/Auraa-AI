@@ -1,0 +1,40 @@
+# Nginx configuration for Auraa-AI SPA
+# Place this in your server block
+
+# Serve static files
+location / {
+    root /var/www/auraa-ai/dist;
+    
+    # SPA fallback - try file, then directory, then index.html
+    try_files $uri $uri/ /index.html;
+    
+    # Security headers
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co; frame-ancestors 'self'; base-uri 'self'; object-src 'none';" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+}
+
+# Cache static assets
+location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+    root /var/www/auraa-ai/dist;
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+    add_header Vary "Accept-Encoding";
+}
+
+# Gzip compression
+gzip on;
+gzip_vary on;
+gzip_min_length 1024;
+gzip_proxied any;
+gzip_comp_level 6;
+gzip_types
+    text/plain
+    text/css
+    text/xml
+    text/javascript
+    application/javascript
+    application/xml+rss
+    application/json;

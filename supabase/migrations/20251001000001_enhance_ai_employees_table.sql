@@ -1,0 +1,3 @@
+ALTER TABLE public.ai_employees
+ADD COLUMN IF NOT EXISTS name TEXT NOT NULL DEFAULT 'AI Employee',
+ADD COLUMN IF NOT EXISTS deployment_config JSONB NOT NULL DEFAULT '{}'::jsonb;
