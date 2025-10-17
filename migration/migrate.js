@@ -106,6 +106,7 @@ async function runMigration() {
   await migrateTable('user_roles', 'userRoles');
   await migrateTable('ai_helper_templates', 'aiHelperTemplates');
 
+
   console.log('🎉 Migration complete!');
 }
 
