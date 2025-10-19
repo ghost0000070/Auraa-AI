@@ -1,172 +1,807 @@
-import React from 'react';
-import { TrendingUp, Users, Zap, BarChart, MessageCircle, ShoppingCart, Mail, Heart, PenTool, UserCheck } from 'lucide-react';
+import {
+  BrainCircuit,
+  Building,
+  BriefcaseBusiness,
+  TrendingUp,
+  MessageSquare,
+  Shield,
+  Search,
+  BookOpen,
+  DollarSign,
+  Heart,
+  Lightbulb,
+  Palette,
+  Megaphone,
+  Network,
+  Rocket,
+  Settings,
+  ShieldCheck,
+  Zap,
+  BotMessageSquare,
+  UserRoundSearch,
+  ScrollText,
+  Gem,
+  BarChart,
+  ShoppingCart,
+  HardHat,
+  Scale,
+  Code,
+  Globe,
+  Wallet,
+  CalendarDays,
+  Hammer,
+  UsersRound,
+  FileText,
+  Headset,
+  Package,
+  GanttChart,
+  PiggyBank,
+  Handshake,
+  Workflow,
+  ClipboardList,
+  Speech,
+  LayoutDashboard,
+  BellRing,
+  Award,
+  CircleDollarSign,
+  LibraryBig,
+  SquareDashedKanban,
+  FileClock,
+  Send,
+  LineChart,
+  ShieldAlert,
+  CloudCog,
+  Factory,
+  PenTool,
+  MessageCircleQuestion,
+  Wand2,
+  ListTodo,
+  MonitorCheck,
+  MegaphoneOff,
+  Gauge,
+  Landmark,
+  PiggyBankOff,
+  UserCog,
+  Kanban,
+  Fingerprint,
+  MessageCircleMore,
+  FileJson,
+  FlaskConical,
+  Puzzle,
+  Mic,
+  Video,
+  Newspaper,
+  BookCopy,
+  FolderOpen,
+  Server,
+  KeyRound,
+  CreditCard,
+  Target,
+  Mail,
+  Store,
+  WalletMinimal,
+  Laptop,
+  Coins,
+  ReceiptText,
+  RefreshCcw,
+  AreaChart,
+  UserCheck,
+  Boxes,
+  Gift,
+  HandCoins,
+  MessageSquareDiff,
+  Cloudy,
+  CloudSun,
+  PaletteIcon,
+  ShoppingBag,
+  Ticket,
+  Trophy,
+  BadgeDollarSign,
+  LightbulbOff,
+  Banknote,
+  Sparkles,
+  UserPlus,
+  RocketLaunch,
+  FileStack,
+  MessageSquareMore,
+  GitFork,
+  HeartCrack,
+  CloudOff,
+  FactoryOff,
+  SpeechIcon,
+  LayoutGrid,
+  BarChartHorizontalBig,
+  BriefcaseMedical,
+  MailOpen,
+  CalendarCheck,
+  Building2,
+  HandshakeIcon,
+  UserRoundX,
+  ClipboardType,
+  ListChecks,
+  Hourglass,
+  BadgeInfo,
+  BadgeAlert,
+  ClipboardCopy,
+  UserX,
+  FileWarning,
+  MessageSquareWarning,
+  AlertTriangle,
+  FileCheck,
+  ThumbsUp,
+  ThumbsDown,
+  MegaphoneDot,
+  LightbulbModern,
+  PenLine,
+  GanttChartSquare,
+  CloudUpload,
+  DatabaseZap,
+  NetworkIcon,
+  MessageSquareHeart,
+  ShieldMinus,
+  Brain,
+  MessageSquareQuote,
+  MessageSquareText,
+  MessageSquareCode,
+  MessageSquareOff,
+  MessageSquarePlus,
+  MessageSquareReply,
+  MessageSquareShare,
+  MessageSquareShrink,
+  MessageSquareSlash,
+  MessageSquareTextIcon,
+  MessageSquareX,
+  PenSquare,
+  FilePen,
+  FilePlus,
+  FileMinus,
+  FileType,
+  FileSearch,
+  FileSliders,
+  FileKey,
+  FileLock,
+  FileClockIcon,
+  FileTerminal,
+  FileVolume,
+  FileBadge,
+  FileBarChart,
+  FileBox,
+  FileAxis3D,
+  FileCode,
+  FileDigit,
+  FileDiff,
+  FileQuestion,
+  FileRibbon,
+  FilePieChart,
+  FileSpreadsheet,
+  FileTextIcon,
+  FileSymlink,
+  FileType2,
+  FileWarningIcon,
+  FolderDot,
+  FolderKanban,
+  FolderOpenDot,
+  FolderSearch2,
+  FolderTree,
+  FolderX,
+  FolderPen,
+  FolderArchive,
+  FolderClock,
+  FolderCog,
+  FolderCode,
+  FolderGit,
+  FolderGit2,
+  FolderHeart,
+  FolderInput,
+  FolderKey,
+  FolderLock,
+  FolderMinus,
+  FolderOutput,
+  FolderPlus,
+  FolderRoot,
+  FolderSync,
+  FolderUp,
+  FolderUpDot,
+  FolderUser,
+  FolderVolume,
+  FolderWarning,
+  FolderX2,
+  Home,
+  Users,
+  Briefcase,
+  Layers,
+  BarChart3,
+  Bell,
+  Settings2,
+  MessageSquareMoreIcon,
+  PieChart,
+  LineChartIcon,
+  Cloud,
+  Cpu,
+  Database,
+  GlobeIcon,
+  ServerCog,
+  ShieldEllipsis,
+  ShieldPlus,
+  ShieldQuestion,
+  ShieldX,
+  TabletSmartphone,
+  Type,
+  Unplug,
+  UploadCloud,
+  User,
+  UserCogIcon,
+  UserPlusIcon,
+  UserSquare,
+  UserXIcon,
+  Webhook,
+  Wifi,
+  WorkflowIcon,
+  X,
+  ZapIcon,
+} from "lucide-react";
 
-// Import Power Guardian images
-import cyberSageImage from '@/assets/cyber-sage-guardian.jpg';
-import viralVortexImage from '@/assets/viral-vortex-guardian.jpg';
-import quantumHelperImage from '@/assets/quantum-helper-guardian.jpg';
-import dealStrikerImage from '@/assets/deal-striker-guardian.jpg';
-import growthHackerImage from '@/assets/growth-hacker-guardian.jpg';
-import supportShieldImage from '@/assets/support-shield-guardian.jpg';
-import commerceCoreImage from '@/assets/commerce-core-guardian.jpg';
-import dataNexusImage from '@/assets/data-nexus-guardian.jpg';
-import messageMatrixImage from '@/assets/message-matrix-guardian.jpg';
-import lifeOptimizerImage from '@/assets/life-optimizer-guardian.jpg';
-import wordForgeImage from '@/assets/word-forge-guardian.jpg';
-import talentTrackerImage from '@/assets/talent-tracker-guardian.jpg';
+export interface AIEmployeeTemplate {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ElementType;
+  color: string;
+  category:
+    | "Marketing"
+    | "Sales"
+    | "Customer Service"
+    | "Operations"
+    | "Finance"
+    | "HR"
+    | "IT"
+    | "Development"
+    | "Analytics"
+    | "Content Creation"
+    | "Security"
+    | "Product Management"
+    | "Legal"
+    | "Education"
+    | "Healthcare"
+    | "Research"
+    | "Personal Assistant"
+    | "Creative"
+    | "Consulting"
+    | "Communication"
+    | "Project Management";
+  tasks: string[];
+  skills: string[];
+  deploymentCost: number; // Cost per deployment
+  monthlyCost: number; // Monthly subscription cost
+  isPremium: boolean;
+  model: "GPT-3.5" | "GPT-4" | "Custom" | "Gemini-Pro"; // Added Gemini-Pro
+  trainingData: string[];
+  apiEndpoints: {
+    generateContent: string;
+    analyzeData?: string;
+    automateTask?: string;
+  };
+}
 
-const getGuardianImage = (id: string) => {
-    const imageMap: Record<string, string> = {
-      'cyber-sage': cyberSageImage,
-      'viral-vortex': viralVortexImage,
-      'quantum-helper': quantumHelperImage,
-      'deal-striker': dealStrikerImage,
-      'growth-hacker': growthHackerImage,
-      'support-shield': supportShieldImage,
-      'commerce-core': commerceCoreImage,
-      'data-nexus': dataNexusImage,
-      'message-matrix': messageMatrixImage,
-      'life-optimizer': lifeOptimizerImage,
-      'word-forge': wordForgeImage,
-      'talent-tracker': talentTrackerImage,
-    };
-    return imageMap[id] || cyberSageImage;
-};
-
-export const aiEmployeeTemplates = [
-    {
-      id: 'cyber-sage',
-      name: 'Cyber-Sage',
-      role: 'SEO Specialist',
-      type: 'seo-specialist',
-      description: 'Digital architect optimizing web presence with advanced SEO protocols, content enhancement algorithms, and search engine domination strategies.',
-      skills: ['Keyword Research', 'Content Optimization', 'Technical SEO', 'Analytics'],
-      avatar: getGuardianImage('cyber-sage'),
-      color: 'bg-gradient-to-br from-green-500 to-emerald-600',
-      icon: <TrendingUp className="w-6 h-6" />,
-      popular: true
+export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
+  {
+    id: "marketing-guru",
+    name: "Marketing Guru",
+    description:
+      "Crafts compelling marketing campaigns, analyzes market trends, and optimizes ad spend.",
+    icon: Megaphone,
+    color: "#EF4444", // Red-500
+    category: "Marketing",
+    tasks: [
+      "Generate campaign ideas",
+      "Write ad copy",
+      "Analyze campaign performance",
+      "Identify target audiences",
+    ],
+    skills: ["Market Research", "Copywriting", "SEO", "Analytics", "Strategy"],
+    deploymentCost: 20,
+    monthlyCost: 50,
+    isPremium: false,
+    model: "Gemini-Pro",
+    trainingData: ["Marketing best practices", "Consumer behavior", "Ad platform data"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      analyzeData: "/api/analyze-marketing-data",
     },
-    {
-      id: 'viral-vortex',
-      name: 'Viral-Vortex',
-      role: 'Social Media Manager',
-      type: 'social-media-manager',
-      description: 'Social network commander deploying viral content strategies, trend analysis protocols, and community engagement systems across all digital platforms.',
-      skills: ['Content Creation', 'Strategy Planning', 'Trend Analysis', 'Community Management'],
-      avatar: getGuardianImage('viral-vortex'),
-      color: 'bg-gradient-to-br from-pink-500 to-rose-600',
-      icon: <Users className="w-6 h-6" />
+  },
+  {
+    id: "sales-strategist",
+    name: "Sales Strategist",
+    description:
+      "Identifies high-potential leads, personalizes outreach, and closes deals more efficiently.",
+    icon: DollarSign,
+    color: "#F97316", // Orange-500
+    category: "Sales",
+    tasks: [
+      "Lead scoring",
+      "Personalized email drafting",
+      "Sales script generation",
+      "Competitor analysis",
+    ],
+    skills: ["Lead Generation", "CRM Management", "Negotiation", "Communication", "Market Analysis"],
+    deploymentCost: 25,
+    monthlyCost: 60,
+    isPremium: false,
+    model: "Gemini-Pro",
+    trainingData: ["Sales methodologies", "Product knowledge", "Customer interactions"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      automateTask: "/api/automate-sales-outreach",
     },
-    {
-      id: 'quantum-helper',
-      name: 'Quantum-Helper',
-      role: 'Virtual Assistant',
-      type: 'virtual-assistant',
-      description: 'Multi-dimensional assistant processing complex scheduling matrices, workflow optimization, and executive task coordination with quantum efficiency.',
-      skills: ['Scheduling', 'Email Management', 'Travel Planning', 'Task Organization'],
-      avatar: getGuardianImage('quantum-helper'),
-      color: 'bg-gradient-to-br from-blue-500 to-cyan-600',
-      icon: <Zap className="w-6 h-6" />
+  },
+  {
+    id: "support-shield",
+    name: "Support Shield",
+    description:
+      "Provides instant, accurate customer support, resolves common issues, and escalates complex queries.",
+    icon: Headset,
+    color: "#10B981", // Emerald-500
+    category: "Customer Service",
+    tasks: [
+      "Answer FAQs",
+      "Troubleshoot problems",
+      "Route inquiries",
+      "Provide product information",
+    ],
+    skills: ["Customer Communication", "Problem Solving", "Product Knowledge", "Empathy", "Ticketing System Management"],
+    deploymentCost: 15,
+    monthlyCost: 40,
+    isPremium: false,
+    model: "GPT-3.5",
+    trainingData: ["Customer service logs", "Product manuals", "FAQ databases"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      automateTask: "/api/handle-support-ticket",
     },
-    {
-      id: 'deal-striker',
-      name: 'Deal-Striker',
-      role: 'Sales Manager',
-      type: 'sales-manager',
-      description: 'Revenue optimization engine crafting persuasive communication protocols, lead conversion algorithms, and deal-closing tactical systems.',
-      skills: ['Cold Outreach', 'Sales Scripts', 'Pitch Development', 'Lead Conversion'],
-      avatar: getGuardianImage('deal-striker'),
-      color: 'bg-gradient-to-br from-orange-500 to-red-600',
-      icon: <TrendingUp className="w-6 h-6" />
+  },
+  {
+    id: "data-nexus-guardian",
+    name: "Data Nexus Guardian",
+    description:
+      "Collects, cleans, and analyzes vast datasets to provide actionable business intelligence.",
+    icon: Database,
+    color: "#3B82F6", // Blue-500
+    category: "Analytics",
+    tasks: [
+      "Data extraction",
+      "Data cleaning",
+      "Report generation",
+      "Predictive modeling",
+    ],
+    skills: ["Data Analysis", "SQL", "Python (Pandas)", "Statistical Modeling", "Data Visualization"],
+    deploymentCost: 30,
+    monthlyCost: 75,
+    isPremium: true,
+    model: "GPT-4",
+    trainingData: ["Statistical methods", "Database schemas", "Industry reports"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      analyzeData: "/api/analyze-business-data",
     },
-    {
-      id: 'growth-hacker',
-      name: 'Growth-Hacker',
-      role: 'Business Development Manager',
-      type: 'business-development',
-      description: 'Strategic expansion specialist deploying growth acceleration frameworks, market penetration algorithms, and partnership development protocols.',
-      skills: ['Growth Strategy', 'Market Analysis', 'Product Launch', 'Partnership Development'],
-      avatar: getGuardianImage('growth-hacker'),
-      color: 'bg-gradient-to-br from-purple-500 to-indigo-600',
-      icon: <BarChart className="w-6 h-6" />,
-      popular: true
+  },
+  {
+    id: "content-creator-pro",
+    name: "Content Creator Pro",
+    description:
+      "Generates high-quality articles, blog posts, social media updates, and video scripts.",
+    icon: PenTool,
+    color: "#8B5CF6", // Violet-500
+    category: "Content Creation",
+    tasks: [
+      "Draft blog posts",
+      "Create social media captions",
+      "Develop video scripts",
+      "Generate image ideas",
+    ],
+    skills: ["Writing", "Creativity", "SEO", "Research", "Plagiarism Checking"],
+    deploymentCost: 20,
+    monthlyCost: 55,
+    isPremium: false,
+    model: "GPT-4",
+    trainingData: ["Content marketing guides", "Grammar rules", "Style guides"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
     },
-    {
-      id: 'support-shield',
-      name: 'Support-Shield',
-      role: 'Customer Support Specialist',
-      type: 'customer-support',
-      description: 'Customer defense system deploying empathetic response protocols, issue resolution algorithms, and brand voice preservation technology.',
-      skills: ['Customer Service', 'Query Resolution', 'Brand Voice', 'FAQ Creation'],
-      avatar: getGuardianImage('support-shield'),
-      color: 'bg-gradient-to-br from-cyan-500 to-blue-600',
-      icon: <MessageCircle className="w-6 h-6" />
+  },
+  {
+    id: "hr-talent-tracker",
+    name: "HR Talent Tracker",
+    description:
+      "Automates recruitment, screens candidates, and assists with onboarding processes.",
+    icon: Users,
+    color: "#EC4899", // Pink-500
+    category: "HR",
+    tasks: [
+      "Resume screening",
+      "Interview question generation",
+      "Candidate communication",
+      "Onboarding checklist creation",
+    ],
+    skills: ["Recruitment", "HR Policies", "Communication", "Candidate Assessment", "ATS Management"],
+    deploymentCost: 25,
+    monthlyCost: 60,
+    isPremium: false,
+    model: "GPT-4",
+    trainingData: ["HR best practices", "Job descriptions", "Interview guides"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      automateTask: "/api/automate-hr-tasks",
     },
-    {
-      id: 'commerce-core',
-      name: 'Commerce-Core',
-      role: 'eCommerce Manager',
-      type: 'ecommerce-manager',
-      description: 'Digital commerce commander optimizing store performance with conversion enhancement protocols, inventory management systems, and revenue maximization algorithms.',
-      skills: ['Store Optimization', 'Product Launch', 'Inventory Management', 'Conversion Optimization'],
-      avatar: getGuardianImage('commerce-core'),
-      color: 'bg-gradient-to-br from-emerald-500 to-green-600',
-      icon: <ShoppingCart className="w-6 h-6" />
+  },
+  {
+    id: "code-craftsman",
+    name: "Code Craftsman",
+    description:
+      "Writes, debugs, and optimizes code across various programming languages and frameworks.",
+    icon: Code,
+    color: "#60A5FA", // Blue-400
+    category: "Development",
+    tasks: [
+      "Generate code snippets",
+      "Review code for bugs",
+      "Optimize algorithms",
+      "Write documentation",
+    ],
+    skills: ["Programming (JS, Python, etc.)", "Debugging", "Code Review", "Software Architecture", "Documentation"],
+    deploymentCost: 35,
+    monthlyCost: 80,
+    isPremium: true,
+    model: "GPT-4",
+    trainingData: ["Programming languages docs", "Design patterns", "Open-source codebases"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      automateTask: "/api/generate-code",
     },
-    {
-      id: 'data-nexus',
-      name: 'Data-Nexus',
-      role: 'Data Analyst',
-      type: 'data-analyst',
-      description: 'Information processing nexus transforming raw data streams into predictive models, business intelligence frameworks, and actionable insight algorithms.',
-      skills: ['Data Analysis', 'Forecasting', 'Business Intelligence', 'Report Generation'],
-      avatar: getGuardianImage('data-nexus'),
-      color: 'bg-gradient-to-br from-indigo-500 to-purple-600',
-      icon: <BarChart className="w-6 h-6" />
+  },
+  {
+    id: "project-manager-pro",
+    name: "Project Manager Pro",
+    description:
+      "Plans, organizes, and tracks projects, ensuring timely completion and efficient resource allocation.",
+    icon: GanttChart,
+    color: "#A855F7", // Purple-500
+    category: "Project Management",
+    tasks: [
+      "Create project plans",
+      "Assign tasks",
+      "Monitor progress",
+      "Identify roadblocks",
+    ],
+    skills: ["Project Planning", "Task Management", "Risk Management", "Communication", "Agile Methodologies"],
+    deploymentCost: 30,
+    monthlyCost: 70,
+    isPremium: true,
+    model: "GPT-4",
+    trainingData: ["Project management frameworks", "Case studies", "Team collaboration data"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      automateTask: "/api/manage-project-tasks",
     },
-    {
-      id: 'message-matrix',
-      name: 'Message-Matrix',
-      role: 'Email Marketing Specialist',
-      type: 'email-marketing',
-      description: 'Email orchestration engine deploying engagement optimization protocols, automated flow systems, and conversion-maximizing communication algorithms.',
-      skills: ['Email Campaigns', 'Automation Flows', 'A/B Testing', 'List Segmentation'],
-      avatar: getGuardianImage('message-matrix'),
-      color: 'bg-gradient-to-br from-red-500 to-pink-600',
-      icon: <Mail className="w-6 h-6" />
+  },
+  {
+    id: "legal-eagle",
+    name: "Legal Eagle",
+    description:
+      "Drafts legal documents, analyzes contracts, and provides insights on compliance.",
+    icon: Scale,
+    color: "#059669", // Green-600
+    category: "Legal",
+    tasks: [
+      "Review contracts",
+      "Draft legal clauses",
+      "Research regulations",
+      "Provide compliance advice",
+    ],
+    skills: ["Legal Research", "Contract Law", "Compliance", "Document Drafting", "Risk Assessment"],
+    deploymentCost: 40,
+    monthlyCost: 90,
+    isPremium: true,
+    model: "GPT-4",
+    trainingData: ["Legal precedents", "Statutes", "Case law"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      analyzeData: "/api/analyze-legal-document",
     },
-    {
-      id: 'life-optimizer',
-      name: 'Life-Optimizer',
-      role: 'Personal Growth Coach',
-      type: 'personal-coach',
-      description: 'Personal enhancement system deploying lifestyle optimization protocols, habit formation algorithms, and wellness maximization frameworks.',
-      skills: ['Meal Planning', 'Fitness Coaching', 'Study Schedules', 'Habit Formation'],
-      avatar: getGuardianImage('life-optimizer'),
-      color: 'bg-gradient-to-br from-rose-500 to-red-600',
-      icon: <Heart className="w-6 h-6" />
+  },
+  {
+    id: "financial-advisor-ai",
+    name: "Financial Advisor AI",
+    description:
+      "Offers personalized financial advice, investment strategies, and budget planning.",
+    icon: PiggyBank,
+    color: "#FCD34D", // Yellow-400
+    category: "Finance",
+    tasks: [
+      "Budget analysis",
+      "Investment recommendations",
+      "Financial planning",
+      "Tax strategy insights",
+    ],
+    skills: ["Financial Planning", "Investment Analysis", "Risk Management", "Market Trends", "Taxation"],
+    deploymentCost: 35,
+    monthlyCost: 85,
+    isPremium: true,
+    model: "GPT-4",
+    trainingData: ["Financial markets data", "Economic indicators", "Personal finance guides"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      analyzeData: "/api/analyze-financial-data",
     },
-    {
-      id: 'word-forge',
-      name: 'Word-Forge',
-      role: 'Copywriter',
-      type: 'copywriter',
-      description: 'Content creation engine forging persuasive copy with conversion optimization algorithms, engagement enhancement protocols, and brand voice amplification systems.',
-      skills: ['Ad Copy', 'Blog Writing', 'Landing Pages', 'Sales Copy'],
-      avatar: getGuardianImage('word-forge'),
-      color: 'bg-gradient-to-br from-amber-500 to-orange-600',
-      icon: <PenTool className="w-6 h-6" />,
-      popular: true
+  },
+  {
+    id: "educational-tutor",
+    name: "Educational Tutor",
+    description:
+      "Provides personalized learning, explains complex concepts, and creates study materials.",
+    icon: BookOpen,
+    color: "#6366F1", // Indigo-500
+    category: "Education",
+    tasks: [
+      "Explain topics",
+      "Generate quizzes",
+      "Create study guides",
+      "Offer homework help",
+    ],
+    skills: ["Pedagogy", "Subject Matter Expertise", "Content Creation", "Adaptive Learning", "Assessment"],
+    deploymentCost: 20,
+    monthlyCost: 50,
+    isPremium: false,
+    model: "GPT-4",
+    trainingData: ["Educational curricula", "Academic papers", "Textbooks"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
     },
-    {
-      id: 'talent-tracker',
-      name: 'Talent-Tracker',
-      role: 'Recruiter',
-      type: 'recruiter',
-      description: 'Human resource acquisition system deploying candidate identification protocols, interview optimization algorithms, and team integration frameworks.',
-      skills: ['Job Posting', 'Candidate Screening', 'Interview Planning', 'Team Onboarding'],
-      avatar: getGuardianImage('talent-tracker'),
-      color: 'bg-gradient-to-br from-teal-500 to-cyan-600',
-      icon: <UserCheck className="w-6 h-6" />
-    }
+  },
+  {
+    id: "research-assistant",
+    name: "Research Assistant",
+    description:
+      "Conducts in-depth research, synthesizes information, and summarizes findings.",
+    icon: FlaskConical,
+    color: "#9CA3AF", // Gray-400
+    category: "Research",
+    tasks: [
+      "Literature review",
+      "Data gathering",
+      "Information synthesis",
+      "Report summarization",
+    ],
+    skills: ["Academic Research", "Information Retrieval", "Critical Thinking", "Writing", "Data Synthesis"],
+    deploymentCost: 30,
+    monthlyCost: 65,
+    isPremium: true,
+    model: "GPT-4",
+    trainingData: ["Academic databases", "Research methodologies", "Scientific journals"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+    },
+  },
+  {
+    id: "personal-optimizer",
+    name: "Personal Optimizer",
+    description:
+      "Helps manage schedules, provides productivity tips, and assists with personal tasks.",
+    icon: CalendarDays,
+    color: "#A3E635", // Lime-400
+    category: "Personal Assistant",
+    tasks: [
+      "Schedule management",
+      "To-do list creation",
+      "Reminder setting",
+      "Goal tracking",
+    ],
+    skills: ["Time Management", "Organization", "Motivation", "Goal Setting", "Task Automation"],
+    deploymentCost: 15,
+    monthlyCost: 45,
+    isPremium: false,
+    model: "GPT-3.5",
+    trainingData: ["Productivity frameworks", "Personal development books", "Scheduling algorithms"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      automateTask: "/api/manage-personal-tasks",
+    },
+  },
+  {
+    id: "creative-muse",
+    name: "Creative Muse",
+    description:
+      "Generates innovative ideas for art, design, music, and creative writing projects.",
+    icon: Palette,
+    color: "#E879F9", // Pink-400
+    category: "Creative",
+    tasks: [
+      "Brainstorm ideas",
+      "Generate artistic concepts",
+      "Write song lyrics",
+      "Develop story plots",
+    ],
+    skills: ["Creativity", "Imagination", "Art History", "Music Theory", "Storytelling"],
+    deploymentCost: 25,
+    monthlyCost: 55,
+    isPremium: false,
+    model: "GPT-4",
+    trainingData: ["Artistic movements", "Creative writing examples", "Music compositions"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+    },
+  },
+  {
+    id: "it-support-specialist",
+    name: "IT Support Specialist",
+    description:
+      "Assists with technical issues, provides troubleshooting steps, and manages system configurations.",
+    icon: Settings,
+    color: "#6B7280", // Gray-500
+    category: "IT",
+    tasks: [
+      "Diagnose tech problems",
+      "Provide step-by-step solutions",
+      "Manage software installations",
+      "Configure network settings",
+    ],
+    skills: ["Troubleshooting", "Networking", "Software Management", "Hardware Knowledge", "Cybersecurity Basics"],
+    deploymentCost: 20,
+    monthlyCost: 50,
+    isPremium: false,
+    model: "GPT-3.5",
+    trainingData: ["IT documentation", "Troubleshooting guides", "System administration manuals"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      automateTask: "/api/resolve-it-issue",
+    },
+  },
+  {
+    id: "supply-chain-optimizer",
+    name: "Supply Chain Optimizer",
+    description:
+      "Optimizes logistics, inventory management, and supplier relations for efficient operations.",
+    icon: Boxes,
+    color: "#F59E0B", // Amber-500
+    category: "Operations",
+    tasks: [
+      "Forecast demand",
+      "Optimize inventory levels",
+      "Manage supplier communication",
+      "Plan logistics routes",
+    ],
+    skills: ["Logistics", "Inventory Management", "Demand Planning", "Supplier Relations", "Operations Research"],
+    deploymentCost: 30,
+    monthlyCost: 70,
+    isPremium: true,
+    model: "GPT-4",
+    trainingData: ["Supply chain models", "Logistics data", "Market forecasts"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      analyzeData: "/api/optimize-supply-chain",
+    },
+  },
+  {
+    id: "cyber-security-analyst",
+    name: "Cyber Security Analyst",
+    description:
+      "Monitors for threats, identifies vulnerabilities, and recommends security protocols.",
+    icon: ShieldCheck,
+    color: "#DC2626", // Red-600
+    category: "Security",
+    tasks: [
+      "Monitor network traffic",
+      "Analyze security logs",
+      "Identify vulnerabilities",
+      "Suggest security improvements",
+    ],
+    skills: ["Threat Detection", "Vulnerability Assessment", "Incident Response", "Cryptography", "Network Security"],
+    deploymentCost: 35,
+    monthlyCost: 85,
+    isPremium: true,
+    model: "GPT-4",
+    trainingData: ["Cybersecurity frameworks", "Threat intelligence", "Penetration testing reports"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      analyzeData: "/api/analyze-security-threat",
+    },
+  },
+  {
+    id: "product-manager-ai",
+    name: "Product Manager AI",
+    description:
+      "Defines product roadmaps, gathers user feedback, and guides product development cycles.",
+    icon: BriefcaseBusiness,
+    color: "#3B82F6", // Blue-500
+    category: "Product Management",
+    tasks: [
+      "Define product features",
+      "Analyze user feedback",
+      "Create product roadmaps",
+      "Prioritize backlog items",
+    ],
+    skills: ["Product Strategy", "User Research", "Market Analysis", "Roadmapping", "Agile Development"],
+    deploymentCost: 30,
+    monthlyCost: 70,
+    isPremium: true,
+    model: "GPT-4",
+    trainingData: ["Product management principles", "User experience research", "Market trends"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      analyzeData: "/api/analyze-product-feedback",
+    },
+  },
+  {
+    id: "healthcare-coordinator",
+    name: "Healthcare Coordinator",
+    description:
+      "Manages patient appointments, assists with medical record keeping, and provides health information.",
+    icon: BriefcaseMedical,
+    color: "#06B6D4", // Cyan-500
+    category: "Healthcare",
+    tasks: [
+      "Schedule appointments",
+      "Process patient data",
+      "Provide general health info",
+      "Manage prescriptions",
+    ],
+    skills: ["Medical Terminology", "Patient Communication", "HIPAA Compliance", "Record Management", "Scheduling"],
+    deploymentCost: 30,
+    monthlyCost: 70,
+    isPremium: true,
+    model: "GPT-4",
+    trainingData: ["Medical guidelines", "Patient care protocols", "Healthcare regulations"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+      automateTask: "/api/manage-patient-records",
+    },
+  },
+  {
+    id: "communication-expert",
+    name: "Communication Expert",
+    description:
+      "Enhances internal and external communications, drafts announcements, and manages public relations.",
+    icon: MessageSquareText,
+    color: "#F43F5E", // Rose-500
+    category: "Communication",
+    tasks: [
+      "Draft press releases",
+      "Write internal announcements",
+      "Manage social media communication",
+      "Handle crisis communication",
+    ],
+    skills: ["Public Relations", "Corporate Communications", "Technical Writing", "Social Media Management", "Crisis Management"],
+    deploymentCost: 25,
+    monthlyCost: 60,
+    isPremium: false,
+    model: "GPT-4",
+    trainingData: ["Communication theories", "PR case studies", "Brand guidelines"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion",
+    },
+  },
+  {
+    id: "ai-team-coordinator",
+    name: "AI Team Coordinator",
+    description:
+      "Orchestrates multiple AI employees to work together on complex workflows and projects.",
+    icon: Workflow,
+    color: "#8B5CF6", // Violet-500
+    category: "Operations",
+    tasks: [
+      "Define multi-AI workflows",
+      "Monitor AI task execution",
+      "Optimize AI resource allocation",
+      "Resolve AI inter-communication issues",
+    ],
+    skills: ["Workflow Automation", "AI Orchestration", "System Integration", "Problem Solving", "Monitoring"],
+    deploymentCost: 40,
+    monthlyCost: 95,
+    isPremium: true,
+    model: "Custom", // This one might use a custom orchestration logic
+    trainingData: ["Workflow management systems", "Task delegation principles", "System architectures"],
+    apiEndpoints: {
+      generateContent: "/api/generate-chat-completion", // May still use this for high-level instructions
+      automateTask: "/api/orchestrate-ai-team",
+    },
+  },
 ];

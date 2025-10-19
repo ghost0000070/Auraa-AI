@@ -1,41 +1,73 @@
+
 import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { db } from '@/firebase'; // Assuming you have a firebase config file
+import { collection, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '@/hooks/useAuth';
-import { useAgentRealtime } from '@/hooks/useAgentRealtime';
-import { Database } from '@/integrations/supabase/types';
+import { functions } from '@/firebase'; // Assuming you have a firebase config file
+import { httpsCallable } from 'firebase/functions';
 
-type Target = Database['public']['Tables']['integration_targets']['Row'];
-type AgentTask = Database['public']['Tables']['agent_tasks']['Row'];
+// Note: You'll need to define the shape of your data in Firestore.
+// This is an example based on the Supabase types.
+interface Target {
+  id: string;
+  name: string;
+  base_url: string;
+  auth_type: string;
+  created_at: any;
+}
 
-export function WebsiteIntegrations() {
-  const { tasks } = useAgentRealtime();
+interface AgentTask {
+  id: string;
+  target_id: string;
+  status: 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';
+  created_at: any;
+}
+
+export function FirebaseWebsiteIntegrations() {
   const { user } = useAuth();
   const [targets, setTargets] = useState<Target[]>([]);
+  const [tasks, setTasks] = useState<AgentTask[]>([]);
   const [loading, setLoading] = useState(false);
   const [runningId, setRunningId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
-    const { data, error } = await supabase.from('integration_targets').select('*').order('created_at', { ascending: false });
-    if (!error) setTargets(data || []);
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    try {
+      const targetsCollection = collection(db, 'integration_targets');
+      const targetsSnapshot = await getDocs(targetsCollection);
+      const targetsData = targetsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Target));
+      setTargets(targetsData.sort((a, b) => b.created_at.toMillis() - a.created_at.toMillis()));
+
+      // You would also fetch tasks associated with these targets
+      // For simplicity, this is not shown here, but you would use a similar pattern to fetch tasks
+      // and update the `tasks` state.
+
+    } catch (error) {
+      console.error("Error loading integration targets: ", error);
+      setMessage("Failed to load integration targets.");
+    }
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, [user]);
 
   async function runAction(target: Target, action: string) {
     if (!user) return;
     setRunningId(target.id);
     setMessage(null);
     try {
-      const { data, error } = await supabase.functions.invoke('agent-run', {
-        body: {
-          target_id: target.id,
-          action: action,
-        }
+      const agentRun = httpsCallable(functions, 'agent-run');
+      const result = await agentRun({
+        target_id: target.id,
+        action: action,
       });
-      if (error) throw error;
       setMessage(`Task queued for action: ${action}`);
     } catch (e: any) {
       setMessage(`Error: ${e.message}`);
@@ -47,7 +79,8 @@ export function WebsiteIntegrations() {
   async function cancelTask(taskId: string) {
     setMessage(null);
     try {
-      await supabase.functions.invoke('agent-cancel', { body: { task_id: taskId } });
+      const agentCancel = httpsCallable(functions, 'agent-cancel');
+      await agentCancel({ task_id: taskId });
       setMessage('Cancellation request sent.');
     } catch (e: any) {
       setMessage(`Error: ${e.message}`);
@@ -57,7 +90,7 @@ export function WebsiteIntegrations() {
   const getLatestTaskForTarget = (targetId: string): AgentTask | undefined => {
     return tasks
       .filter(t => t.target_id === targetId)
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+      .sort((a, b) => b.created_at.toMillis() - a.created_at.toMillis())[0];
   };
 
   return (

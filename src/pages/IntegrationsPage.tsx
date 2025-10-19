@@ -1,6 +1,7 @@
+
 import { useState } from 'react';
 import { AddWebsiteIntegration } from '@/components/integrations/AddWebsiteIntegration';
-import { WebsiteIntegrations } from '@/components/integrations/WebsiteIntegrations';
+import { FirebaseWebsiteIntegrations } from '@/components/integrations/FirebaseWebsiteIntegrations';
 import { useAgentTasks } from '@/hooks/useAgentTasks';
 import { useAgentRealtime } from '@/hooks/useAgentRealtime';
 import { AgentMetricsDashboard } from '@/components/integrations/AgentMetricsDashboard';
@@ -20,7 +21,7 @@ export default function IntegrationsPage() {
           <AddWebsiteIntegration onCreated={() => { /* could trigger reload via context if needed */ }} />
         </div>
         <div className="md:col-span-2">
-          <WebsiteIntegrations />
+          <FirebaseWebsiteIntegrations />
         </div>
       </div>
       <div>
