@@ -1,13 +1,13 @@
 specVersion: "v1"
-serviceId: "auraa-ai"
+serviceId: "auraa-ai-69-3-service"
 location: "us-east4"
 schema:
   source: "./schema"
   datasource:
     postgresql:
-      database: "fdcdb"
+      database: "auraa-ai-69-3-database"
       cloudSql:
-        instanceId: "auraa-ai-fdc"
+        instanceId: "auraa-ai-69-3-instance"
         # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
         # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
-connectorDirs: []
+connectorDirs: ["./example"]

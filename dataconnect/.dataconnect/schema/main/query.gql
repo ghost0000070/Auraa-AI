@@ -1,0 +1,262 @@
+extend type Query {
+  """
+  ✨ Look up a single `AIEmployee` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  aIEmployee(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: AIEmployee_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AIEmployee_FirstRow
+  ): AIEmployee @fdc_generated(from: "AIEmployee", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `AIEmployeeSkill` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  aIEmployeeSkill(
+    """
+    The key used to identify the object.
+    """
+    key: AIEmployeeSkill_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AIEmployeeSkill_FirstRow
+  ): AIEmployeeSkill @fdc_generated(from: "AIEmployeeSkill", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Skill` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  skill(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Skill_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Skill_FirstRow
+  ): Skill @fdc_generated(from: "Skill", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Task` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  task(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Task_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Task_FirstRow
+  ): Task @fdc_generated(from: "Task", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  user(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User @fdc_generated(from: "User", purpose: QUERY_SINGLE)
+  """
+  ✨ List `AIEmployee` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  aIEmployees(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: AIEmployee_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [AIEmployee_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: AIEmployee_Having
+  ): [AIEmployee!]! @fdc_generated(from: "AIEmployee", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `AIEmployeeSkill` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  aIEmployeeSkills(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: AIEmployeeSkill_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [AIEmployeeSkill_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: AIEmployeeSkill_Having
+  ): [AIEmployeeSkill!]! @fdc_generated(from: "AIEmployeeSkill", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Skill` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  skills(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Skill_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Skill_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Skill_Having
+  ): [Skill!]! @fdc_generated(from: "Skill", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Task` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  tasks(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Task_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Task_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Task_Having
+  ): [Task!]! @fdc_generated(from: "Task", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `User` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  users(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: User_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [User_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: User_Having
+  ): [User!]! @fdc_generated(from: "User", purpose: QUERY_MULTIPLE)
+}

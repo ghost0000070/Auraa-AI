@@ -1,0 +1,25 @@
+mutation CreateUser @auth(level: USER) {
+  user_insert(data: {displayName: "New User", email: "newuser@example.com", createdAt_expr: "request.time"})
+}
+
+query ListSkills @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  skills {
+    id
+    name
+    description
+    category
+  }
+}
+
+mutation AssignSkillToAIEmployee($aiEmployeeId: UUID!, $skillId: UUID!) @auth(level: USER) {
+  aIEmployeeSkill_insert(data: {aiEmployeeId: $aiEmployeeId, skillId: $skillId, enabled: true})
+}
+
+query ListTasksForUser($userId: UUID!) @auth(level: USER) {
+  tasks(where: {userId: {eq: $userId}}) {
+    id
+    description
+    status
+    dueDate
+  }
+}

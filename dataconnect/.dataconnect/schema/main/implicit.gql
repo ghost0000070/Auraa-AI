@@ -1,0 +1,50 @@
+extend type AIEmployee {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "AIEmployee", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `AIEmployee`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID! @fdc_generated(from: "AIEmployee.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type AIEmployeeSkill {
+  """
+  ✨ Implicit foreign key field based on `AIEmployeeSkill`.`aiEmployee`. It must match the value of `AIEmployee`.`id`. See `@ref` for how to customize it.
+  """
+  aiEmployeeId: UUID! @fdc_generated(from: "AIEmployeeSkill.aiEmployee", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `AIEmployeeSkill`.`skill`. It must match the value of `Skill`.`id`. See `@ref` for how to customize it.
+  """
+  skillId: UUID! @fdc_generated(from: "AIEmployeeSkill.skill", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Skill {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Skill", purpose: IMPLICIT_KEY_FIELD)
+}
+extend type Task {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "Task", purpose: IMPLICIT_KEY_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Task`.`aiEmployee`. It must match the value of `AIEmployee`.`id`. See `@ref` for how to customize it.
+  """
+  aiEmployeeId: UUID! @fdc_generated(from: "Task.aiEmployee", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Task`.`skillUsed`. It must match the value of `Skill`.`id`. See `@ref` for how to customize it.
+  """
+  skillUsedId: UUID @fdc_generated(from: "Task.skillUsed", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Task`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID! @fdc_generated(from: "Task.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type User {
+  """
+  ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
+  """
+  id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "User", purpose: IMPLICIT_KEY_FIELD)
+}
