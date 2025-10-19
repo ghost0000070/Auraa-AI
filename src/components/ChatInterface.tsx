@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2, Send, CornerDownLeft, User, Bot } from 'lucide-react';
 import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { generativeModel } from '@/firebase'; // Import generativeModel
 
 interface ChatInterfaceProps {
   employeeType: string;
@@ -27,9 +28,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const template = aiEmployeeTemplates.find(e => e.type === employeeType);
+    const template = aiEmployeeTemplates.find(e => e.id === employeeType);
     const welcomeMessage = template 
-      ? `Hello! I'm ${template.name}, your new ${template.role}. How can I assist you with your business goals today?`
+      ? `Hello! I'm ${template.name}, your new ${template.category} expert. How can I assist you with your business goals today?`
       : `Hello! I'm your new AI employee. How can I help you today?`;
     
     setMessages([{ sender: 'ai', text: welcomeMessage }]);
@@ -51,23 +52,42 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('generate-chat-completion', {
-        body: {
-          employeeType,
-          employeeName,
-          businessContext,
-          prompt: input,
-          history: messages,
-        },
-      });
+      const template = aiEmployeeTemplates.find(e => e.id === employeeType);
 
-      if (error) throw new Error(error.message);
+      let aiResponseText = "Sorry, I'm having trouble connecting. Please try again later.";
 
-      const aiMessage: Message = { sender: 'ai', text: data.response };
+      if (template?.model === "Gemini-Pro") {
+        // Use client-side Gemini API
+        const chat = generativeModel.startChat({
+          history: messages.map(msg => ({
+            role: msg.sender === 'user' ? 'user' : 'model',
+            parts: [{ text: msg.text }],
+          })),
+        });
+
+        const result = await chat.sendMessage(input);
+        aiResponseText = result.response.text();
+
+      } else {
+        // Fallback to Firebase Function for other models (now all Gemini via backend)
+        const functions = getFunctions();
+        const generateChatCompletion = httpsCallable(functions, 'generateChatCompletion');
+        const result = await generateChatCompletion({
+            employeeType,
+            employeeName,
+            businessContext,
+            prompt: input,
+            history: messages,
+            model: template?.model || 'gemini-1.5-flash-001', // Pass the model to the backend
+        });
+        aiResponseText = (result.data as any).response;
+      }
+
+      const aiMessage: Message = { sender: 'ai', text: aiResponseText };
       setMessages(prev => [...prev, aiMessage]);
 
     } catch (error) {
-      const errorMessage: Message = { sender: 'ai', text: "Sorry, I'm having trouble connecting. Please try again later." };
+      const errorMessage: Message = { sender: 'ai', text: "Sorry, I'm having trouble processing your request. Please try again later." };
       setMessages(prev => [...prev, errorMessage]);
       console.error('Error getting AI response:', error);
     } finally {

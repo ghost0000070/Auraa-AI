@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+// REMOVED: import { supabase } from '@/integrations/supabase/client';
 import { 
   MessageSquare, 
   Users, 
@@ -24,8 +24,21 @@ import {
   Filter
 } from 'lucide-react';
 import { Header } from '@/components/Header';
-import { Json } from '@/integrations/supabase/types';
-import { JsonValue } from '@/types/json';
+// REMOVED: import { Json } from '@/integrations/supabase/types';
+// REMOVED: import { JsonValue } from '@/types/json';
+import { db } from '@/firebase'; // Import db from firebase.ts
+import { 
+  collection, 
+  query, 
+  orderBy, 
+  limit, 
+  onSnapshot, 
+  addDoc, 
+  updateDoc, 
+  doc, 
+  serverTimestamp, 
+  Timestamp 
+} from 'firebase/firestore'; // Firestore operations
 
 interface TeamCommunication {
   id: string;
@@ -34,9 +47,9 @@ interface TeamCommunication {
   message_type: string;
   subject: string | null;
   content: string;
-  metadata: JsonValue | null; // Supabase JSON column
+  metadata: Record<string, any> | null; // Changed from JsonValue to generic object for Firestore
   is_read: boolean;
-  created_at: string;
+  created_at: Timestamp; // Changed to Firestore Timestamp
   user_id: string;
 }
 
@@ -45,8 +58,8 @@ interface TeamExecution {
   workflow_id: string | null;
   status: string;
   current_step: number | null;
-  created_at: string;
-  updated_at: string;
+  created_at: Timestamp; // Changed to Firestore Timestamp
+  updated_at: Timestamp; // Changed to Firestore Timestamp
   user_id: string;
   type: string | null;
 }
@@ -89,79 +102,68 @@ const AITeamCoordination = () => {
       navigate('/auth');
       return;
     }
-    fetchData();
-    
-    // Set up real-time subscriptions
-    const communicationsSubscription = supabase
-      .channel('team-communications')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'ai_team_communications' }, 
-        () => fetchData()
-      )
-      .subscribe();
 
-    const executionsSubscription = supabase
-      .channel('team-executions')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'ai_team_executions' }, 
-        () => fetchData()
-      )
-      .subscribe();
+    setLoading(true);
+
+    // Firestore real-time subscriptions for communications
+    const communicationsQuery = query(
+      collection(db, 'ai_team_communications'),
+      where('user_id', '==', user.id),
+      orderBy('created_at', 'desc'),
+      limit(50)
+    );
+    const unsubscribeCommunications = onSnapshot(communicationsQuery, (snapshot) => {
+      const fetchedCommunications = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        created_at: doc.data().created_at // Keep as Timestamp for now, convert on render
+      })) as TeamCommunication[];
+      setCommunications(fetchedCommunications);
+      setLoading(false);
+    }, (error) => {
+      console.error('❌ Communications real-time error:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load real-time communications',
+        variant: 'destructive'
+      });
+      setLoading(false);
+    });
+
+    // Firestore real-time subscriptions for executions
+    const executionsQuery = query(
+      collection(db, 'ai_team_executions'),
+      where('user_id', '==', user.id),
+      orderBy('created_at', 'desc'),
+      limit(20)
+    );
+    const unsubscribeExecutions = onSnapshot(executionsQuery, (snapshot) => {
+      const fetchedExecutions = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        created_at: doc.data().created_at,
+        updated_at: doc.data().updated_at
+      })) as TeamExecution[];
+      setExecutions(fetchedExecutions);
+      setLoading(false);
+    }, (error) => {
+      console.error('❌ Executions real-time error:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load real-time workflow executions',
+        variant: 'destructive'
+      });
+      setLoading(false);
+    });
 
     return () => {
-      supabase.removeChannel(communicationsSubscription);
-      supabase.removeChannel(executionsSubscription);
+      unsubscribeCommunications();
+      unsubscribeExecutions();
     };
   }, [user, navigate]);
 
-  const fetchData = async () => {
-    try {
-      console.log('🔄 Fetching team coordination data...');
-      
-      const [communicationsResponse, executionsResponse] = await Promise.all([
-        supabase
-          .from('ai_team_communications')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(50),
-        supabase
-          .from('ai_team_executions')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(20)
-      ]);
-
-      console.log('📊 Coordination data responses:', {
-        communications: communicationsResponse.data?.length || 0,
-        executions: executionsResponse.data?.length || 0
-      });
-
-      if (communicationsResponse.error) {
-        console.error('❌ Communications fetch error:', communicationsResponse.error);
-        throw communicationsResponse.error;
-      }
-      if (executionsResponse.error) {
-        console.error('❌ Executions fetch error:', executionsResponse.error);
-        throw executionsResponse.error;
-      }
-
-      // Cast data to our interface adjusting metadata which is Json from Supabase
-      setCommunications((communicationsResponse.data as (TeamCommunication & { metadata: Json })[] | null)?.map(c => ({
-        ...c,
-        metadata: c.metadata as JsonValue | null
-      })) || []);
-      setExecutions(executionsResponse.data || []);
-    } catch (error) {
-      console.error('❌ Error fetching coordination data:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch team coordination data',
-        variant: 'destructive'
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Removed fetchData as onSnapshot now handles initial load and real-time updates
+  // const fetchData = async () => { ... }; 
 
   const sendMessage = async () => {
     try {
@@ -174,16 +176,14 @@ const AITeamCoordination = () => {
         return;
       }
 
-      const { error } = await supabase
-        .from('ai_team_communications')
-        .insert({
-          ...newMessage,
-          sender_employee: 'User',
-          user_id: user?.id,
-          metadata: {}
-        });
-
-      if (error) throw error;
+      await addDoc(collection(db, 'ai_team_communications'), {
+        ...newMessage,
+        sender_employee: 'User',
+        user_id: user?.id,
+        metadata: {},
+        is_read: false, // Default to unread when sent
+        created_at: serverTimestamp(),
+      });
 
       toast({
         title: 'Success',
@@ -197,7 +197,7 @@ const AITeamCoordination = () => {
         content: ''
       });
       setShowMessageDialog(false);
-      fetchData();
+      // No need to call fetchData explicitly due to onSnapshot
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
@@ -210,13 +210,12 @@ const AITeamCoordination = () => {
 
   const markAsRead = async (messageId: string) => {
     try {
-      const { error } = await supabase
-        .from('ai_team_communications')
-        .update({ is_read: true })
-        .eq('id', messageId);
-
-      if (error) throw error;
-      fetchData();
+      const messageRef = doc(db, 'ai_team_communications', messageId);
+      await updateDoc(messageRef, {
+        is_read: true,
+        updated_at: serverTimestamp(),
+      });
+      // No need to call fetchData explicitly due to onSnapshot
     } catch (error) {
       console.error('Error marking message as read:', error);
     }
@@ -414,7 +413,7 @@ const AITeamCoordination = () => {
                             </div>
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            {new Date(comm.created_at).toLocaleTimeString()}
+                            {comm.created_at.toDate().toLocaleTimeString()} {/* Convert Timestamp to Date */}
                           </div>
                         </div>
                         
@@ -473,11 +472,11 @@ const AITeamCoordination = () => {
                       </div>
                       
                       <div className="text-xs text-muted-foreground">
-                        Started: {new Date(execution.created_at).toLocaleString()}
+                        Started: {execution.created_at.toDate().toLocaleString()} {/* Convert Timestamp to Date */}
                       </div>
                       
                       <div className="text-xs text-muted-foreground">
-                        Updated: {new Date(execution.updated_at).toLocaleString()}
+                        Updated: {execution.updated_at.toDate().toLocaleString()} {/* Convert Timestamp to Date */}
                       </div>
                       
                       {execution.type && (

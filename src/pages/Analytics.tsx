@@ -6,6 +6,7 @@ import { CheckCircle, XCircle, Clock } from 'lucide-react';
 import { supabase } from "@/integrations/supabase/client";
 import SubscriptionGuard from "@/components/SubscriptionGuard"; // Corrected import
 import { Header } from "@/components/Header";
+import { BarChart, XAxis, YAxis } from 'recharts';
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -115,7 +116,7 @@ const Analytics = () => {
                   mobile: { label: "Mobile", color: "hsl(var(--chart-2))" },
                 }}
                 >
-                  {/* <BarChart data={chartData}>
+                  <BarChart data={chartData}>
                     <XAxis
                       dataKey="month"
                       tickLine={false}
@@ -128,7 +129,7 @@ const Analytics = () => {
                     <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                     <ChartColumn dataKey="desktop" fill="var(--color-desktop)" />
                     <ChartColumn dataKey="mobile" fill="var(--color-mobile)" />
-                  </BarChart> */}
+                  </BarChart>
                 </ChartContainer>
               </CardContent>
             </Card>

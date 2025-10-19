@@ -6,25 +6,15 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { supabase } from '@/integrations/supabase/client';
+import { db, functions } from '@/firebase'; // Import db and functions from firebase.ts
+import { collection, query, where, getDocs, addDoc, serverTimestamp, doc } from 'firebase/firestore'; // Firestore operations
+import { httpsCallable } from 'firebase/functions'; // For calling Firebase Functions
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2, Zap, CheckCircle, AlertCircle } from 'lucide-react';
-
-interface AIEmployee {
-  id: string;
-  name: string;
-  role: string;
-  type: string;
-  description: string;
-  skills: string[];
-  avatar: string;
-  color: string;
-  icon: React.ReactNode;
-  popular?: boolean;
-}
+import { AIEmployeeTemplate } from '@/lib/ai-employee-templates'; // Import the unified AIEmployeeTemplate
 
 interface DeploymentRequestCardProps {
-  employee: AIEmployee;
+  employee: AIEmployeeTemplate; // Use the unified interface
 }
 
 export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ employee }) => {
@@ -55,81 +45,81 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ em
 
     setIsLoading(true);
     try {
-      let businessProfile;
-      const { data: existingProfile } = await supabase
-        .from('business_profiles')
-        .select('id, name')
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .maybeSingle();
+      let businessProfileId: string;
 
-      if (existingProfile) {
-        businessProfile = existingProfile;
+      // 1. Check for existing business profile or create a new one
+      const businessProfilesRef = collection(db, 'business_profiles');
+      const q = query(businessProfilesRef, where('user_id', '==', user.id), where('is_active', '==', true));
+      const existingProfilesSnap = await getDocs(q);
+
+      if (!existingProfilesSnap.empty) {
+        businessProfileId = existingProfilesSnap.docs[0].id;
       } else {
-        const { data: newProfile, error: createProfileError } = await supabase
-          .from('business_profiles')
-          .insert({
-            user_id: user.id,
-            name: `${user.email?.split('@')[0] || 'User'}'s Business`,
-          })
-          .select('id, name')
-          .single();
-
-        if (createProfileError) throw createProfileError;
-        businessProfile = newProfile;
-      }
-
-      let templateId: string | null = null;
-      const { data: existingTemplate } = await supabase
-        .from('ai_helper_templates')
-        .select('id')
-        .eq('name', employee.name)
-        .maybeSingle();
-
-      if (existingTemplate) {
-        templateId = existingTemplate.id;
-      } else {
-        const { data: newTemplate, error: createError } = await supabase
-          .from('ai_helper_templates')
-          .insert({
-            name: employee.name,
-            description: employee.description,
-            category: employee.type,
-            color_scheme: employee.color,
-            prompt_template: `You are ${employee.name}, a ${employee.role}. ${employee.description}`,
-            capabilities: employee.skills as any,
-            user_id: user.id,
-          })
-          .select('id')
-          .single();
-
-        if (createError) throw createError;
-        templateId = newTemplate!.id;
-      }
-
-      const { data: deploymentRequest, error: requestError } = await supabase
-        .from('ai_employee_deployment_requests')
-        .insert({
+        const newProfileData = {
           user_id: user.id,
-          helper_template_id: templateId,
-          business_profile_id: businessProfile.id,
-          deployment_config: {
-            notes: deploymentNotes,
-          },
-        })
-        .select('id')
-        .single();
+          name: `${user.email?.split('@')[0] || 'User'}'s Business`,
+          is_active: true, // Assuming new profiles are active by default
+          created_at: serverTimestamp(),
+        };
+        const newProfileRef = await addDoc(businessProfilesRef, newProfileData);
+        businessProfileId = newProfileRef.id;
+      }
 
-      if (requestError) throw requestError;
+      let templateDocId: string;
 
-      if (subscriptionStatus.subscription_tier === 'Enterprise') {
-        const { error: approvalError } = await supabase.functions.invoke('deploy-ai-employee', {
-          body: { deployment_request_id: deploymentRequest!.id },
-        });
-        if (approvalError) {
-          toast({ title: "Deployment Submitted", description: "Auto-approval failed, manual review required." });
-        } else {
+      // 2. Check for existing AI helper template or create a new one
+      const aiHelperTemplatesRef = collection(db, 'ai_helper_templates');
+      const templateQ = query(aiHelperTemplatesRef, where('name', '==', employee.name));
+      const existingTemplateSnap = await getDocs(templateQ);
+
+      if (!existingTemplateSnap.empty) {
+        templateDocId = existingTemplateSnap.docs[0].id;
+      } else {
+        const newTemplateData = {
+          name: employee.name,
+          description: employee.description,
+          category: employee.category, // Use category from employee template
+          color_scheme: employee.color,
+          prompt_template: `You are ${employee.name}, a ${employee.category} expert. ${employee.description}`,
+          capabilities: employee.skills,
+          user_id: user.id,
+          model: employee.model, // Store the model type
+          deploymentCost: employee.deploymentCost,
+          monthlyCost: employee.monthlyCost,
+          isPremium: employee.isPremium,
+          trainingData: employee.trainingData,
+          apiEndpoints: employee.apiEndpoints,
+          created_at: serverTimestamp(),
+        };
+        const newTemplateRef = await addDoc(aiHelperTemplatesRef, newTemplateData);
+        templateDocId = newTemplateRef.id;
+      }
+
+      // 3. Create a new AI employee deployment request in Firestore
+      const deploymentRequestsRef = collection(db, 'aiEmployeeDeploymentRequests');
+      const deploymentRequestData = {
+        user_id: user.id,
+        ai_helper_template_id: templateDocId,
+        business_profile_id: businessProfileId,
+        deployment_config: {
+          notes: deploymentNotes,
+        },
+        status: 'pending', // Initial status
+        created_at: serverTimestamp(),
+      };
+      const newDeploymentRequestRef = await addDoc(deploymentRequestsRef, deploymentRequestData);
+      const deploymentRequestId = newDeploymentRequestRef.id;
+
+      // 4. If Enterprise tier, directly invoke Firebase Function for auto-approval
+      if (subscriptionStatus?.subscription_tier === 'Enterprise') {
+        const deployAiEmployeeFunction = httpsCallable(functions, 'deployAiEmployee');
+        const result = await deployAiEmployeeFunction({ deploymentRequestId: deploymentRequestId });
+        
+        // The Firebase Function should return success/failure in result.data
+        if ((result.data as any)?.success) {
           toast({ title: "Employee Deployed!", description: `${employee.name} is now active.` });
+        } else {
+          toast({ title: "Deployment Submitted", description: "Auto-approval failed, manual review required." });
         }
       } else {
         toast({ title: "Deployment Requested", description: "Your request has been submitted for review." });
@@ -139,9 +129,10 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ em
       setDeploymentNotes('');
 
     } catch (error: any) {
+      console.error("Deployment Error:", error);
       toast({
         title: "Deployment Failed",
-        description: error.message || "An unexpected error occurred.",
+        description: error.message || "An unexpected error occurred during deployment.",
         variant: "destructive"
       });
     } finally {
@@ -149,25 +140,29 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ em
     }
   };
 
+  // Using employee.category and employee.model directly from the unified template
+  // Note: The 'role' prop in the old interface is replaced by 'category'
+
   return (
     <Card className="hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 cursor-pointer group border-2 border-slate-700/50 hover:border-primary/30 backdrop-blur-sm overflow-hidden bg-slate-800/50">
       <div className="relative">
         <div className="h-[300px] w-full bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden flex items-center justify-center p-4">
           <img 
-            src={employee.avatar} 
+            src={employee.avatar} // Assuming 'avatar' is still part of the template or can be derived
             alt={`${employee.name} - AI Employee`}
             className="max-w-[80%] max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
-          {employee.popular && (
+          {employee.isPremium && (
             <Badge className="absolute top-3 right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg animate-pulse">
               <CheckCircle className="w-3 h-3 mr-1 fill-current" />
-              Elite
+              Premium
             </Badge>
           )}
           <div className="absolute bottom-3 left-3">
             <div className={`w-12 h-12 ${employee.color} rounded-full flex items-center justify-center text-white shadow-lg`}>
-              {employee.icon}
+              {/* Assuming employee.icon is a React.ReactNode as before */}
+              {employee.icon && React.createElement(employee.icon as React.ElementType, { className: 'w-6 h-6' })}
             </div>
           </div>
         </div>
@@ -178,7 +173,7 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ em
           {employee.name}
         </CardTitle>
         <CardDescription className="font-medium text-primary/80">
-          {employee.role}
+          {employee.category} {/* Use category instead of role */}
         </CardDescription>
       </CardHeader>
       
@@ -219,7 +214,8 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ em
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <div className={`w-8 h-8 ${employee.color} rounded-full flex items-center justify-center text-white`}>
-                    {employee.icon}
+                    {/* Assuming employee.icon is a React.ReactNode as before */}
+                    {employee.icon && React.createElement(employee.icon as React.ElementType, { className: 'w-4 h-4' })}
                   </div>
                   Deploy {employee.name}
                 </DialogTitle>

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+// REMOVED: import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { 
   Activity, 
@@ -18,6 +18,8 @@ import {
   Clock,
   CheckCircle
 } from 'lucide-react';
+import { db } from '@/firebase'; // Import db from firebase.ts
+import { collection, query, where, getDocs, orderBy, limit, Timestamp } from 'firebase/firestore'; // Firestore operations
 
 interface DashboardStats {
   activeWorkflows: number;
@@ -27,6 +29,18 @@ interface DashboardStats {
   unreadMessages: number;
   runningExecutions: number;
 }
+
+interface ExecutionActivityItem {
+  type: 'execution';
+  data: { id: string; status: string; created_at: Timestamp; current_step?: number }; // Changed to Timestamp
+  timestamp: Timestamp; // Changed to Timestamp
+}
+interface CommunicationActivityItem {
+  type: 'communication';
+  data: { id: string; message_type: string; created_at: Timestamp; is_read: boolean; sender_employee?: string; content?: string }; // Changed to Timestamp
+  timestamp: Timestamp; // Changed to Timestamp
+}
+type ActivityItem = ExecutionActivityItem | CommunicationActivityItem;
 
 const AITeamDashboard = () => {
   const { user } = useAuth();
@@ -38,17 +52,6 @@ const AITeamDashboard = () => {
     unreadMessages: 0,
     runningExecutions: 0
   });
-  interface ExecutionActivityItem {
-    type: 'execution';
-    data: { id: string; status: string; created_at: string; current_step?: number }; // minimal fields used
-    timestamp: string;
-  }
-  interface CommunicationActivityItem {
-    type: 'communication';
-    data: { id: string; message_type: string; created_at: string; is_read: boolean; sender_employee?: string; content?: string };
-    timestamp: string;
-  }
-  type ActivityItem = ExecutionActivityItem | CommunicationActivityItem;
   const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,29 +65,29 @@ const AITeamDashboard = () => {
     try {
       console.log('🔄 Fetching AI team dashboard data...');
       
-      // Fetch data from all required tables - use proper table names 
+      // Fetch data from all required tables using Firestore
       const [
-        workflowsResponse,
-        executionsResponse,
-        communicationsResponse,
-        goalsResponse
+        workflowsSnapshot,
+        executionsSnapshot,
+        communicationsSnapshot,
+        goalsSnapshot
       ] = await Promise.all([
-        supabase.from('ai_workflows').select('*').eq('is_active', true),
-        supabase.from('ai_team_executions').select('*').order('created_at', { ascending: false }).limit(5),
-        supabase.from('ai_team_communications').select('*').order('created_at', { ascending: false }),
-        supabase.from('business_profiles').select('*')
+        getDocs(query(collection(db, 'ai_workflows'), where('is_active', '==', true), where('user_id', '==', user!.id))), // Filter by user_id
+        getDocs(query(collection(db, 'ai_team_executions'), where('user_id', '==', user!.id), orderBy('created_at', 'desc'), limit(5))),
+        getDocs(query(collection(db, 'ai_team_communications'), where('user_id', '==', user!.id), orderBy('created_at', 'desc'))),
+        getDocs(query(collection(db, 'business_profiles'), where('user_id', '==', user!.id))) // Filter by user_id
       ]);
-
-      if (workflowsResponse.error) console.warn('Workflows query error:', workflowsResponse.error);
-      if (executionsResponse.error) console.warn('Executions query error:', executionsResponse.error);
-      if (communicationsResponse.error) console.warn('Communications query error:', communicationsResponse.error);
-      if (goalsResponse.error) console.warn('Goals query error:', goalsResponse.error);
 
       console.log('📊 Dashboard data fetched successfully');
 
-      const completedExecutions = executionsResponse.data?.filter(e => e.status === 'completed').length || 0;
-      const unreadMessages = communicationsResponse.data?.filter(c => !c.is_read).length || 0;
-      const runningExecutions = executionsResponse.data?.filter(e => e.status === 'running').length || 0;
+      const workflowsData = workflowsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const executionsData = executionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const communicationsData = communicationsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const goalsData = goalsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      const completedExecutions = executionsData.filter(e => e.status === 'completed').length || 0;
+      const unreadMessages = communicationsData.filter(c => !c.is_read).length || 0;
+      const runningExecutions = executionsData.filter(e => e.status === 'running').length || 0;
 
       console.log('📈 Calculated stats:', {
         completedExecutions,
@@ -93,27 +96,27 @@ const AITeamDashboard = () => {
       });
 
       setStats({
-        activeWorkflows: workflowsResponse.data?.length || 0,
+        activeWorkflows: workflowsData.length || 0,
         completedTasks: completedExecutions,
-        teamMessages: communicationsResponse.data?.length || 0,
-        businessGoals: goalsResponse.data?.length || 0,
+        teamMessages: communicationsData.length || 0,
+        businessGoals: goalsData.length || 0,
         unreadMessages,
         runningExecutions
       });
 
       // Recent activity from executions and communications
       const activity = [
-        ...(executionsResponse.data || []).map(e => ({
+        ...(executionsData || []).map(e => ({
           type: 'execution' as const,
-          data: e,
-          timestamp: e.created_at
+          data: e as ExecutionActivityItem['data'],
+          timestamp: e.created_at as Timestamp
         })),
-        ...(communicationsResponse.data || []).slice(0, 3).map(c => ({
+        ...(communicationsData || []).slice(0, 3).map(c => ({
           type: 'communication' as const,
-          data: c,
-          timestamp: c.created_at
+          data: c as CommunicationActivityItem['data'],
+          timestamp: c.created_at as Timestamp
         }))
-      ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 6);
+      ].sort((a, b) => (b.timestamp as Timestamp).toDate().getTime() - (a.timestamp as Timestamp).toDate().getTime()).slice(0, 6);
 
       console.log('📋 Recent activity items:', activity.length);
       setRecentActivity(activity);
@@ -297,7 +300,7 @@ const AITeamDashboard = () => {
                           }
                         </p>
                         <span className="text-xs text-muted-foreground">
-                          {new Date(activity.timestamp).toLocaleTimeString()}
+                          {activity.timestamp.toDate().toLocaleTimeString()} {/* Convert Timestamp to Date */}
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground">
