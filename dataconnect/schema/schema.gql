@@ -1,64 +1,45 @@
 type User @table {
-  username: String!
-  email: String
-  currencyPreference: String
+  displayName: String!
+  email: String! @unique
   createdAt: Timestamp!
+  organizationName: String
+  profilePictureUrl: String
 }
 
-type Category @table {
-  user: User
+type AIEmployee @table {
+  user: User!
   name: String!
   type: String!
-  description: String
-  createdAt: Timestamp!
-}
-
-type Transaction @table {
-  user: User
-  category: Category
-  amount: Float!
-  date: Date!
-  description: String!
-  type: String!
-  notes: String
-  createdAt: Timestamp!
-}
-
-type Budget @table {
-  user: User
-  category: Category
-  amount: Float!
-  period: String!
-  startDate: Date!
-  endDate: Date
-  createdAt: Timestamp!
-}
-
-type BusinessGoal @table {
-  goal_name: String
-  title: String
-  description: String
-  target_value: Float
-  current_value: Float
-  unit: String
-  goal_type: String
   status: String!
-  assigned_employees: [String]!
-  progress_history: JSON
-  created_at: Timestamp!
-  updated_at: Timestamp!
-  user: User!
+  createdAt: Timestamp!
+  description: String
 }
 
-type SharedKnowledge @table {
-  knowledge_type: String
-  title: String
-  content: String!
-  source_employee: String
-  relevance_tags: [String]!
-  confidence_score: Float
-  is_verified: Boolean
-  created_at: Timestamp!
+type Skill @table {
+  name: String! @unique
+  description: String!
+  category: String!
+  isPredefined: Boolean!
+  inputSchema: String
+  outputSchema: String
+}
+
+type AIEmployeeSkill @table(key: ["aiEmployee", "skill"]) {
+  aiEmployee: AIEmployee!
+  skill: Skill!
+  enabled: Boolean!
+  configuration: String
+}
+
+type Task @table {
+  aiEmployee: AIEmployee!
   user: User!
-  metadata: JSON
+  status: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  description: String
+  inputData: String
+  outputData: String
+  skillUsed: Skill
+  dueDate: Timestamp
 }
