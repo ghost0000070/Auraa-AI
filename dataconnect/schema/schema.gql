@@ -33,3 +33,32 @@ type Budget @table {
   endDate: Date
   createdAt: Timestamp!
 }
+
+type BusinessGoal @table {
+  goal_name: String
+  title: String
+  description: String
+  target_value: Float
+  current_value: Float
+  unit: String
+  goal_type: String
+  status: String!
+  assigned_employees: [String]!
+  progress_history: JSON
+  created_at: Timestamp!
+  updated_at: Timestamp!
+  user: User!
+}
+
+type SharedKnowledge @table {
+  knowledge_type: String
+  title: String
+  content: String!
+  source_employee: String
+  relevance_tags: [String]!
+  confidence_score: Float
+  is_verified: Boolean
+  created_at: Timestamp!
+  user: User!
+  metadata: JSON
+}
