@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/hooks/useAuth';
-// REMOVED: import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { 
   Activity, 
@@ -18,8 +16,8 @@ import {
   Clock,
   CheckCircle
 } from 'lucide-react';
-import { db } from '@/firebase'; // Import db from firebase.ts
-import { collection, query, where, getDocs, orderBy, limit, Timestamp } from 'firebase/firestore'; // Firestore operations
+import { db } from '@/firebase';
+import { collection, query, where, getDocs, orderBy, limit, Timestamp } from 'firebase/firestore';
 
 interface DashboardStats {
   activeWorkflows: number;
@@ -32,13 +30,13 @@ interface DashboardStats {
 
 interface ExecutionActivityItem {
   type: 'execution';
-  data: { id: string; status: string; created_at: Timestamp; current_step?: number }; // Changed to Timestamp
-  timestamp: Timestamp; // Changed to Timestamp
+  data: { id: string; status: string; created_at: Timestamp; current_step?: number };
+  timestamp: Timestamp;
 }
 interface CommunicationActivityItem {
   type: 'communication';
-  data: { id: string; message_type: string; created_at: Timestamp; is_read: boolean; sender_employee?: string; content?: string }; // Changed to Timestamp
-  timestamp: Timestamp; // Changed to Timestamp
+  data: { id: string; message_type: string; created_at: Timestamp; is_read: boolean; sender_employee?: string; content?: string };
+  timestamp: Timestamp;
 }
 type ActivityItem = ExecutionActivityItem | CommunicationActivityItem;
 
@@ -55,73 +53,58 @@ const AITeamDashboard = () => {
   const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user) {
-      fetchDashboardData();
-    }
-  }, [user]);
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
+    if (!user) return;
     try {
-      console.log('🔄 Fetching AI team dashboard data...');
+      setLoading(true);
       
-      // Fetch data from all required tables using Firestore
+      const baseQuery = (coll: string) => collection(db, coll);
+      const userQuery = (coll: string) => query(baseQuery(coll), where('user_id', '==', user.uid));
+
       const [
         workflowsSnapshot,
         executionsSnapshot,
         communicationsSnapshot,
         goalsSnapshot
       ] = await Promise.all([
-        getDocs(query(collection(db, 'ai_workflows'), where('is_active', '==', true), where('user_id', '==', user!.id))), // Filter by user_id
-        getDocs(query(collection(db, 'ai_team_executions'), where('user_id', '==', user!.id), orderBy('created_at', 'desc'), limit(5))),
-        getDocs(query(collection(db, 'ai_team_communications'), where('user_id', '==', user!.id), orderBy('created_at', 'desc'))),
-        getDocs(query(collection(db, 'business_profiles'), where('user_id', '==', user!.id))) // Filter by user_id
+        getDocs(query(userQuery('ai_workflows'), where('is_active', '==', true))),
+        getDocs(query(userQuery('ai_team_executions'), orderBy('created_at', 'desc'), limit(5))),
+        getDocs(query(userQuery('ai_team_communications'), orderBy('created_at', 'desc'))),
+        getDocs(userQuery('business_profiles'))
       ]);
 
-      console.log('📊 Dashboard data fetched successfully');
-
-      const workflowsData = workflowsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       const executionsData = executionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       const communicationsData = communicationsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      const goalsData = goalsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      const completedExecutions = executionsData.filter(e => e.status === 'completed').length || 0;
-      const unreadMessages = communicationsData.filter(c => !c.is_read).length || 0;
-      const runningExecutions = executionsData.filter(e => e.status === 'running').length || 0;
-
-      console.log('📈 Calculated stats:', {
-        completedExecutions,
-        unreadMessages,
-        runningExecutions
-      });
+      const completedExecutions = executionsData.filter(e => e.status === 'completed').length;
+      const unreadMessages = communicationsData.filter(c => !c.is_read).length;
+      const runningExecutions = executionsData.filter(e => e.status === 'running').length;
 
       setStats({
-        activeWorkflows: workflowsData.length || 0,
+        activeWorkflows: workflowsSnapshot.size,
         completedTasks: completedExecutions,
-        teamMessages: communicationsData.length || 0,
-        businessGoals: goalsData.length || 0,
+        teamMessages: communicationsSnapshot.size,
+        businessGoals: goalsSnapshot.size,
         unreadMessages,
         runningExecutions
       });
 
-      // Recent activity from executions and communications
-      const activity = [
-        ...(executionsData || []).map(e => ({
-          type: 'execution' as const,
+      const activity: ActivityItem[] = [
+        ...executionsData.map((e): ExecutionActivityItem => ({
+          type: 'execution',
           data: e as ExecutionActivityItem['data'],
           timestamp: e.created_at as Timestamp
         })),
-        ...(communicationsData || []).slice(0, 3).map(c => ({
-          type: 'communication' as const,
+        ...communicationsData.slice(0, 3).map((c): CommunicationActivityItem => ({
+          type: 'communication',
           data: c as CommunicationActivityItem['data'],
           timestamp: c.created_at as Timestamp
         }))
-      ].sort((a, b) => (b.timestamp as Timestamp).toDate().getTime() - (a.timestamp as Timestamp).toDate().getTime()).slice(0, 6);
+      ].sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis()).slice(0, 6);
 
-      console.log('📋 Recent activity items:', activity.length);
       setRecentActivity(activity);
     } catch (error) {
-      console.error('❌ Error fetching dashboard data:', error);
+      console.error('Error fetching dashboard data:', error);
       toast({
         title: 'Error',
         description: 'Failed to fetch dashboard data',
@@ -130,7 +113,11 @@ const AITeamDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, toast]);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   const getActivityIcon = (type: string, status?: string) => {
     if (type === 'execution') {
@@ -300,7 +287,7 @@ const AITeamDashboard = () => {
                           }
                         </p>
                         <span className="text-xs text-muted-foreground">
-                          {activity.timestamp.toDate().toLocaleTimeString()} {/* Convert Timestamp to Date */}
+                          {activity.timestamp.toDate().toLocaleTimeString()}
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground">

@@ -2,24 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChatInterface } from '@/components/ChatInterface';
 import { ArrowLeft, Star, Settings, Loader2, MessageCircle } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '@/firebase';
 import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
 
+// Define a more specific type for the deployed employee
 interface DeployedEmployee {
   id: string;
   name: string;
-  deployment_config: Record<string, any>;
-  ai_helper_templates: {
-    name: string;
-    description: string;
-  };
+  deployment_config: Record<string, unknown>;
+  template_id: string; // Storing the template ID is more robust
 }
 
 const AIEmployeePage: React.FC = () => {
@@ -48,35 +47,42 @@ const AIEmployeePage: React.FC = () => {
 
     const fetchEmployee = async () => {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('ai_employees')
-        .select(`
-          id,
-          name,
-          deployment_config,
-          ai_helper_templates ( name, description )
-        `)
-        .eq('id', employeeId)
-        .eq('user_id', user.id)
-        .single();
+      try {
+        const employeeDocRef = doc(db, 'ai_employees', employeeId);
+        const employeeDoc = await getDoc(employeeDocRef);
 
-      if (error || !data) {
-        toast({ title: "Error", description: "Could not find the specified AI employee.", variant: "destructive" });
+        if (!employeeDoc.exists()) {
+          toast({ title: "Error", description: "Could not find the specified AI employee.", variant: "destructive" });
+          navigate('/ai-employees');
+          return;
+        }
+
+        const employeeData = { id: employeeDoc.id, ...employeeDoc.data() } as DeployedEmployee;
+        
+        // Ensure the fetched employee belongs to the current user
+        // This is a basic security check. For multi-tenancy, you'd check a businessId.
+        // @ts-ignore
+        if (employeeData.user_id !== user.uid) {
+            toast({ title: "Access Denied", description: "You do not have permission to view this employee.", variant: "destructive" });
+            navigate('/ai-employees');
+            return;
+        }
+
+        setDeployedEmployee(employeeData);
+
+        const staticInfo = aiEmployeeTemplates.find(e => e.id === employeeData.template_id);
+        if (staticInfo) {
+          setStaticData(staticInfo);
+        }
+
+        setConfigDraft(JSON.stringify(employeeData.deployment_config, null, 2));
+      } catch (error) {
+        console.error("Error fetching employee:", error);
+        toast({ title: "Error", description: "Failed to fetch AI employee data.", variant: "destructive" });
         navigate('/ai-employees');
-        return;
+      } finally {
+        setIsLoading(false);
       }
-      
-      setDeployedEmployee(data as DeployedEmployee);
-
-      const templateName = (data.ai_helper_templates as { name: string }).name;
-      const staticInfo = aiEmployeeTemplates.find(e => e.name === templateName);
-      
-      if (staticInfo) {
-        setStaticData(staticInfo);
-      }
-
-      setConfigDraft(JSON.stringify(data.deployment_config, null, 2));
-      setIsLoading(false);
     };
 
     fetchEmployee();
@@ -86,18 +92,14 @@ const AIEmployeePage: React.FC = () => {
     if (!deployedEmployee) return;
     setIsSaving(true);
     try {
-      JSON.parse(configDraft); // Validate JSON
-      const { error } = await supabase
-        .from('ai_employees')
-        .update({ deployment_config: JSON.parse(configDraft) })
-        .eq('id', deployedEmployee.id);
+      const parsedConfig = JSON.parse(configDraft); // Validate JSON
+      const employeeDocRef = doc(db, 'ai_employees', deployedEmployee.id);
+      await updateDoc(employeeDocRef, { deployment_config: parsedConfig });
 
-      if (error) throw error;
-
-      setDeployedEmployee(prev => prev ? { ...prev, deployment_config: JSON.parse(configDraft) } : null);
+      setDeployedEmployee(prev => prev ? { ...prev, deployment_config: parsedConfig } : null);
       toast({ title: "Success", description: "Configuration saved successfully." });
       setIsSettingsOpen(false);
-    } catch (error: any) {
+    } catch (error) {
       toast({ title: "Invalid JSON", description: "The configuration is not valid JSON.", variant: "destructive" });
     } finally {
       setIsSaving(false);
@@ -109,6 +111,8 @@ const AIEmployeePage: React.FC = () => {
   }
 
   if (showChat) {
+    // Note: 'type' is not a property on the staticData object.
+    // Let's pass a relevant property like 'category' or a default value.
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
         <Button variant="ghost" onClick={() => setShowChat(false)} className="flex items-center gap-2 mb-4">
@@ -116,7 +120,7 @@ const AIEmployeePage: React.FC = () => {
           Back to {deployedEmployee.name}
         </Button>
         <ChatInterface
-          employeeType={staticData.type}
+          employeeType={staticData.category}
           employeeName={deployedEmployee.name}
           businessContext={JSON.stringify(deployedEmployee.deployment_config)}
           onClose={() => setShowChat(false)}
@@ -140,16 +144,16 @@ const AIEmployeePage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="flex justify-center">
              <div className="relative w-96 h-96 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg overflow-hidden shadow-2xl">
-                <img src={staticData.avatar} alt={deployedEmployee.name} className="w-full h-full object-cover"/>
-                {staticData.popular && <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg"><Star className="w-3 h-3 fill-current" />Elite</div>}
-                <div className={`absolute bottom-4 left-4 w-12 h-12 ${staticData.color} rounded-full flex items-center justify-center text-white shadow-lg`}>{staticData.icon}</div>
+                <img src={staticData.image} alt={deployedEmployee.name} className="w-full h-full object-cover"/>
+                {staticData.isPremium && <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg"><Star className="w-3 h-3 fill-current" />Elite</div>}
+                <div className={`absolute bottom-4 left-4 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg`} style={{ backgroundColor: staticData.color }}><staticData.icon/></div>
             </div>
           </div>
           <div className="space-y-6">
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-2">{deployedEmployee.name}</h1>
-              <p className="text-xl text-primary/80 font-medium mb-4">{staticData.role}</p>
-              <p className="text-muted-foreground leading-relaxed">{(deployedEmployee.ai_helper_templates as any).description}</p>
+              <p className="text-xl text-primary/80 font-medium mb-4">{staticData.category}</p>
+              <p className="text-muted-foreground leading-relaxed">{staticData.description}</p>
             </div>
 
             <Card className="bg-slate-800/50 border border-slate-700/50">

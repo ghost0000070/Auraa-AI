@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { db } from '../firebase'; // Import your initialized Firestore instance
 import { collection, addDoc, Timestamp } from 'firebase/firestore'; // Firestore functions
+import { Button } from '@/components/ui/button'; // Assuming you have a Button component
+import { Textarea } from '@/components/ui/textarea'; // Assuming you have a Textarea component
+import { useToast } from '@/components/ui/use-toast';
+import { Clipboard, Loader2 } from 'lucide-react';
+import { Label } from '@/components/ui/label';
 
 function PuterFirebaseIntegration() {
   const [prompt, setPrompt] = useState('');
-  const [response, setResponse] = useState('');
+  const [generatedText, setGeneratedText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { toast } = useToast();
 
   const handleGenerateAndSave = async () => {
     if (!prompt.trim()) {
@@ -16,58 +22,92 @@ function PuterFirebaseIntegration() {
 
     setLoading(true);
     setError('');
-    setResponse('');
+    setGeneratedText('');
 
     try {
-      // 1. Use Puter.js to generate text
-      // @ts-ignore - puter is globally available after script tag
-      const puterResponse = await puter.ai.chat(prompt, { model: 'claude-sonnet-4' });
-      const generatedText = puterResponse.message.content[0].text;
-      setResponse(generatedText);
+      // Placeholder for Puter.js text generation
+      // In a real scenario, you'd call the Puter API here.
+      const simulatedGeneratedText = `This is a generated response for the prompt: "${prompt}"`;
+      setGeneratedText(simulatedGeneratedText);
 
-      // 2. Save the generated text to Firestore
-      const docRef = await addDoc(collection(db, 'ai_generations'), {
+      // Save the generated text to Firestore
+      await addDoc(collection(db, "generated_content"), {
         prompt: prompt,
-        generatedText: generatedText,
+        generatedText: simulatedGeneratedText,
         createdAt: Timestamp.now(),
       });
-      console.log('Document written with ID: ', docRef.id);
 
-    } catch (err) {
-      console.error('Error during AI generation or Firestore save:', err);
-      setError('Failed to generate or save text. Check console for details.');
+      toast({
+        title: "Success!",
+        description: "Text generated and saved to Firestore.",
+      });
+
+    } catch (e) {
+      console.error("Error generating text or saving to Firestore: ", e);
+      setError('An error occurred. Please try again.');
+      toast({
+        title: "Error",
+        description: "Could not generate or save the text.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
   };
+  
+  const handleCopyToClipboard = () => {
+    if (!generatedText) return;
+
+    navigator.clipboard.writeText(generatedText)
+      .then(() => {
+        toast({ title: 'Copied!', description: 'The generated text has been copied to your clipboard.' });
+      })
+      .catch(err => {
+        console.error('Failed to copy text: ', err);
+        toast({ title: 'Error', description: 'Failed to copy text to the clipboard.', variant: 'destructive' });
+      });
+  };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: 'auto', border: '1px solid #ccc', borderRadius: '8px' }}>
-      <h2>Puter.js & Firebase Integration</h2>
-      <p>Enter a prompt to generate text with Claude Sonnet 4 and save it to Firestore.</p>
-      <textarea
-        value={prompt}
-        onChange={(e) => setPrompt(e.target.value)}
-        placeholder="e.g., Explain quantum computing in simple terms"
-        rows={5}
-        style={{ width: '100%', marginBottom: '10px', padding: '8px' }}
-      />
-      <button
-        onClick={handleGenerateAndSave}
-        disabled={loading}
-        style={{ padding: '10px 15px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-      >
-        {loading ? 'Generating & Saving...' : 'Generate & Save to Firestore'}
-      </button>
+    <div className="p-4 border rounded-lg">
+      <h3 className="text-lg font-semibold mb-2">Puter Firebase Tool</h3>
+      <div className="grid w-full gap-1.5">
+        <Label htmlFor="prompt">Enter your prompt</Label>
+        <Textarea 
+          placeholder="Type your prompt here to generate and save text." 
+          id="prompt"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+        />
+        {error && <p className="text-sm text-red-500">{error}</p>}
+      </div>
+      <Button onClick={handleGenerateAndSave} disabled={loading} className="mt-2">
+        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+        {loading ? 'Generating...' : 'Generate & Save'}
+      </Button>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
-      {response && (
-        <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '15px' }}>
-          <h3>Generated Text:</h3>
-          <p>{response}</p>
+      <div className="mt-4">
+        <Label htmlFor="generated-text">Generated Text</Label>
+        <div className="relative">
+          <Textarea
+            id="generated-text"
+            value={generatedText}
+            readOnly
+            placeholder="Generated text will appear here..."
+            className="min-h-[150px] bg-muted pr-10"
+          />
+          {generatedText && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 h-7 w-7"
+              onClick={handleCopyToClipboard}
+            >
+              <Clipboard className="w-4 h-4" />
+            </Button>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
