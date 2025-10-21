@@ -1,0 +1,26 @@
+{
+    "workbench.editor.autoLockGroups": {
+        "default": true,
+        "workbench.editorinputs.searchEditorInput": true,
+        "vscode.audioPreview": true,
+        "vscode.videoPreview": true,
+        "workbench.input.interactive": true,
+        "mainThreadWebview-markdown.preview": true,
+        "imagePreview.previewEditor": true,
+        "repl": true,
+        "workbench.editors.gettingStartedInput": true,
+        "jupyter-notebook": true
+    },
+    "workbench.commandPalette.experimental.askChatLocation": "chatView",
+    "workbench.editor.alwaysShowEditorActions": true,
+    "workbench.editor.closeOnFileDelete": false,
+    "workbench.editor.centeredLayoutFixedWidth": true,
+    "workbench.editor.enablePreviewFromCodeNavigation": true,
+    "workbench.editor.enablePreviewFromQuickOpen": true,
+    "workbench.editor.highlightModifiedTabs": true,
+    "workbench.editor.sharedViewState": true,
+    "notebook.multiCursor.enabled": true,
+    "vercelVSCode.accessToken": "6AjsMADmYimgjCNBRYO8WM3C",
+    "terminal.integrated.rightClickBehavior": "copyPaste",
+    "git.ignoreLimitWarning": true
+}

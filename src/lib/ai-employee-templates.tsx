@@ -247,6 +247,7 @@ export interface AIEmployeeTemplate {
   description: string;
   icon: React.ElementType;
   color: string;
+  image: string; // Added image property
   category:
     | "Marketing"
     | "Sales"
@@ -286,11 +287,12 @@ export interface AIEmployeeTemplate {
 export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   {
     id: "marketing-guru",
-    name: "Marketing Guru",
+    name: "Viral Vortex",
     description:
       "Crafts compelling marketing campaigns, analyzes market trends, and optimizes ad spend.",
     icon: Megaphone,
     color: "#EF4444", // Red-500
+    image: "/src/assets/viral-vortex-guardian.jpg",
     category: "Marketing",
     tasks: [
       "Generate campaign ideas",
@@ -311,11 +313,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "sales-strategist",
-    name: "Sales Strategist",
+    name: "Deal Striker",
     description:
       "Identifies high-potential leads, personalizes outreach, and closes deals more efficiently.",
     icon: DollarSign,
     color: "#F97316", // Orange-500
+    image: "/src/assets/deal-striker-guardian.jpg",
     category: "Sales",
     tasks: [
       "Lead scoring",
@@ -336,11 +339,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "support-shield",
-    name: "Support Shield",
+    name: "Support Sentinel",
     description:
       "Provides instant, accurate customer support, resolves common issues, and escalates complex queries.",
     icon: Headset,
     color: "#10B981", // Emerald-500
+    image: "/src/assets/support-sentinel-guardian.jpg",
     category: "Customer Service",
     tasks: [
       "Answer FAQs",
@@ -361,11 +365,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "data-nexus-guardian",
-    name: "Data Nexus Guardian",
+    name: "Data Daemon",
     description:
       "Collects, cleans, and analyzes vast datasets to provide actionable business intelligence.",
     icon: Database,
     color: "#3B82F6", // Blue-500
+    image: "/src/assets/data-daemon-guardian.jpg",
     category: "Analytics",
     tasks: [
       "Data extraction",
@@ -386,11 +391,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "content-creator-pro",
-    name: "Content Creator Pro",
+    name: "Word Smith",
     description:
       "Generates high-quality articles, blog posts, social media updates, and video scripts.",
     icon: PenTool,
     color: "#8B5CF6", // Violet-500
+    image: "/src/assets/word-smith-guardian.jpg",
     category: "Content Creation",
     tasks: [
       "Draft blog posts",
@@ -410,11 +416,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "hr-talent-tracker",
-    name: "HR Talent Tracker",
+    name: "Talent Scout",
     description:
       "Automates recruitment, screens candidates, and assists with onboarding processes.",
     icon: Users,
     color: "#EC4899", // Pink-500
+    image: "/src/assets/talent-scout-guardian.jpg",
     category: "HR",
     tasks: [
       "Resume screening",
@@ -435,11 +442,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "code-craftsman",
-    name: "Code Craftsman",
+    name: "Code Corsair",
     description:
       "Writes, debugs, and optimizes code across various programming languages and frameworks.",
     icon: Code,
     color: "#60A5FA", // Blue-400
+    image: "/src/assets/code-corsair-guardian.jpg",
     category: "Development",
     tasks: [
       "Generate code snippets",
@@ -460,11 +468,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "project-manager-pro",
-    name: "Project Manager Pro",
+    name: "Task Master",
     description:
       "Plans, organizes, and tracks projects, ensuring timely completion and efficient resource allocation.",
     icon: GanttChart,
     color: "#A855F7", // Purple-500
+    image: "/src/assets/task-master-guardian.jpg",
     category: "Project Management",
     tasks: [
       "Create project plans",
@@ -485,11 +494,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "legal-eagle",
-    name: "Legal Eagle",
+    name: "Lex Machina",
     description:
       "Drafts legal documents, analyzes contracts, and provides insights on compliance.",
     icon: Scale,
     color: "#059669", // Green-600
+    image: "/src/assets/lex-machina-guardian.jpg",
     category: "Legal",
     tasks: [
       "Review contracts",
@@ -510,11 +520,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "financial-advisor-ai",
-    name: "Financial Advisor AI",
+    name: "Profit Prophet",
     description:
       "Offers personalized financial advice, investment strategies, and budget planning.",
     icon: PiggyBank,
     color: "#FCD34D", // Yellow-400
+    image: "/src/assets/profit-prophet-guardian.jpg",
     category: "Finance",
     tasks: [
       "Budget analysis",
@@ -535,11 +546,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "educational-tutor",
-    name: "Educational Tutor",
+    name: "Knowledge Node",
     description:
       "Provides personalized learning, explains complex concepts, and creates study materials.",
     icon: BookOpen,
     color: "#6366F1", // Indigo-500
+    image: "/src/assets/knowledge-node-guardian.jpg",
     category: "Education",
     tasks: [
       "Explain topics",
@@ -559,11 +571,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "research-assistant",
-    name: "Research Assistant",
+    name: "Data Dredger",
     description:
       "Conducts in-depth research, synthesizes information, and summarizes findings.",
     icon: FlaskConical,
     color: "#9CA3AF", // Gray-400
+    image: "/src/assets/data-dredger-guardian.jpg",
     category: "Research",
     tasks: [
       "Literature review",
@@ -583,11 +596,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "personal-optimizer",
-    name: "Personal Optimizer",
+    name: "Life Hacker",
     description:
       "Helps manage schedules, provides productivity tips, and assists with personal tasks.",
     icon: CalendarDays,
     color: "#A3E635", // Lime-400
+    image: "/src/assets/life-hacker-guardian.jpg",
     category: "Personal Assistant",
     tasks: [
       "Schedule management",
@@ -608,11 +622,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "creative-muse",
-    name: "Creative Muse",
+    name: "The Artisan",
     description:
       "Generates innovative ideas for art, design, music, and creative writing projects.",
     icon: Palette,
     color: "#E879F9", // Pink-400
+    image: "/src/assets/the-artisan-guardian.jpg",
     category: "Creative",
     tasks: [
       "Brainstorm ideas",
@@ -632,11 +647,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "it-support-specialist",
-    name: "IT Support Specialist",
+    name: "Tech Medic",
     description:
       "Assists with technical issues, provides troubleshooting steps, and manages system configurations.",
     icon: Settings,
     color: "#6B7280", // Gray-500
+    image: "/src/assets/tech-medic-guardian.jpg",
     category: "IT",
     tasks: [
       "Diagnose tech problems",
@@ -657,11 +673,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "supply-chain-optimizer",
-    name: "Supply Chain Optimizer",
+    name: "Logistics Lord",
     description:
       "Optimizes logistics, inventory management, and supplier relations for efficient operations.",
     icon: Boxes,
     color: "#F59E0B", // Amber-500
+    image: "/src/assets/logistics-lord-guardian.jpg",
     category: "Operations",
     tasks: [
       "Forecast demand",
@@ -682,11 +699,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "cyber-security-analyst",
-    name: "Cyber Security Analyst",
+    name: "Cyber Sentinel",
     description:
       "Monitors for threats, identifies vulnerabilities, and recommends security protocols.",
     icon: ShieldCheck,
     color: "#DC2626", // Red-600
+    image: "/src/assets/cyber-sentinel-guardian.jpg",
     category: "Security",
     tasks: [
       "Monitor network traffic",
@@ -707,11 +725,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "product-manager-ai",
-    name: "Product Manager AI",
+    name: "Roadmap Raider",
     description:
       "Defines product roadmaps, gathers user feedback, and guides product development cycles.",
     icon: BriefcaseBusiness,
     color: "#3B82F6", // Blue-500
+    image: "/src/assets/roadmap-raider-guardian.jpg",
     category: "Product Management",
     tasks: [
       "Define product features",
@@ -732,11 +751,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "healthcare-coordinator",
-    name: "Healthcare Coordinator",
+    name: "MediBot",
     description:
       "Manages patient appointments, assists with medical record keeping, and provides health information.",
     icon: BriefcaseMedical,
     color: "#06B6D4", // Cyan-500
+    image: "/src/assets/medibot-guardian.jpg",
     category: "Healthcare",
     tasks: [
       "Schedule appointments",
@@ -757,11 +777,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "communication-expert",
-    name: "Communication Expert",
+    name: "Message Maestro",
     description:
       "Enhances internal and external communications, drafts announcements, and manages public relations.",
     icon: MessageSquareText,
     color: "#F43F5E", // Rose-500
+    image: "/src/assets/message-maestro-guardian.jpg",
     category: "Communication",
     tasks: [
       "Draft press releases",
@@ -781,11 +802,12 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "ai-team-coordinator",
-    name: "AI Team Coordinator",
+    name: "The Overmind",
     description:
       "Orchestrates multiple AI employees to work together on complex workflows and projects.",
     icon: Workflow,
     color: "#8B5CF6", // Violet-500
+    image: "/src/assets/the-overmind-guardian.jpg",
     category: "Operations",
     tasks: [
       "Define multi-AI workflows",
