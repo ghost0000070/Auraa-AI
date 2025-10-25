@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { db } from '@/lib/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 import { encryptCredential } from '@/lib/crypto';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -21,29 +22,23 @@ export function AddWebsiteIntegration({ onCreated }: Props) {
     setError(null);
     setSaving(true);
     try {
-      const { data: target, error: tErr } = await supabase
-        .from('integration_targets')
-        .insert({
-          owner_user: user.id,
-          name,
-          base_url: baseUrl,
-          auth_type: authType,
-          public_key: '' // TODO: Implement public key generation
-        })
-        .select()
-        .single();
-      if (tErr) throw tErr;
+      const targetCollection = collection(db, 'integration_targets');
+      const targetDoc = await addDoc(targetCollection, {
+        owner_user: user.id,
+        name,
+        base_url: baseUrl,
+        auth_type: authType,
+        public_key: '' // TODO: Implement public key generation
+      });
 
       if (authType !== 'none' && (username || password)) {
         const envelope = await encryptCredential(JSON.stringify({ username, password }));
-        const { error: cErr } = await supabase
-          .from('integration_credentials')
-          .insert({
-            target_id: target.id,
-            owner_user: user.id,
-            credentials_encrypted: JSON.stringify(envelope)
-          });
-        if (cErr) throw cErr;
+        const credentialCollection = collection(db, 'integration_credentials');
+        await addDoc(credentialCollection, {
+          target_id: targetDoc.id,
+          owner_user: user.id,
+          credentials_encrypted: JSON.stringify(envelope)
+        });
       }
 
       setName(''); setBaseUrl(''); setUsername(''); setPassword('');
