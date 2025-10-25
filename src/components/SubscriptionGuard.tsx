@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase";
 
 interface SubscriptionGuardProps {
   children: React.ReactNode;
@@ -27,19 +28,16 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children, require
       }
 
       if (requiredTier) {
-        const { data: roleData, error } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', user.id)
-          .single();
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
 
-        if (error || !roleData) {
+        if (!userDoc.exists()) {
           console.error("Could not verify user role.");
           navigate('/dashboard');
           return;
         }
 
-        const userRole = roleData.role;
+        const userRole = userDoc.data().role;
         const tierLevels: Record<string, number> = { user: 0, premium: 1, enterprise: 2, admin: 3 };
         const requiredLevel = tierLevels[requiredTier.toLowerCase()];
 

@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/firebase";
+import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useEffect, useState } from "react";
 import AITeamDashboard from "@/components/AITeamDashboard";
 import { Header } from "@/components/Header";
@@ -42,12 +43,13 @@ const Dashboard = () => {
 
   const trackPageView = async () => {
     try {
-      await supabase.from('user_analytics').insert({
+      await addDoc(collection(db, 'user_analytics'), {
+        userId: user.uid,
         event_type: 'page_view',
         page_path: '/dashboard',
         event_data: { 
           subscription_tier: subscriptionStatus?.subscription_tier || 'free',
-          timestamp: new Date().toISOString()
+          timestamp: serverTimestamp()
         }
       });
     } catch (error) {
@@ -60,26 +62,25 @@ const Dashboard = () => {
     try {
       setLoading(true);
       
-      // Fetch real data from database
-      const { data: helpers, error: helpersError } = await supabase
-        .from('helpers')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('is_deployed', true);
+      const helpersQuery = query(
+        collection(db, 'helpers'),
+        where('userId', '==', user.uid),
+        where('is_deployed', '==', true)
+      );
+      const helpersSnapshot = await getDocs(helpersQuery);
+      const helpers = helpersSnapshot.docs.map(doc => doc.data());
 
       const currentMonth = new Date().toISOString().slice(0, 7);
-      const { data: usage, error: usageError } = await supabase
-        .from('ai_employee_usage')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('created_at', `${currentMonth}-01`);
-
-      if (helpersError) console.warn('Helpers query error:', helpersError);
-      if (usageError) console.warn('Usage query error:', usageError);
-
+      const usageQuery = query(
+        collection(db, 'ai_employee_usage'),
+        where('userId', '==', user.uid),
+        where('createdAt', '>=', new Date(`${currentMonth}-01`))
+      );
+      const usageSnapshot = await getDocs(usageQuery);
+      const usage = usageSnapshot.docs.map(doc => doc.data());
+      
       console.log('📊 Dashboard metrics fetched successfully');
 
-      // Calculate metrics with safe defaults
       const completedTasks = usage?.filter(u => u.success).length || 0;
       const avgTimePerTask = 2.5; // hours saved per task
       const avgCostPerTask = 35; // cost savings per task in dollars
@@ -92,46 +93,43 @@ const Dashboard = () => {
       });
 
     } catch (error) {
-      // Only show user-facing error for unexpected issues
-      console.debug('Error fetching dashboard metrics:', error);
-      // Don't show toast for data loading issues
+      console.error('Error fetching dashboard metrics:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCreateEmployee = async () => {
+  const trackEvent = async (eventName: string, eventData: object = {}) => {
+    if (!user) return;
+    try {
+      await addDoc(collection(db, 'user_analytics'), {
+        userId: user.uid,
+        event_type: 'action_click',
+        event_data: {
+          action: eventName,
+          ...eventData,
+          subscription_tier: subscriptionStatus?.subscription_tier || 'free',
+          timestamp: serverTimestamp()
+        }
+      });
+    } catch (error) {
+      console.debug(`Analytics event '${eventName}' failed:`, error);
+    }
+  };
+
+  const handleCreateEmployee = () => {
     if (!subscriptionStatus?.subscribed) {
       toast.error("Subscription Required", {
         description: "Creating AI Employees requires an active subscription.",
       });
       return;
     }
-
-    // Track the action silently (fire and forget)
-    supabase.from('user_analytics').insert({
-      event_type: 'action_click',
-      event_data: { 
-        action: 'create_ai_employee',
-        subscription_tier: subscriptionStatus.subscription_tier
-      }
-    });
-
-    // Navigate to AI employees page
+    trackEvent('create_ai_employee');
     navigate('/ai-employees');
   };
 
-  const handleViewAnalytics = async () => {
-    // Track analytics access silently (fire and forget)
-  supabase.from('user_analytics').insert({
-    event_type: 'action_click',
-    event_data: { 
-      action: 'view_analytics',
-      subscription_tier: subscriptionStatus?.subscription_tier || 'free'
-    }
-  });
-
-    // Navigate to analytics page
+  const handleViewAnalytics = () => {
+    trackEvent('view_analytics');
     navigate('/analytics');
   };
 
@@ -155,10 +153,7 @@ const Dashboard = () => {
       description: "Add or remove team members",
       icon: "👥",
       action: () => {
-        supabase.from('user_analytics').insert({
-          event_type: 'action_click',
-          event_data: { action: 'manage_team' }
-        });
+        trackEvent('manage_team');
         navigate('/power-ups');
       },
       requiresSubscription: false
@@ -168,10 +163,7 @@ const Dashboard = () => {
       description: "Use AI-powered tools and automation",
       icon: "🔗",
       action: () => {
-        supabase.from('user_analytics').insert({
-          event_type: 'action_click',
-          event_data: { action: 'power_ups' }
-        });
+        trackEvent('power_ups');
         navigate('/power-ups');
       },
       requiresSubscription: false

@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
+import { httpsCallable } from "firebase/functions";
+import { functions } from "@/firebase";
+import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
@@ -71,15 +72,17 @@ export const PricingSection = () => {
     }
 
     try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { plan: planName, user_id: user.id }
-      });
-      if (error || !data?.url) throw new Error(error?.message || "Failed to create checkout session");
+      const createCheckout = httpsCallable(functions, 'createCheckout');
+      const result: any = await createCheckout({ plan: planName, userId: user.uid });
+      const data = result.data;
+
+      if (!data || !data.url) throw new Error("Failed to create checkout session");
+
       window.open(data.url, "_blank");
       setTimeout(() => { checkSubscription(); }, 5000);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      toast({ title: "Checkout failed", description: msg, variant: "destructive" });
+      toast.error("Checkout failed", { description: msg });
     }
   };
 
@@ -90,14 +93,15 @@ export const PricingSection = () => {
     }
 
     try {
-      const { data, error } = await supabase.functions.invoke("customer-portal", {
-        body: { user_id: user.id }
-      });
-      if (error || !data?.url) throw new Error(error?.message || "Failed to create portal session");
+      const customerPortal = httpsCallable(functions, 'customerPortal');
+      const result: any = await customerPortal({ userId: user.uid });
+      const data = result.data;
+
+      if (!data || !data.url) throw new Error("Failed to create portal session");
       window.open(data.url, "_blank");
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      toast({ title: "Portal failed", description: msg, variant: "destructive" });
+      toast.error("Portal failed", { description: msg });
     }
   };
 

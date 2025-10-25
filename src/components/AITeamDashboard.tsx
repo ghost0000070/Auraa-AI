@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from "@/components/ui/sonner";
 import { 
   Activity, 
   TrendingUp, 
@@ -105,15 +105,13 @@ const AITeamDashboard = () => {
       setRecentActivity(activity);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch dashboard data',
-        variant: 'destructive'
+      toast.error("Error", {
+        description: "Failed to fetch dashboard data",
       });
     } finally {
       setLoading(false);
     }
-  }, [user, toast]);
+  }, [user]);
 
   useEffect(() => {
     fetchDashboardData();

@@ -8,8 +8,9 @@ import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { toast } from '@/components/ui/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { db } from '@/firebase';
+import { collection, query, where, orderBy, getDocs, addDoc } from 'firebase/firestore';
 import { 
   TrendingUp, 
   Target, 
@@ -25,7 +26,6 @@ import {
   Lightbulb
 } from 'lucide-react';
 import { Header } from '@/components/Header';
-import { Json } from '@/integrations/supabase/types';
 import { JsonValue } from '@/types/json';
 
 interface BusinessGoal {
@@ -104,37 +104,33 @@ const BusinessIntelligence = () => {
   const fetchData = async () => {
     try {
       console.log('🔄 Fetching business intelligence data...');
-      
-      const [goalsResponse, knowledgeResponse] = await Promise.all([
-        supabase.from('business_goals').select('*').order('created_at', { ascending: false }),
-        supabase.from('ai_shared_knowledge').select('*').order('created_at', { ascending: false }).limit(10)
+      if (!user) return;
+
+      const goalsQuery = query(
+        collection(db, 'business_goals'),
+        where('user_id', '==', user.uid),
+        orderBy('created_at', 'desc')
+      );
+      const knowledgeQuery = query(
+        collection(db, 'ai_shared_knowledge'),
+        where('user_id', '==', user.uid),
+        orderBy('created_at', 'desc'),
+      );
+
+      const [goalsSnapshot, knowledgeSnapshot] = await Promise.all([
+        getDocs(goalsQuery),
+        getDocs(knowledgeQuery),
       ]);
 
-      console.log('📊 BI data responses:', {
-        goals: goalsResponse.data?.length || 0,
-        knowledge: knowledgeResponse.data?.length || 0
-      });
+      const goalsData = goalsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as BusinessGoal));
+      const knowledgeData = knowledgeSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SharedKnowledge));
 
-      if (goalsResponse.error) {
-        console.error('❌ Goals fetch error:', goalsResponse.error);
-        throw goalsResponse.error;
-      }
-      if (knowledgeResponse.error) {
-        console.error('❌ Knowledge fetch error:', knowledgeResponse.error);
-        throw knowledgeResponse.error;
-      }
-
-      setGoals(goalsResponse.data || []);
-      setKnowledge((knowledgeResponse.data as (SharedKnowledge & { metadata: Json | null })[] | null)?.map(k => ({
-        ...k,
-        metadata: k.metadata as JsonValue | null
-      })) || []);
+      setGoals(goalsData);
+      setKnowledge(knowledgeData);
     } catch (error) {
       console.error('❌ Error fetching BI data:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch business intelligence data',
-        variant: 'destructive'
+      toast("Error", {
+        description: 'Failed to fetch business intelligence data'
       });
     } finally {
       setLoading(false);
@@ -143,27 +139,23 @@ const BusinessIntelligence = () => {
 
   const createGoal = async () => {
     try {
-      if (!newGoal.goal_name.trim()) {
-        toast({
-          title: 'Error',
-          description: 'Please enter a goal name',
-          variant: 'destructive'
+      if (!newGoal.goal_name.trim() || !user) {
+        toast('Error', {
+          description: 'Please enter a goal name'
         });
         return;
       }
 
-      const { error } = await supabase
-        .from('business_goals')
-        .insert({
-          ...newGoal,
-          user_id: user?.id,
-          current_value: 0
-        });
+      await addDoc(collection(db, 'business_goals'), {
+        ...newGoal,
+        user_id: user.uid,
+        current_value: 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        status: 'active', 
+      });
 
-      if (error) throw error;
-
-      toast({
-        title: 'Success',
+      toast('Success', {
         description: 'Business goal created successfully'
       });
 
@@ -181,16 +173,14 @@ const BusinessIntelligence = () => {
       fetchData();
     } catch (error) {
       console.error('Error creating goal:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to create goal',
-        variant: 'destructive'
+      toast('Error', {
+        description: 'Failed to create goal'
       });
     }
   };
 
-  const getProgressPercentage = (current: number, target: number) => {
-    if (target === 0) return 0;
+  const getProgressPercentage = (current: number | null, target: number | null) => {
+    if (target === 0 || target === null || current === null) return 0;
     return Math.min(100, (current / target) * 100);
   };
 
@@ -203,7 +193,8 @@ const BusinessIntelligence = () => {
     }
   };
 
-  const getKnowledgeIcon = (type: string) => {
+  const getKnowledgeIcon = (type: string | null) => {
+    if (!type) return <Brain className="w-4 h-4" />;
     switch (type) {
       case 'insight': return <Lightbulb className="w-4 h-4 text-yellow-500" />;
       case 'strategy': return <Target className="w-4 h-4 text-blue-500" />;

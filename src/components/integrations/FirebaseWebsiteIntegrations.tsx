@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { httpsCallable } from 'firebase/functions';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from "@/components/ui/sonner";
 import { Loader2 } from 'lucide-react';
 
 interface IntegrationTarget {
@@ -47,10 +47,10 @@ export function FirebaseWebsiteIntegrations() {
       
     } catch (error) {
       console.error("Error loading integrations: ", error);
-      toast({ title: "Error", description: "Failed to load website integrations.", variant: 'destructive' });
+      toast.error("Error", { description: "Failed to load website integrations." });
     }
     setLoading(false);
-  }, [user, toast]);
+  }, [user]);
 
   useEffect(() => {
     load();
@@ -62,9 +62,9 @@ export function FirebaseWebsiteIntegrations() {
     try {
       const agentRun = httpsCallable(functions, 'agentRun');
       await agentRun({ targetId: target.id, action });
-      toast({ title: "Task Queued", description: `Action "${action}" has been queued for ${target.name}.` });
+      toast.info("Task Queued", { description: `Action "${action}" has been queued for ${target.name}.` });
     } catch (e) {
-      toast({ title: "Error", description: (e as Error).message, variant: 'destructive' });
+      toast.error("Error", { description: (e as Error).message });
     } finally {
       setRunningId(null);
     }
@@ -74,9 +74,9 @@ export function FirebaseWebsiteIntegrations() {
     try {
       const agentCancel = httpsCallable(functions, 'agentCancel');
       await agentCancel({ taskId });
-      toast({ title: "Cancellation Sent", description: "A request to cancel the task has been sent." });
+      toast.info("Cancellation Sent", { description: "A request to cancel the task has been sent." });
     } catch (e) {
-      toast({ title: "Error", description: (e as Error).message, variant: 'destructive' });
+      toast.error("Error", { description: (e as Error).message });
     }
   }
 

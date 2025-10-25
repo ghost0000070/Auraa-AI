@@ -6,21 +6,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/firebase";
+import { doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { toast } from "@/components/ui/sonner";
 import { Header } from "@/components/Header";
-import { JsonValue } from '@/types/json';
 
 interface BusinessProfile {
   id?: string;
   name: string;
   description: string;
   industry: string;
-  target_audience: string;
-  website_url: string;
-  brand_voice: string;
-  business_data: JsonValue;
-  is_default: boolean;
+  targetAudience: string;
+  websiteUrl: string;
+  brandVoice: string;
+  businessData: any;
+  isDefault: boolean;
 }
 
 const industries = [
@@ -40,11 +40,11 @@ const BusinessProfile = () => {
     name: '',
     description: '',
     industry: '',
-    target_audience: '',
-    website_url: '',
-    brand_voice: '',
-    business_data: {},
-    is_default: true
+    targetAudience: '',
+    websiteUrl: '',
+    brandVoice: '',
+    businessData: {},
+    isDefault: true
   });
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -60,11 +60,13 @@ const BusinessProfile = () => {
   }, [user]);
 
   const trackPageView = async () => {
+    if (!user) return;
     try {
-      await supabase.from('user_analytics').insert({
-        event_type: 'page_view',
-        page_path: '/business-profile',
-        event_data: { timestamp: new Date().toISOString() }
+      await addDoc(collection(db, 'user_analytics'), {
+        userId: user.uid,
+        eventType: 'page_view',
+        pagePath: '/business-profile',
+        eventData: { timestamp: serverTimestamp() }
       });
     } catch (error) {
       console.error('Analytics tracking failed:', error);
@@ -72,29 +74,23 @@ const BusinessProfile = () => {
   };
 
   const fetchBusinessProfile = async () => {
+    if (!user) return;
     try {
-      const { data, error } = await supabase
-        .from('business_profiles')
-        .select('*')
-        .eq('user_id', user!.id)
-        .eq('is_active', true)
-        .single();
+      const docRef = doc(db, "businessProfiles", user.uid);
+      const docSnap = await getDoc(docRef);
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-        throw error;
-      }
-
-      if (data) {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
         setProfile({
-          id: data.id,
+          id: docSnap.id,
           name: data.name || '',
           description: data.description || '',
           industry: data.industry || '',
-          target_audience: data.target_audience || '',
-          website_url: data.website_url || '',
-          brand_voice: data.brand_voice || '',
-          business_data: data.business_data || {},
-          is_default: data.is_default || true
+          targetAudience: data.targetAudience || '',
+          websiteUrl: data.websiteUrl || '',
+          brandVoice: data.brandVoice || '',
+          businessData: data.businessData || {},
+          isDefault: data.isDefault || true
         });
       }
     } catch (error) {
@@ -115,12 +111,12 @@ const BusinessProfile = () => {
   };
 
   const validateForm = () => {
-    const requiredFields = ['name', 'industry', 'target_audience'];
-    const missingFields = requiredFields.filter(field => !profile[field as keyof BusinessProfile]);
+    const requiredFields: (keyof BusinessProfile)[] = ['name', 'industry', 'targetAudience'];
+    const missingFields = requiredFields.filter(field => !profile[field]);
     
     if (missingFields.length > 0) {
       toast.error("Missing Required Fields", {
-        description: `Please fill in: ${missingFields.join(', ')}`,
+        description: `Please fill in: ${missingFields.join(', ')}`
       });
       return false;
     }
@@ -129,61 +125,44 @@ const BusinessProfile = () => {
   };
 
   const saveProfile = async () => {
-    if (!validateForm()) return;
+    if (!user || !validateForm()) return;
 
     try {
       setSaving(true);
 
-      // Track save attempt
-      await supabase.from('user_analytics').insert({
-        event_type: 'action_click',
-        event_data: { 
+      await addDoc(collection(db, 'user_analytics'), {
+        userId: user.uid,
+        eventType: 'action_click',
+        eventData: { 
           action: 'save_business_profile',
           has_existing_profile: !!profile.id
-        }
+        },
+        createdAt: serverTimestamp()
       });
 
       const profileData = {
-        user_id: user!.id,
+        userId: user.uid,
         name: profile.name,
         description: profile.description,
         industry: profile.industry,
-        target_audience: profile.target_audience,
-        website_url: profile.website_url,
-        brand_voice: profile.brand_voice,
-        business_data: {
-          ...(profile.business_data as object),
-          updated_at: new Date().toISOString()
+        targetAudience: profile.targetAudience,
+        websiteUrl: profile.websiteUrl,
+        brandVoice: profile.brandVoice,
+        businessData: {
+          ...(profile.businessData as object),
+          updatedAt: serverTimestamp()
         },
-        is_default: profile.is_default,
-        is_active: true
+        isDefault: profile.isDefault,
+        isActive: true
       };
 
-      if (profile.id) {
-        // Update existing profile
-        const { error } = await supabase
-          .from('business_profiles')
-          .update(profileData)
-          .eq('id', profile.id);
-
-        if (error) throw error;
-      } else {
-        // Create new profile
-        const { data, error } = await supabase
-          .from('business_profiles')
-          .insert(profileData)
-          .select()
-          .single();
-
-        if (error) throw error;
-        setProfile(prev => ({ ...prev, id: data.id }));
-      }
+      const docRef = doc(db, "businessProfiles", user.uid);
+      await setDoc(docRef, profileData, { merge: true });
 
       toast.success("Profile Saved", {
         description: "Your business profile has been saved successfully.",
       });
 
-      // Redirect back to dashboard or previous page
       navigate('/dashboard');
 
     } catch (error) {
@@ -196,55 +175,53 @@ const BusinessProfile = () => {
     }
   };
 
-  if (!user) return null;
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-950 flex items-center justify-center">
-        <div className="text-center">Loading business profile...</div>
+        <div className="text-center text-white">Loading business profile...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-950 text-white">
       <Header />
       
       <main className="container mx-auto px-6 py-8 pt-24 max-w-2xl">
-        <Card className="bg-slate-800/50 border border-slate-700/50">
+        <Card className="bg-slate-800/50 border border-slate-700/50 text-white">
           <CardHeader>
             <CardTitle>Company Information</CardTitle>
-            <CardDescription>
+            <CardDescription className="text-slate-400">
               Complete your business profile to enable AI employees and get personalized recommendations.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
-              <label className="text-sm font-medium mb-2 block">
+              <label className="text-sm font-medium mb-2 block text-slate-300">
                 Company Name <span className="text-red-500">*</span>
               </label>
               <Input
                 value={profile.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
                 placeholder="Your company name"
-                className="bg-slate-900/60 border-slate-700 text-foreground placeholder:text-muted-foreground"
+                className="bg-slate-900/60 border-slate-700 text-white placeholder:text-slate-500"
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-2 block">
+              <label className="text-sm font-medium mb-2 block text-slate-300">
                 Industry <span className="text-red-500">*</span>
               </label>
               <Select
                 value={profile.industry}
                 onValueChange={(value) => handleInputChange('industry', value)}
               >
-                <SelectTrigger className="bg-slate-900/60 border-slate-700 text-foreground">
+                <SelectTrigger className="bg-slate-900/60 border-slate-700 text-white">
                   <SelectValue placeholder="Select your industry" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-slate-800 border-slate-700 text-white">
                   {industries.map((industry) => (
-                    <SelectItem key={industry} value={industry}>
+                    <SelectItem key={industry} value={industry} className="hover:bg-slate-700">
                       {industry}
                     </SelectItem>
                   ))}
@@ -253,7 +230,7 @@ const BusinessProfile = () => {
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-2 block">
+              <label className="text-sm font-medium mb-2 block text-slate-300">
                 Company Description
               </label>
               <Textarea
@@ -261,50 +238,50 @@ const BusinessProfile = () => {
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 placeholder="Brief description of your company and what you do"
                 rows={4}
-                className="bg-slate-900/60 border-slate-700 text-foreground placeholder:text-muted-foreground"
+                className="bg-slate-900/60 border-slate-700 text-white placeholder:text-slate-500"
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-2 block">
+              <label className="text-sm font-medium mb-2 block text-slate-300">
                 Target Audience <span className="text-red-500">*</span>
               </label>
               <Textarea
-                value={profile.target_audience}
-                onChange={(e) => handleInputChange('target_audience', e.target.value)}
+                value={profile.targetAudience}
+                onChange={(e) => handleInputChange('targetAudience', e.target.value)}
                 placeholder="Describe your ideal customers and target market"
                 rows={3}
-                className="bg-slate-900/60 border-slate-700 text-foreground placeholder:text-muted-foreground"
+                className="bg-slate-900/60 border-slate-700 text-white placeholder:text-slate-500"
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-2 block">
+              <label className="text-sm font-medium mb-2 block text-slate-300">
                 Website URL
               </label>
               <Input
                 type="url"
-                value={profile.website_url}
-                onChange={(e) => handleInputChange('website_url', e.target.value)}
+                value={profile.websiteUrl}
+                onChange={(e) => handleInputChange('websiteUrl', e.target.value)}
                 placeholder="https://yourcompany.com"
-                className="bg-slate-900/60 border-slate-700 text-foreground placeholder:text-muted-foreground"
+                className="bg-slate-900/60 border-slate-700 text-white placeholder:text-slate-500"
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-2 block">
+              <label className="text-sm font-medium mb-2 block text-slate-300">
                 Brand Voice
               </label>
               <Select
-                value={profile.brand_voice}
-                onValueChange={(value) => handleInputChange('brand_voice', value)}
+                value={profile.brandVoice}
+                onValueChange={(value) => handleInputChange('brandVoice', value)}
               >
-                <SelectTrigger className="bg-slate-900/60 border-slate-700 text-foreground">
+                <SelectTrigger className="bg-slate-900/60 border-slate-700 text-white">
                   <SelectValue placeholder="Select your brand voice" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-slate-800 border-slate-700 text-white">
                   {brandVoices.map((voice) => (
-                    <SelectItem key={voice} value={voice}>
+                    <SelectItem key={voice} value={voice} className="hover:bg-slate-700">
                       {voice}
                     </SelectItem>
                   ))}
@@ -316,7 +293,7 @@ const BusinessProfile = () => {
               <Button
                 onClick={saveProfile}
                 disabled={saving}
-                className="w-full"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                 size="lg"
               >
                 {saving ? 'Saving...' : 'Save Business Profile'}
@@ -326,7 +303,7 @@ const BusinessProfile = () => {
         </Card>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-slate-400">
             Your business profile helps AI employees provide more accurate and relevant assistance.
           </p>
         </div>

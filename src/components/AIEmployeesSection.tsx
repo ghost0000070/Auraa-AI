@@ -3,21 +3,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { toast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { db } from "@/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 // Import guardian images
 import commerceCoreImage from "@/assets/commerce-core-guardian.jpg";
-import cyberSageImage from "@/assets/cyber-sage-guardian.jpg";
-import dataNexusImage from "@/assets/data-nexus-guardian.jpg";
+import cyberSageImage from "@/assets/cyber-sentinel-guardian.jpg";
+import dataNexusImage from "@/assets/data-daemon-guardian.jpg";
 import dealStrikerImage from "@/assets/deal-striker-guardian.jpg";
 import growthHackerImage from "@/assets/growth-hacker-guardian.jpg";
-import lifeOptimizerImage from "@/assets/life-optimizer-guardian.jpg";
-import messageMatrixImage from "@/assets/message-matrix-guardian.jpg";
+import lifeOptimizerImage from "@/assets/life-hacker-guardian.jpg";
+import messageMatrixImage from "@/assets/message-maestro-guardian.jpg";
 import quantumHelperImage from "@/assets/quantum-helper-guardian.jpg";
-import supportShieldImage from "@/assets/support-shield-guardian.jpg";
-import talentTrackerImage from "@/assets/talent-tracker-guardian.jpg";
+import supportShieldImage from "@/assets/support-sentinel-guardian.jpg";
+import talentTrackerImage from "@/assets/talent-scout-guardian.jpg";
 import viralVortexImage from "@/assets/viral-vortex-guardian.jpg";
-import wordForgeImage from "@/assets/word-forge-guardian.jpg";
+import wordForgeImage from "@/assets/word-smith-guardian.jpg";
 
 const aiEmployees = [
   {
@@ -62,27 +63,26 @@ export const AIEmployeesSection = () => {
     }
 
     if (!subscriptionStatus?.subscribed) {
-      toast({
-        title: "Subscription Required",
+      toast.error("Subscription Required", {
         description: "Custom AI Employee creation requires an active subscription.",
-        variant: "destructive"
       });
       return;
     }
 
     // Track custom AI creation interest
     if (user) {
-      await supabase.from('user_analytics').insert({
-        event_type: 'action_click',
-        event_data: { 
+      await addDoc(collection(db, 'user_analytics'), {
+        userId: user.uid,
+        eventType: 'action_click',
+        eventData: { 
           action: 'custom_ai_creation',
-          subscription_tier: subscriptionStatus?.subscription_tier || 'free'
-        }
+          subscriptionTier: subscriptionStatus?.subscription_tier || 'free'
+        },
+        createdAt: serverTimestamp()
       });
     }
 
-    toast({
-      title: "Contact Sales",
+    toast.info("Contact Sales", {
       description: "Custom AI Employee creation requires consultation. Redirecting to contact form...",
     });
 

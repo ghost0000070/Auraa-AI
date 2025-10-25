@@ -5,6 +5,7 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
+import { getVertexAI, getGenerativeModel } from "@firebase/vertexai-preview";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -22,5 +23,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const functions = getFunctions(app);
+const vertex = getVertexAI(app);
+const generativeModel = getGenerativeModel(vertex, { model: "gemini-pro" });
 
-export { app, analytics, auth, db, storage, functions };
+export { app, analytics, auth, db, storage, functions, generativeModel };

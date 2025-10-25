@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { db } from '@/firebase';
+import { collection, query, orderBy, limit as firestoreLimit, getDocs } from 'firebase/firestore';
 
 interface AgentTask {
   id: string;
@@ -16,13 +17,20 @@ export function useAgentTasks(limit = 50) {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('agent_tasks')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(limit);
-    if (!error) setTasks(data as AgentTask[] || []);
-    setLoading(false);
+    try {
+      const tasksQuery = query(
+        collection(db, 'agent_tasks'),
+        orderBy('created_at', 'desc'),
+        firestoreLimit(limit)
+      );
+      const querySnapshot = await getDocs(tasksQuery);
+      const tasksData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as AgentTask));
+      setTasks(tasksData);
+    } catch (error) {
+      console.error("Error loading agent tasks:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [limit]);
 
   useEffect(() => { load(); }, [load]);

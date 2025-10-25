@@ -1,34 +1,20 @@
-/*
-  Agent Worker
-  ------------
-  Polls queued tasks from Supabase, executes actions using Playwright, updates task status & events.
-  Requirements:
-    - Environment: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, INTEGRATION_RSA_PRIVATE_KEY (PEM)
-    - npm dependencies: @supabase/supabase-js, playwright
-
-  Run: npx ts-node scripts/agentWorker.ts  (or compile to JS first)
-*/
-import { createClient } from '@supabase/supabase-js';
+import * as admin from 'firebase-admin';
 import { chromium } from 'playwright';
 import * as crypto from 'crypto';
 
-const SUPABASE_URL = process.env.SUPABASE_URL!;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const RSA_PRIVATE_PEM = process.env.INTEGRATION_RSA_PRIVATE_KEY!; // PKCS8 PEM
+// Initialize Firebase Admin SDK
+admin.initializeApp();
+const db = admin.firestore();
 
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.error('Missing Supabase env vars');
-  process.exit(1);
-}
+const RSA_PRIVATE_PEM = process.env.INTEGRATION_RSA_PRIVATE_KEY!;
+
 if (!RSA_PRIVATE_PEM) {
   console.error('Missing INTEGRATION_RSA_PRIVATE_KEY');
   process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-
 async function logEvent(task_id: string, level: string, message: string, context?: any) {
-  await supabase.from('agent_task_events').insert({ task_id, level, message, context });
+  await db.collection('agent_task_events').add({ task_id, level, message, context, createdAt: new Date() });
 }
 
 interface Envelope {
@@ -49,7 +35,6 @@ function decryptEnvelope(env: Envelope): string {
   const aesKeyRaw = crypto.privateDecrypt({ key: privateKey, padding: crypto.constants.RSA_PKCS1_OAEP_PADDING, oaepHash: 'sha256' }, base64ToBuf(env.key));
   const decipher = crypto.createDecipheriv('aes-256-gcm', aesKeyRaw, base64ToBuf(env.iv));
   const cipherBuf = base64ToBuf(env.cipher);
-  // GCM tag is last 16 bytes
   const tag = cipherBuf.slice(cipherBuf.length - 16);
   const data = cipherBuf.slice(0, cipherBuf.length - 16);
   decipher.setAuthTag(tag);
@@ -58,21 +43,19 @@ function decryptEnvelope(env: Envelope): string {
 }
 
 async function fetchCredentials(target_id: string, owner_user: string) {
-  const { data, error } = await supabase
-    .from('integration_credentials')
-    .select('cipher_text')
-    .eq('target_id', target_id)
-    .eq('owner_user', owner_user)
-    .maybeSingle();
-  if (error) throw error;
-  if (!data) return null;
+  const credsSnapshot = await db.collection('integration_credentials')
+    .where('target_id', '==', target_id)
+    .where('owner_user', '==', owner_user)
+    .limit(1)
+    .get();
+  if (credsSnapshot.empty) return null;
+  const data = credsSnapshot.docs[0].data();
   try {
     const parsed = JSON.parse(data.cipher_text);
     if (parsed && parsed.algo) {
       const plaintext = decryptEnvelope(parsed);
       return JSON.parse(plaintext);
     }
-    // legacy base64 fallback
     const legacy = Buffer.from(data.cipher_text, 'base64').toString('utf8');
     return JSON.parse(legacy);
   } catch (e) {
@@ -82,24 +65,25 @@ async function fetchCredentials(target_id: string, owner_user: string) {
 }
 
 async function fetchNextTask() {
-  const { data, error } = await supabase
-    .from('agent_tasks')
-    .select('*')
-    .eq('status', 'queued')
-    .lte('next_run_at', new Date().toISOString())
-    .order('created_at', { ascending: true })
-    .limit(1);
-  if (error) throw error;
-  return data?.[0];
+  const tasksSnapshot = await db.collection('agent_tasks')
+    .where('status', '==', 'queued')
+    .where('next_run_at', '<=', new Date())
+    .orderBy('next_run_at')
+    .orderBy('createdAt')
+    .limit(1)
+    .get();
+  if (tasksSnapshot.empty) return null;
+  const doc = tasksSnapshot.docs[0];
+  return { id: doc.id, ...doc.data() };
 }
 
 async function markTask(id: string, patch: any) {
-  await supabase.from('agent_tasks').update(patch).eq('id', id);
+  await db.collection('agent_tasks').doc(id).update(patch);
 }
 
 async function runTask(task: any) {
-  await markTask(task.id, { status: 'running', started_at: new Date().toISOString(), attempt_count: task.attempt_count + 1 });
-  await logEvent(task.id, 'info', `Task started (attempt ${task.attempt_count + 1})`);
+  await markTask(task.id, { status: 'running', started_at: new Date(), attempt_count: (task.attempt_count || 0) + 1 });
+  await logEvent(task.id, 'info', `Task started (attempt ${(task.attempt_count || 0) + 1})`);
 
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
@@ -111,7 +95,7 @@ async function runTask(task: any) {
         await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
         await logEvent(task.id, 'info', 'Navigated', { url });
         const text = await page.textContent(selector).catch(()=>null);
-        await markTask(task.id, { status: 'success', result: { selector, text }, finished_at: new Date().toISOString() });
+        await markTask(task.id, { status: 'success', result: { selector, text }, finished_at: new Date() });
         await logEvent(task.id, 'info', 'Extraction complete', { selector, text });
         break;
       }
@@ -126,21 +110,23 @@ async function runTask(task: any) {
         await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
         await logEvent(task.id, 'info', 'Login submitted');
         const text = await page.textContent(selector).catch(()=>null);
-        await markTask(task.id, { status: 'success', result: { selector, text }, finished_at: new Date().toISOString() });
+        await markTask(task.id, { status: 'success', result: { selector, text }, finished_at: new Date() });
         await logEvent(task.id, 'info', 'Extraction complete after login', { selector, text });
         break;
       }
       default:
         await logEvent(task.id, 'error', 'Unknown action', { action: task.action });
-        await markTask(task.id, { status: 'error', error: 'Unknown action', finished_at: new Date().toISOString() });
+        await markTask(task.id, { status: 'error', error: 'Unknown action', finished_at: new Date() });
     }
   } catch (e: any) {
     await logEvent(task.id, 'error', 'Execution failed', { error: e.message });
-    if (task.attempt_count + 1 >= task.max_attempts) {
-      await markTask(task.id, { status: 'error', error: `Failed after ${task.max_attempts} attempts: ${e.message}`, finished_at: new Date().toISOString() });
+    const max_attempts = task.max_attempts || 1;
+    const attempt_count = task.attempt_count || 0;
+    if (attempt_count + 1 >= max_attempts) {
+      await markTask(task.id, { status: 'error', error: `Failed after ${max_attempts} attempts: ${e.message}`, finished_at: new Date() });
     } else {
-      const nextRun = new Date(Date.now() + 1000 * (2 ** task.attempt_count) * 5); // 5s, 10s, 20s...
-      await markTask(task.id, { status: 'queued', next_run_at: nextRun.toISOString() });
+      const nextRun = new Date(Date.now() + 1000 * (2 ** attempt_count) * 5); // 5s, 10s, 20s...
+      await markTask(task.id, { status: 'queued', next_run_at: nextRun });
       await logEvent(task.id, 'warn', `Retrying at ${nextRun.toISOString()}`);
     }
   } finally {
