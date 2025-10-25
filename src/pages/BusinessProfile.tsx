@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/sonner";
 import { Header } from "@/components/Header";
 import { JsonValue } from '@/types/json';
 
@@ -99,10 +99,8 @@ const BusinessProfile = () => {
       }
     } catch (error) {
       console.error('Error fetching business profile:', error);
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to load business profile",
-        variant: "destructive"
       });
     } finally {
       setLoading(false);
@@ -121,10 +119,8 @@ const BusinessProfile = () => {
     const missingFields = requiredFields.filter(field => !profile[field as keyof BusinessProfile]);
     
     if (missingFields.length > 0) {
-      toast({
-        title: "Missing Required Fields",
+      toast.error("Missing Required Fields", {
         description: `Please fill in: ${missingFields.join(', ')}`,
-        variant: "destructive"
       });
       return false;
     }
@@ -183,8 +179,7 @@ const BusinessProfile = () => {
         setProfile(prev => ({ ...prev, id: data.id }));
       }
 
-      toast({
-        title: "Profile Saved",
+      toast.success("Profile Saved", {
         description: "Your business profile has been saved successfully.",
       });
 
@@ -193,10 +188,8 @@ const BusinessProfile = () => {
 
     } catch (error) {
       console.error('Error saving business profile:', error);
-      toast({
-        title: "Save Failed",
+      toast.error("Save Failed", {
         description: "Failed to save business profile",
-        variant: "destructive"
       });
     } finally {
       setSaving(false);

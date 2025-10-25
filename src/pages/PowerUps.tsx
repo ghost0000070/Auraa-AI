@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, XCircle, Clock } from 'lucide-react';
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/sonner";
 import SubscriptionGuard from "@/components/SubscriptionGuard"; // Corrected import
 import { Header } from "@/components/Header";
 import { Json } from '@/integrations/supabase/types';
@@ -40,8 +40,7 @@ const PowerUps = () => {
     setPowerUps(powerUps.map(pu =>
       pu.id === id ? { ...pu, status: pu.status === 'active' ? 'inactive' : 'active' } : pu
     ));
-    toast({
-      title: "Power-up Toggled",
+    toast("Power-up Toggled", {
       description: "Power-up status has been updated.",
     });
   };
