@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/components/ui/sonner';
 
 declare const grecaptcha: any; // Declare grecaptcha to avoid TypeScript errors
 
@@ -129,8 +129,7 @@ const Auth = () => {
         });
         console.log('Sign up response:', { data, error });
         if (error) throw error;
-        toast({
-          title: "Check your email",
+        toast("Check your email", {
           description: "We've sent you a confirmation link.",
         });
       } else {
@@ -151,10 +150,8 @@ const Auth = () => {
         errorMessage = err.message;
       }
       
-      toast({
-        title: "Authentication Error",
+      toast.error("Authentication Error", {
         description: errorMessage,
-        variant: "destructive",
       });
     } finally {
       setIsLoading(false);

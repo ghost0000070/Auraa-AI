@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import AITeamDashboard from "@/components/AITeamDashboard";
@@ -102,10 +102,8 @@ const Dashboard = () => {
 
   const handleCreateEmployee = async () => {
     if (!subscriptionStatus?.subscribed) {
-      toast({
-        title: "Subscription Required",
+      toast.error("Subscription Required", {
         description: "Creating AI Employees requires an active subscription.",
-        variant: "destructive"
       });
       return;
     }

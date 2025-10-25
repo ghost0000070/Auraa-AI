@@ -4,7 +4,7 @@
   # Which nixpkgs channel to use.
   channel = "stable-24.05"; # or "unstable"
 
-  # Use https://search.nixos.org/packages to find packages
+  # Use https://search.nixos.org/packages to find packages4
   packages = [
     # pkgs.go
     # pkgs.python311
@@ -21,6 +21,8 @@
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
       # "vscodevim.vim"
-    ];
-  };
-}
+      "prettier.prettier-vscode"
+      "dbaeumer.vscode-eslint"]
+      "SonarSource.sonarlint-vscode";
+      "kisstkondoros.codemetrics"=
+      "usernamehw.error-lens";};}
