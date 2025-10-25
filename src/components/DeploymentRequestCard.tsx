@@ -1,4 +1,4 @@
-import React, 'react';
+import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { db, functions } from '@/firebase';
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from "@/components/ui/sonner";
 import { Loader2, Zap, CheckCircle, AlertCircle } from 'lucide-react';
 import { AIEmployeeTemplate } from '@/lib/ai-employee-templates';
 
@@ -19,26 +19,21 @@ interface DeploymentRequestCardProps {
 
 export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ employee }) => {
   const { user, subscriptionStatus } = useAuth();
-  const { toast } = useToast();
   const [isOpen, setIsOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [deploymentNotes, setDeploymentNotes] = React.useState('');
 
   const handleDeploymentRequest = async (): Promise<void> => {
     if (!user) {
-      toast({
-        title: "Authentication Required",
+      toast.error("Authentication Required", {
         description: "Please log in to deploy AI employees.",
-        variant: "destructive"
       });
       return;
     }
 
     if (!subscriptionStatus?.subscribed) {
-      toast({
-        title: "Subscription Required",
+      toast.error("Subscription Required", {
         description: "Please upgrade to deploy AI employees.",
-        variant: "destructive"
       });
       return;
     }
@@ -60,9 +55,9 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ em
       if (subscriptionStatus?.subscription_tier === 'Enterprise') {
         const deployFunction = httpsCallable(functions, 'deployAiEmployee');
         await deployFunction({ requestId: docRef.id });
-        toast({ title: "Employee Deployed!", description: `${employee.name} is now active.` });
+        toast.success("Employee Deployed!", { description: `${employee.name} is now active.` });
       } else {
-        toast({ title: "Deployment Requested", description: "Your request has been submitted for review." });
+        toast.info("Deployment Requested", { description: "Your request has been submitted for review." });
       }
 
       setIsOpen(false);
@@ -70,10 +65,8 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ em
 
     } catch (error) {
       console.error("Deployment Error:", error);
-      toast({
-        title: "Deployment Failed",
+      toast.error("Deployment Failed", {
         description: (error as Error).message || "An unexpected error occurred.",
-        variant: "destructive"
       });
     } finally {
       setIsLoading(false);

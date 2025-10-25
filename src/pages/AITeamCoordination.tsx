@@ -7,8 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { toast } from '@/components/ui/use-toast';
-// REMOVED: import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { 
   MessageSquare, 
   Users, 
@@ -19,17 +18,14 @@ import {
   AlertTriangle,
   Info,
   Lightbulb,
-  ArrowUpRight,
-  Plus,
   Filter
 } from 'lucide-react';
 import { Header } from '@/components/Header';
-// REMOVED: import { Json } from '@/integrations/supabase/types';
-// REMOVED: import { JsonValue } from '@/types/json';
-import { db } from '@/firebase'; // Import db from firebase.ts
+import { db } from '@/firebase';
 import { 
   collection, 
   query, 
+  where, 
   orderBy, 
   limit, 
   onSnapshot, 
@@ -38,7 +34,7 @@ import {
   doc, 
   serverTimestamp, 
   Timestamp 
-} from 'firebase/firestore'; // Firestore operations
+} from 'firebase/firestore';
 
 interface TeamCommunication {
   id: string;
@@ -47,9 +43,9 @@ interface TeamCommunication {
   message_type: string;
   subject: string | null;
   content: string;
-  metadata: Record<string, any> | null; // Changed from JsonValue to generic object for Firestore
+  metadata: Record<string, any> | null;
   is_read: boolean;
-  created_at: Timestamp; // Changed to Firestore Timestamp
+  created_at: Timestamp;
   user_id: string;
 }
 
@@ -58,8 +54,8 @@ interface TeamExecution {
   workflow_id: string | null;
   status: string;
   current_step: number | null;
-  created_at: Timestamp; // Changed to Firestore Timestamp
-  updated_at: Timestamp; // Changed to Firestore Timestamp
+  created_at: Timestamp;
+  updated_at: Timestamp;
   user_id: string;
   type: string | null;
 }
@@ -105,10 +101,9 @@ const AITeamCoordination = () => {
 
     setLoading(true);
 
-    // Firestore real-time subscriptions for communications
     const communicationsQuery = query(
       collection(db, 'ai_team_communications'),
-      where('user_id', '==', user.id),
+      where('user_id', '==', user.uid),
       orderBy('created_at', 'desc'),
       limit(50)
     );
@@ -116,24 +111,20 @@ const AITeamCoordination = () => {
       const fetchedCommunications = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
-        created_at: doc.data().created_at // Keep as Timestamp for now, convert on render
       })) as TeamCommunication[];
       setCommunications(fetchedCommunications);
       setLoading(false);
     }, (error) => {
-      console.error('❌ Communications real-time error:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load real-time communications',
-        variant: 'destructive'
+      console.error('Communications real-time error:', error);
+      toast('Error', {
+        description: 'Failed to load real-time communications'
       });
       setLoading(false);
     });
 
-    // Firestore real-time subscriptions for executions
     const executionsQuery = query(
       collection(db, 'ai_team_executions'),
-      where('user_id', '==', user.id),
+      where('user_id', '==', user.uid),
       orderBy('created_at', 'desc'),
       limit(20)
     );
@@ -141,17 +132,13 @@ const AITeamCoordination = () => {
       const fetchedExecutions = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
-        created_at: doc.data().created_at,
-        updated_at: doc.data().updated_at
       })) as TeamExecution[];
       setExecutions(fetchedExecutions);
       setLoading(false);
     }, (error) => {
-      console.error('❌ Executions real-time error:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load real-time workflow executions',
-        variant: 'destructive'
+      console.error('Executions real-time error:', error);
+      toast('Error', {
+        description: 'Failed to load real-time workflow executions'
       });
       setLoading(false);
     });
@@ -162,49 +149,28 @@ const AITeamCoordination = () => {
     };
   }, [user, navigate]);
 
-  // Removed fetchData as onSnapshot now handles initial load and real-time updates
-  // const fetchData = async () => { ... }; 
-
   const sendMessage = async () => {
-    try {
-      if (!newMessage.content.trim()) {
-        toast({
-          title: 'Error',
-          description: 'Please enter a message',
-          variant: 'destructive'
-        });
+    if (!user || !newMessage.content.trim()) {
+        toast('Error', { description: 'Please enter a message' });
         return;
-      }
+    }
 
-      await addDoc(collection(db, 'ai_team_communications'), {
-        ...newMessage,
-        sender_employee: 'User',
-        user_id: user?.id,
-        metadata: {},
-        is_read: false, // Default to unread when sent
-        created_at: serverTimestamp(),
-      });
+    try {
+        await addDoc(collection(db, 'ai_team_communications'), {
+            ...newMessage,
+            sender_employee: 'User',
+            user_id: user.uid,
+            metadata: {},
+            is_read: false,
+            created_at: serverTimestamp(),
+        });
 
-      toast({
-        title: 'Success',
-        description: 'Message sent successfully'
-      });
-
-      setNewMessage({
-        recipient_employee: '',
-        message_type: 'update',
-        subject: '',
-        content: ''
-      });
-      setShowMessageDialog(false);
-      // No need to call fetchData explicitly due to onSnapshot
+        toast('Success', { description: 'Message sent successfully' });
+        setNewMessage({ recipient_employee: '', message_type: 'update', subject: '', content: '' });
+        setShowMessageDialog(false);
     } catch (error) {
-      console.error('Error sending message:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to send message',
-        variant: 'destructive'
-      });
+        console.error('Error sending message:', error);
+        toast('Error', { description: 'Failed to send message' });
     }
   };
 
@@ -215,7 +181,6 @@ const AITeamCoordination = () => {
         is_read: true,
         updated_at: serverTimestamp(),
       });
-      // No need to call fetchData explicitly due to onSnapshot
     } catch (error) {
       console.error('Error marking message as read:', error);
     }
@@ -269,7 +234,6 @@ const AITeamCoordination = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="container mx-auto p-6 pt-24">
-        {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
@@ -352,7 +316,6 @@ const AITeamCoordination = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Team Communications */}
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
@@ -413,7 +376,7 @@ const AITeamCoordination = () => {
                             </div>
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            {comm.created_at.toDate().toLocaleTimeString()} {/* Convert Timestamp to Date */}
+                            {comm.created_at.toDate().toLocaleTimeString()}
                           </div>
                         </div>
                         
@@ -444,7 +407,6 @@ const AITeamCoordination = () => {
             </Card>
           </div>
 
-          {/* Active Workflow Executions */}
           <div>
             <Card>
               <CardHeader>
@@ -472,11 +434,11 @@ const AITeamCoordination = () => {
                       </div>
                       
                       <div className="text-xs text-muted-foreground">
-                        Started: {execution.created_at.toDate().toLocaleString()} {/* Convert Timestamp to Date */}
+                        Started: {execution.created_at.toDate().toLocaleString()}
                       </div>
                       
                       <div className="text-xs text-muted-foreground">
-                        Updated: {execution.updated_at.toDate().toLocaleString()} {/* Convert Timestamp to Date */}
+                        Updated: {execution.updated_at.toDate().toLocaleString()}
                       </div>
                       
                       {execution.type && (

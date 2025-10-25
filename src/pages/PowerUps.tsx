@@ -2,21 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, XCircle, Clock } from 'lucide-react';
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/firebase";
+import { collection, query, where, getDocs, doc, updateDoc, setDoc } from 'firebase/firestore';
+import { useAuth } from '@/hooks/useAuth';
 import { toast } from "@/components/ui/sonner";
-import SubscriptionGuard from "@/components/SubscriptionGuard"; // Corrected import
+import SubscriptionGuard from "@/components/SubscriptionGuard";
 import { Header } from "@/components/Header";
-import { Json } from '@/integrations/supabase/types';
 
 interface PowerUp {
   id: string;
   name: string;
   description: string;
   status: 'active' | 'inactive' | 'pending';
-  details: Json;
+  details: any;
 }
 
 const PowerUps = () => {
+  const { user } = useAuth();
   const [powerUps, setPowerUps] = useState<PowerUp[]>(
     [
       { id: "1", name: "AI-Driven Anomaly Detection", description: "Automatically detect anomalies in your data patterns.", status: "inactive", details: {} },
@@ -26,23 +28,41 @@ const PowerUps = () => {
   );
 
   useEffect(() => {
-    // In a real application, fetch user-specific power-up statuses from Supabase
-    const fetchPowerUpStatus = async () => {
-      // This is a placeholder for actual data fetching from Supabase
-      // const { data, error } = await supabase.from('user_power_ups').select('*').eq('user_id', user.id);
-      // if (data) { setPowerUps(data); }
-      // if (error) { console.error("Error fetching power-ups:", error); }
-    };
-    fetchPowerUpStatus();
-  }, []);
+    if (!user) return;
 
-  const togglePowerUpStatus = (id: string) => {
-    setPowerUps(powerUps.map(pu =>
-      pu.id === id ? { ...pu, status: pu.status === 'active' ? 'inactive' : 'active' } : pu
-    ));
-    toast("Power-up Toggled", {
-      description: "Power-up status has been updated.",
-    });
+    const fetchPowerUpStatus = async () => {
+        const powerUpsCollectionRef = collection(db, `users/${user.uid}/powerUps`);
+        const querySnapshot = await getDocs(powerUpsCollectionRef);
+        if (!querySnapshot.empty) {
+            const userPowerUps = querySnapshot.docs.map(doc => doc.data() as PowerUp);
+            setPowerUps(currentPowerUps =>
+                currentPowerUps.map(p => userPowerUps.find(up => up.id === p.id) || p)
+            );
+        }
+    };
+
+    fetchPowerUpStatus();
+  }, [user]);
+
+  const togglePowerUpStatus = async (id: string) => {
+    if (!user) return;
+
+    const powerUp = powerUps.find(p => p.id === id);
+    if (!powerUp) return;
+
+    const newStatus = powerUp.status === 'active' ? 'inactive' : 'active';
+    const powerUpRef = doc(db, `users/${user.uid}/powerUps`, id);
+
+    try {
+        await setDoc(powerUpRef, { ...powerUp, status: newStatus }, { merge: true });
+        setPowerUps(powerUps.map(pu => (pu.id === id ? { ...pu, status: newStatus } : pu)));
+        toast("Power-up Toggled", {
+            description: "Power-up status has been updated.",
+        });
+    } catch (error) {
+        console.error("Error toggling power-up:", error);
+        toast.error("Failed to update power-up status.");
+    }
   };
 
   return (

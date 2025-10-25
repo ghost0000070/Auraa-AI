@@ -1,10 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { db } from '@/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 async function fetchAgentMetrics() {
-  const { data, error } = await supabase.from('agent_metrics').select('*');
-  if (error) throw new Error(error.message);
-  return data;
+  const querySnapshot = await getDocs(collection(db, 'agent_metrics'));
+  const metrics: any[] = [];
+  querySnapshot.forEach((doc) => {
+    metrics.push({ id: doc.id, ...doc.data() });
+  });
+  return metrics;
 }
 
 export function useAgentMetrics() {

@@ -3,7 +3,7 @@ import { db } from '../firebase'; // Import your initialized Firestore instance
 import { collection, addDoc, Timestamp } from 'firebase/firestore'; // Firestore functions
 import { Button } from '@/components/ui/button'; // Assuming you have a Button component
 import { Textarea } from '@/components/ui/textarea'; // Assuming you have a Textarea component
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { Clipboard, Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 
@@ -12,7 +12,6 @@ function PuterFirebaseIntegration() {
   const [generatedText, setGeneratedText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { toast } = useToast();
 
   const handleGenerateAndSave = async () => {
     if (!prompt.trim()) {
@@ -37,18 +36,15 @@ function PuterFirebaseIntegration() {
         createdAt: Timestamp.now(),
       });
 
-      toast({
-        title: "Success!",
+      toast("Success!", {
         description: "Text generated and saved to Firestore.",
       });
 
     } catch (e) {
       console.error("Error generating text or saving to Firestore: ", e);
       setError('An error occurred. Please try again.');
-      toast({
-        title: "Error",
+      toast("Error", {
         description: "Could not generate or save the text.",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -60,11 +56,11 @@ function PuterFirebaseIntegration() {
 
     navigator.clipboard.writeText(generatedText)
       .then(() => {
-        toast({ title: 'Copied!', description: 'The generated text has been copied to your clipboard.' });
+        toast('Copied!', { description: 'The generated text has been copied to your clipboard.' });
       })
       .catch(err => {
         console.error('Failed to copy text: ', err);
-        toast({ title: 'Error', description: 'Failed to copy text to the clipboard.', variant: 'destructive' });
+        toast('Error', { description: 'Failed to copy text to the clipboard.' });
       });
   };
 

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartColumn, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { CheckCircle, XCircle, Clock } from 'lucide-react';
-import { supabase } from "@/integrations/supabase/client";
-import SubscriptionGuard from "@/components/SubscriptionGuard"; // Corrected import
+import { db } from "@/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { useAuth } from "@/hooks/useAuth";
+import SubscriptionGuard from "@/components/SubscriptionGuard";
 import { Header } from "@/components/Header";
-import { BarChart, XAxis, YAxis } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -17,7 +19,19 @@ const chartData = [
   { month: "June", desktop: 214, mobile: 140 },
 ];
 
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "hsl(var(--chart-1))",
+  },
+  mobile: {
+    label: "Mobile",
+    color: "hsl(var(--chart-2))",
+  },
+};
+
 const Analytics = () => {
+  const { user } = useAuth();
   const [agentMetrics, setAgentMetrics] = useState({
     activeAgents: 0,
     tasksCompleted: 0,
@@ -25,24 +39,28 @@ const Analytics = () => {
   });
 
   useEffect(() => {
-    const fetchAgentMetrics = async () => {
-      // This is a placeholder for actual data fetching from Supabase
-      // In a real application, you would fetch these from your backend
-      const { data, error } = await supabase
-        .from('agent_metrics')
-        .select('active_agents, tasks_completed, uptime')
-        .single();
+    if (!user) return;
 
-      if (data) {
-        setAgentMetrics(data);
-      }
-      if (error) {
+    const fetchAgentMetrics = async () => {
+      try {
+        const docRef = doc(db, "agent_metrics", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setAgentMetrics({
+            activeAgents: data.activeAgents || 0,
+            tasksCompleted: data.tasksCompleted || 0,
+            uptime: data.uptime || 0,
+          });
+        }
+      } catch (error) {
         console.error("Error fetching agent metrics:", error);
       }
     };
 
     fetchAgentMetrics();
-  }, []);
+  }, [user]);
 
   return (
     <SubscriptionGuard requiredTier="Enterprise">
@@ -111,24 +129,20 @@ const Analytics = () => {
                 <CardTitle>Overview</CardTitle>
               </CardHeader>
               <CardContent className="pl-2">
-                <ChartContainer config={{
-                  desktop: { label: "Desktop", color: "hsl(var(--chart-1))" },
-                  mobile: { label: "Mobile", color: "hsl(var(--chart-2))" },
-                }}
-                >
-                  <BarChart data={chartData}>
+                <ChartContainer config={chartConfig}>
+                  <BarChart accessibilityLayer data={chartData}>
+                    <CartesianGrid vertical={false} />
                     <XAxis
                       dataKey="month"
                       tickLine={false}
+                      tickMargin={10}
                       axisLine={false}
-                      tickMargin={8}
-                      minTickGap={32}
                       tickFormatter={(value) => value.slice(0, 3)}
                     />
                     <YAxis />
-                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                    <ChartColumn dataKey="desktop" fill="var(--color-desktop)" />
-                    <ChartColumn dataKey="mobile" fill="var(--color-mobile)" />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+                    <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
                   </BarChart>
                 </ChartContainer>
               </CardContent>
@@ -147,46 +161,7 @@ const Analytics = () => {
                   </TabsList>
                   <TabsContent value="week">
                     <div className="space-y-8">
-                      <div className="flex items-center">
-                        <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center text-sm font-medium dark:bg-slate-800">OM</div>
-                        <div className="ml-4 space-y-1">
-                          <p className="text-sm font-medium leading-none">Olivia Martin</p>
-                          <p className="text-sm text-muted-foreground">olivia.martin@email.com</p>
-                        </div>
-                        <div className="ml-auto font-medium">+$1,999.00</div>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center text-sm font-medium dark:bg-slate-800">JL</div>
-                        <div className="ml-4 space-y-1">
-                          <p className="text-sm font-medium leading-none">Jackson Lee</p>
-                          <p className="text-sm text-muted-foreground">jackson.lee@email.com</p>
-                        </div>
-                        <div className="ml-auto font-medium">+$39.00</div>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center text-sm font-medium dark:bg-slate-800">SF</div>
-                        <div className="ml-4 space-y-1">
-                          <p className="text-sm font-medium leading-none">Sofia Fernandez</p>
-                          <p className="text-sm text-muted-foreground">sofia.fernandez@email.com</p>
-                        </div>
-                        <div className="ml-auto font-medium">+$299.00</div>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center text-sm font-medium dark:bg-slate-800">WM</div>
-                        <div className="ml-4 space-y-1">
-                          <p className="text-sm font-medium leading-none">William Miller</p>
-                          <p className="text-sm text-muted-foreground">will.miller@email.com</p>
-                        </div>
-                        <div className="ml-auto font-medium">+$399.00</div>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center text-sm font-medium dark:bg-slate-800">HS</div>
-                        <div className="ml-4 space-y-1">
-                          <p className="text-sm font-medium leading-none">Henry Smith</p>
-                          <p className="text-sm text-muted-foreground">henry.smith@email.com</p>
-                        </div>
-                        <div className="ml-auto font-medium">+$49.00</div>
-                      </div>
+                      {/* Recent sales data would be fetched and mapped here */}
                     </div>
                   </TabsContent>
                 </Tabs>

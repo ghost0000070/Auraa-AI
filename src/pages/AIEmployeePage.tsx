@@ -7,7 +7,7 @@ import { ChatInterface } from '@/components/ChatInterface';
 import { ArrowLeft, Star, Settings, Loader2, MessageCircle } from 'lucide-react';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -25,7 +25,6 @@ const AIEmployeePage: React.FC = () => {
   const { employeeId } = useParams<{ employeeId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { toast } = useToast();
 
   const [deployedEmployee, setDeployedEmployee] = useState<DeployedEmployee | null>(null);
   const [staticData, setStaticData] = useState<(typeof aiEmployeeTemplates)[0] | null>(null);
@@ -52,18 +51,16 @@ const AIEmployeePage: React.FC = () => {
         const employeeDoc = await getDoc(employeeDocRef);
 
         if (!employeeDoc.exists()) {
-          toast({ title: "Error", description: "Could not find the specified AI employee.", variant: "destructive" });
+          toast("Error", { description: "Could not find the specified AI employee." });
           navigate('/ai-employees');
           return;
         }
 
         const employeeData = { id: employeeDoc.id, ...employeeDoc.data() } as DeployedEmployee;
         
-        // Ensure the fetched employee belongs to the current user
-        // This is a basic security check. For multi-tenancy, you'd check a businessId.
         // @ts-ignore
         if (employeeData.user_id !== user.uid) {
-            toast({ title: "Access Denied", description: "You do not have permission to view this employee.", variant: "destructive" });
+            toast("Access Denied", { description: "You do not have permission to view this employee." });
             navigate('/ai-employees');
             return;
         }
@@ -78,7 +75,7 @@ const AIEmployeePage: React.FC = () => {
         setConfigDraft(JSON.stringify(employeeData.deployment_config, null, 2));
       } catch (error) {
         console.error("Error fetching employee:", error);
-        toast({ title: "Error", description: "Failed to fetch AI employee data.", variant: "destructive" });
+        toast("Error", { description: "Failed to fetch AI employee data." });
         navigate('/ai-employees');
       } finally {
         setIsLoading(false);
@@ -86,7 +83,7 @@ const AIEmployeePage: React.FC = () => {
     };
 
     fetchEmployee();
-  }, [employeeId, user, navigate, toast]);
+  }, [employeeId, user, navigate]);
 
   const handleSaveSettings = async () => {
     if (!deployedEmployee) return;
@@ -97,10 +94,10 @@ const AIEmployeePage: React.FC = () => {
       await updateDoc(employeeDocRef, { deployment_config: parsedConfig });
 
       setDeployedEmployee(prev => prev ? { ...prev, deployment_config: parsedConfig } : null);
-      toast({ title: "Success", description: "Configuration saved successfully." });
+      toast("Success", { description: "Configuration saved successfully." });
       setIsSettingsOpen(false);
     } catch (error) {
-      toast({ title: "Invalid JSON", description: "The configuration is not valid JSON.", variant: "destructive" });
+      toast("Invalid JSON", { description: "The configuration is not valid JSON." });
     } finally {
       setIsSaving(false);
     }
@@ -111,8 +108,6 @@ const AIEmployeePage: React.FC = () => {
   }
 
   if (showChat) {
-    // Note: 'type' is not a property on the staticData object.
-    // Let's pass a relevant property like 'category' or a default value.
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
         <Button variant="ghost" onClick={() => setShowChat(false)} className="flex items-center gap-2 mb-4">
