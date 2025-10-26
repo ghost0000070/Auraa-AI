@@ -8,10 +8,61 @@ import { stripe } from './utils/stripe';
 import * as functions from 'firebase-functions'; // Import for Firestore triggers
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore'; // Firestore operations
 
+// Genkit imports
+import { genkit } from 'genkit';
+import { googleAI, gemini15Flash } from '@genkit-ai/googleai';
+import { onCallGenkit, hasClaim } from 'firebase-functions/https';
+import { defineSecret } from 'firebase-functions/params';
+import { z } from 'zod';
+
+// Define the API key secret
+const googleAIapiKey = defineSecret("GOOGLE_API_KEY");
+
+// Configure Genkit
+genkit({
+  plugins: [
+    googleAI({
+      apiKey: googleAIapiKey.value(),
+    }),
+  ],
+  logLevel: 'debug',
+  flowStateStore: 'firebase', // Using firebase for flow state storage
+  flowStateRetentionInDays: 7,
+});
+
 
 initializeApp();
 const db = getFirestore();
 const auth = getAuth();
+
+// Define your Genkit flow
+const helloFlow = genkit.defineFlow(
+  {
+    name: 'helloFlow',
+    inputSchema: z.string().describe('The name to greet'),
+    outputSchema: z.object({ message: z.string() }),
+  },
+  async (name) => {
+    // make a generation request
+    const { text } = await genkit.ai.generate({
+        model: gemini15Flash,
+        prompt: `Hello Gemini, my name is ${name}`,
+    });
+    console.log(text);
+    return { message: text };
+  },
+);
+
+// Wrap the flow in onCallGenkit for deployment
+export const helloGenkitFlow = onCallGenkit(
+  {
+    secrets: [googleAIapiKey],
+    authPolicy: hasClaim('email_verified'), // Example policy: user must have a verified email
+    enforceAppCheck: true, // Enforce App Check
+  },
+  helloFlow
+);
+
 
 export const generateChatCompletion = https.onCall(async (request) => {
   const { prompt, history, model: requestedModel } = request.data;
