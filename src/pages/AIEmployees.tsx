@@ -4,14 +4,27 @@ import { Button } from '@/components/ui/button';
 import { DeploymentRequestCard } from '@/components/DeploymentRequestCard';
 import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
 import { useAuth } from '@/hooks/useAuth';
+import { Loader2 } from 'lucide-react';
 
 const AIEmployees: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth(); // Destructure loading state
 
-  if (!user) {
-    navigate('/auth');
-    return null;
+  React.useEffect(() => {
+    if (!loading && !user) {
+      navigate('/auth');
+    }
+  }, [user, loading, navigate]);
+
+  if (loading || !user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-950 text-white flex items-center justify-center">
+        <div className="flex items-center space-x-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-xl">Loading workforce...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
