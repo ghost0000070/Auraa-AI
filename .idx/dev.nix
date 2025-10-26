@@ -22,7 +22,7 @@
     extensions = [
       # "vscodevim.vim"
       "prettier.prettier-vscode"
-      "dbaeumer.vscode-eslint"]
-      "SonarSource.sonarlint-vscode";
-      "kisstkondoros.codemetrics"=
-      "usernamehw.error-lens";};}
+      "dbaeumer.vscode-eslint"
+      "SonarSource.sonarlint-vscode"
+      "kisstkondoros.codemetrics"
+      "usernamehw.error-lens"];};}

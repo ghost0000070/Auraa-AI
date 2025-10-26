@@ -1205,3 +1205,259 @@
 [debug] [2025-10-25T08:01:57.413Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com [omitted]
 [debug] [2025-10-25T08:01:57.436Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com 403
 [debug] [2025-10-25T08:01:57.436Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com [omitted]
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-26T00:30:26.686Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-26T00:30:26.713Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:30:26.754Z] Running auto auth
+[debug] [2025-10-26T00:30:26.761Z] Running auto auth
+[debug] [2025-10-26T00:30:26.896Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:26.897Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:26.898Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:26.898Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:26.899Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:26.899Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:26.908Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:26.912Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:26.913Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com [none]
+[debug] [2025-10-26T00:30:26.914Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:26.979Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com [none]
+[debug] [2025-10-26T00:30:26.979Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:26.982Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-26T00:30:26.982Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:26.983Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com [none]
+[debug] [2025-10-26T00:30:26.983Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:26.984Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com [none]
+[debug] [2025-10-26T00:30:26.985Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:26.986Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com [none]
+[debug] [2025-10-26T00:30:26.986Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:26.987Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-26T00:30:26.987Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:26.989Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com [none]
+[debug] [2025-10-26T00:30:26.989Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:27.019Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:27.019Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:27.019Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:27.020Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:27.020Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:27.020Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:27.022Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:27.022Z] No OAuth tokens found
+[debug] [2025-10-26T00:30:27.023Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com [none]
+[debug] [2025-10-26T00:30:27.023Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:27.025Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com [none]
+[debug] [2025-10-26T00:30:27.025Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:27.026Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-26T00:30:27.027Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:27.029Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com [none]
+[debug] [2025-10-26T00:30:27.029Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:27.031Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com [none]
+[debug] [2025-10-26T00:30:27.031Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:27.033Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com [none]
+[debug] [2025-10-26T00:30:27.033Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:27.034Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-26T00:30:27.034Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:27.035Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com [none]
+[debug] [2025-10-26T00:30:27.036Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:30:27.194Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com 403
+[debug] [2025-10-26T00:30:27.194Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com [omitted]
+[debug] [2025-10-26T00:30:27.202Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com 403
+[debug] [2025-10-26T00:30:27.202Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.205Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com 403
+[debug] [2025-10-26T00:30:27.205Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.216Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com 403
+[debug] [2025-10-26T00:30:27.216Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.220Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com 403
+[debug] [2025-10-26T00:30:27.220Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.227Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com 403
+[debug] [2025-10-26T00:30:27.227Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.228Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com 403
+[debug] [2025-10-26T00:30:27.228Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.228Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com 403
+[debug] [2025-10-26T00:30:27.228Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.237Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com 403
+[debug] [2025-10-26T00:30:27.237Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.238Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com 403
+[debug] [2025-10-26T00:30:27.238Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.239Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com 403
+[debug] [2025-10-26T00:30:27.239Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.241Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com 403
+[debug] [2025-10-26T00:30:27.241Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.241Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com 403
+[debug] [2025-10-26T00:30:27.241Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.243Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com 403
+[debug] [2025-10-26T00:30:27.244Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.244Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com 403
+[debug] [2025-10-26T00:30:27.244Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com [omitted]
+[debug] [2025-10-26T00:30:27.248Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com 403
+[debug] [2025-10-26T00:30:27.248Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com [omitted]
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-26T00:30:27.251Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:30:27.252Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-26T00:30:27.255Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:30:27.255Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-26T00:30:27.267Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:30:27.268Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-26T00:30:27.269Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:30:27.269Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-26T00:30:27.275Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:30:27.275Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-26T00:30:27.276Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:30:27.277Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-26T00:31:58.305Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.305Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.312Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.312Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.312Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.313Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.313Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.314Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.314Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.314Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.314Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.315Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.315Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.315Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.315Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.315Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.315Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.315Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.316Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.316Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.316Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.316Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.316Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.316Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.317Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.317Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.323Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.323Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.324Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.324Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.324Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.324Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.324Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.324Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.324Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.324Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.325Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.325Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.325Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.325Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.325Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.326Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.326Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.326Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.326Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.326Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.326Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.326Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.326Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.326Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.327Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.327Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.327Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.327Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.327Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.327Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.327Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.327Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.327Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.328Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.329Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.329Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.329Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.329Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.329Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.329Z] No OAuth tokens found
+[debug] [2025-10-26T00:31:58.329Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.329Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.331Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.331Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.369Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.369Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.371Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.371Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.372Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.372Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.373Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.373Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.374Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.374Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.375Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.375Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.376Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com [none]
+[debug] [2025-10-26T00:31:58.376Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.377Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.377Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.379Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.379Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.380Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.380Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.381Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.381Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.382Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.382Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.384Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.384Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.385Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-10-26T00:31:58.385Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.386Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com [none]
+[debug] [2025-10-26T00:31:58.386Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com x-goog-quota-user=projects/monospace-11
+[debug] [2025-10-26T00:31:58.493Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com 403
+[debug] [2025-10-26T00:31:58.493Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com [omitted]
+[debug] [2025-10-26T00:31:58.497Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com 403
+[debug] [2025-10-26T00:31:58.497Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com [omitted]
+[debug] [2025-10-26T00:31:58.502Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com 403
+[debug] [2025-10-26T00:31:58.502Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com [omitted]
+[debug] [2025-10-26T00:31:58.504Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com 403
+[debug] [2025-10-26T00:31:58.504Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-26T00:31:58.504Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com 403
+[debug] [2025-10-26T00:31:58.504Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com [omitted]
+[debug] [2025-10-26T00:31:58.505Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com 403
+[debug] [2025-10-26T00:31:58.505Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com [omitted]
+[debug] [2025-10-26T00:31:58.510Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com 403
+[debug] [2025-10-26T00:31:58.510Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com [omitted]
+[debug] [2025-10-26T00:31:58.521Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com 403
+[debug] [2025-10-26T00:31:58.521Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com [omitted]
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-26T00:31:58.524Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.524Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-26T00:31:58.525Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-26T00:31:58.525Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-10-26T00:31:58.526Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com 403
+[debug] [2025-10-26T00:31:58.526Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-10-26T00:31:58.527Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com 403
+[debug] [2025-10-26T00:31:58.527Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/identitytoolkit.googleapis.com [omitted]
+[debug] [2025-10-26T00:31:58.527Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com 403
+[debug] [2025-10-26T00:31:58.527Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firestore.googleapis.com [omitted]
+[debug] [2025-10-26T00:31:58.529Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com 403
+[debug] [2025-10-26T00:31:58.529Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/fcm.googleapis.com [omitted]
+[debug] [2025-10-26T00:31:58.529Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com 403
+[debug] [2025-10-26T00:31:58.529Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/storage.googleapis.com [omitted]
+[debug] [2025-10-26T00:31:58.530Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com 403
+[debug] [2025-10-26T00:31:58.530Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseio.com [omitted]
+[debug] [2025-10-26T00:31:58.531Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com 403
+[debug] [2025-10-26T00:31:58.531Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebaseremoteconfig.googleapis.com [omitted]
+[debug] [2025-10-26T00:31:58.531Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com 403
+[debug] [2025-10-26T00:31:58.531Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/monospace-11/services/firebasedataconnect.googleapis.com [omitted]
