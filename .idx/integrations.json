@@ -1,4 +1,5 @@
 {
-  "firebase_hosting": {},
-  "cloud_run_deploy": {}
+  "firebase_hosting": {
+    "deploymentHostingUrl": "https://monospace-11.web.app"
+  }
 }
