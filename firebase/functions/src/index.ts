@@ -64,14 +64,14 @@ export const helloGenkitFlow = onCallGenkit(
 );
 
 
-export const generateChatCompletion = https.onCall(async (request) => {
+export const generateChatCompletion = https.onCall(async (request: https.CallableRequest<{ prompt: string; history: unknown[]; model: string; }>) => {
   const { prompt, history, model: requestedModel } = request.data;
 
   // This function currently uses gemini-1.5-flash-001 by default
   // Client-side Gemini-Pro is handled in src/components/ChatInterface.tsx
   // If we want to support other Gemini models via backend for different AI employees,
   // we would add logic here to map `requestedModel` to a specific Vertex AI model string.
-  let geminiModelToUse = 'gemini-1.5-flash-001';
+  const geminiModelToUse = 'gemini-1.5-flash-001';
 
   const vertex_ai = new VertexAI({ project: process.env.GCLOUD_PROJECT, location: 'us-central1' });
 
@@ -98,7 +98,7 @@ export const generateChatCompletion = https.onCall(async (request) => {
   return { response: response.candidates[0].content.parts[0].text };
 });
 
-export const customerPortal = https.onCall(async (request) => {
+export const customerPortal = https.onCall(async (request: https.CallableRequest<{ user_id: string }>) => {
   const { user_id } = request.data;
 
   if (!user_id) {
@@ -116,7 +116,7 @@ export const customerPortal = https.onCall(async (request) => {
     await customerRef.set({ stripe_customer_id: stripeCustomer.id });
 
     // Also add a basic user role
-    await db.collection('user_roles').doc(user.id).set({ role: 'user' }); // Fixed: Use user.id here
+    await db.collection('user_roles').doc(user_id).set({ role: 'user' }); // Fixed: Use user.id here
 
     customerDoc = await customerRef.get();
   }
@@ -132,7 +132,7 @@ export const customerPortal = https.onCall(async (request) => {
 });
 
 
-export const deployAiEmployee = https.onCall(async (request) => {
+export const deployAiEmployee = https.onCall(async (request: https.CallableRequest<{ deploymentRequestId: string }>) => {
   const { deploymentRequestId } = request.data;
 
   if (!deploymentRequestId) {
@@ -224,7 +224,7 @@ export const fixAdminAccount = https.onCall(async () => {
       note: 'Please log in with this temporary password and change it immediately'
     };
   } catch (error: unknown) {
-    if (error instanceof Error && 'code' in error && error.code === 'auth/user-not-found') {
+    if (error instanceof Error && 'code' in error && (error as {code: string}).code === 'auth/user-not-found') {
       const user = await auth.createUser({
         email: adminEmail,
         password: tempPassword,
@@ -262,7 +262,9 @@ export const resetAdminPassword = https.onCall(async () => {
   try {
     const link = await auth.generatePasswordResetLink(adminEmail);
     // You would typically send this link to the user via email.\n
-    // For this migration, we\'ll just return it.\n
+
+    // For this migration, we'll just return it.\n
+
     return {
       success: true,
       message: 'Password reset link generated successfully',
@@ -322,10 +324,10 @@ export const processAiTeamCommunication = functions.firestore
       const aiTemplate = templateSnapshot.docs[0].data();
 
       // 2. Determine the Gemini model to use
-      let geminiModelToUse = 'gemini-1.5-flash-001'; // Default for backend
+      const geminiModelToUse = 'gemini-1.5-flash-001'; // Default for backend
 
       // Optionally, use a more capable model if specified in the template
-      // For simplicity, we\'ll stick to gemini-1.5-flash-001 for now,
+      // For simplicity, we'll stick to gemini-1.5-flash-001 for now,
       // as "Gemini-Pro" is handled client-side.
       // If aiTemplate.model were 'GPT-4', you could map it to a stronger Gemini model here if desired.
 
@@ -341,13 +343,13 @@ export const processAiTeamCommunication = functions.firestore
 
       // 3. Craft the prompt for Gemini
       // Include historical context if available in the 'metadata' of the communication
-      const chatHistory = (communication.metadata?.history || []).map((msg: any) => ({
+      const chatHistory = (communication.metadata?.history || []).map((msg: { sender: string; content: string; }) => ({
         role: msg.sender === 'User' ? 'user' : 'model',
         parts: [{ text: msg.content }],
       }));
 
-      // Add the AI employee\'s persona and skills to the prompt
-      const personaPrompt = `You are ${aiTemplate.name}, a ${aiTemplate.category} expert. Your core skills include: ${aiTemplate.capabilities.join(', ')}. Your description is: "${aiTemplate.description}". Respond to the user\'s message concisely and helpfully, leveraging your expertise.`;
+      // Add the AI employee's persona and skills to the prompt
+      const personaPrompt = `You are ${aiTemplate.name}, a ${aiTemplate.category} expert. Your core skills include: ${aiTemplate.capabilities.join(', ')}. Your description is: "${aiTemplate.description}". Respond to the user's message concisely and helpfully, leveraging your expertise.`;
       
       const parts = [{ text: `${personaPrompt}\n\nUser: ${communication.content}` }];
 
@@ -362,7 +364,7 @@ export const processAiTeamCommunication = functions.firestore
         throw new Error('Failed to generate a valid response from the AI model.');
       }
 
-      // 4. Store AI\'s response in Firestore
+      // 4. Store AI's response in Firestore
       await addDoc(collection(db, 'ai_team_communications'), {
         sender_employee: aiTemplate.name,
         recipient_employee: 'User', // AI responds to the user
@@ -374,11 +376,11 @@ export const processAiTeamCommunication = functions.firestore
           ai_model_used: geminiModelToUse,
         },
         user_id: userId,
-        is_read: false, // AI\'s response is initially unread by the user
+        is_read: false, // AI's response is initially unread by the user
         created_at: serverTimestamp(),
       });
 
-      console.log(`✅ AI employee \"${aiTemplate.name}\" responded to communication ${communicationId}`);
+      console.log(`✅ AI employee "${aiTemplate.name}" responded to communication ${communicationId}`);
       return null;
 
     } catch (error) {

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
 import { db } from "@/firebase";
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import AITeamDashboard from "@/components/AITeamDashboard";
 import { Header } from "@/components/Header";
 
@@ -28,20 +28,8 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-    fetchDashboardMetrics();
-    trackPageView();
-  }, [user, navigate]);
-
-  if (!user) {
-    return null;
-  }
-
-  const trackPageView = async () => {
+  const trackPageView = useCallback(async () => {
+    if (!user) return;
     try {
       await addDoc(collection(db, 'user_analytics'), {
         userId: user.uid,
@@ -56,9 +44,10 @@ const Dashboard = () => {
       // Silently handle analytics errors to prevent UI disruption
       console.debug('Analytics tracking failed:', error);
     }
-  };
+  }, [user, subscriptionStatus]);
 
-  const fetchDashboardMetrics = async () => {
+  const fetchDashboardMetrics = useCallback(async () => {
+    if (!user) return;
     try {
       setLoading(true);
       
@@ -97,7 +86,20 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    fetchDashboardMetrics();
+    trackPageView();
+  }, [user, navigate, fetchDashboardMetrics, trackPageView]);
+
+  if (!user) {
+    return null;
+  }
 
   const trackEvent = async (eventName: string, eventData: object = {}) => {
     if (!user) return;

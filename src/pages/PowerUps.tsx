@@ -14,7 +14,7 @@ interface PowerUp {
   name: string;
   description: string;
   status: 'active' | 'inactive' | 'pending';
-  details: any;
+  details: Record<string, unknown>;
 }
 
 const PowerUps = () => {

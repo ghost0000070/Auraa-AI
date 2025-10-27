@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -93,15 +93,7 @@ const BusinessIntelligence = () => {
     cancelled: 'destructive' as const
   };
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-    fetchData();
-  }, [user, navigate]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       console.log('🔄 Fetching business intelligence data...');
       if (!user) return;
@@ -135,7 +127,15 @@ const BusinessIntelligence = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    fetchData();
+  }, [user, navigate, fetchData]);
 
   const createGoal = async () => {
     try {

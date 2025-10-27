@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { db } from "@/firebase";
 import { doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { toast } from "@/components/ui/sonner";
@@ -19,7 +19,7 @@ interface BusinessProfile {
   targetAudience: string;
   websiteUrl: string;
   brandVoice: string;
-  businessData: any;
+  businessData: Record<string, unknown>;
   isDefault: boolean;
 }
 
@@ -49,17 +49,7 @@ const BusinessProfile = () => {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-
-    fetchBusinessProfile();
-    trackPageView();
-  }, [user]);
-
-  const trackPageView = async () => {
+  const trackPageView = useCallback(async () => {
     if (!user) return;
     try {
       await addDoc(collection(db, 'user_analytics'), {
@@ -71,9 +61,9 @@ const BusinessProfile = () => {
     } catch (error) {
       console.error('Analytics tracking failed:', error);
     }
-  };
+  }, [user]);
 
-  const fetchBusinessProfile = async () => {
+  const fetchBusinessProfile = useCallback(async () => {
     if (!user) return;
     try {
       const docRef = doc(db, "businessProfiles", user.uid);
@@ -101,7 +91,17 @@ const BusinessProfile = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    fetchBusinessProfile();
+    trackPageView();
+  }, [user, navigate, fetchBusinessProfile, trackPageView]);
 
   const handleInputChange = (field: keyof BusinessProfile, value: string) => {
     setProfile(prev => ({

@@ -19,6 +19,7 @@ interface DeployedEmployee {
   name: string;
   deployment_config: Record<string, unknown>;
   template_id: string; // Storing the template ID is more robust
+  user_id: string;
 }
 
 const AIEmployeePage: React.FC = () => {
@@ -58,7 +59,6 @@ const AIEmployeePage: React.FC = () => {
 
         const employeeData = { id: employeeDoc.id, ...employeeDoc.data() } as DeployedEmployee;
         
-        // @ts-ignore
         if (employeeData.user_id !== user.uid) {
             toast("Access Denied", { description: "You do not have permission to view this employee." });
             navigate('/ai-employees');

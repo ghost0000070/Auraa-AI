@@ -22,9 +22,9 @@ import { formatDistanceToNow } from 'date-fns';
 
 interface DeploymentRequest {
   id: string;
-  createdAt: any; // Firestore timestamp
+  createdAt: Date; 
   status: string;
-  deploymentConfig?: any;
+  deploymentConfig?: Record<string, unknown>;
   rejectionReason?: string;
   employeeName: string;
   employeeDescription: string;
@@ -34,9 +34,9 @@ interface DeploymentRequest {
 
 interface DeployedEmployee {
   id: string;
-  deployedAt: any; // Firestore timestamp
+  deployedAt: Date; 
   status: string;
-  performanceMetrics?: any;
+  performanceMetrics?: Record<string, unknown>;
   employeeName: string;
   employeeType: string;
 }
@@ -59,13 +59,10 @@ export const DeploymentDashboard: React.FC = () => {
     try {
       setLoading(true);
       
-      // Fetch deployment requests
       const requestsQuery = query(collection(db, 'deploymentRequests'), where('userId', '==', user.uid));
       const requestsSnapshot = await getDocs(requestsQuery);
       const requestsData = await Promise.all(requestsSnapshot.docs.map(async (d) => {
         const request = d.data();
-        // Assuming employee and business details are stored within the request doc
-        // or you might need to fetch them separately if they are in different collections
         return {
           id: d.id,
           ...request,
@@ -74,7 +71,6 @@ export const DeploymentDashboard: React.FC = () => {
       }));
       setDeploymentRequests(requestsData);
 
-      // Fetch deployed employees
       const employeesQuery = query(collection(db, 'deployedEmployees'), where('userId', '==', user.uid));
       const employeesSnapshot = await getDocs(employeesQuery);
       const employeesData = employeesSnapshot.docs.map(d => ({
@@ -84,7 +80,6 @@ export const DeploymentDashboard: React.FC = () => {
       }) as DeployedEmployee);
       setDeployedEmployees(employeesData);
 
-      // Calculate stats
       const pending = requestsData.filter(r => r.status === 'pending').length;
       const approved = requestsData.filter(r => r.status === 'approved').length;
       const active = employeesData.filter(e => e.status === 'active').length;
@@ -138,5 +133,42 @@ export const DeploymentDashboard: React.FC = () => {
     }
   };
 
-  // ... rest of the component remains the same ...
+  return (
+    <div className="p-4 md:p-8">
+      <h1 className="text-3xl font-bold mb-4">Deployment Dashboard</h1>
+      {/* Cards for stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {/* Stats cards */}
+      </div>
 
+      <Tabs defaultValue="requests">
+        <TabsList>
+          <TabsTrigger value="requests">Deployment Requests</TabsTrigger>
+          <TabsTrigger value="employees">Deployed Employees</TabsTrigger>
+        </TabsList>
+        <TabsContent value="requests">
+          <Card>
+            <CardHeader>
+              <CardTitle>Deployment Requests</CardTitle>
+              <CardDescription>Review and manage pending, approved, and rejected deployment requests.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* Table of deployment requests */}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="employees">
+          <Card>
+            <CardHeader>
+              <CardTitle>Deployed AI Employees</CardTitle>
+              <CardDescription>Monitor the status and performance of your deployed AI employees.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* Table of deployed employees */}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};

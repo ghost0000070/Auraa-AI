@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Toaster } from '@/components/ui/toaster';
 import { toast } from 'sonner';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, AuthError } from 'firebase/auth';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -49,11 +49,12 @@ const Auth = () => {
         await signInWithEmailAndPassword(auth, email, password);
         // onAuthStateChanged will handle navigation to /dashboard
       }
-    } catch (err: any) {
-      console.error('Authentication error:', err);
-      setError(err.message);
+    } catch (err) {
+      const authError = err as AuthError;
+      console.error('Authentication error:', authError);
+      setError(authError.message);
       toast.error("Authentication Error", {
-        description: err.message,
+        description: authError.message,
       });
     } finally {
       setIsLoading(false);

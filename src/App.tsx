@@ -19,6 +19,7 @@ import NotFound from "./pages/NotFound";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import IntegrationsPage from "./pages/IntegrationsPage";
 import PuterFirebaseIntegration from "./components/PuterFirebaseIntegration"; // Import the new component
+import AITeamDebugger from "./components/AITeamDebugger";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
               <Route path="/ai-team-coordination" element={<ProtectedRoute><AITeamCoordination /></ProtectedRoute>} />
               <Route path="/integrations" element={<ProtectedRoute><IntegrationsPage /></ProtectedRoute>} />
               <Route path="/puter-firebase-integration" element={<ProtectedRoute><PuterFirebaseIntegration /></ProtectedRoute>} /> {/* New route added here */}
+              <Route path="/dev/debugger" element={<AITeamDebugger />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

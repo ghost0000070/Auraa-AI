@@ -7,20 +7,21 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from "@/components/ui/sonner";
 import { Loader2 } from 'lucide-react';
+import { Timestamp } from 'firebase/firestore';
 
 interface IntegrationTarget {
   id: string;
   name: string;
   base_url: string;
   auth_type: string;
-  createdAt: any;
+  createdAt: Timestamp;
 }
 
 interface AgentTask {
   id: string;
   target_id: string;
   status: 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';
-  createdAt: any;
+  createdAt: Timestamp;
 }
 
 export function FirebaseWebsiteIntegrations() {

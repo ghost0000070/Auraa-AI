@@ -43,7 +43,7 @@ interface TeamCommunication {
   message_type: string;
   subject: string | null;
   content: string;
-  metadata: Record<string, any> | null;
+  metadata: Record<string, unknown> | null;
   is_read: boolean;
   created_at: Timestamp;
   user_id: string;

@@ -18,7 +18,7 @@ export default async function handler(
     } else {
       return response.status(400).json({ success: false, error: 'reCAPTCHA verification failed' });
     }
-  } catch (error: any) {
-    return response.status(500).json({ error: error.message });
+  } catch (error) {
+    return response.status(500).json({ error: (error as Error).message });
   }
 }

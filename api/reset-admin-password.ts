@@ -16,8 +16,8 @@ export default async function handler(
       resetLink: link,
       note: 'This link should be sent to the user to reset their password.'
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('💥 Function error:', error);
-    return response.status(500).json({ success: false, error: error.message });
+    return response.status(500).json({ success: false, error: (error as Error).message });
   }
 }

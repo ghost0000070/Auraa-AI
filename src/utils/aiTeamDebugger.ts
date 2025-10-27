@@ -1,7 +1,8 @@
 import { collection, getDocs, limit, query } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { db, functions } from '@/firebase';
-import { toast } from '@/components/ui/use-toast';
+import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
+import { HttpsCallableResult } from 'firebase/functions';
 
 export class AITeamDebugger {
   private static instance: AITeamDebugger;
@@ -48,11 +49,12 @@ export class AITeamDebugger {
         };
 
         console.log(`✅ ${coll}: ${snapshot.size} records (queried 1)`);
-      } catch (err:any) {
-        console.error(`💥 ${coll} exception:`, err);
+      } catch (err: unknown) {
+        const error = err as Error;
+        console.error(`💥 ${coll} exception:`, error);
         results[coll] = {
           accessible: false,
-          error: err.message,
+          error: error.message,
           recordCount: 0,
           sampleData: 'Unavailable'
         };
@@ -84,7 +86,7 @@ export class AITeamDebugger {
         console.log(`🚀 Testing ${functionName}...`);
 
         const cloudFunction = httpsCallable(functions, functionName);
-        const result = await cloudFunction({ test: true });
+        const result: HttpsCallableResult<unknown> = await cloudFunction({ test: true });
 
         results[functionName] = {
           accessible: true,
@@ -93,11 +95,12 @@ export class AITeamDebugger {
         };
 
         console.log(`✅ ${functionName}: Available`);
-      } catch (err:any) {
-        console.error(`💥 ${functionName} exception:`, err);
+      } catch (err: unknown) {
+        const error = err as Error;
+        console.error(`💥 ${functionName} exception:`, error);
         results[functionName] = {
           accessible: false,
-          error: err.message,
+          error: error.message,
           response: 'Unavailable'
         };
       }
@@ -117,7 +120,7 @@ export class AITeamDebugger {
       console.log(`🚀 Testing workflow execution: ${workflowId}`);
 
       const workflowExecution = httpsCallable(functions, 'workflowExecution');
-      const result = await workflowExecution({
+      const result: HttpsCallableResult<unknown> = await workflowExecution({
         workflowId,
         userId: 'test-user-id',
         dryRun: true // Add dry run flag for testing
@@ -129,12 +132,44 @@ export class AITeamDebugger {
         success: true,
         data: result.data
       };
-    } catch (err:any) {
-      console.error('💥 Workflow execution test exception:', err);
+    } catch (err: unknown) {
+      const error = err as Error;
+      console.error('💥 Workflow execution test exception:', error);
       return {
         success: false,
-        error: err.message
+        error: error.message
       };
+    }
+  }
+
+  async testAIPersonalities() {
+    console.log('🤖 Testing AI personalities...');
+
+    const testPrompt = 'What is the meaning of life?';
+
+    for (const employee of aiEmployeeTemplates.slice(0, 3)) {
+      try {
+        console.log(`🧪 Testing personality: ${employee.personality}`);
+
+        const response = await fetch('/api/generate-chat-completion', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt: testPrompt, personality: employee.personality })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API returned ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(`🎨 ${employee.name} responded:`, data.completion.text);
+
+      } catch (err: unknown) {
+        const error = err as Error;
+        console.error(`💥 Error testing ${employee.name}:`, error);
+      }
     }
   }
 
@@ -151,6 +186,9 @@ export class AITeamDebugger {
     console.log('🚀 Testing cloud functions...');
     const functionResults = await this.testCloudFunctions();
 
+    // Test AI personalities
+    await this.testAIPersonalities();
+
     const diagnostics = {
       timestamp: new Date().toISOString(),
       duration: Date.now() - startTime,
@@ -165,18 +203,6 @@ export class AITeamDebugger {
     };
 
     console.log('📊 Full diagnostics completed:', diagnostics);
-
-    // Show user-friendly summary
-    const dbSuccess = diagnostics.summary.databaseCollectionsAccessible;
-    const dbTotal = diagnostics.summary.totalDatabaseCollections;
-    const fnSuccess = diagnostics.summary.cloudFunctionsAccessible;
-    const fnTotal = diagnostics.summary.totalCloudFunctions;
-
-    toast({
-      title: 'AI Team Diagnostics Complete',
-      description: `Database: ${dbSuccess}/${dbTotal} accessible. Functions: ${fnSuccess}/${fnTotal} accessible.`,
-      variant: dbSuccess === dbTotal && fnSuccess === fnTotal ? 'default' : 'destructive'
-    });
 
     return diagnostics;
   }

@@ -61,6 +61,18 @@ const plans = [
   }
 ];
 
+interface CheckoutResult {
+    data: {
+        url: string;
+    };
+}
+
+interface PortalResult {
+    data: {
+        url: string;
+    };
+}
+
 export const PricingSection = () => {
   const { user, subscriptionStatus, checkSubscription } = useAuth();
   const navigate = useNavigate();
@@ -73,7 +85,7 @@ export const PricingSection = () => {
 
     try {
       const createCheckout = httpsCallable(functions, 'createCheckout');
-      const result: any = await createCheckout({ plan: planName, userId: user.uid });
+      const result = await createCheckout({ plan: planName, userId: user.uid }) as CheckoutResult;
       const data = result.data;
 
       if (!data || !data.url) throw new Error("Failed to create checkout session");
@@ -94,7 +106,7 @@ export const PricingSection = () => {
 
     try {
       const customerPortal = httpsCallable(functions, 'customerPortal');
-      const result: any = await customerPortal({ userId: user.uid });
+      const result = await customerPortal({ userId: user.uid }) as PortalResult;
       const data = result.data;
 
       if (!data || !data.url) throw new Error("Failed to create portal session");

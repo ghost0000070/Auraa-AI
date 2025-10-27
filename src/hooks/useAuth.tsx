@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
 import { User, onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase'; // Correctly import Firebase auth and Firestore db
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     subscription_end: string | null;
   } | null>(null);
 
-  const checkSubscription = async () => {
+  const checkSubscription = useCallback(async () => {
     if (!user) {
       setSubscriptionStatus(null);
       setIsAdmin(false);
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.error("Error checking subscription:", error);
       setSubscriptionStatus({ subscribed: false, subscription_tier: null, subscription_end: null });
     }
-  };
+  }, [user]);
 
   const signOut = async () => {
     await firebaseSignOut(auth);
@@ -89,19 +89,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
-      if (user) {
-        await checkSubscription();
-      } else {
-        setIsAdmin(false);
-        setSubscriptionStatus(null);
-      }
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, []);
+
+  useEffect(() => {
+    checkSubscription();
+  }, [checkSubscription]);
 
   return (
     <AuthContext.Provider value={{

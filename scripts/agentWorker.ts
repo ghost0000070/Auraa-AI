@@ -13,7 +13,7 @@ if (!RSA_PRIVATE_PEM) {
   process.exit(1);
 }
 
-async function logEvent(task_id: string, level: string, message: string, context?: any) {
+async function logEvent(task_id: string, level: string, message: string, context?: Record<string, unknown>) {
   await db.collection('agent_task_events').add({ task_id, level, message, context, createdAt: new Date() });
 }
 
@@ -64,7 +64,22 @@ async function fetchCredentials(target_id: string, owner_user: string) {
   }
 }
 
-async function fetchNextTask() {
+interface AgentTask {
+    id: string;
+    action: string;
+    parameters: {
+        url: string;
+        selector?: string;
+        username_selector?: string;
+        password_selector?: string;
+    };
+    target_id: string;
+    owner_user: string;
+    attempt_count?: number;
+    max_attempts?: number;
+}
+
+async function fetchNextTask(): Promise<AgentTask | null> {
   const tasksSnapshot = await db.collection('agent_tasks')
     .where('status', '==', 'queued')
     .where('next_run_at', '<=', new Date())
@@ -74,14 +89,14 @@ async function fetchNextTask() {
     .get();
   if (tasksSnapshot.empty) return null;
   const doc = tasksSnapshot.docs[0];
-  return { id: doc.id, ...doc.data() };
+  return { id: doc.id, ...doc.data() } as AgentTask;
 }
 
-async function markTask(id: string, patch: any) {
+async function markTask(id: string, patch: Record<string, unknown>) {
   await db.collection('agent_tasks').doc(id).update(patch);
 }
 
-async function runTask(task: any) {
+async function runTask(task: AgentTask) {
   await markTask(task.id, { status: 'running', started_at: new Date(), attempt_count: (task.attempt_count || 0) + 1 });
   await logEvent(task.id, 'info', `Task started (attempt ${(task.attempt_count || 0) + 1})`);
 
@@ -104,12 +119,12 @@ async function runTask(task: any) {
         if (!creds) throw new Error('Credentials not found');
         const { url, username_selector, password_selector, selector } = task.parameters;
         await page.goto(url, { waitUntil: 'domcontentloaded' });
-        await page.fill(username_selector, creds.username);
-        await page.fill(password_selector, creds.password);
-        await page.press(password_selector, 'Enter');
+        await page.fill(username_selector!, creds.username);
+        await page.fill(password_selector!, creds.password);
+        await page.press(password_selector!, 'Enter');
         await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
         await logEvent(task.id, 'info', 'Login submitted');
-        const text = await page.textContent(selector).catch(()=>null);
+        const text = await page.textContent(selector!).catch(()=>null);
         await markTask(task.id, { status: 'success', result: { selector, text }, finished_at: new Date() });
         await logEvent(task.id, 'info', 'Extraction complete after login', { selector, text });
         break;
@@ -118,12 +133,13 @@ async function runTask(task: any) {
         await logEvent(task.id, 'error', 'Unknown action', { action: task.action });
         await markTask(task.id, { status: 'error', error: 'Unknown action', finished_at: new Date() });
     }
-  } catch (e: any) {
-    await logEvent(task.id, 'error', 'Execution failed', { error: e.message });
+  } catch (e: unknown) {
+    const errorMessage = e instanceof Error ? e.message : String(e);
+    await logEvent(task.id, 'error', 'Execution failed', { error: errorMessage });
     const max_attempts = task.max_attempts || 1;
     const attempt_count = task.attempt_count || 0;
     if (attempt_count + 1 >= max_attempts) {
-      await markTask(task.id, { status: 'error', error: `Failed after ${max_attempts} attempts: ${e.message}`, finished_at: new Date() });
+      await markTask(task.id, { status: 'error', error: `Failed after ${max_attempts} attempts: ${errorMessage}`, finished_at: new Date() });
     } else {
       const nextRun = new Date(Date.now() + 1000 * (2 ** attempt_count) * 5); // 5s, 10s, 20s...
       await markTask(task.id, { status: 'queued', next_run_at: nextRun });

@@ -275,7 +275,8 @@ export interface AIEmployeeTemplate {
   deploymentCost: number; // Cost per deployment
   monthlyCost: number; // Monthly subscription cost
   isPremium: boolean;
-  model: "GPT-3.5" | "GPT-4" | "Custom" | "Gemini-Pro"; // Added Gemini-Pro
+  model: "Claude-Sonnet-4-5";
+  personality: string; // Added personality property
   trainingData: string[];
   apiEndpoints: {
     generateContent: string;
@@ -304,7 +305,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 20,
     monthlyCost: 50,
     isPremium: false,
-    model: "Gemini-Pro",
+    model: "Claude-Sonnet-4-5",
+    personality: "Creative, witty, and persuasive.",
     trainingData: ["Marketing best practices", "Consumer behavior", "Ad platform data"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -330,7 +332,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 25,
     monthlyCost: 60,
     isPremium: false,
-    model: "Gemini-Pro",
+    model: "Claude-Sonnet-4-5",
+    personality: "Confident, assertive, and charming.",
     trainingData: ["Sales methodologies", "Product knowledge", "Customer interactions"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -356,7 +359,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 15,
     monthlyCost: 40,
     isPremium: false,
-    model: "GPT-3.5",
+    model: "Claude-Sonnet-4-5",
+    personality: "Empathetic, patient, and helpful.",
     trainingData: ["Customer service logs", "Product manuals", "FAQ databases"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -382,7 +386,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 30,
     monthlyCost: 75,
     isPremium: true,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Analytical, meticulous, and insightful.",
     trainingData: ["Statistical methods", "Database schemas", "Industry reports"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -408,7 +413,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 20,
     monthlyCost: 55,
     isPremium: false,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Eloquent, imaginative, and engaging.",
     trainingData: ["Content marketing guides", "Grammar rules", "Style guides"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -433,7 +439,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 25,
     monthlyCost: 60,
     isPremium: false,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Personable, organized, and discerning.",
     trainingData: ["HR best practices", "Job descriptions", "Interview guides"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -459,7 +466,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 35,
     monthlyCost: 80,
     isPremium: true,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Logical, precise, and innovative.",
     trainingData: ["Programming languages docs", "Design patterns", "Open-source codebases"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -485,7 +493,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 30,
     monthlyCost: 70,
     isPremium: true,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Authoritative, efficient, and strategic.",
     trainingData: ["Project management frameworks", "Case studies", "Team collaboration data"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -511,7 +520,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 40,
     monthlyCost: 90,
     isPremium: true,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Formal, cautious, and knowledgeable.",
     trainingData: ["Legal precedents", "Statutes", "Case law"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -537,7 +547,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 35,
     monthlyCost: 85,
     isPremium: true,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Prudent, analytical, and forward-looking.",
     trainingData: ["Financial markets data", "Economic indicators", "Personal finance guides"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -563,7 +574,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 20,
     monthlyCost: 50,
     isPremium: false,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Encouraging, clear, and patient.",
     trainingData: ["Educational curricula", "Academic papers", "Textbooks"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -588,7 +600,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 30,
     monthlyCost: 65,
     isPremium: true,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Inquisitive, thorough, and objective.",
     trainingData: ["Academic databases", "Research methodologies", "Scientific journals"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -613,7 +626,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 15,
     monthlyCost: 45,
     isPremium: false,
-    model: "GPT-3.5",
+    model: "Claude-Sonnet-4-5",
+    personality: "Proactive, organized, and encouraging.",
     trainingData: ["Productivity frameworks", "Personal development books", "Scheduling algorithms"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -639,7 +653,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 25,
     monthlyCost: 55,
     isPremium: false,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Expressive, imaginative, and unconventional.",
     trainingData: ["Artistic movements", "Creative writing examples", "Music compositions"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -664,7 +679,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 20,
     monthlyCost: 50,
     isPremium: false,
-    model: "GPT-3.5",
+    model: "Claude-Sonnet-4-5",
+    personality: "Methodical, patient, and helpful.",
     trainingData: ["IT documentation", "Troubleshooting guides", "System administration manuals"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -690,7 +706,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 30,
     monthlyCost: 70,
     isPremium: true,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Efficient, analytical, and detail-oriented.",
     trainingData: ["Supply chain models", "Logistics data", "Market forecasts"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -716,7 +733,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 35,
     monthlyCost: 85,
     isPremium: true,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Vigilant, analytical, and decisive.",
     trainingData: ["Cybersecurity frameworks", "Threat intelligence", "Penetration testing reports"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -742,7 +760,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 30,
     monthlyCost: 70,
     isPremium: true,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Visionary, user-focused, and collaborative.",
     trainingData: ["Product management principles", "User experience research", "Market trends"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -768,7 +787,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 30,
     monthlyCost: 70,
     isPremium: true,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Compassionate, accurate, and discreet.",
     trainingData: ["Medical guidelines", "Patient care protocols", "Healthcare regulations"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -794,7 +814,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 25,
     monthlyCost: 60,
     isPremium: false,
-    model: "GPT-4",
+    model: "Claude-Sonnet-4-5",
+    personality: "Articulate, strategic, and adaptable.",
     trainingData: ["Communication theories", "PR case studies", "Brand guidelines"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion",
@@ -819,7 +840,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     deploymentCost: 40,
     monthlyCost: 95,
     isPremium: true,
-    model: "Custom", // This one might use a custom orchestration logic
+    model: "Claude-Sonnet-4-5",
+    personality: "Strategic, decisive, and holistic.",
     trainingData: ["Workflow management systems", "Task delegation principles", "System architectures"],
     apiEndpoints: {
       generateContent: "/api/generate-chat-completion", // May still use this for high-level instructions

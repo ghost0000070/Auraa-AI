@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2, Send, CornerDownLeft, User, Bot } from 'lucide-react';
 import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getFunctions, httpsCallable, HttpsCallableResult } from 'firebase/functions';
 import { generativeModel } from '@/firebase'; // Import generativeModel
 
 interface ChatInterfaceProps {
@@ -72,7 +72,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
         // Fallback to Firebase Function for other models (now all Gemini via backend)
         const functions = getFunctions();
         const generateChatCompletion = httpsCallable(functions, 'generateChatCompletion');
-        const result = await generateChatCompletion({
+        const result: HttpsCallableResult<{response: string}> = await generateChatCompletion({
             employeeType,
             employeeName,
             businessContext,
@@ -80,7 +80,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
             history: messages,
             model: template?.model || 'gemini-1.5-flash-001', // Pass the model to the backend
         });
-        aiResponseText = (result.data as any).response;
+        aiResponseText = result.data.response;
       }
 
       const aiMessage: Message = { sender: 'ai', text: aiResponseText };
