@@ -34,5 +34,5 @@ jobs:
         with:
           action: deploy
           project: ${{ secrets.FIREBASE_PROJECT_ID }}
-          token: ${{ secrets.FIREBASE_TOKEN }}
+          service_account: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           only: hosting

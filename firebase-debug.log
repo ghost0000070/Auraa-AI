@@ -385,3 +385,288 @@
 [error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
 [debug] [2025-10-28T07:35:50.584Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
 [debug] [2025-10-28T07:35:50.584Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.779Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:23:40.802Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.784Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.785Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.789Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.790Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.790Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.791Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:23:40.804Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:23:40.804Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:23:40.805Z] > refreshing access token with scopes: []
+[debug] [2025-10-28T15:23:40.807Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-28T15:23:40.807Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-28T15:23:40.842Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.842Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.843Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:23:40.844Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:23:40.844Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:23:40.844Z] > refreshing access token with scopes: []
+[debug] [2025-10-28T15:23:40.845Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-28T15:23:40.845Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.806Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.808Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.808Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.813Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:23:40.824Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:23:40.824Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:23:40.824Z] > refreshing access token with scopes: []
+[debug] [2025-10-28T15:23:40.826Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-28T15:23:40.826Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-28T15:23:40.873Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.874Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.875Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.875Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.875Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:23:40.877Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:23:40.877Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:23:40.877Z] > refreshing access token with scopes: []
+[debug] [2025-10-28T15:23:40.878Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-28T15:23:40.878Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-28T15:23:40.924Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-28T15:23:40.924Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-28T15:23:40.925Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.926Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.927Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.927Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.928Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.928Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:23:40.929Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.929Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.930Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.937Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.938Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.938Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.939Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.939Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.940Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.940Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.940Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.940Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.940Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.940Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:23:40.941Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:23:40.941Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.941Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.942Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.942Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.942Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.942Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.946Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-28T15:23:40.946Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-28T15:23:40.956Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-28T15:23:40.956Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-28T15:23:40.968Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-28T15:23:40.968Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-28T15:23:40.968Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.969Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.969Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.970Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.970Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.970Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:23:40.971Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.971Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.971Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.977Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.978Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.978Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.978Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.978Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.979Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:23:40.979Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.979Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.979Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.980Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.981Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.981Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.982Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.982Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:23:40.982Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:23:40.982Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:23:40.982Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:23:40.982Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:33:32.659Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.664Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.665Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.666Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.667Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:33:32.668Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:33:32.668Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:33:32.680Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:33:32.680Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:33:32.681Z] > refreshing access token with scopes: []
+[debug] [2025-10-28T15:33:32.683Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-28T15:33:32.683Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-28T15:33:32.716Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:33:32.716Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:33:32.717Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:33:32.718Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:33:32.718Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:33:32.718Z] > refreshing access token with scopes: []
+[debug] [2025-10-28T15:33:32.719Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-28T15:33:32.719Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-28T15:33:32.804Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-28T15:33:32.804Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-28T15:33:32.824Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-28T15:33:32.824Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-28T15:33:32.824Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.825Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.826Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.827Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:33:32.827Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:33:32.827Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:33:32.828Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.828Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:33:32.828Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:33:32.840Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.841Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.841Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.842Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:33:32.842Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:33:32.842Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:33:32.843Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.843Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:33:32.843Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:33:32.844Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.845Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.846Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.847Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:33:32.847Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:33:32.847Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:33:32.847Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-28T15:33:32.847Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-28T15:33:32.847Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-28T15:34:50.625Z] ----------------------------------------------------------------------
+[debug] [2025-10-28T15:34:50.626Z] Command:       /nix/store/ws50yvm6vzlzf7jzz6n7xh4szddrack1-nodejs-20.19.1/bin/node /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/lib/bin/firebase.js login:ci
+[debug] [2025-10-28T15:34:50.627Z] CLI Version:   14.19.1
+[debug] [2025-10-28T15:34:50.627Z] Platform:      linux
+[debug] [2025-10-28T15:34:50.627Z] Node Version:  v20.19.1
+[debug] [2025-10-28T15:34:50.627Z] Time:          Tue Oct 28 2025 15:34:50 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-10-28T15:34:50.627Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-28T15:34:50.840Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-28T15:34:50.843Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:34:50.843Z] Checked if tokens are valid: false, expires at: 1761640242662
+[debug] [2025-10-28T15:34:50.843Z] > refreshing access token with scopes: []
+[debug] [2025-10-28T15:34:50.845Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-28T15:34:50.845Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-28T15:34:50.944Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-10-28T15:34:50.945Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Failed to fetch Firebase Project from current Studio Workspace: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[warn] ⚠  Authenticating with a `login:ci` token is deprecated and will be removed in a future major version of `firebase-tools`. Instead, use a service account key with `GOOGLE_APPLICATION_CREDENTIALS`: https://cloud.google.com/docs/authentication/getting-started 
+[info] 
+[info] Visit this URL on this device to log in:
+[info] https://accounts.google.com/o/oauth2/auth?client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com&scope=email%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloudplatformprojects.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffirebase%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&response_type=code&state=266599377&redirect_uri=http%3A%2F%2Flocalhost%3A9005
+[info] 
+[info] Waiting for authentication...
+[debug] [2025-10-28T15:34:54.389Z] >>> [apiv2][query] POST https://auth.firebase.tools/attest [none]
+[debug] [2025-10-28T15:34:54.389Z] >>> [apiv2][body] POST https://auth.firebase.tools/attest {"session_id":"245415ed-c196-45ef-8ba0-d67ce36aab38"}
+[debug] [2025-10-28T15:34:54.611Z] <<< [apiv2][status] POST https://auth.firebase.tools/attest 200
+[debug] [2025-10-28T15:34:54.611Z] <<< [apiv2][body] POST https://auth.firebase.tools/attest {"token":"3TYhtexr0Ao70BYWgizjV-ZYsL4qfuf1Zy5VioLH6Ec"}
+[info] 
+[info] To sign in to the Firebase CLI:
+[info] 
+[info] 1. Take note of your session ID:
+[info] 
+[info]    24541
+[info] 
+[info] 2. Visit the URL below on any device and follow the instructions to get your code:
+[info] 
+[info]    https://auth.firebase.tools/login?code_challenge=xVR3j7zDrP4B3rcEfd9nbutYAtDGwDarJKV5zABxSg0&session=245415ed-c196-45ef-8ba0-d67ce36aab38&attest=3TYhtexr0Ao70BYWgizjV-ZYsL4qfuf1Zy5VioLH6Ec
+[info] 
+[info] 3. Paste or enter the authorization code below once you have it:
+[info] 
