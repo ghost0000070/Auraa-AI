@@ -593,7 +593,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     skills: ["Public Relations", "Corporate Communications", "Technical Writing", "Social Media Management", "Crisis Management"],
     deploymentCost: 25,
     monthlyCost: 60,
-    isPremium: false,.
+    isPremium: false,
     model: "Claude-Sonnet-4-5",
     personality: "Articulate, strategic, and adaptable.",
     trainingData: ["Communication theories", "PR case studies", "Brand guidelines"],
