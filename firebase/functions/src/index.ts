@@ -17,6 +17,9 @@ import { z } from 'zod';
 
 // Define the API key secret
 const googleAIapiKey = defineSecret("GOOGLE_API_KEY");
+const adminEmail = defineSecret("ADMIN_EMAIL");
+const adminTempPassword = defineSecret("ADMIN_TEMP_PASSWORD");
+
 
 // Configure Genkit
 genkit({
@@ -196,21 +199,21 @@ export const deployAiEmployee = functions.runWith({ enforceAppCheck: true, consu
   return { success: true, message: 'AI Employee deployed successfully.' };
 });
 
-export const fixAdminAccount = functions.runWith({ enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async () => {
-  const adminEmail = 'ghostspooks@icloud.com';
-  const tempPassword = 'AdminReset2024!';
+export const fixAdminAccount = functions.runWith({ secrets: [adminEmail, adminTempPassword], enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async () => {
+  const adminEmailValue = adminEmail.value();
+  const tempPasswordValue = adminTempPassword.value();
 
   try {
-    const user = await auth.getUserByEmail(adminEmail);
+    const user = await auth.getUserByEmail(adminEmailValue);
     await auth.updateUser(user.uid, {
-      password: tempPassword,
+      password: tempPasswordValue,
       emailVerified: true,
     });
     await auth.setCustomUserClaims(user.uid, { admin: true });
 
     await db.collection('user_roles').doc(user.uid).set({ role: 'admin' }, { merge: true });
     await db.collection('subscribers').doc(user.uid).set({
-      email: adminEmail,
+      email: adminEmailValue,
       subscribed: true,
       subscription_tier: 'Enterprise',
       subscription_end: null,
@@ -220,22 +223,22 @@ export const fixAdminAccount = functions.runWith({ enforceAppCheck: true, consum
       success: true,
       message: 'Admin account fixed successfully',
       user_id: user.uid,
-      email: adminEmail,
-      temporary_password: tempPassword,
+      email: adminEmailValue,
+      temporary_password: tempPasswordValue,
       note: 'Please log in with this temporary password and change it immediately'
     };
   } catch (error: unknown) {
     if (error instanceof Error && (error as {code: string}).code === 'auth/user-not-found') {
       const user = await auth.createUser({
-        email: adminEmail,
-        password: tempPassword,
+        email: adminEmailValue,
+        password: tempPasswordValue,
         emailVerified: true,
       });
       await auth.setCustomUserClaims(user.uid, { admin: true });
 
       await db.collection('user_roles').doc(user.uid).set({ role: 'admin' });
       await db.collection('subscribers').doc(user.uid).set({
-        email: adminEmail,
+        email: adminEmailValue,
         subscribed: true,
         subscription_tier: 'Enterprise',
         subscription_end: null,
@@ -245,8 +248,8 @@ export const fixAdminAccount = functions.runWith({ enforceAppCheck: true, consum
         success: true,
         message: 'Admin account created successfully',
         user_id: user.uid,
-        email: adminEmail,
-        temporary_password: tempPassword,
+        email: adminEmailValue,
+        temporary_password: tempPasswordValue,
         note: 'Please log in with this temporary password and change it immediately'
       };
     } else if (error instanceof Error) {
@@ -257,19 +260,21 @@ export const fixAdminAccount = functions.runWith({ enforceAppCheck: true, consum
   }
 });
 
-export const resetAdminPassword = functions.runWith({ enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async () => {
-  const adminEmail = 'ghostspooks@icloud.com';
+export const resetAdminPassword = functions.runWith({ secrets: [adminEmail], enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async () => {
+  const adminEmailValue = adminEmail.value();
 
   try {
-    const link = await auth.generatePasswordResetLink(adminEmail);
+    const link = await auth.generatePasswordResetLink(adminEmailValue);
     // You would typically send this link to the user via email.\n
 
+
     // For this migration, we'll just return it.\n
+
 
     return {
       success: true,
       message: 'Password reset link generated successfully',
-      email: adminEmail,
+      email: adminEmailValue,
       resetLink: link,
       note: 'This link should be sent to the user to reset their password.'
     };
@@ -345,7 +350,7 @@ export const processAiTeamCommunication = functions.firestore
       // 3. Craft the prompt for Gemini
       // Include historical context if available in the 'metadata' of the communication
       const chatHistory = (communication.metadata?.history || []).map((msg: { sender: string; content: string; }) => ({
-        role: msg.sender === 'User' ? 'user' : 'model',
+        role: msg.sender === 'User' ? 'model' : 'user',
         parts: [{ text: msg.content }],
       }));
 
