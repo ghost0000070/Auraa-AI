@@ -59,12 +59,13 @@ export const helloGenkitFlow = onCallGenkit(
     secrets: [googleAIapiKey],
     authPolicy: hasClaim('email_verified'), // Example policy: user must have a verified email
     enforceAppCheck: true, // Enforce App Check
+    consumeAppCheckToken: true,
   },
   helloFlow
 );
 
 
-export const generateChatCompletion = https.onCall(async (request: https.CallableRequest<{ prompt: string; history: unknown[]; model: string; }>) => {
+export const generateChatCompletion = functions.runWith({ enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async (request: https.CallableRequest<{ prompt: string; history: unknown[]; model: string; }>) => {
   const { prompt, history, model: requestedModel } = request.data;
 
   // This function currently uses gemini-1.5-flash-001 by default
@@ -98,7 +99,7 @@ export const generateChatCompletion = https.onCall(async (request: https.Callabl
   return { response: response.candidates[0].content.parts[0].text };
 });
 
-export const customerPortal = https.onCall(async (request: https.CallableRequest<{ user_id: string }>) => {
+export const customerPortal = functions.runWith({ enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async (request: https.CallableRequest<{ user_id: string }>) => {
   const { user_id } = request.data;
 
   if (!user_id) {
@@ -132,7 +133,7 @@ export const customerPortal = https.onCall(async (request: https.CallableRequest
 });
 
 
-export const deployAiEmployee = https.onCall(async (request: https.CallableRequest<{ deploymentRequestId: string }>) => {
+export const deployAiEmployee = functions.runWith({ enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async (request: https.CallableRequest<{ deploymentRequestId: string }>) => {
   const { deploymentRequestId } = request.data;
 
   if (!deploymentRequestId) {
@@ -195,7 +196,7 @@ export const deployAiEmployee = https.onCall(async (request: https.CallableReque
   return { success: true, message: 'AI Employee deployed successfully.' };
 });
 
-export const fixAdminAccount = https.onCall(async () => {
+export const fixAdminAccount = functions.runWith({ enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async () => {
   const adminEmail = 'ghostspooks@icloud.com';
   const tempPassword = 'AdminReset2024!';
 
@@ -224,7 +225,7 @@ export const fixAdminAccount = https.onCall(async () => {
       note: 'Please log in with this temporary password and change it immediately'
     };
   } catch (error: unknown) {
-    if (error instanceof Error && 'code' in error && (error as {code: string}).code === 'auth/user-not-found') {
+    if (error instanceof Error && (error as {code: string}).code === 'auth/user-not-found') {
       const user = await auth.createUser({
         email: adminEmail,
         password: tempPassword,
@@ -256,7 +257,7 @@ export const fixAdminAccount = https.onCall(async () => {
   }
 });
 
-export const resetAdminPassword = https.onCall(async () => {
+export const resetAdminPassword = functions.runWith({ enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async () => {
   const adminEmail = 'ghostspooks@icloud.com';
 
   try {

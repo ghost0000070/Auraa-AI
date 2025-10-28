@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import { db } from "@/firebase";
 import { doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import { Header } from "@/components/Header";
 
 interface BusinessProfile {

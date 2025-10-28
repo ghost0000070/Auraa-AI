@@ -1,370 +1,263 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot, doc, getDoc, query, where, orderBy, updateDoc, Timestamp } from 'firebase/firestore';
+import { db } from '@/firebase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import { 
   Activity, 
-  TrendingUp, 
-  Users, 
-  MessageSquare, 
-  Target, 
-  Brain,
-  ArrowUpRight,
-  PlayCircle,
-  Clock,
-  CheckCircle
+  Code, 
+  ChevronDown,
+  ChevronUp,
+  AlertCircle
 } from 'lucide-react';
-import { db } from '@/firebase';
-import { collection, query, where, getDocs, orderBy, limit, Timestamp } from 'firebase/firestore';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Button } from '@/components/ui/button';
 
-interface DashboardStats {
-  activeWorkflows: number;
-  completedTasks: number;
-  teamMessages: number;
-  businessGoals: number;
-  unreadMessages: number;
-  runningExecutions: number;
+interface AgentTask {
+  id: string;
+  action: string;
+  status: 'success' | 'running' | 'queued' | 'error';
+  parameters: {
+    url?: string;
+    [key: string]: unknown;
+  };
+  result?: unknown;
+  error?: string;
+  finished_at?: Timestamp;
+  createdAt: Timestamp;
 }
 
-interface ExecutionActivityItem {
-  type: 'execution';
-  data: { id: string; status: string; created_at: Timestamp; current_step?: number };
+interface Communication {
+  id: string;
+  sender_employee: string;
+  recipient_employee: string;
+  content: string;
+  is_read: boolean;
+  created_at?: Timestamp;
+}
+
+interface Metric {
+  id: string;
+  name: string;
+  value: number;
   timestamp: Timestamp;
 }
-interface CommunicationActivityItem {
-  type: 'communication';
-  data: { id: string; message_type: string; created_at: Timestamp; is_read: boolean; sender_employee?: string; content?: string };
-  timestamp: Timestamp;
-}
-type ActivityItem = ExecutionActivityItem | CommunicationActivityItem;
 
 const AITeamDashboard = () => {
   const { user } = useAuth();
-  const [stats, setStats] = useState<DashboardStats>({
-    activeWorkflows: 0,
-    completedTasks: 0,
-    teamMessages: 0,
-    businessGoals: 0,
-    unreadMessages: 0,
-    runningExecutions: 0
-  });
-  const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [tasks, setTasks] = useState<AgentTask[]>([]);
+  const [communications, setCommunications] = useState<Communication[]>([]);
+  const [metrics, setMetrics] = useState<Metric[]>([]);
+  const [expandedTask, setExpandedTask] = useState<string | null>(null);
 
-  const fetchDashboardData = useCallback(async () => {
-    if (!user) return;
-    try {
-      setLoading(true);
+  useEffect(() => {
+    if (user) {
+      const tasksQuery = query(
+        collection(db, 'agent_tasks'),
+        where('owner_user', '==', user.uid),
+        orderBy('createdAt', 'desc')
+      );
       
-      const baseQuery = (coll: string) => collection(db, coll);
-      const userQuery = (coll: string) => query(baseQuery(coll), where('user_id', '==', user.uid));
+      const commsQuery = query(
+        collection(db, 'ai_team_communications'),
+        where('user_id', '==', user.uid),
+        orderBy('created_at', 'desc')
+      );
 
-      const [
-        workflowsSnapshot,
-        executionsSnapshot,
-        communicationsSnapshot,
-        goalsSnapshot
-      ] = await Promise.all([
-        getDocs(query(userQuery('ai_workflows'), where('is_active', '==', true))),
-        getDocs(query(userQuery('ai_team_executions'), orderBy('created_at', 'desc'), limit(5))),
-        getDocs(query(userQuery('ai_team_communications'), orderBy('created_at', 'desc'))),
-        getDocs(userQuery('business_profiles'))
-      ]);
+      const metricsQuery = query(
+        collection(db, 'agent_metrics'),
+        where('user_id', '==', user.uid),
+        orderBy('timestamp', 'desc')
+      );
 
-      const executionsData = executionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      const communicationsData = communicationsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-      const completedExecutions = executionsData.filter(e => e.status === 'completed').length;
-      const unreadMessages = communicationsData.filter(c => !c.is_read).length;
-      const runningExecutions = executionsData.filter(e => e.status === 'running').length;
-
-      setStats({
-        activeWorkflows: workflowsSnapshot.size,
-        completedTasks: completedExecutions,
-        teamMessages: communicationsSnapshot.size,
-        businessGoals: goalsSnapshot.size,
-        unreadMessages,
-        runningExecutions
+      const unsubscribeTasks = onSnapshot(tasksQuery, (snapshot) => {
+        const tasksData = snapshot.docs.map(docSnapshot => ({ id: docSnapshot.id, ...docSnapshot.data() } as AgentTask));
+        setTasks(tasksData);
+      }, (error) => {
+        console.error("Error fetching agent tasks: ", error);
+        toast.error("Failed to fetch agent tasks.");
       });
 
-      const activity: ActivityItem[] = [
-        ...executionsData.map((e): ExecutionActivityItem => ({
-          type: 'execution',
-          data: e as ExecutionActivityItem['data'],
-          timestamp: e.created_at as Timestamp
-        })),
-        ...communicationsData.slice(0, 3).map((c): CommunicationActivityItem => ({
-          type: 'communication',
-          data: c as CommunicationActivityItem['data'],
-          timestamp: c.created_at as Timestamp
-        }))
-      ].sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis()).slice(0, 6);
+      const unsubscribeComms = onSnapshot(commsQuery, async (snapshot) => {
+        try {
+          const commsData = await Promise.all(snapshot.docs.map(async (docSnapshot) => {
+            const comm = { id: docSnapshot.id, ...docSnapshot.data() } as Communication;
+            if (!comm.is_read && comm.recipient_employee === 'User') {
+              let senderName = comm.sender_employee;
+              if(senderName && senderName !== 'System') {
+                  try {
+                      const employeeDocRef = doc(db, 'aiEmployees', senderName);
+                      const employeeDoc = await getDoc(employeeDocRef);
+                      if (employeeDoc.exists()) {
+                          const employeeData = employeeDoc.data() as { name?: string };
+                          if (employeeData?.name) {
+                            senderName = employeeData.name;
+                          }
+                      }
+                  } catch(e) {
+                      console.error(`Error fetching employee document for ${senderName}:`, e);
+                      // Fallback to original sender name
+                  }
+              }
 
-      setRecentActivity(activity);
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-      toast.error("Error", {
-        description: "Failed to fetch dashboard data",
+              toast(`New Message from ${senderName}`, {
+                description: comm.content,
+              });
+              await updateDoc(docSnapshot.ref, { is_read: true });
+            }
+            return comm;
+          }));
+          setCommunications(commsData);
+        } catch (error) {
+          console.error("Error processing communications: ", error);
+          toast.error("Failed to process team communications.");
+        }
+      }, (error) => {
+        console.error("Error fetching team communications: ", error);
+        toast.error("Failed to fetch team communications.");
       });
-    } finally {
-      setLoading(false);
+
+      const unsubscribeMetrics = onSnapshot(metricsQuery, (snapshot) => {
+        const metricsData = snapshot.docs.map(docSnapshot => ({ id: docSnapshot.id, ...docSnapshot.data() } as Metric));
+        setMetrics(metricsData);
+      }, (error) => {
+        console.error("Error fetching performance metrics: ", error);
+        toast.error("Failed to fetch performance metrics.");
+      });
+
+      return () => {
+        unsubscribeTasks();
+        unsubscribeComms();
+        unsubscribeMetrics();
+      };
     }
   }, [user]);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, [fetchDashboardData]);
-
-  const getActivityIcon = (type: string, status?: string) => {
-    if (type === 'execution') {
-      switch (status) {
-        case 'completed': return <CheckCircle className="w-4 h-4 text-green-500" />;
-        case 'failed': return <Activity className="w-4 h-4 text-red-500" />;
-        case 'running': return <PlayCircle className="w-4 h-4 text-blue-500" />;
-        default: return <Clock className="w-4 h-4 text-yellow-500" />;
-      }
+  const getStatusColor = (status: AgentTask['status']) => {
+    switch (status) {
+      case 'success':
+        return 'bg-green-500';
+      case 'running':
+        return 'bg-blue-500';
+      case 'queued':
+        return 'bg-yellow-500';
+      case 'error':
+        return 'bg-red-500';
+      default:
+        return 'bg-gray-500';
     }
-    return <MessageSquare className="w-4 h-4 text-purple-500" />;
   };
-
-  const quickActions = [
-    {
-      title: 'Create Workflow',
-      description: 'Build a new AI team workflow',
-      icon: Users,
-      action: () => window.location.href = '/ai-team-workflows',
-      color: 'bg-blue-500'
-    },
-    {
-      title: 'Set Business Goal',
-      description: 'Define a new business objective',
-      icon: Target,
-      action: () => window.location.href = '/business-intelligence',
-      color: 'bg-green-500'
-    },
-    {
-      title: 'View Team Chat',
-      description: 'Check team communications',
-      icon: MessageSquare,
-      action: () => window.location.href = '/ai-team-coordination',
-      color: 'bg-purple-500'
-    },
-    {
-      title: 'AI Insights',
-      description: 'Review shared knowledge',
-      icon: Brain,
-      action: () => window.location.href = '/business-intelligence',
-      color: 'bg-orange-500'
+  
+  const getIconForAction = (action: string) => {
+    switch(action) {
+      case 'scrape_dashboard':
+      case 'login_and_scrape':
+        return <Activity className="h-5 w-5 mr-2" />;
+      default:
+        return <Code className="h-5 w-5 mr-2" />;
     }
-  ];
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardContent className="p-6">
-                <div className="h-8 bg-gray-200 rounded mb-2"></div>
-                <div className="h-6 bg-gray-200 rounded"></div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
   }
 
+  const toggleExpand = (taskId: string) => {
+    setExpandedTask(expandedTask === taskId ? null : taskId);
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Active Workflows</p>
-                <p className="text-2xl font-bold">{stats.activeWorkflows}</p>
-              </div>
-              <div className="p-3 rounded-full bg-blue-100">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-            <div className="flex items-center mt-4 text-sm">
-              <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-              <span className="text-green-500 font-medium">+12%</span>
-              <span className="text-muted-foreground ml-2">from last week</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Completed Tasks</p>
-                <p className="text-2xl font-bold">{stats.completedTasks}</p>
-              </div>
-              <div className="p-3 rounded-full bg-green-100">
-                <CheckCircle className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-            <div className="flex items-center mt-4 text-sm">
-              <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-              <span className="text-green-500 font-medium">+23%</span>
-              <span className="text-muted-foreground ml-2">from last week</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Team Messages</p>
-                <p className="text-2xl font-bold">{stats.teamMessages}</p>
-              </div>
-              <div className="p-3 rounded-full bg-purple-100">
-                <MessageSquare className="w-6 h-6 text-purple-600" />
-              </div>
-            </div>
-            {stats.unreadMessages > 0 && (
-              <div className="flex items-center mt-4">
-                <Badge variant="destructive" className="text-xs">
-                  {stats.unreadMessages} unread
-                </Badge>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Business Goals</p>
-                <p className="text-2xl font-bold">{stats.businessGoals}</p>
-              </div>
-              <div className="p-3 rounded-full bg-orange-100">
-                <Target className="w-6 h-6 text-orange-600" />
-              </div>
-            </div>
-            <div className="flex items-center mt-4 text-sm">
-              <span className="text-muted-foreground">Active objectives</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Activity */}
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Activity className="w-5 h-5 mr-2" />
-                Recent Team Activity
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentActivity.map((activity, index) => (
-                  <div key={index} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-muted/50">
-                    <div className="flex-shrink-0 mt-1">
-                      {getActivityIcon(activity.type, activity.type === 'execution' ? activity.data.status : undefined)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium">
-                          {activity.type === 'execution' 
-                            ? `Workflow execution ${activity.data.status}`
-                            : `New message from ${activity.data.sender_employee || 'System'}`
-                          }
-                        </p>
-                        <span className="text-xs text-muted-foreground">
-                          {activity.timestamp.toDate().toLocaleTimeString()}
-                        </span>
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+      <Card className="lg:col-span-2">
+        <CardHeader>
+          <CardTitle>AI Agent Tasks</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4 max-h-[600px] overflow-y-auto">
+            {tasks.map((task) => (
+              <Collapsible key={task.id} open={expandedTask === task.id} onOpenChange={() => toggleExpand(task.id)}>
+                <Card className="w-full">
+                  <CollapsibleTrigger asChild>
+                    <div className="flex justify-between items-center p-4 cursor-pointer">
+                      <div className="flex items-center">
+                        {getIconForAction(task.action)}
+                        <span className="font-semibold">{task.action?.replace(/_/g, ' ')}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        {activity.type === 'execution' 
-                          ? `Step ${activity.data.current_step || 1} • ${activity.data.status}`
-                          : activity.data.content?.slice(0, 80) + '...'
-                        }
+                      <div className="flex items-center">
+                        <Badge className={`${getStatusColor(task.status)} text-white`}>{task.status}</Badge>
+                        <Button variant="ghost" size="sm">
+                          {expandedTask === task.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </div>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="p-4 border-t">
+                      <p><strong>URL:</strong> {task.parameters?.url}</p>
+                      {task.result && <p><strong>Result:</strong> <pre className="whitespace-pre-wrap break-all max-h-60 overflow-auto">{JSON.stringify(task.result, null, 2)}</pre></p>}
+                      {task.error && <p className="text-red-500"><strong>Error:</strong> {task.error}</p>}
+                      <p className="text-sm text-gray-500 mt-2">
+                        Last Run: {task.finished_at ? new Date(task.finished_at.seconds * 1000).toLocaleString() : 'N/A'}
                       </p>
                     </div>
-                  </div>
-                ))}
-
-                {recentActivity.length === 0 && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Activity className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>No recent activity. Start by creating a workflow!</p>
-                  </div>
-                )}
+                  </CollapsibleContent>
+                </Card>
+              </Collapsible>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>Team Communications</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4 max-h-[600px] overflow-y-auto">
+            {communications.map((comm) => (
+              <div key={comm.id} className="p-3 bg-gray-50 rounded-lg">
+                <div className="flex justify-between">
+                  <p className="font-bold text-sm">
+                    {comm.sender_employee === 'User' ? 'You' : comm.sender_employee} 
+                    <span className="font-normal"> to </span> 
+                    {comm.recipient_employee === 'User' ? 'You' : comm.recipient_employee}
+                  </p>
+                  <span className="text-xs text-gray-500">
+                    {comm.created_at ? new Date(comm.created_at.seconds * 1000).toLocaleTimeString() : ''}
+                  </span>
+                </div>
+                <p className="text-sm mt-1">{comm.content}</p>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Quick Actions */}
-        <div>
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {quickActions.map((action, index) => {
-                  const IconComponent = action.icon;
-                  return (
-                    <Button
-                      key={index}
-                      variant="ghost"
-                      className="w-full justify-start h-auto p-4"
-                      onClick={action.action}
-                    >
-                      <div className={`p-2 rounded-lg ${action.color} mr-3`}>
-                        <IconComponent className="w-4 h-4 text-white" />
-                      </div>
-                      <div className="text-left flex-1">
-                        <p className="font-medium">{action.title}</p>
-                        <p className="text-sm text-muted-foreground">{action.description}</p>
-                      </div>
-                      <ArrowUpRight className="w-4 h-4 text-muted-foreground" />
-                    </Button>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Running Executions */}
-      {stats.runningExecutions > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <PlayCircle className="w-5 h-5 mr-2" />
-              Currently Running
-              <Badge variant="default" className="ml-2">
-                {stats.runningExecutions} active
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm text-muted-foreground">
-              Your AI team is currently processing {stats.runningExecutions} workflow execution{stats.runningExecutions > 1 ? 's' : ''}.
-              <Button variant="link" className="p-0 h-auto text-sm" onClick={() => window.location.href = '/ai-team-coordination'}>
-                View details →
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <Card className="lg:col-span-3">
+        <CardHeader>
+          <CardTitle>Performance Metrics</CardTitle>
+        </CardHeader>
+        <CardContent>
+           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {metrics.slice(0, 4).map(metric => (
+                <Card key={metric.id}>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">{metric.name}</CardTitle>
+                        {metric.name === 'Tasks Failed' && metric.value > 0 ? <AlertCircle className="h-4 w-4 text-red-500"/> : <Activity className="h-4 w-4 text-muted-foreground"/>}
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{metric.value}</div>
+                        <p className="text-xs text-muted-foreground">
+                            {metric.timestamp ? new Date(metric.timestamp.seconds * 1000).toLocaleDateString() : ''}
+                        </p>
+                    </CardContent>
+                </Card>
+              ))}
+           </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

@@ -1,253 +1,33 @@
 import {
-  BrainCircuit,
-  Building,
-  BriefcaseBusiness,
-  TrendingUp,
-  MessageSquare,
-  Shield,
-  Search,
-  BookOpen,
-  DollarSign,
-  Heart,
-  Lightbulb,
-  Palette,
   Megaphone,
-  Network,
-  Rocket,
-  Settings,
-  ShieldCheck,
-  Zap,
-  BotMessageSquare,
-  UserRoundSearch,
-  ScrollText,
-  Gem,
-  BarChart,
-  ShoppingCart,
-  HardHat,
-  Scale,
-  Code,
-  Globe,
-  Wallet,
-  CalendarDays,
-  Hammer,
-  UsersRound,
-  FileText,
-  Headset,
-  Package,
-  GanttChart,
-  PiggyBank,
-  Handshake,
-  Workflow,
-  ClipboardList,
-  Speech,
-  LayoutDashboard,
-  BellRing,
-  Award,
-  CircleDollarSign,
-  LibraryBig,
-  SquareDashedKanban,
-  FileClock,
-  Send,
-  LineChart,
-  ShieldAlert,
-  CloudCog,
-  Factory,
-  PenTool,
-  MessageCircleQuestion,
-  Wand2,
-  ListTodo,
-  MonitorCheck,
-  MegaphoneOff,
-  Gauge,
-  Landmark,
-  PiggyBankOff,
-  UserCog,
-  Kanban,
-  Fingerprint,
-  MessageCircleMore,
-  FileJson,
-  FlaskConical,
-  Puzzle,
-  Mic,
-  Video,
-  Newspaper,
-  BookCopy,
-  FolderOpen,
-  Server,
-  KeyRound,
-  CreditCard,
-  Target,
-  Mail,
-  Store,
-  WalletMinimal,
-  Laptop,
-  Coins,
-  ReceiptText,
-  RefreshCcw,
-  AreaChart,
-  UserCheck,
-  Boxes,
-  Gift,
-  HandCoins,
-  MessageSquareDiff,
-  Cloudy,
-  CloudSun,
-  PaletteIcon,
-  ShoppingBag,
-  Ticket,
-  Trophy,
-  BadgeDollarSign,
-  LightbulbOff,
-  Banknote,
-  Sparkles,
-  UserPlus,
-  RocketLaunch,
-  FileStack,
-  MessageSquareMore,
-  GitFork,
-  HeartCrack,
-  CloudOff,
-  FactoryOff,
-  SpeechIcon,
-  LayoutGrid,
-  BarChartHorizontalBig,
-  BriefcaseMedical,
-  MailOpen,
-  CalendarCheck,
-  Building2,
-  HandshakeIcon,
-  UserRoundX,
-  ClipboardType,
-  ListChecks,
-  Hourglass,
-  BadgeInfo,
-  BadgeAlert,
-  ClipboardCopy,
-  UserX,
-  FileWarning,
-  MessageSquareWarning,
-  AlertTriangle,
-  FileCheck,
-  ThumbsUp,
-  ThumbsDown,
-  MegaphoneDot,
-  LightbulbModern,
-  PenLine,
-  GanttChartSquare,
-  CloudUpload,
-  DatabaseZap,
-  NetworkIcon,
-  MessageSquareHeart,
-  ShieldMinus,
-  Brain,
-  MessageSquareQuote,
-  MessageSquareText,
-  MessageSquareCode,
-  MessageSquareOff,
-  MessageSquarePlus,
-  MessageSquareReply,
-  MessageSquareShare,
-  MessageSquareShrink,
-  MessageSquareSlash,
-  MessageSquareTextIcon,
-  MessageSquareX,
-  PenSquare,
-  FilePen,
-  FilePlus,
-  FileMinus,
-  FileType,
-  FileSearch,
-  FileSliders,
-  FileKey,
-  FileLock,
-  FileClockIcon,
-  FileTerminal,
-  FileVolume,
-  FileBadge,
-  FileBarChart,
-  FileBox,
-  FileAxis3D,
-  FileCode,
-  FileDigit,
-  FileDiff,
-  FileQuestion,
-  FileRibbon,
-  FilePieChart,
-  FileSpreadsheet,
-  FileTextIcon,
-  FileSymlink,
-  FileType2,
-  FileWarningIcon,
-  FolderDot,
-  FolderKanban,
-  FolderOpenDot,
-  FolderSearch2,
-  FolderTree,
-  FolderX,
-  FolderPen,
-  FolderArchive,
-  FolderClock,
-  FolderCog,
-  FolderCode,
-  FolderGit,
-  FolderGit2,
-  FolderHeart,
-  FolderInput,
-  FolderKey,
-  FolderLock,
-  FolderMinus,
-  FolderOutput,
-  FolderPlus,
-  FolderRoot,
-  FolderSync,
-  FolderUp,
-  FolderUpDot,
-  FolderUser,
-  FolderVolume,
-  FolderWarning,
-  FolderX2,
-  Home,
-  Users,
-  Briefcase,
-  Layers,
-  BarChart3,
-  Bell,
-  Settings2,
-  MessageSquareMoreIcon,
-  PieChart,
-  LineChartIcon,
-  Cloud,
-  Cpu,
+  DollarSign,
   Database,
-  GlobeIcon,
-  ServerCog,
-  ShieldEllipsis,
-  ShieldPlus,
-  ShieldQuestion,
-  ShieldX,
-  TabletSmartphone,
-  Type,
-  Unplug,
-  UploadCloud,
-  User,
-  UserCogIcon,
-  UserPlusIcon,
-  UserSquare,
-  UserXIcon,
-  Webhook,
-  Wifi,
-  WorkflowIcon,
-  X,
-  ZapIcon,
+  PenTool,
+  Users,
+  Code,
+  GanttChart,
+  Scale,
+  PiggyBank,
+  BookOpen,
+  FlaskConical,
+  CalendarDays,
+  Palette,
+  Settings,
+  Boxes,
+  ShieldCheck,
+  Briefcase,
+  Stethoscope,
+  MessageSquareText,
+  Workflow,
 } from "lucide-react";
 
 export interface AIEmployeeTemplate {
   id: string;
   name: string;
   description: string;
-  icon: React.ElementType;
+  icon: React.ElementType | string;
   color: string;
-  image: string; // Added image property
+  image: string; 
   category:
     | "Marketing"
     | "Sales"
@@ -272,11 +52,11 @@ export interface AIEmployeeTemplate {
     | "Project Management";
   tasks: string[];
   skills: string[];
-  deploymentCost: number; // Cost per deployment
-  monthlyCost: number; // Monthly subscription cost
+  deploymentCost: number;
+  monthlyCost: number;
   isPremium: boolean;
   model: "Claude-Sonnet-4-5";
-  personality: string; // Added personality property
+  personality: string; 
   trainingData: string[];
   apiEndpoints: {
     generateContent: string;
@@ -292,7 +72,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Crafts compelling marketing campaigns, analyzes market trends, and optimizes ad spend.",
     icon: Megaphone,
-    color: "#EF4444", // Red-500
+    color: "#EF4444", 
     image: "/src/assets/viral-vortex-guardian.jpg",
     category: "Marketing",
     tasks: [
@@ -319,7 +99,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Identifies high-potential leads, personalizes outreach, and closes deals more efficiently.",
     icon: DollarSign,
-    color: "#F97316", // Orange-500
+    color: "#F97316", 
     image: "/src/assets/deal-striker-guardian.jpg",
     category: "Sales",
     tasks: [
@@ -345,8 +125,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     name: "Support Sentinel",
     description:
       "Provides instant, accurate customer support, resolves common issues, and escalates complex queries.",
-    icon: Headset,
-    color: "#10B981", // Emerald-500
+    icon: "//developers.google.com/admob/images/format-rewarded.svg",
+    color: "#10B981", 
     image: "/src/assets/support-sentinel-guardian.jpg",
     category: "Customer Service",
     tasks: [
@@ -373,7 +153,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Collects, cleans, and analyzes vast datasets to provide actionable business intelligence.",
     icon: Database,
-    color: "#3B82F6", // Blue-500
+    color: "#3B82F6", 
     image: "/src/assets/data-daemon-guardian.jpg",
     category: "Analytics",
     tasks: [
@@ -400,7 +180,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Generates high-quality articles, blog posts, social media updates, and video scripts.",
     icon: PenTool,
-    color: "#8B5CF6", // Violet-500
+    color: "#8B5CF6", 
     image: "/src/assets/word-smith-guardian.jpg",
     category: "Content Creation",
     tasks: [
@@ -426,7 +206,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Automates recruitment, screens candidates, and assists with onboarding processes.",
     icon: Users,
-    color: "#EC4899", // Pink-500
+    color: "#EC4899", 
     image: "/src/assets/talent-scout-guardian.jpg",
     category: "HR",
     tasks: [
@@ -453,7 +233,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Writes, debugs, and optimizes code across various programming languages and frameworks.",
     icon: Code,
-    color: "#60A5FA", // Blue-400
+    color: "#60A5FA", 
     image: "/src/assets/code-corsair-guardian.jpg",
     category: "Development",
     tasks: [
@@ -480,7 +260,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Plans, organizes, and tracks projects, ensuring timely completion and efficient resource allocation.",
     icon: GanttChart,
-    color: "#A855F7", // Purple-500
+    color: "#A855F7", 
     image: "/src/assets/task-master-guardian.jpg",
     category: "Project Management",
     tasks: [
@@ -507,7 +287,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Drafts legal documents, analyzes contracts, and provides insights on compliance.",
     icon: Scale,
-    color: "#059669", // Green-600
+    color: "#059669", 
     image: "/src/assets/lex-machina-guardian.jpg",
     category: "Legal",
     tasks: [
@@ -534,7 +314,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Offers personalized financial advice, investment strategies, and budget planning.",
     icon: PiggyBank,
-    color: "#FCD34D", // Yellow-400
+    color: "#FCD34D", 
     image: "/src/assets/profit-prophet-guardian.jpg",
     category: "Finance",
     tasks: [
@@ -561,7 +341,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Provides personalized learning, explains complex concepts, and creates study materials.",
     icon: BookOpen,
-    color: "#6366F1", // Indigo-500
+    color: "#6366F1", 
     image: "/src/assets/knowledge-node-guardian.jpg",
     category: "Education",
     tasks: [
@@ -587,7 +367,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Conducts in-depth research, synthesizes information, and summarizes findings.",
     icon: FlaskConical,
-    color: "#9CA3AF", // Gray-400
+    color: "#9CA3AF", 
     image: "/src/assets/data-dredger-guardian.jpg",
     category: "Research",
     tasks: [
@@ -613,7 +393,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Helps manage schedules, provides productivity tips, and assists with personal tasks.",
     icon: CalendarDays,
-    color: "#A3E635", // Lime-400
+    color: "#A3E635", 
     image: "/src/assets/life-hacker-guardian.jpg",
     category: "Personal Assistant",
     tasks: [
@@ -640,7 +420,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Generates innovative ideas for art, design, music, and creative writing projects.",
     icon: Palette,
-    color: "#E879F9", // Pink-400
+    color: "#E879F9", 
     image: "/src/assets/the-artisan-guardian.jpg",
     category: "Creative",
     tasks: [
@@ -666,7 +446,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Assists with technical issues, provides troubleshooting steps, and manages system configurations.",
     icon: Settings,
-    color: "#6B7280", // Gray-500
+    color: "#6B7280", 
     image: "/src/assets/tech-medic-guardian.jpg",
     category: "IT",
     tasks: [
@@ -693,7 +473,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Optimizes logistics, inventory management, and supplier relations for efficient operations.",
     icon: Boxes,
-    color: "#F59E0B", // Amber-500
+    color: "#F59E0B", 
     image: "/src/assets/logistics-lord-guardian.jpg",
     category: "Operations",
     tasks: [
@@ -720,7 +500,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Monitors for threats, identifies vulnerabilities, and recommends security protocols.",
     icon: ShieldCheck,
-    color: "#DC2626", // Red-600
+    color: "#DC2626", 
     image: "/src/assets/cyber-sentinel-guardian.jpg",
     category: "Security",
     tasks: [
@@ -746,8 +526,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     name: "Roadmap Raider",
     description:
       "Defines product roadmaps, gathers user feedback, and guides product development cycles.",
-    icon: BriefcaseBusiness,
-    color: "#3B82F6", // Blue-500
+    icon: Briefcase,
+    color: "#3B82F6", 
     image: "/src/assets/roadmap-raider-guardian.jpg",
     category: "Product Management",
     tasks: [
@@ -773,8 +553,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     name: "MediBot",
     description:
       "Manages patient appointments, assists with medical record keeping, and provides health information.",
-    icon: BriefcaseMedical,
-    color: "#06B6D4", // Cyan-500
+    icon: Stethoscope,
+    color: "#06B6D4", 
     image: "/src/assets/medibot-guardian.jpg",
     category: "Healthcare",
     tasks: [
@@ -801,7 +581,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Enhances internal and external communications, drafts announcements, and manages public relations.",
     icon: MessageSquareText,
-    color: "#F43F5E", // Rose-500
+    color: "#F43F5E", 
     image: "/src/assets/message-maestro-guardian.jpg",
     category: "Communication",
     tasks: [
@@ -813,7 +593,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     skills: ["Public Relations", "Corporate Communications", "Technical Writing", "Social Media Management", "Crisis Management"],
     deploymentCost: 25,
     monthlyCost: 60,
-    isPremium: false,
+    isPremium: false,.
     model: "Claude-Sonnet-4-5",
     personality: "Articulate, strategic, and adaptable.",
     trainingData: ["Communication theories", "PR case studies", "Brand guidelines"],
@@ -827,7 +607,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     description:
       "Orchestrates multiple AI employees to work together on complex workflows and projects.",
     icon: Workflow,
-    color: "#8B5CF6", // Violet-500
+    color: "#8B5CF6", 
     image: "/src/assets/the-overmind-guardian.jpg",
     category: "Operations",
     tasks: [
@@ -844,7 +624,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Strategic, decisive, and holistic.",
     trainingData: ["Workflow management systems", "Task delegation principles", "System architectures"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion", // May still use this for high-level instructions
+      generateContent: "/api/generate-chat-completion", 
       automateTask: "/api/orchestrate-ai-team",
     },
   },

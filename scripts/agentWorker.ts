@@ -151,6 +151,7 @@ async function runTask(task: AgentTask) {
 }
 
 async function loop() {
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
       const task = await fetchNextTask();

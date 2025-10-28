@@ -5,133 +5,103 @@ import { useAuth } from '@/hooks/useAuth';
 import { httpsCallable } from 'firebase/functions';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { toast } from "@/components/ui/sonner";
+import { toast } from "@/components/ui/use-toast";
 import { Loader2 } from 'lucide-react';
 import { Timestamp } from 'firebase/firestore';
 
-interface IntegrationTarget {
+interface Integration {
   id: string;
-  name: string;
-  base_url: string;
-  auth_type: string;
+  url: string;
   createdAt: Timestamp;
+  lastScrapedAt?: Timestamp;
+  status?: string;
 }
 
-interface AgentTask {
-  id: string;
-  target_id: string;
-  status: 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';
-  createdAt: Timestamp;
-}
-
-export function FirebaseWebsiteIntegrations() {
+export const FirebaseWebsiteIntegrations = () => {
   const { user } = useAuth();
-  const [targets, setTargets] = useState<IntegrationTarget[]>([]);
-  const [tasks, setTasks] = useState<AgentTask[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [runningId, setRunningId] = useState<string | null>(null);
+  const [integrations, setIntegrations] = useState<Integration[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [scraping, setScraping] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
+  const fetchIntegrations = useCallback(async () => {
     if (!user) return;
     setLoading(true);
     try {
-      const targetsQuery = query(collection(db, 'integration_targets'), where('userId', '==', user.uid), orderBy('createdAt', 'desc'));
-      const tasksQuery = query(collection(db, 'agent_tasks'), where('userId', '==', user.uid), orderBy('createdAt', 'desc'));
-      
-      const [targetsSnapshot, tasksSnapshot] = await Promise.all([getDocs(targetsQuery), getDocs(tasksQuery)]);
-      
-      const targetsData = targetsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as IntegrationTarget));
-      const tasksData = tasksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as AgentTask));
-      
-      setTargets(targetsData);
-      setTasks(tasksData);
-      
+      const q = query(
+        collection(db, 'websiteIntegrations'),
+        where('userId', '==', user.uid),
+        orderBy('createdAt', 'desc')
+      );
+      const querySnapshot = await getDocs(q);
+      const integrationsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Integration));
+      setIntegrations(integrationsData);
     } catch (error) {
-      console.error("Error loading integrations: ", error);
-      toast.error("Error", { description: "Failed to load website integrations." });
+      console.error('Error fetching website integrations: ', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch website integrations.",
+        variant: "destructive",
+      });
     }
     setLoading(false);
   }, [user]);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    fetchIntegrations();
+  }, [fetchIntegrations]);
 
-  async function runAction(target: IntegrationTarget, action: string) {
-    if (!user) return;
-    setRunningId(target.id);
+  const handleScrape = async (integrationId: string, url: string) => {
+    setScraping(integrationId);
     try {
-      const agentRun = httpsCallable(functions, 'agentRun');
-      await agentRun({ targetId: target.id, action });
-      toast.info("Task Queued", { description: `Action "${action}" has been queued for ${target.name}.` });
-    } catch (e) {
-      toast.error("Error", { description: (e as Error).message });
-    } finally {
-      setRunningId(null);
+      const scrapeWebsite = httpsCallable(functions, 'scrapeWebsite');
+      await scrapeWebsite({ url });
+      toast({
+        title: "Scraping Initiated",
+        description: "The website is being scraped. This may take a few minutes.",
+      });
+      // Optionally, you can refetch integrations after a delay
+      setTimeout(fetchIntegrations, 5000);
+    } catch (error) {
+      console.error('Error initiating scrape: ', error);
+      toast({
+        title: "Error",
+        description: "Failed to initiate scraping.",
+        variant: "destructive",
+      });
     }
-  }
-
-  async function cancelTask(taskId: string) {
-    try {
-      const agentCancel = httpsCallable(functions, 'agentCancel');
-      await agentCancel({ taskId });
-      toast.info("Cancellation Sent", { description: "A request to cancel the task has been sent." });
-    } catch (e) {
-      toast.error("Error", { description: (e as Error).message });
-    }
-  }
-
-  const getLatestTaskForTarget = (targetId: string): AgentTask | undefined => {
-    return tasks.filter(t => t.target_id === targetId)[0];
+    setScraping(null);
   };
+  
+  if (loading) {
+    return <div className="flex justify-center items-center"><Loader2 className="animate-spin h-8 w-8" /></div>;
+  }
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Website Integrations</h2>
-        <Button onClick={load} variant="outline" size="sm" disabled={loading}>
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Refresh'}
-        </Button>
-      </div>
-      <div className="space-y-3">
-        {targets.map(t => {
-          const latestTask = getLatestTaskForTarget(t.id);
-          const isTaskActive = latestTask && ['queued', 'running'].includes(latestTask.status);
-
-          return (
-            <div key={t.id} className="border rounded-lg p-4 flex items-center justify-between bg-card">
-              <div>
-                <p className="font-semibold">{t.name}</p>
-                <p className="text-sm text-muted-foreground">{t.base_url}</p>
-                <div className="flex items-center gap-2 mt-2">
-                    <Badge variant="secondary">{t.auth_type}</Badge>
-                    {latestTask && <Badge variant={
-                      latestTask.status === 'completed' ? 'default' :
-                      latestTask.status === 'failed' ? 'destructive' : 'secondary'
-                    }>{latestTask.status}</Badge>}
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => runAction(t, 'login_and_scrape')}
-                  disabled={!!runningId || isTaskActive}
-                  size="sm"
-                >
-                  {runningId === t.id ? <Loader2 className="w-4 h-4 animate-spin" /> : (isTaskActive ? 'Running...' : "Run Scrape")}
-                </Button>
-                {isTaskActive && latestTask && (
-                  <Button onClick={() => cancelTask(latestTask.id)} variant="destructive" size="sm">
-                    Cancel
-                  </Button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-        {!targets.length && !loading && (
-          <p className="text-sm text-muted-foreground text-center py-4">No website integrations found.</p>
-        )}
-      </div>
+      {integrations.map((integration) => (
+        <div key={integration.id} className="p-4 border rounded-md flex justify-between items-center">
+          <div>
+            <p className="font-semibold">{integration.url}</p>
+            <p className="text-sm text-gray-500">
+              Added on: {integration.createdAt?.toDate().toLocaleDateString()}
+            </p>
+            {integration.lastScrapedAt && (
+              <p className="text-sm text-gray-500">
+                Last Scraped: {integration.lastScrapedAt.toDate().toLocaleDateString()}
+              </p>
+            )}
+            {integration.status && (
+              <Badge>{integration.status}</Badge>
+            )}
+          </div>
+          <Button 
+            onClick={() => handleScrape(integration.id, integration.url)} 
+            disabled={scraping === integration.id}
+          >
+            {scraping === integration.id ? <Loader2 className="animate-spin h-5 w-5" /> : 'Scrape Now'}
+          </Button>
+        </div>
+      ))}
     </div>
   );
-}
+};

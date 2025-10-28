@@ -6,7 +6,6 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
 import Analytics from "./pages/Analytics";
 import AIEmployees from "./pages/AIEmployees";
 import PowerUps from "./pages/PowerUps";
@@ -20,6 +19,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import IntegrationsPage from "./pages/IntegrationsPage";
 import PuterFirebaseIntegration from "./components/PuterFirebaseIntegration"; // Import the new component
 import AITeamDebugger from "./components/AITeamDebugger";
+import AITeamDashboard from "./components/AITeamDashboard";
 
 const queryClient = new QueryClient();
 
@@ -33,7 +33,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><AITeamDashboard /></ProtectedRoute>} />
               <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
               <Route path="/ai-employees" element={<ProtectedRoute><AIEmployees /></ProtectedRoute>} />
               <Route path="/ai-employees/:employeeName" element={<AIEmployeePage />} />

@@ -1,13 +1,15 @@
 
 import { useState } from 'react';
-import { AddWebsiteIntegration } from '@/components/integrations/AddWebsiteIntegration';
+import AddWebsiteIntegration from '@/components/integrations/AddWebsiteIntegration';
 import { FirebaseWebsiteIntegrations } from '@/components/integrations/FirebaseWebsiteIntegrations';
 import { useAgentTasks } from '@/hooks/useAgentTasks';
 import { useAgentRealtime } from '@/hooks/useAgentRealtime';
 import { AgentMetricsDashboard } from '@/components/integrations/AgentMetricsDashboard';
 import PuterFirebaseIntegration from "@/components/PuterFirebaseIntegration";
+import { useAuth } from '@/hooks/useAuth';
 
 export default function IntegrationsPage() {
+  const { user } = useAuth();
   const { tasks } = useAgentTasks();
   const { tasks: rtTasks, events } = useAgentRealtime();
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
@@ -16,14 +18,16 @@ export default function IntegrationsPage() {
     <div className="container mx-auto py-6 space-y-8">
       <AgentMetricsDashboard />
       <PuterFirebaseIntegration />
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-1">
-          <AddWebsiteIntegration onCreated={() => { /* could trigger reload via context if needed */ }} />
+      {user && (
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="md:col-span-1">
+            <AddWebsiteIntegration userId={user.uid} onIntegrationAdded={() => { /* could trigger reload via context if needed */ }} />
+          </div>
+          <div className="md:col-span-2">
+            <FirebaseWebsiteIntegrations />
+          </div>
         </div>
-        <div className="md:col-span-2">
-          <FirebaseWebsiteIntegrations />
-        </div>
-      </div>
+      )}
       <div>
         <h3 className="font-semibold text-sm mb-2">Recent Agent Tasks (Live)</h3>
         <div className="space-y-1 max-h-64 overflow-auto border rounded p-2 bg-card">
@@ -40,7 +44,7 @@ export default function IntegrationsPage() {
             <h4 className="font-medium text-xs mb-2">Events</h4>
             {(events[selectedTask] || []).map(ev => (
               <div key={ev.id} className="text-[11px] flex gap-2">
-                <span className="text-muted-foreground">{new Date(ev.timestamp).toLocaleTimeString()}</span>
+                <span className="text-muted-foreground">{ev.timestamp?.toDate().toLocaleTimeString()}</span>
                 <span className={`uppercase ${ev.level==='error'?'text-red-500':ev.level==='warn'?'text-yellow-500':'text-muted-foreground'}`}>{ev.level}</span>
                 <span>{ev.message}</span>
               </div>

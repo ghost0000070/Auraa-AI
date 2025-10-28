@@ -5,6 +5,7 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
+import { getPerformance } from 'firebase/performance';
 import { getVertexAI, getGenerativeModel } from "@firebase/vertexai-preview";
 
 const firebaseConfig = {
@@ -23,6 +24,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const functions = getFunctions(app);
+const perf = getPerformance(app);
 const vertex = getVertexAI(app);
 const generativeModel = getGenerativeModel(vertex, { model: "gemini-pro" });
 

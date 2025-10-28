@@ -98,7 +98,7 @@ export const AIEmployeesSection = () => {
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Meet Your New <span className="text-gradient">AI Team</span>
-          </h2>
+        </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Hire and set up enterprise-grade AI Employees within minutes, not months
           </p>
@@ -123,11 +123,11 @@ export const AIEmployeesSection = () => {
               </p>
               <Button variant="accent" className="w-full" onClick={handleCustomAIClick}>
                 {user ? (subscriptionStatus?.subscribed ? 'Create Custom AI' : 'Upgrade to Create') : 'Sign Up to Create'}
-              </Button>
+          </Button>
             </CardContent>
           </Card>
         </div>
       </div>
     </section>
   );
-};
+}

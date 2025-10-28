@@ -5,6 +5,18 @@ import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
 import { HttpsCallableResult } from 'firebase/functions';
 
 export class AITeamDebugger {
+  testCommunications() {
+      throw new Error('Method not implemented.');
+  }
+  testTaskingSystem() {
+      throw new Error('Method not implemented.');
+  }
+  testDeployment() {
+      throw new Error('Method not implemented.');
+  }
+  testVertexAI() {
+      throw new Error('Method not implemented.');
+  }
   private static instance: AITeamDebugger;
 
   static getInstance(): AITeamDebugger {

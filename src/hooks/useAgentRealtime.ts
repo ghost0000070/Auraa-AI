@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { db } from '@/firebase';
-import { collection, query, onSnapshot, orderBy, limit, Timestamp } from 'firebase/firestore';
+import { collection, query, onSnapshot, orderBy, limit, Timestamp, where } from 'firebase/firestore';
 
 export interface AgentTaskEvent {
   ts: Timestamp;
@@ -52,28 +52,53 @@ export function useAgentRealtime() {
       setLoading(false);
     });
 
-    const eventsQuery = query(collection(db, 'agent_task_events'), orderBy('timestamp', 'desc'), limit(500));
-    const unsubscribeEvents = onSnapshot(eventsQuery, (snapshot) => {
-      const grouped: Record<string, AgentTaskEvent[]> = {};
-      snapshot.docs.forEach(doc => {
-        const event = { id: doc.id, ...doc.data() } as AgentTaskEvent;
-        (grouped[event.task_id] ||= []).push(event);
-      });
-
-      Object.keys(grouped).forEach(taskId => {
-        grouped[taskId].sort((a, b) => a.timestamp.toMillis() - b.timestamp.toMillis());
-      });
-
-      setEvents(grouped);
-    }, (error) => {
-      console.error("Error fetching agent task events:", error);
-    });
-
     return () => {
       unsubscribeTasks();
-      unsubscribeEvents();
     };
   }, []);
+
+  useEffect(() => {
+    if (tasks.length === 0) {
+      setEvents({});
+      return;
+    }
+
+    const taskIds = tasks.map(t => t.id);
+    const chunks: string[][] = [];
+    for (let i = 0; i < taskIds.length; i += 30) {
+        chunks.push(taskIds.slice(i, i + 30));
+    }
+
+    const unsubscribes = chunks.map(chunk => {
+        const eventsQuery = query(
+            collection(db, 'agent_task_events'),
+            where('task_id', 'in', chunk),
+            orderBy('timestamp', 'desc')
+        );
+
+        return onSnapshot(eventsQuery, (snapshot) => {
+            const grouped: Record<string, AgentTaskEvent[]> = {};
+            snapshot.docs.forEach(doc => {
+                const event = { id: doc.id, ...doc.data() } as AgentTaskEvent;
+                (grouped[event.task_id] ||= []).push(event);
+            });
+
+            Object.keys(grouped).forEach(taskId => {
+                grouped[taskId].sort((a, b) => a.timestamp.toMillis() - b.timestamp.toMillis());
+            });
+
+            setEvents(prevEvents => ({...prevEvents, ...grouped}));
+        }, (error) => {
+            console.error("Error fetching agent task events:", error);
+        });
+    });
+
+
+    return () => {
+      unsubscribes.forEach(unsub => unsub());
+    };
+  }, [tasks]);
+
 
   return { tasks, events, loading };
 }

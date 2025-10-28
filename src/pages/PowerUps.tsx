@@ -5,9 +5,10 @@ import { CheckCircle, XCircle, Clock } from 'lucide-react';
 import { db } from "@/firebase";
 import { collection, query, where, getDocs, doc, updateDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '@/hooks/useAuth';
-import { toast } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/sonner";
 import SubscriptionGuard from "@/components/SubscriptionGuard";
 import { Header } from "@/components/Header";
+import { toast } from "sonner";
 
 interface PowerUp {
   id: string;
