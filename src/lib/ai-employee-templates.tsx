@@ -89,8 +89,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Creative, witty, and persuasive.",
     trainingData: ["Marketing best practices", "Consumer behavior", "Ad platform data"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      analyzeData: "/api/analyze-marketing-data",
+      generateContent: "generateChatCompletion",
+      analyzeData: "analyzeMarketingData",
     },
   },
   {
@@ -116,8 +116,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Confident, assertive, and charming.",
     trainingData: ["Sales methodologies", "Product knowledge", "Customer interactions"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      automateTask: "/api/automate-sales-outreach",
+      generateContent: "generateChatCompletion",
+      automateTask: "automateSalesOutreach",
     },
   },
   {
@@ -143,8 +143,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Empathetic, patient, and helpful.",
     trainingData: ["Customer service logs", "Product manuals", "FAQ databases"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      automateTask: "/api/handle-support-ticket",
+      generateContent: "generateChatCompletion",
+      automateTask: "handleSupportTicket",
     },
   },
   {
@@ -170,8 +170,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Analytical, meticulous, and insightful.",
     trainingData: ["Statistical methods", "Database schemas", "Industry reports"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      analyzeData: "/api/analyze-business-data",
+      generateContent: "generateChatCompletion",
+      analyzeData: "analyzeBusinessData",
     },
   },
   {
@@ -197,7 +197,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Eloquent, imaginative, and engaging.",
     trainingData: ["Content marketing guides", "Grammar rules", "Style guides"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
+      generateContent: "generateChatCompletion",
     },
   },
   {
@@ -223,8 +223,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Personable, organized, and discerning.",
     trainingData: ["HR best practices", "Job descriptions", "Interview guides"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      automateTask: "/api/automate-hr-tasks",
+      generateContent: "generateChatCompletion",
+      automateTask: "automateHrTasks",
     },
   },
   {
@@ -250,8 +250,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Logical, precise, and innovative.",
     trainingData: ["Programming languages docs", "Design patterns", "Open-source codebases"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      automateTask: "/api/generate-code",
+      generateContent: "generateChatCompletion",
+      automateTask: "generateCode",
     },
   },
   {
@@ -277,8 +277,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Authoritative, efficient, and strategic.",
     trainingData: ["Project management frameworks", "Case studies", "Team collaboration data"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      automateTask: "/api/manage-project-tasks",
+      generateContent: "generateChatCompletion",
+      automateTask: "manageProjectTasks",
     },
   },
   {
@@ -304,8 +304,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Formal, cautious, and knowledgeable.",
     trainingData: ["Legal precedents", "Statutes", "Case law"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      analyzeData: "/api/analyze-legal-document",
+      generateContent: "generateChatCompletion",
+      analyzeData: "analyzeLegalDocument",
     },
   },
   {
@@ -331,8 +331,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Prudent, analytical, and forward-looking.",
     trainingData: ["Financial markets data", "Economic indicators", "Personal finance guides"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      analyzeData: "/api/analyze-financial-data",
+      generateContent: "generateChatCompletion",
+      analyzeData: "analyzeFinancialData",
     },
   },
   {
@@ -358,7 +358,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Encouraging, clear, and patient.",
     trainingData: ["Educational curricula", "Academic papers", "Textbooks"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
+      generateContent: "generateChatCompletion",
     },
   },
   {
@@ -384,7 +384,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Inquisitive, thorough, and objective.",
     trainingData: ["Academic databases", "Research methodologies", "Scientific journals"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
+      generateContent: "generateChatCompletion",
     },
   },
   {
@@ -410,8 +410,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Proactive, organized, and encouraging.",
     trainingData: ["Productivity frameworks", "Personal development books", "Scheduling algorithms"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      automateTask: "/api/manage-personal-tasks",
+      generateContent: "generateChatCompletion",
+      automateTask: "managePersonalTasks",
     },
   },
   {
@@ -437,7 +437,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Expressive, imaginative, and unconventional.",
     trainingData: ["Artistic movements", "Creative writing examples", "Music compositions"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
+      generateContent: "generateChatCompletion",
     },
   },
   {
@@ -463,8 +463,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Methodical, patient, and helpful.",
     trainingData: ["IT documentation", "Troubleshooting guides", "System administration manuals"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      automateTask: "/api/resolve-it-issue",
+      generateContent: "generateChatCompletion",
+      automateTask: "resolveItIssue",
     },
   },
   {
@@ -490,8 +490,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Efficient, analytical, and detail-oriented.",
     trainingData: ["Supply chain models", "Logistics data", "Market forecasts"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      analyzeData: "/api/optimize-supply-chain",
+      generateContent: "generateChatCompletion",
+      analyzeData: "optimizeSupplyChain",
     },
   },
   {
@@ -517,8 +517,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Vigilant, analytical, and decisive.",
     trainingData: ["Cybersecurity frameworks", "Threat intelligence", "Penetration testing reports"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      analyzeData: "/api/analyze-security-threat",
+      generateContent: "generateChatCompletion",
+      analyzeData: "analyzeSecurityThreat",
     },
   },
   {
@@ -544,8 +544,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Visionary, user-focused, and collaborative.",
     trainingData: ["Product management principles", "User experience research", "Market trends"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      analyzeData: "/api/analyze-product-feedback",
+      generateContent: "generateChatCompletion",
+      analyzeData: "analyzeProductFeedback",
     },
   },
   {
@@ -571,8 +571,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Compassionate, accurate, and discreet.",
     trainingData: ["Medical guidelines", "Patient care protocols", "Healthcare regulations"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
-      automateTask: "/api/manage-patient-records",
+      generateContent: "generateChatCompletion",
+      automateTask: "managePatientRecords",
     },
   },
   {
@@ -598,7 +598,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Articulate, strategic, and adaptable.",
     trainingData: ["Communication theories", "PR case studies", "Brand guidelines"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion",
+      generateContent: "generateChatCompletion",
     },
   },
   {
@@ -624,8 +624,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     personality: "Strategic, decisive, and holistic.",
     trainingData: ["Workflow management systems", "Task delegation principles", "System architectures"],
     apiEndpoints: {
-      generateContent: "/api/generate-chat-completion", 
-      automateTask: "/api/orchestrate-ai-team",
+      generateContent: "generateChatCompletion", 
+      automateTask: "orchestrateAiTeam",
     },
   },
 ];

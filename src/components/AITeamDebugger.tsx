@@ -1,96 +1,56 @@
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { toast } from "@/components/ui/use-toast";
-import { aiTeamDebugger } from '@/utils/aiTeamDebugger';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { AITeamDebugger as Debugger } from '@/utils/aiTeamDebugger';
 
-const AITeamDebugger = () => {
-    const handleTestCommunications = async () => {
-        toast({ title: "Testing Communications", description: "Dispatching a test message..." });
-        try {
-            const result = await aiTeamDebugger.testCommunications();
-            if (result.success) {
-                toast({ title: "Test Successful", description: `Test message dispatched with ID: ${result.communicationId}` });
-            } else {
-                throw new Error(result.error);
-            }
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-            toast({
-                title: "Test Failed",
-                description: errorMessage,
-                variant: "destructive"
-            });
-        }
-    };
+interface TestResults {
+  [key: string]: {
+    accessible: boolean;
+    error: string | null;
+    response: string;
+  };
+}
 
-    const handleTestTasking = async () => {
-        toast({ title: "Testing Tasking System", description: "Creating a test task..." });
-        try {
-            const result = await aiTeamDebugger.testTaskingSystem();
-            if (result.success) {
-                toast({ title: "Test Successful", description: `Test task created with ID: ${result.taskId}` });
-            } else {
-                throw new Error(result.error);
-            }
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-            toast({
-                title: "Test Failed",
-                description: errorMessage,
-                variant: "destructive"
-            });
-        }
-    };
+export const AITeamDebugger: React.FC = () => {
+  const [isTesting, setIsTesting] = useState(false);
+  const [results, setResults] = useState<TestResults | null>(null);
 
-    const handleTestDeployment = async () => {
-        toast({ title: "Testing Deployment", description: "Simulating an AI employee deployment..." });
-        try {
-            const result = await aiTeamDebugger.testDeployment();
-            if (result.success) {
-                toast({ title: "Test Successful", description: `Simulated deployment for user: ${result.userId}` });
-            } else {
-                throw new Error(result.error);
-            }
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-            toast({
-                title: "Test Failed",
-                description: errorMessage,
-                variant: "destructive"
-            });
-        }
-    };
+  const handleTest = async () => {
+    setIsTesting(true);
+    setResults(null);
+    const debuggerInstance = new Debugger();
+    const testResults = await debuggerInstance.testCloudFunctions();
+    setResults(testResults);
+    setIsTesting(false);
+  };
 
-    const handleTestVertexAI = async () => {
-        toast({ title: "Testing Vertex AI", description: "Sending a test prompt..." });
-        try {
-            const result = await aiTeamDebugger.testVertexAI();
-            if (result.success) {
-                toast({ title: "Test Successful", description: `Received response from Vertex AI.` });
-                console.log("Vertex AI Response:", result.response);
-            } else {
-                throw new Error(result.error);
-            }
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-            toast({
-                title: "Test Failed",
-                description: errorMessage,
-                variant: "destructive"
-            });
-        }
-    };
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>AI Team Debugger</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Button onClick={handleTest} disabled={isTesting}>
+          {isTesting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+          Test Backend Functions
+        </Button>
 
-    return (
-        <div className="p-4 border rounded-lg">
-            <h2 className="text-lg font-semibold mb-4">AI Team Debugger</h2>
-            <div className="grid grid-cols-2 gap-4">
-                <Button onClick={handleTestCommunications}>Test Communications</Button>
-                <Button onClick={handleTestTasking}>Test Tasking</Button>
-                <Button onClick={handleTestDeployment}>Test Deployment</Button>
-                <Button onClick={handleTestVertexAI}>Test Vertex AI</Button>
-            </div>
-        </div>
-    );
+        {results && (
+          <div className="mt-4 space-y-2">
+            {Object.entries(results).map(([functionName, result]) => (
+              <div key={functionName} className="flex items-center justify-between p-2 border rounded">
+                <span className="font-mono text-sm">{functionName}</span>
+                {result.accessible ? (
+                  <CheckCircle className="text-green-500" />
+                ) : (
+                  <XCircle className="text-red-500" />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 };
-
-export default AITeamDebugger;

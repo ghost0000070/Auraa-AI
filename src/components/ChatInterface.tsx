@@ -3,10 +3,39 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
-import { Loader2, Send, CornerDownLeft, User, Bot } from 'lucide-react';
+import { Loader2, Send, User, Bot } from 'lucide-react';
 import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
-import { getFunctions, httpsCallable, HttpsCallableResult } from 'firebase/functions';
-import { generativeModel } from '@/firebase'; // Import generativeModel
+import { getFunctions, httpsCallable } from 'firebase/functions';
+
+// --- Helper function to build dynamic payloads ---
+const buildPayload = (employeeId: string, userInput: string) => {
+  // This is placeholder data. In a real application, you would fetch this 
+  // from your state management, forms, or other relevant sources.
+  const placeholderData: Record<string, any> = {
+    metrics: ["engagement", "conversion"],
+    leadInfo: { name: "John Doe", email: "john.doe@example.com" },
+    companyInfo: { name: "Acme Corp", industry: "Manufacturing" },
+    ticketDetails: `The user's message is: "${userInput}"`,
+    knowledgeBase: { faqs: ["FAQ 1", "FAQ 2"], articles: ["Article 1"] },
+    systemInfo: { os: "Windows 11", browser: "Chrome 125" },
+    // ... add other necessary placeholder data here
+  };
+
+  switch (employeeId) {
+    case 'marketing-guru':
+      return { data: userInput, metrics: placeholderData.metrics };
+    case 'sales-strategist':
+      return { leadInfo: placeholderData.leadInfo, companyInfo: placeholderData.companyInfo };
+    case 'support-shield':
+      return { ticketDetails: placeholderData.ticketDetails, knowledgeBase: placeholderData.knowledgeBase };
+    case 'it-support-specialist':
+        return { issueDescription: userInput, systemInfo: placeholderData.systemInfo };
+    // Add cases for all other AI employee types...
+    default:
+      return { data: userInput }; // Default payload for simple flows
+  }
+};
+
 
 interface ChatInterfaceProps {
   employeeType: string;
@@ -48,41 +77,28 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
 
     const userMessage: Message = { sender: 'user', text: input };
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
     setIsLoading(true);
 
     try {
       const template = aiEmployeeTemplates.find(e => e.id === employeeType);
-
-      let aiResponseText = "Sorry, I'm having trouble connecting. Please try again later.";
-
-      if (template?.model === "Gemini-Pro") {
-        // Use client-side Gemini API
-        const chat = generativeModel.startChat({
-          history: messages.map(msg => ({
-            role: msg.sender === 'user' ? 'user' : 'model',
-            parts: [{ text: msg.text }],
-          })),
-        });
-
-        const result = await chat.sendMessage(input);
-        aiResponseText = result.response.text();
-
-      } else {
-        // Fallback to Firebase Function for other models (now all Gemini via backend)
-        const functions = getFunctions();
-        const generateChatCompletion = httpsCallable(functions, 'generateChatCompletion');
-        const result: HttpsCallableResult<{response: string}> = await generateChatCompletion({
-            employeeType,
-            employeeName,
-            businessContext,
-            prompt: input,
-            history: messages,
-            model: template?.model || 'gemini-1.5-flash-001', // Pass the model to the backend
-        });
-        aiResponseText = result.data.response;
+      if (!template) {
+        throw new Error("AI Employee template not found.");
       }
 
+      const functions = getFunctions();
+      const flowName = template.apiEndpoints.generateContent || template.apiEndpoints.analyzeData || template.apiEndpoints.automateTask;
+      if (!flowName) {
+        throw new Error("No API endpoint defined for this employee.");
+      }
+      
+      const callFlow = httpsCallable(functions, flowName);
+      const payload = buildPayload(employeeType, currentInput);
+      
+      const result = await callFlow(payload);
+
+      const aiResponseText = result.data as string;
       const aiMessage: Message = { sender: 'ai', text: aiResponseText };
       setMessages(prev => [...prev, aiMessage]);
 

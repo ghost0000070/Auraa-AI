@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'fire
 
 import AITeamDashboard from '@/components/AITeamDashboard';
 import { QuickDeploymentWidget } from '@/components/QuickDeploymentWidget';
+import { AITeamDebugger } from '@/components/AITeamDebugger';
 
 export default function Dashboard() {
   const { user, loading, isSubscriber } = useAuth();
@@ -115,6 +115,9 @@ export default function Dashboard() {
             </div>
             <div className="md:col-span-1">
                 <QuickDeploymentWidget onDeploy={handleDeploy} />
+                <div className="mt-6">
+                  <AITeamDebugger />
+                </div>
             </div>
         </div>
 

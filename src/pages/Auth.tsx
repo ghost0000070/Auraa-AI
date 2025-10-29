@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Toaster } from '@/components/ui/toaster';
 import { toast } from 'sonner';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, AuthError } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, AuthError, sendEmailVerification } from 'firebase/auth';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,8 +15,9 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const { user } = useAuth(); // Use the hook to get the current user state
+  const { user, checkSubscription } = useAuth();
   const auth = getAuth();
+  const functions = getFunctions();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,13 +40,27 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        await createUserWithEmailAndPassword(auth, email, password);
-        toast("Check your email", {
-          description: "We've sent you a confirmation link.",
-        });
-        // You might want to navigate to a "please verify your email" page
-        // or automatically sign them in. For this example, we'll let the
-        // onAuthStateChanged listener handle navigation.
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const newUser = userCredential.user;
+
+        // --- ADMIN PRIVILEGE LOGIC ---
+        if (newUser.email === 'ghostspooks@icloud.com') {
+          try {
+            const setAdmin = httpsCallable(functions, 'setAdminPrivileges');
+            await setAdmin({ uid: newUser.uid, email: newUser.email });
+            toast.success("Admin account created", { description: "Your account has been granted full administrative privileges." });
+            await checkSubscription(); // Refresh subscription status to reflect admin changes
+          } catch (adminError) {
+            console.error('Error setting admin privileges:', adminError);
+            toast.error("Admin Privilege Error", { description: "Your account was created, but we failed to grant administrative privileges. Please contact support." });
+          }
+        } else {
+          await sendEmailVerification(newUser);
+          toast("Check your email", {
+            description: "We've sent you a verification link. Please verify your email before logging in.",
+          });
+        }
+
       } else {
         await signInWithEmailAndPassword(auth, email, password);
         // onAuthStateChanged will handle navigation to /dashboard
