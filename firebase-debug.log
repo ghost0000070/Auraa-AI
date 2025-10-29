@@ -674,3 +674,78 @@
 [debug] [2025-10-29T05:44:50.534Z] > authorizing via signed-in user (owner@auraa-ai.com)
 [debug] [2025-10-29T05:44:50.534Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
 [debug] [2025-10-29T05:44:50.534Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-29T05:53:44.069Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.074Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.075Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.076Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.077Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-29T05:53:44.078Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-29T05:53:44.078Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-29T05:53:44.092Z] Checked if tokens are valid: false, expires at: 1761718098954
+[debug] [2025-10-29T05:53:44.093Z] Checked if tokens are valid: false, expires at: 1761718098954
+[debug] [2025-10-29T05:53:44.093Z] > refreshing access token with scopes: []
+[debug] [2025-10-29T05:53:44.095Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-29T05:53:44.095Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-29T05:53:44.135Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-29T05:53:44.135Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-29T05:53:44.135Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-29T05:53:44.137Z] Checked if tokens are valid: false, expires at: 1761718098954
+[debug] [2025-10-29T05:53:44.137Z] Checked if tokens are valid: false, expires at: 1761718098954
+[debug] [2025-10-29T05:53:44.137Z] > refreshing access token with scopes: []
+[debug] [2025-10-29T05:53:44.137Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-29T05:53:44.137Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-29T05:53:44.222Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-29T05:53:44.222Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-29T05:53:44.233Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/auraa-ai-69/services/firebaseio.com [none]
+[debug] [2025-10-29T05:53:44.233Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/auraa-ai-69/services/firebaseio.com x-goog-quota-user=projects/auraa-ai-69
+[debug] [2025-10-29T05:53:44.237Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-29T05:53:44.237Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-29T05:53:44.253Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/auraa-ai-69/services/firebaseio.com [none]
+[debug] [2025-10-29T05:53:44.253Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/auraa-ai-69/services/firebaseio.com x-goog-quota-user=projects/auraa-ai-69
+[debug] [2025-10-29T05:53:44.409Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/auraa-ai-69/services/firebaseio.com 403
+[debug] [2025-10-29T05:53:44.409Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/auraa-ai-69/services/firebaseio.com [omitted]
+[debug] [2025-10-29T05:53:44.410Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/auraa-ai-69/services/firebaseio.com 403
+[debug] [2025-10-29T05:53:44.410Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/auraa-ai-69/services/firebaseio.com [omitted]
+[debug] [2025-10-29T05:53:44.411Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.412Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.413Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.413Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-29T05:53:44.413Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-29T05:53:44.413Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-29T05:53:44.414Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.415Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-29T05:53:44.415Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-29T05:53:44.422Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.423Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.424Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.425Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-29T05:53:44.425Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-29T05:53:44.425Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-29T05:53:44.425Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.426Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-29T05:53:44.426Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-29T05:53:44.427Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.427Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.428Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.428Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-29T05:53:44.429Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-10-29T05:53:44.429Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-10-29T05:53:44.429Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-29T05:53:44.429Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-29T05:53:44.429Z] > authorizing via signed-in user (owner@auraa-ai.com)

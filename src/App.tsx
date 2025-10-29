@@ -20,7 +20,7 @@ import IntegrationsPage from "./pages/IntegrationsPage";
 import PuterFirebaseIntegration from "./components/PuterFirebaseIntegration"; // Import the new component
 import { AITeamDebugger } from "./components/AITeamDebugger";
 import AITeamDashboard from "./components/AITeamDashboard";
-
+import Marketplace from './pages/Marketplace';
 
 const App: React.FC = () => {
   return (
@@ -47,6 +47,7 @@ const App: React.FC = () => {
               <Route path="/integrations" element={<ProtectedRoute><IntegrationsPage /></ProtectedRoute>} />
               <Route path="/ai-team-debugger" element={<ProtectedRoute><AITeamDebugger /></ProtectedRoute>} />
               <Route path="/ai-team-dashboard" element={<ProtectedRoute><AITeamDashboard /></ProtectedRoute>} />
+              <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
 
             </Routes>
           </main>

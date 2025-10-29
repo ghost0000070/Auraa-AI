@@ -110,6 +110,9 @@ export const Header = () => {
               <Button variant="ghost" onClick={() => navigate('/dashboard')} className="text-muted-foreground hover:text-foreground">
                 Dashboard
               </Button>
+              <Button variant="ghost" onClick={() => navigate('/marketplace')} className="text-muted-foreground hover:text-foreground">
+                Marketplace
+              </Button>
             </>
           ) : (
             <>
