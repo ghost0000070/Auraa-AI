@@ -4,6 +4,7 @@ import { onFlow } from 'genkit/firebase';
 import { z } from 'zod';
 import { claudeModel } from './claude-plugin';
 import * as admin from 'firebase-admin';
+import * as functions from 'firebase-functions';
 
 // Initialize Firebase Admin SDK
 try {
@@ -12,7 +13,6 @@ try {
   console.log('Admin SDK already initialized');
 }
 
-
 // Initialize Genkit with the custom Claude plugin
 configure({
   plugins: [claudeModel],
@@ -20,7 +20,34 @@ configure({
   enableTracingAndMetrics: true,
 });
 
-// --- NEW FUNCTION: Grant Admin Privileges ---
+// --- NEW FUNCTION: Automatically Delete User Data ---
+export const onUserDelete = functions.auth.user().onDelete(async (user) => {
+  const logger = functions.logger;
+  logger.info(`User ${user.uid} is being deleted. Cleaning up associated data.`);
+
+  try {
+    const firestore = admin.firestore();
+    
+    // 1. Delete the user's document from the 'subscribers' collection
+    const subscriberDoc = firestore.collection('subscribers').doc(user.uid);
+    await subscriberDoc.delete();
+    logger.info(`Deleted subscriber document for user ${user.uid}.`);
+
+    // 2. Add deletion logic for other collections as needed.
+    // For example, if you have a 'profiles' collection:
+    // const profileDoc = firestore.collection('profiles').doc(user.uid);
+    // await profileDoc.delete();
+    // logger.info(`Deleted profile document for user ${user.uid}.`);
+
+    return { success: true, message: `Cleanup successful for user ${user.uid}.` };
+  } catch (error) {
+    logger.error(`Error cleaning up data for user ${user.uid}:`, error);
+    return { success: false, message: `Cleanup failed for user ${user.uid}.` };
+  }
+});
+
+
+// --- Grant Admin Privileges ---
 export const setAdminPrivileges = onFlow({
   name: 'setAdminPrivileges',
   inputSchema: z.object({ uid: z.string(), email: z.string() }),
