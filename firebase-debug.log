@@ -1764,3 +1764,29 @@
 [error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
 [debug] [2025-11-02T07:33:05.035Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
 [debug] [2025-11-02T07:33:05.035Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-11-02T07:36:20.690Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-11-02T07:36:20.691Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-11-02T07:36:20.692Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-11-02T07:36:20.693Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-11-02T07:36:20.694Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-11-02T07:36:20.694Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-11-02T07:36:20.695Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-02T07:36:20.695Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-11-02T07:36:20.695Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-02T07:36:20.695Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-11-02T07:36:20.696Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-11-02T07:36:20.696Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[debug] [2025-11-02T07:36:20.697Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-11-02T07:36:20.699Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-11-02T07:36:20.700Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-02T07:36:20.700Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-11-02T07:36:20.700Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-02T07:36:20.700Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
