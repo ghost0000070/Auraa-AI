@@ -23,5 +23,9 @@
     "vercelVSCode.accessToken": "6AjsMADmYimgjCNBRYO8WM3C",
     "terminal.integrated.rightClickBehavior": "copyPaste",
     "git.ignoreLimitWarning": true,
-    "IDX.aI.showChatInEditorTab": true
+    "IDX.aI.showChatInEditorTab": true,
+    "cSpell.words": [
+        "firestore",
+        "vertexai"
+    ]
 }

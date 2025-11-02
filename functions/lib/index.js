@@ -33,220 +33,341 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setAdminPrivileges = void 0;
-// import { configure } from 'genkit';
-// import { onFlow } from 'genkit/firebase';
-// import { z } from 'zod';
-// import { claudeModel } from './claude-plugin';
-const admin = __importStar(require("firebase-admin"));
-const functions = __importStar(require("firebase-functions"));
-// Initialize Firebase Admin SDK
-try {
-    admin.initializeApp();
-}
-catch (e) {
-    console.log('Admin SDK already initialized');
-}
-// // Initialize Genkit with the custom Claude plugin
-// configure({
-//   plugins: [claudeModel],
-//   logLevel: 'debug',
-//   enableTracingAndMetrics: true,
-// });
-// // --- NEW FUNCTION: Automatically Delete User Data ---
-// export const onUserDelete = functions.auth.user().onDelete(async (user) => {
-//   const logger = functions.logger;
-//   logger.info(`User ${user.uid} is being deleted. Cleaning up associated data.`);
-//   try {
-//     const firestore = admin.firestore();
-//     // 1. Delete the user's document from the 'subscribers' collection
-//     const subscriberDoc = firestore.collection('subscribers').doc(user.uid);
-//     await subscriberDoc.delete();
-//     logger.info(`Deleted subscriber document for user ${user.uid}.`);
-//     // 2. Add deletion logic for other collections as needed.
-//     // For example, if you have a 'profiles' collection:
-//     // const profileDoc = firestore.collection('profiles').doc(user.uid);
-//     // await profileDoc.delete();
-//     // logger.info(`Deleted profile document for user ${user.uid}.`);
-//     return { success: true, message: `Cleanup successful for user ${user.uid}.` };
-//   } catch (error) {
-//     logger.error(`Error cleaning up data for user ${user.uid}:`, error);
-//     return { success: false, message: `Cleanup failed for user ${user.uid}.` };
-//   }
-// });
-// // --- Grant Admin Privileges ---
-// export const setAdminPrivileges = onFlow({
-//   name: 'setAdminPrivileges',
-//   inputSchema: z.object({ uid: z.string(), email: z.string() }),
-//   outputSchema: z.object({ success: z.boolean(), message: z.string() }),
-//   enforceAppCheck: true,
-//   cors: true,
-// }, async ({ uid, email }) => {
-//   if (email !== 'ghostspooks@icloud.com') {
-//     return { success: false, message: 'This function is restricted.' };
-//   }
-//   try {
-//     await admin.auth().setCustomUserClaims(uid, { admin: true });
-//     await admin.firestore().collection('subscribers').doc(uid).set({
-//         subscription_tier: 'Enterprise (Admin)',
-//         subscribed: true,
-//         email: email,
-//     }, { merge: true });
-//     return { success: true, message: `Admin privileges granted to ${email}.` };
-//   } catch (error: any) {
-//     return { success: false, message: error.message };
-//   }
-// });
-// // Reusable flow creation function with App Check enforcement
-// const createAIFlow = (name: string, inputSchema: z.ZodType, systemPrompt: string, promptBuilder: (input: any) => string) => {
-//   return onFlow({ 
-//     name, 
-//     inputSchema, 
-//     outputSchema: z.string(),
-//     enforceAppCheck: true, // Enforce App Check for all flows
-//     cors: true 
-//   }, async (input) => {
-//     const prompt = promptBuilder(input);
-//     const llmResponse = await claudeModel.generate({
-//       body: {
-//         system: systemPrompt,
-//         messages: [{ role: 'user', content: [{ text: prompt }] }],
-//       },
-//     });
-//     return llmResponse.candidates[0].message.content[0].text || "No response available.";
-//   });
-// };
-// // --- Marketing and Sales Flows ---
-// export const analyzeMarketingData = createAIFlow(
-//   'analyzeMarketingData',
-//   z.object({ data: z.any(), metrics: z.array(z.string()) }),
-//   'You are the Growth Hacker Guardian, a marketing AI specializing in lead generation, customer acquisition, and market trend analysis. Your purpose is to drive business growth.',
-//   ({ data, metrics }) => `Analyze the following marketing data: ${JSON.stringify(data)}. Your analysis must focus on these key metrics: ${metrics.join(', ')}. Provide a detailed report that includes: 1. Key trends observed. 2. Actionable insights for SEO optimization and A/B testing. 3. Concrete strategies for improving lead generation.`
-// );
-// export const automateSalesOutreach = createAIFlow(
-//   'automateSalesOutreach',
-//   z.object({ leadInfo: z.any(), companyInfo: z.any() }),
-//   'You are the Deal Striker Guardian, an expert AI sales representative. Your role is to handle lead qualification, follow-ups, and initial customer outreach with precision and professionalism.',
-//   ({ leadInfo, companyInfo }) => `Generate a personalized outreach email to a potential lead. The email must be tailored to the lead's role and the company's industry. Your goal is to book a meeting.
-//   Lead Information: ${JSON.stringify(leadInfo)}.
-//   Company Information: ${JSON.stringify(companyInfo)}.
-//   Output only the email content.`
-// );
-// // --- Support & Operations Flows ---
-// export const handleSupportTicket = createAIFlow(
-//   'handleSupportTicket',
-//   z.object({ ticketDetails: z.string(), knowledgeBase: z.any() }),
-//   'You are the Support Shield Guardian, an empathetic and efficient Customer Support AI. Your goal is to resolve customer issues accurately by leveraging all available information.',
-//   ({ ticketDetails, knowledgeBase }) => `A customer has submitted a support ticket.
-//   Ticket Details: "${ticketDetails}".
-//   Using the provided knowledge base, create a comprehensive and helpful response. Classify the ticket's sentiment, and if the knowledge base is insufficient, recommend the correct department for escalation.
-//   Knowledge Base: ${JSON.stringify(knowledgeBase)}.`
-// );
-// export const resolveItIssue = createAIFlow(
-//   'resolveItIssue',
-//   z.object({ issueDescription: z.string(), systemInfo: z.any() }),
-//   'You are the Quantum Helper Guardian, a senior IT helpdesk AI. You resolve common technical issues for employees with clear, step-by-step instructions.',
-//   ({ issueDescription, systemInfo }) => `An employee is reporting the following IT issue: "${issueDescription}".
-//   Their System Information is: ${JSON.stringify(systemInfo)}.
-//   Provide a step-by-step guide to diagnose and resolve the problem. Your response should include instructions for logging a ticket if the issue cannot be resolved.`
-// );
-// // ... (other functions will be updated similarly)
-// // NOTE: I am keeping the rest of the functions as-is to save space, but in a real scenario,
-// // I would update every single one with this level of detail.
-// export const analyzeBusinessData = createAIFlow(
-//   'analyzeBusinessData',
-//   z.object({ dataSet: z.any(), analysisObjective: z.string() }),
-//   'You are a Business Intelligence (BI) analyst AI. Your role is to find actionable insights from raw data.',
-//   ({ dataSet, analysisObjective }) => `Analyze the following dataset: ${JSON.stringify(dataSet)}. The main objective of this analysis is: "${analysisObjective}". Provide a summary of findings, key performance indicators (KPIs), and strategic recommendations.`
-// );
-// export const optimizeSupplyChain = createAIFlow(
-//   'optimizeSupplyChain',
-//   z.object({ inventoryData: z.any(), shippingLogs: z.any(), demandForecast: z.any() }),
-//   'You are a supply chain and logistics optimization AI.',
-//   ({ inventoryData, shippingLogs, demandForecast }) => `Analyze the following supply chain data to identify bottlenecks and suggest improvements. Inventory Data: ${JSON.stringify(inventoryData)}. Shipping Logs: ${JSON.stringify(shippingLogs)}. Demand Forecast: ${JSON.stringify(demandForecast)}. Provide a report with actionable recommendations for cost reduction and efficiency improvement.`
-// );
-// export const orchestrateAiTeam = createAIFlow(
-//   'orchestrateAiTeam',
-//   z.object({ objective: z.string(), availableAgents: z.any() }),
-//   'You are "The Overmind," an AI team coordinator. You orchestrate tasks between other AI employees.',
-//   ({ objective, availableAgents }) => `Develop a step-by-step plan to achieve the following objective: "${objective}". The available AI agents and their skills are: ${JSON.stringify(availableAgents)}. Delegate each step of the plan to the most appropriate AI agent.`
-// );
-// export const automateHrTasks = createAIFlow(
-//   'automateHrTasks',
-//   z.object({ task: z.string(), employeeData: z.any() }),
-//   'You are an HR automation specialist AI.',
-//   ({ task, employeeData }) => `Automate the following HR task: "${task}". Relevant employee data: ${JSON.stringify(employeeData)}. Provide the result of the automated task, for example, a drafted email for onboarding or a summary of a resume.`
-// );
-// export const generateCode = createAIFlow(
-//   'generateCode',
-//   z.object({ language: z.string(), description: z.string() }),
-//   'You are an expert software developer AI specializing in writing clean, efficient, and well-documented code.',
-//   ({ language, description }) => `Generate a code snippet in ${language} that accomplishes the following: "${description}". The code should be production-ready and include comments explaining the logic.`
-// );
-// export const manageProjectTasks = createAIFlow(
-//   'manageProjectTasks',
-//   z.object({ projectStatus: z.any(), teamMembers: z.any(), request: z.string() }),
-//   'You are an Agile Project Manager AI.',
-//   ({ projectStatus, teamMembers, request }) => `Based on the current project status and team member allocation, handle the following request: "${request}". Project Status: ${JSON.stringify(projectStatus)}. Team Members: ${JSON.stringify(teamMembers)}. Provide an updated task list, gantt chart data, or resource allocation plan.`
-// );
-// export const analyzeLegalDocument = createAIFlow(
-//   'analyzeLegalDocument',
-//   z.object({ documentText: z.string(), analysisType: z.string() }),
-//   'You are an AI legal assistant specializing in contract analysis and compliance.',
-//   ({ documentText, analysisType }) => `Please perform a ${analysisType} analysis on the following legal document. Identify key clauses, potential risks, and areas of concern. Document: "${documentText}".`
-// );
-// export const analyzeFinancialData = createAIFlow(
-//   'analyzeFinancialData',
-//   z.object({ financialStatements: z.any(), query: z.string() }),
-//   'You are a financial analyst AI. Your purpose is to provide clear financial insights.',
-//   ({ financialStatements, query }) => `Analyze the provided financial statements: ${JSON.stringify(financialStatements)}. Address the following query: "${query}". Provide a detailed financial analysis, including ratios, trends, and a concluding summary.`
-// );
-// export const managePersonalTasks = createAIFlow(
-//   'managePersonalTasks',
-//   z.object({ tasks: z.array(z.string()), priorities: z.string(), schedule: z.any() }),
-//   'You are a personal productivity assistant AI.',
-//   ({ tasks, priorities, schedule }) => `Organize the following tasks based on the provided priorities and schedule. Tasks: ${JSON.stringify(tasks)}. Priorities: "${priorities}". Current Schedule: ${JSON.stringify(schedule)}. Produce an optimized daily schedule.`
-// );
-// export const analyzeSecurityThreat = createAIFlow(
-//   'analyzeSecurityThreat',
-//   z.object({ logs: z.any(), alertContext: z.string() }),
-//   'You are a cybersecurity threat analyst AI.',
-//   ({ logs, alertContext }) => `Analyze the following security logs and contextual alert data to determine the nature and severity of a potential threat. Logs: ${JSON.stringify(logs)}. Alert Context: "${alertContext}". Provide a threat assessment and recommend immediate mitigation steps.`
-// );
-// export const analyzeProductFeedback = createAIFlow(
-//   'analyzeProductFeedback',
-//   z.object({ feedbackArray: z.array(z.string()), productArea: z.string() }),
-//   'You are a product management AI focused on user feedback analysis.',
-//   ({ feedbackArray, productArea }) => `Analyze the following user feedback related to the ${productArea} of our product. Feedback: ${JSON.stringify(feedbackArray)}. Categorize the feedback, identify the most common themes, and suggest feature improvements or bug fixes.`
-// );
-// export const managePatientRecords = createAIFlow(
-//   'managePatientRecords',
-//   z.object({ record: z.any(), action: z.string() }),
-//   'You are a medical records assistant AI, operating under strict HIPAA compliance.',
-//   ({ record, action }) => `Perform the following secure action on a patient record: "${action}". Record Data: ${JSON.stringify(record)}. Return a confirmation of the action taken and the updated record summary. All personally identifiable information (PII) must be masked in the response.`
-// );
-// export const workflowExecution = createAIFlow(
-//   'workflowExecution',
-//   z.object({ task: z.string(), context: z.any() }),
-//   'You are a workflow execution AI.',
-//   ({ task, context }) => `Execute the following task: "${task}". Context: ${JSON.stringify(context)}.`
-// );
-exports.setAdminPrivileges = functions.https.onCall(async (data, context) => {
-    const { uid, email } = data;
-    if (email !== 'ghostspooks@icloud.com') {
-        throw new functions.https.HttpsError('permission-denied', 'This function is restricted.');
+exports.processAiTeamCommunication = exports.resetAdminPassword = exports.fixAdminAccount = exports.deployAiEmployee = exports.customerPortal = exports.generateChatCompletion = exports.helloGenkitFlow = void 0;
+const firebase_functions_1 = require("firebase-functions");
+const app_1 = require("firebase-admin/app");
+const auth_1 = require("firebase-admin/auth");
+const firestore_1 = require("firebase-admin/firestore");
+const vertexai_1 = require("@google-cloud/vertexai");
+const stripe_1 = require("./utils/stripe");
+const functions = __importStar(require("firebase-functions")); // Import for Firestore triggers
+// Genkit imports
+const genkit_1 = require("genkit");
+const googleai_1 = require("@genkit-ai/googleai");
+const https_1 = require("firebase-functions/https");
+const params_1 = require("firebase-functions/params");
+const zod_1 = require("zod");
+// Define the API key secret
+const googleAIapiKey = (0, params_1.defineSecret)("GOOGLE_API_KEY");
+const adminEmail = (0, params_1.defineSecret)("ADMIN_EMAIL");
+const adminTempPassword = (0, params_1.defineSecret)("ADMIN_TEMP_PASSWORD");
+// Configure Genkit
+(0, genkit_1.genkit)({
+    plugins: [
+        (0, googleai_1.googleAI)({
+            apiKey: googleAIapiKey.value(),
+        }),
+    ],
+    logLevel: 'debug',
+    flowStateStore: 'firebase', // Using firebase for flow state storage
+    flowStateRetentionInDays: 7,
+});
+(0, app_1.initializeApp)();
+const db = (0, firestore_1.getFirestore)();
+const auth = (0, auth_1.getAuth)();
+// Define your Genkit flow
+const helloFlow = genkit_1.genkit.defineFlow({
+    name: 'helloFlow',
+    inputSchema: zod_1.z.string().describe('The name to greet'),
+    outputSchema: zod_1.z.object({ message: zod_1.z.string() }),
+}, async (name) => {
+    // make a generation request
+    const result = await genkit_1.genkit.ai.generate({
+        model: googleai_1.gemini15Flash,
+        prompt: `Hello Gemini, my name is ${name}`,
+    });
+    const text = result.text();
+    console.log(text);
+    return { message: text };
+});
+// Wrap the flow in onCallGenkit for deployment
+exports.helloGenkitFlow = (0, https_1.onCallGenkit)({
+    secrets: [googleAIapiKey],
+    authPolicy: (0, https_1.hasClaim)('email_verified'), // Example policy: user must have a verified email
+    enforceAppCheck: true, // Enforce App Check
+    consumeAppCheckToken: true,
+}, helloFlow);
+exports.generateChatCompletion = functions.runWith({ enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async (request) => {
+    const { prompt, history, model: requestedModel } = request.data;
+    // This function currently uses gemini-1.5-flash-001 by default
+    // Client-side Gemini-Pro is handled in src/components/ChatInterface.tsx
+    // If we want to support other Gemini models via backend for different AI employees,
+    // we would add logic here to map `requestedModel` to a specific Vertex AI model string.
+    const geminiModelToUse = 'gemini-1.5-flash-001';
+    const vertex_ai = new vertexai_1.VertexAI({ project: process.env.GCLOUD_PROJECT, location: 'us-central1' });
+    const generativeModel = vertex_ai.preview.getGenerativeModel({
+        model: geminiModelToUse,
+        generationConfig: {
+            maxOutputTokens: 2048,
+            temperature: 1,
+            topP: 0.95,
+        },
+    });
+    const chat = generativeModel.startChat({
+        history: history || [],
+    });
+    const result = await chat.sendMessage(prompt);
+    const response = result.response;
+    if (!response?.candidates?.[0]?.content?.parts?.[0]?.text) {
+        throw new firebase_functions_1.https.HttpsError('internal', 'Failed to generate a valid response from the AI model.');
     }
+    return { response: response.candidates[0].content.parts[0].text };
+});
+exports.customerPortal = functions.runWith({ enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async (request) => {
+    const { user_id } = request.data;
+    if (!user_id) {
+        throw new firebase_functions_1.https.HttpsError('invalid-argument', 'The function must be called with a user_id.');
+    }
+    const customerRef = db.collection('stripe_customers').doc(user_id);
+    let customerDoc = await customerRef.get();
+    if (!customerDoc.exists) {
+        const stripeCustomer = await stripe_1.stripe.customers.create({
+            metadata: { user_id },
+        });
+        await customerRef.set({ stripe_customer_id: stripeCustomer.id });
+        // Also add a basic user role
+        await db.collection('user_roles').doc(user_id).set({ role: 'user' });
+        customerDoc = await customerRef.get();
+    }
+    const customer = customerDoc.data();
+    const { url } = await stripe_1.stripe.billingPortal.sessions.create({
+        customer: customer.stripe_customer_id,
+        return_url: 'https://auraa-ai-96399413-e4e2f.web.app/dashboard',
+    });
+    return { url };
+});
+exports.deployAiEmployee = functions.runWith({ enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async (request) => {
+    const { deploymentRequestId } = request.data;
+    if (!deploymentRequestId) {
+        throw new firebase_functions_1.https.HttpsError('invalid-argument', 'The function must be called with a deploymentRequestId.');
+    }
+    // Fetch deployment request from Firestore
+    const deploymentRequestRef = db.collection('aiEmployeeDeploymentRequests').doc(deploymentRequestId);
+    const deploymentRequestDoc = await deploymentRequestRef.get();
+    if (!deploymentRequestDoc.exists) {
+        throw new firebase_functions_1.https.HttpsError('not-found', 'Deployment request not found in Firestore.');
+    }
+    const deploymentRequest = deploymentRequestDoc.data();
+    if (deploymentRequest.status !== 'pending') {
+        throw new firebase_functions_1.https.HttpsError('failed-precondition', `Deployment request has already been processed. Status: ${deploymentRequest.status}`);
+    }
+    // Fetch AI helper template from Firestore using the template ID stored in the deployment request
+    // Assuming 'ai_helper_template_id' is a string ID within the deploymentRequest document
+    const templateId = deploymentRequest.ai_helper_template_id;
+    if (!templateId) {
+        throw new firebase_functions_1.https.HttpsError('failed-precondition', 'AI helper template ID is missing in the deployment request.');
+    }
+    const templateRef = db.collection('ai_helper_templates').doc(templateId);
+    const templateDoc = await templateRef.get();
+    if (!templateDoc.exists) {
+        await deploymentRequestRef.update({ status: 'rejected', rejection_reason: 'Failed to fetch AI template details from Firestore (template not found).' });
+        throw new firebase_functions_1.https.HttpsError('not-found', 'AI template not found in Firestore.');
+    }
+    const template = templateDoc.data();
     try {
-        await admin.auth().setCustomUserClaims(uid, { admin: true });
-        await admin.firestore().collection('subscribers').doc(uid).set({
-            subscription_tier: 'Enterprise (Admin)',
-            subscribed: true,
-            email: email,
-        }, { merge: true });
-        return { success: true, message: `Admin privileges granted to ${email}.` };
+        // Add the deployed AI employee instance to the 'aiEmployees' collection
+        await db.collection('aiEmployees').add({
+            user_id: deploymentRequest.user_id,
+            deployment_request_id: deploymentRequestDoc.id,
+            name: template.name || 'AI Employee',
+            deployment_config: deploymentRequest.deployment_config,
+            status: 'active',
+            template_id: templateDoc.id,
+            category: template.category,
+            model: template.model,
+            skills: template.skills, // Assuming 'skills' field exists in ai_helper_templates
+            // Include any other relevant fields from the template or deployment request
+        });
     }
     catch (error) {
-        throw new functions.https.HttpsError('internal', error.message);
+        console.error('Error creating AI employee record in Firestore:', error);
+        await deploymentRequestRef.update({ status: 'rejected', rejection_reason: 'Failed to create AI employee record in Firestore.' });
+        throw new firebase_functions_1.https.HttpsError('internal', 'Failed to create AI employee in Firestore.');
+    }
+    await deploymentRequestRef.update({ status: 'approved' });
+    return { success: true, message: 'AI Employee deployed successfully.' };
+});
+exports.fixAdminAccount = functions.runWith({ secrets: [adminEmail, adminTempPassword], enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async () => {
+    const adminEmailValue = adminEmail.value();
+    const tempPasswordValue = adminTempPassword.value();
+    try {
+        const user = await auth.getUserByEmail(adminEmailValue);
+        await auth.updateUser(user.uid, {
+            password: tempPasswordValue,
+            emailVerified: true,
+        });
+        await auth.setCustomUserClaims(user.uid, { admin: true });
+        await db.collection('user_roles').doc(user.uid).set({ role: 'admin' }, { merge: true });
+        await db.collection('subscribers').doc(user.uid).set({
+            email: adminEmailValue,
+            subscribed: true,
+            subscription_tier: 'Enterprise',
+            subscription_end: null,
+        }, { merge: true });
+        return {
+            success: true,
+            message: 'Admin account fixed successfully',
+            user_id: user.uid,
+            email: adminEmailValue,
+            temporary_password: tempPasswordValue,
+            note: 'Please log in with this temporary password and change it immediately'
+        };
+    }
+    catch (error) {
+        if (error instanceof Error && error.code === 'auth/user-not-found') {
+            const user = await auth.createUser({
+                email: adminEmailValue,
+                password: tempPasswordValue,
+                emailVerified: true,
+            });
+            await auth.setCustomUserClaims(user.uid, { admin: true });
+            await db.collection('user_roles').doc(user.uid).set({ role: 'admin' });
+            await db.collection('subscribers').doc(user.uid).set({
+                email: adminEmailValue,
+                subscribed: true,
+                subscription_tier: 'Enterprise',
+                subscription_end: null,
+            });
+            return {
+                success: true,
+                message: 'Admin account created successfully',
+                user_id: user.uid,
+                email: adminEmailValue,
+                temporary_password: tempPasswordValue,
+                note: 'Please log in with this temporary password and change it immediately'
+            };
+        }
+        else if (error instanceof Error) {
+            throw new firebase_functions_1.https.HttpsError('internal', error.message);
+        }
+        throw new firebase_functions_1.https.HttpsError('internal', 'An unknown error occurred.');
+    }
+});
+exports.resetAdminPassword = functions.runWith({ secrets: [adminEmail], enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async () => {
+    const adminEmailValue = adminEmail.value();
+    try {
+        const link = await auth.generatePasswordResetLink(adminEmailValue);
+        // You would typically send this link to the user via email.
+        // For this migration, we'll just return it.
+        return {
+            success: true,
+            message: 'Password reset link generated successfully',
+            email: adminEmailValue,
+            resetLink: link,
+            note: 'This link should be sent to the user to reset their password.'
+        };
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            throw new firebase_functions_1.https.HttpsError('internal', error.message);
+        }
+        throw new firebase_functions_1.https.HttpsError('internal', 'An unknown error occurred.');
+    }
+});
+// New Firebase Function to process AI Team Communications
+exports.processAiTeamCommunication = functions.firestore
+    .document('ai_team_communications/{communicationId}')
+    .onCreate(async (snapshot, context) => {
+    const communication = snapshot.data();
+    const communicationId = snapshot.id;
+    console.log(`💬 New AI team communication received: ${communicationId}`);
+    // Only process if it's a message from a user to an AI employee
+    if (communication.sender_employee !== 'User' || !communication.recipient_employee) {
+        console.log('Skipping communication: Not from a user to a specific AI employee.');
+        return null;
+    }
+    const recipientEmployeeName = communication.recipient_employee;
+    const userId = communication.user_id;
+    try {
+        // 1. Fetch the AI employee template for the recipient
+        const aiHelperTemplatesRef = db.collection('ai_helper_templates');
+        const q = aiHelperTemplatesRef.where('name', '==', recipientEmployeeName);
+        const templateSnapshot = await q.get();
+        if (templateSnapshot.empty) {
+            console.warn(`No AI helper template found for recipient: ${recipientEmployeeName}`);
+            // Optionally, send a default "I don't understand" message
+            await db.collection('ai_team_communications').add({
+                sender_employee: 'System',
+                recipient_employee: recipientEmployeeName,
+                message_type: 'alert',
+                subject: 'Communication Error',
+                content: `AI Employee "${recipientEmployeeName}" not found or configured.`,
+                user_id: userId,
+                is_read: false,
+                created_at: firestore_1.FieldValue.serverTimestamp(),
+                original_communication_id: communicationId,
+            });
+            return null;
+        }
+        const aiTemplate = templateSnapshot.docs[0].data();
+        // 2. Determine the Gemini model to use
+        const geminiModelToUse = 'gemini-1.5-flash-001'; // Default for backend
+        // Optionally, use a more capable model if specified in the template
+        // For simplicity, we'll stick to gemini-1.5-flash-001 for now,
+        // as "Gemini-Pro" is handled client-side.
+        // If aiTemplate.model were 'GPT-4', you could map it to a stronger Gemini model here if desired.
+        const vertex_ai = new vertexai_1.VertexAI({ project: process.env.GCLOUD_PROJECT, location: 'us-central1' });
+        const generativeModel = vertex_ai.preview.getGenerativeModel({
+            model: geminiModelToUse,
+            generationConfig: {
+                maxOutputTokens: 2048,
+                temperature: 0.7, // Adjust temperature for more creative/less factual responses
+                topP: 0.95,
+            },
+        });
+        // 3. Craft the prompt for Gemini
+        // Include historical context if available in the 'metadata' of the communication
+        const chatHistory = (communication.metadata?.history || []).map((msg) => ({
+            role: msg.sender === 'User' ? 'user' : 'model',
+            parts: [{ text: msg.content }],
+        }));
+        // Add the AI employee's persona and skills to the prompt
+        const capabilities = Array.isArray(aiTemplate.capabilities) ? aiTemplate.capabilities.join(', ') : 'a wide range of tasks';
+        const personaPrompt = `You are ${aiTemplate.name}, a ${aiTemplate.category} expert. Your core skills include: ${capabilities}. Your description is: "${aiTemplate.description}". Respond to the user's message concisely and helpfully, leveraging your expertise.`;
+        const parts = [{ text: `${personaPrompt}
+
+User: ${communication.content}` }];
+        const chat = generativeModel.startChat({
+            history: chatHistory,
+        });
+        const result = await chat.sendMessage({ parts });
+        const aiResponseContent = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!aiResponseContent) {
+            throw new Error('Failed to generate a valid response from the AI model.');
+        }
+        // 4. Store AI's response in Firestore
+        await db.collection('ai_team_communications').add({
+            sender_employee: aiTemplate.name,
+            recipient_employee: 'User', // AI responds to the user
+            message_type: 'response',
+            subject: `Re: ${communication.subject || 'Team Communication'} `,
+            content: aiResponseContent,
+            metadata: {
+                original_communication_id: communicationId,
+                ai_model_used: geminiModelToUse,
+            },
+            user_id: userId,
+            is_read: false,
+            created_at: firestore_1.FieldValue.serverTimestamp(),
+        });
+        console.log(`✅ AI employee "${aiTemplate.name}" responded to communication ${communicationId}`);
+        return null;
+    }
+    catch (error) {
+        console.error(`❌ Error processing AI team communication ${communicationId}:`, error);
+        // Log an error message in communications if AI fails to respond
+        await db.collection('ai_team_communications').add({
+            sender_employee: 'System',
+            recipient_employee: recipientEmployeeName,
+            message_type: 'alert',
+            subject: 'AI Response Error',
+            content: `AI Employee "${recipientEmployeeName}" encountered an error while responding. Please check logs.`,
+            user_id: userId,
+            is_read: false,
+            created_at: firestore_1.FieldValue.serverTimestamp(),
+            original_communication_id: communicationId,
+        });
+        return null;
     }
 });
 //# sourceMappingURL=index.js.map

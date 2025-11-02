@@ -228,7 +228,7 @@ export const fixAdminAccount = functions.runWith({ secrets: [adminEmail, adminTe
       note: 'Please log in with this temporary password and change it immediately'
     };
   } catch (error: unknown) {
-    if (error instanceof Error && (error as {code: string}).code === 'auth/user-not-found') {
+    if (error instanceof Error && (error as unknown as {code: string}).code === 'auth/user-not-found') {
       const user = await auth.createUser({
         email: adminEmailValue,
         password: tempPasswordValue,

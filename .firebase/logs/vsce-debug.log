@@ -2695,3 +2695,71 @@ I1102 13:18:25.376009     651 load.go:109] Finished reloading
 [debug] [2025-11-02T13:18:25.515Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
 [debug] [2025-11-02T13:18:25.515Z] Request to https://firebase.googleapis.com/v1beta1/projects?pageSize=1000 had HTTP Error: 403, Request had insufficient authentication scopes.
 [error] [Firebase Plugin] error:  {}
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2025-11-02T13:47:43.656Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-02T13:47:47.752Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-02T13:47:47.753Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-02T13:47:47.754Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-02T13:47:47.757Z] Checked if tokens are valid: true, expires at: 1762093915770
+[debug] [2025-11-02T13:47:47.757Z] Checked if tokens are valid: true, expires at: 1762093915770
+[debug] [2025-11-02T13:47:47.757Z] [Firebase Plugin] User found:  owner@auraa-ai.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2025-11-02T13:47:47.758Z] Checked if tokens are valid: true, expires at: 1762093915770
+[debug] [2025-11-02T13:47:47.760Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2025-11-02T13:47:47.792Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[debug] [2025-11-02T13:47:48.188Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2025-11-02T13:47:48.189Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2025-11-02T13:47:48.824Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.15.0) on port 50001
+[debug] [2025-11-02T13:47:48.926Z] I1102 13:47:48.897013    9613 control.go:94] [/emulator/auraa-ai-69-3-service 5c50] UpdateResources(): done
+Main schema: sources: schema/schema.gql [826B] 
+Connector "operations1": sources: example/operations1.gql [667B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1102 13:47:48.897013    9613 control.go:94] [/emulator/auraa-ai-69-3-service 5c50] UpdateResources(): done\nMain schema: sources: schema/schema.gql [826B] \nConnector \"operations1\": sources: example/operations1.gql [667B] \n"}}
+[debug] [2025-11-02T13:47:48.927Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-02T13:47:48.927Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-02T13:47:48.927Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.15.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.15.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-02T13:47:48.958Z] I1102 13:47:48.952482    9623 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1102 13:47:48.952482    9623 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-02T13:47:49.006Z] I1102 13:47:49.005968    9623 control.go:94] [/emulator/auraa-ai-69-3-service 773a] UpdateResources(): done
+Main schema: sources: schema/schema.gql [826B] 
+Connector "operations1": sources: example/operations1.gql [667B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1102 13:47:49.005968    9623 control.go:94] [/emulator/auraa-ai-69-3-service 773a] UpdateResources(): done\nMain schema: sources: schema/schema.gql [826B] \nConnector \"operations1\": sources: example/operations1.gql [667B] \n"}}
+[debug] [2025-11-02T13:47:49.044Z] I1102 13:47:49.044411    9623 codegen.go:82] [connector "operations1" javascriptSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-generated"
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1102 13:47:49.044411    9623 codegen.go:82] [connector \"operations1\" javascriptSdk] Generating sources into \"/home/user/Auraa-AI/src/dataconnect-generated\"\n"}}
+[debug] [2025-11-02T13:47:49.057Z] I1102 13:47:49.057181    9623 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] main/query.gql [6273B] main/mutation.gql [16959B] main/implicit.gql [2533B] main/input.gql [46270B] main/relation.gql [23404B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1102 13:47:49.057181    9623 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] main/query.gql [6273B] main/mutation.gql [16959B] main/implicit.gql [2533B] main/input.gql [46270B] main/relation.gql [23404B] \n"}}
+[debug] [2025-11-02T13:47:49.058Z] I1102 13:47:49.057993    9623 collector.go:107] connector "operations1" javascriptSdk wrote into "/home/user/Auraa-AI/src/dataconnect-generated"
+Generated sources: react/index.d.ts [2123B] react/esm/package.json [17B] react/index.cjs.js [1741B] .guides/usage.md [2346B] esm/index.esm.js [1765B] index.cjs.js [2050B] react/package.json [464B] react/esm/index.esm.js [1646B] react/README.md [27734B] .guides/setup.md [1682B] index.d.ts [4002B] esm/package.json [17B] package.json [867B] README.md [20970B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1102 13:47:49.057993    9623 collector.go:107] connector \"operations1\" javascriptSdk wrote into \"/home/user/Auraa-AI/src/dataconnect-generated\"\nGenerated sources: react/index.d.ts [2123B] react/esm/package.json [17B] react/index.cjs.js [1741B] .guides/usage.md [2346B] esm/index.esm.js [1765B] index.cjs.js [2050B] react/package.json [464B] react/esm/index.esm.js [1646B] react/README.md [27734B] .guides/setup.md [1682B] index.d.ts [4002B] esm/package.json [17B] package.json [867B] README.md [20970B] \n"}}
+[debug] [2025-11-02T13:47:49.061Z] I1102 13:47:49.059780    9623 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I1102 13:47:49.059810    9623 load.go:109] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1102 13:47:49.059780    9623 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation\nI1102 13:47:49.059810    9623 load.go:109] Finished reloading\n"}}
+[debug] [2025-11-02T13:47:49.072Z] I1102 13:47:49.072565    9623 dev.go:102] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1102 13:47:49.072565    9623 dev.go:102] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[error] [Firebase Plugin] error:  {}
+[debug] [2025-11-02T13:50:56.202Z] [Firebase Plugin] Value of process.env.MONOSPACE_ENV: true
+[debug] [2025-11-02T13:50:56.203Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-02T13:50:56.204Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-02T13:50:56.204Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-02T13:50:56.204Z] [Firebase Plugin] Value of process.env.MONOSPACE_ENV: true
+[debug] [2025-11-02T13:50:56.205Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-02T13:50:56.205Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-02T13:50:56.205Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-02T13:50:56.206Z] Emulator locator file path: /tmp/hub-monospace-11.json
+[debug] [2025-11-02T13:50:56.207Z] Checked if tokens are valid: true, expires at: 1762093915770
+[debug] [2025-11-02T13:50:56.207Z] Checked if tokens are valid: true, expires at: 1762093915770
+[debug] [2025-11-02T13:50:56.207Z] [Firebase Plugin] User found:  owner@auraa-ai.com
+[debug] [2025-11-02T13:50:56.207Z] [Firebase Plugin] User found:  owner@auraa-ai.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2025-11-02T13:50:56.208Z] Checked if tokens are valid: true, expires at: 1762093915770
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2025-11-02T13:50:56.208Z] Checked if tokens are valid: true, expires at: 1762093915770
+[debug] [2025-11-02T13:50:56.209Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2025-11-02T13:50:56.212Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2025-11-02T13:50:56.572Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2025-11-02T13:50:56.573Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2025-11-02T13:50:56.591Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2025-11-02T13:50:56.591Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
