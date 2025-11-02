@@ -2490,3 +2490,16 @@ Generated sources: react/esm/package.json [17B] react/esm/index.esm.js [1646B] r
  {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1102 07:27:33.469409    3236 load.go:109] Finished reloading\n"}}
 [debug] [2025-11-02T07:27:33.483Z] I1102 07:27:33.483313    3236 dev.go:102] Listening on address (HTTP + gRPC): 127.0.0.1:50001
  {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1102 07:27:33.483313    3236 dev.go:102] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[debug] [2025-11-02T07:33:04.715Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-02T07:33:10.331Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-02T07:33:10.333Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-02T07:33:10.334Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-11-02T07:33:10.337Z] No OAuth tokens found
+[debug] [2025-11-02T07:33:10.338Z] No OAuth tokens found
+[debug] [2025-11-02T07:33:10.338Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-02T07:33:10.339Z] > authorizing via signed-in user (id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com)
+[debug] [2025-11-02T07:33:10.339Z] [Firebase Plugin] User found:  id-monospace-workstations-sa@monospace-11.iam.gserviceaccount.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2025-11-02T07:33:10.341Z] No OAuth tokens found
+[debug] [2025-11-02T07:33:10.343Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2025-11-02T07:33:10.382Z] [Firebase Plugin] VSCode notification server listening on port 40001
