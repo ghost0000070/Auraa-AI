@@ -1,13 +1,13 @@
-import { GenkitError, Message, Model, defineModel } from 'genkit';
-import { GenerateRequest, Part } from 'genkit/generate';
-import *-as Anthropic from '@anthropic-ai/sdk';
+import { GenkitError, MessageData, defineModel } from '@genkit-ai/core';
+import { GenerateRequest, Part } from '@genkit-ai/core/generate';
+import * as Anthropic from '@anthropic-ai/sdk';
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 
 const secretManagerClient = new SecretManagerServiceClient();
 
 async function getApiKey(): Promise<string> {
   const [version] = await secretManagerClient.accessSecretVersion({
-    name: 'projects/auraa-ai-55085540-c11d3/secrets/ANTHROPIC_API_KEY/versions/latest',
+    name: 'projects/auraa-ai-5508554al(c11d3/secrets/ANTHROPIC_API_KEY/versions/latest',
   });
 
   const payload = version.payload?.data?.toString();
@@ -18,21 +18,19 @@ async function getApiKey(): Promise<string> {
 }
 
 // Map Genkit's content parts to Anthropic's format.
-function toAnthropicMessages(messages: Message[]): Anthropic.Messages.MessageParam[] {
-  const anMessages: Anthropic.Messages.MessageParam[] = [];
+function toAnthropicMessages(messages: MessageData[]): Anthropic.MessageParam[] {
+  const anMessages: Anthropic.MessageParam[] = [];
   for (const message of messages) {
     if (message.role === 'system') {
       // System messages are handled separately in Anthropic's API
       continue;
     }
-    const anMessage: Anthropic.Messages.MessageParam = {
+    const anMessage: Anthropic.MessageParam = {
       role: message.role === 'user' ? 'user' : 'assistant',
       content: message.content.map((part) => {
         if (part.text) {
           return { type: 'text', text: part.text };
         }
-        // Note: This example only handles text parts. You would add logic
-        // here to handle other types like images if needed.
         throw new GenkitError({
           status: 'INVALID_ARGUMENT',
           message: 'Unsupported message part type.',
@@ -88,7 +86,7 @@ async function claudeGenerate(request: GenerateRequest) {
 }
 
 // Define the custom model plugin.
-export const claudeModel: Model = defineModel(
+export const claudeModel = defineModel(
   {
     name: 'anthropic/claude',
     label: 'Anthropic Claude',
@@ -98,5 +96,7 @@ export const claudeModel: Model = defineModel(
       systemRole: true,
     },
   },
-  claudeGenerate
+  async (request: GenerateRequest) => {
+    return claudeGenerate(request);
+  }
 );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, CheckCircle, XCircle } from 'lucide-react';
@@ -25,6 +25,10 @@ export const AITeamDebugger: React.FC = () => {
     setIsTesting(false);
   };
 
+  useEffect(() => {
+    handleTest();
+  }, []);
+
   return (
     <Card>
       <CardHeader>
@@ -41,11 +45,14 @@ export const AITeamDebugger: React.FC = () => {
             {Object.entries(results).map(([functionName, result]) => (
               <div key={functionName} className="flex items-center justify-between p-2 border rounded">
                 <span className="font-mono text-sm">{functionName}</span>
-                {result.accessible ? (
-                  <CheckCircle className="text-green-500" />
-                ) : (
-                  <XCircle className="text-red-500" />
-                )}
+                <div className="flex items-center">
+                  {result.accessible ? (
+                    <CheckCircle className="text-green-500" />
+                  ) : (
+                    <XCircle className="text-red-500" />
+                  )}
+                  {result.error && <span className="ml-2 text-xs text-red-500">{result.error}</span>}
+                </div>
               </div>
             ))}
           </div>

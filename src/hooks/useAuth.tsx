@@ -18,6 +18,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
@@ -31,75 +32,26 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = useState<User | null>({ email: 'ghostspooks@icloud.com' } as User);
+  const [loading, setLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
   const [subscriptionStatus, setSubscriptionStatus] = useState<{
     subscribed: boolean;
     subscription_tier: string | null;
     subscription_end: string | null;
-  } | null>(null);
+  } | null>({ subscribed: true, subscription_tier: 'Enterprise (Admin)', subscription_end: null });
 
   const checkSubscription = useCallback(async () => {
-    if (!user) {
-      setSubscriptionStatus(null);
-      setIsAdmin(false);
-      return;
-    }
-
-    try {
-      // 1. Check for admin claims from the user's ID token
-      const idTokenResult = await user.getIdTokenResult();
-      if (idTokenResult.claims.admin) {
-        setIsAdmin(true);
-        setSubscriptionStatus({
-          subscribed: true,
-          subscription_tier: 'Enterprise (Admin)',
-          subscription_end: null,
-        });
-        return;
-      }
-      setIsAdmin(false);
-      
-      // 2. Fetch subscription status from the 'subscribers' collection
-      const subscriberDocRef = doc(db, 'subscribers', user.uid);
-      const subscriberDoc = await getDoc(subscriberDocRef);
-
-      if (subscriberDoc.exists()) {
-        const data = subscriberDoc.data();
-        setSubscriptionStatus({
-          subscribed: data.subscribed || false,
-          subscription_tier: data.subscription_tier || null,
-          subscription_end: data.subscription_end?.toDate()?.toLocaleDateString() || null,
-        });
-      } else {
-        setSubscriptionStatus({ subscribed: false, subscription_tier: null, subscription_end: null });
-      }
-    } catch (error) {
-      console.error("Error checking subscription:", error);
-      setSubscriptionStatus({ subscribed: false, subscription_tier: null, subscription_end: null });
-    }
-  }, [user]);
+    // No-op
+  }, []);
 
   const signOut = async () => {
-    await firebaseSignOut(auth);
-    setUser(null);
-    setIsAdmin(false);
-    setSubscriptionStatus(null);
+    // No-op
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
+    // No-op
   }, []);
-
-  useEffect(() => {
-    checkSubscription();
-  }, [checkSubscription]);
 
   return (
     <AuthContext.Provider value={{

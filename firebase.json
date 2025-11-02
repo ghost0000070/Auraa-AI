@@ -18,12 +18,20 @@
   },
   "functions": {
     "source": "functions",
-    "runtime": "nodejs20"
+    "runtime": "nodejs20",
+    "codebase": "default",
+    "ignore": [
+      "**/node_modules/**",
+      "**/.*"
+    ],
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run build"
+    ]
   },
   "firestore": {
     "database": "(default)",
     "location": "nam5",
-    "ruèles": "firestore.rules",
+    "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   }
 }

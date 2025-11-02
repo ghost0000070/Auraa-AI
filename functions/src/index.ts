@@ -1,10 +1,11 @@
 
-import { configure } from 'genkit';
-import { onFlow } from 'genkit/firebase';
+import { configure } from '@genkit-ai/core';
+import { onFlow } from '@genkit-ai/firebase/functions';
 import { z } from 'zod';
 import { claudeModel } from './claude-plugin';
 import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
+import { onUserDeleted } from 'firebase-functions/v2/auth';
+import { logger } from 'firebase-functions';
 
 // Initialize Firebase Admin SDK
 try {
@@ -21,8 +22,8 @@ configure({
 });
 
 // --- NEW FUNCTION: Automatically Delete User Data ---
-export const onUserDelete = functions.auth.user().onDelete(async (user) => {
-  const logger = functions.logger;
+export const onUserDelete = onUserDeleted(async (event) => {
+  const user = event.data;
   logger.info(`User ${user.uid} is being deleted. Cleaning up associated data.`);
 
   try {
@@ -105,10 +106,7 @@ export const automateSalesOutreach = createAIFlow(
   'automateSalesOutreach',
   z.object({ leadInfo: z.any(), companyInfo: z.any() }),
   'You are the Deal Striker Guardian, an expert AI sales representative. Your role is to handle lead qualification, follow-ups, and initial customer outreach with precision and professionalism.',
-  ({ leadInfo, companyInfo }) => `Generate a personalized outreach email to a potential lead. The email must be tailored to the lead's role and the company's industry. Your goal is to book a meeting.
-  Lead Information: ${JSON.stringify(leadInfo)}.
-  Company Information: ${JSON.stringify(companyInfo)}.
-  Output only the email content.`
+  ({ leadInfo, companyInfo }) => `Generate a personalized outreach email to a potential lead. The email must be tailored to the lead's role and the company's industry. Your goal is to book a meeting.\n  Lead Information: ${JSON.stringify(leadInfo)}.\n  Company Information: ${JSON.stringify(companyInfo)}.\n  Output only the email content.`
 );
 
 // --- Support & Operations Flows ---
@@ -117,19 +115,14 @@ export const handleSupportTicket = createAIFlow(
   'handleSupportTicket',
   z.object({ ticketDetails: z.string(), knowledgeBase: z.any() }),
   'You are the Support Shield Guardian, an empathetic and efficient Customer Support AI. Your goal is to resolve customer issues accurately by leveraging all available information.',
-  ({ ticketDetails, knowledgeBase }) => `A customer has submitted a support ticket.
-  Ticket Details: "${ticketDetails}".
-  Using the provided knowledge base, create a comprehensive and helpful response. Classify the ticket's sentiment, and if the knowledge base is insufficient, recommend the correct department for escalation.
-  Knowledge Base: ${JSON.stringify(knowledgeBase)}.`
+  ({ ticketDetails, knowledgeBase }) => `A customer has submitted a support ticket.\n  Ticket Details: "${ticketDetails}".\n  Using the provided knowledge base, create a comprehensive and helpful response. Classify the ticket's sentiment, and if the knowledge base is insufficient, recommend the correct department for escalation.\n  Knowledge Base: ${JSON.stringify(knowledgeBase)}.`
 );
 
 export const resolveItIssue = createAIFlow(
   'resolveItIssue',
   z.object({ issueDescription: z.string(), systemInfo: z.any() }),
   'You are the Quantum Helper Guardian, a senior IT helpdesk AI. You resolve common technical issues for employees with clear, step-by-step instructions.',
-  ({ issueDescription, systemInfo }) => `An employee is reporting the following IT issue: "${issueDescription}".
-  Their System Information is: ${JSON.stringify(systemInfo)}.
-  Provide a step-by-step guide to diagnose and resolve the problem. Your response should include instructions for logging a ticket if the issue cannot be resolved.`
+  ({ issueDescription, systemInfo }) => `An employee is reporting the following IT issue: "${issueDescription}".\n  Their System Information is: ${JSON.stringify(systemInfo)}.\n  Provide a step-by-step guide to diagnose and resolve the problem. Your response should include instructions for logging a ticket if the issue cannot be resolved.`
 );
 
 // ... (other functions will be updated similarly)
@@ -218,4 +211,11 @@ export const managePatientRecords = createAIFlow(
   z.object({ record: z.any(), action: z.string() }),
   'You are a medical records assistant AI, operating under strict HIPAA compliance.',
   ({ record, action }) => `Perform the following secure action on a patient record: "${action}". Record Data: ${JSON.stringify(record)}. Return a confirmation of the action taken and the updated record summary. All personally identifiable information (PII) must be masked in the response.`
+);
+
+export const workflowExecution = createAIFlow(
+  'workflowExecution',
+  z.object({ task: z.string(), context: z.any() }),
+  'You are a workflow execution AI.',
+  ({ task, context }) => `Execute the following task: "${task}". Context: ${JSON.stringify(context)}.`
 );

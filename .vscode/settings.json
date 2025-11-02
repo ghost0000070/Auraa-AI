@@ -22,5 +22,6 @@
     "notebook.multiCursor.enabled": true,
     "vercelVSCode.accessToken": "6AjsMADmYimgjCNBRYO8WM3C",
     "terminal.integrated.rightClickBehavior": "copyPaste",
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "IDX.aI.showChatInEditorTab": true
 }
