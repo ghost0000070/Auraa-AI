@@ -1,0 +1,12 @@
+I1102 07:26:14.930812    3236 load.go:31] Reloading schema and connectors...
+I1102 07:26:14.970822    3236 control.go:94] [/emulator/auraa-ai-69-3-service 7927] UpdateResources(): done
+Main schema: sources: schema/schema.gql [826B] 
+Connector "operations1": sources: example/operations1.gql [667B] 
+I1102 07:26:15.010377    3236 codegen.go:82] [connector "operations1" javascriptSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-generated"
+I1102 07:26:15.021237    3236 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: main/relation.gql [23404B] prelude.gql [73219B] main/query.gql [6273B] main/mutation.gql [16959B] main/implicit.gql [2533B] main/input.gql [46270B] 
+I1102 07:26:15.021932    3236 collector.go:107] connector "operations1" javascriptSdk wrote into "/home/user/Auraa-AI/src/dataconnect-generated"
+Generated sources: react/esm/package.json [17B] react/esm/index.esm.js [1646B] react/README.md [27734B] .guides/setup.md [1682B] esm/index.esm.js [1765B] index.cjs.js [2050B] README.md [20970B] react/package.json [464B] react/index.cjs.js [1741B] .guides/usage.md [2346B] index.d.ts [4002B] esm/package.json [17B] package.json [867B] react/index.d.ts [2123B] 
+I1102 07:26:15.023533    3236 installsdk.go:86] Running command: /usr/bin/npm install file:src/dataconnect-generated
+I1102 07:27:33.469409    3236 load.go:109] Finished reloading
+I1102 07:27:33.483313    3236 dev.go:102] Listening on address (HTTP + gRPC): 127.0.0.1:50001

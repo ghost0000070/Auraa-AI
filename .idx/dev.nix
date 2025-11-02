@@ -25,4 +25,6 @@
       "dbaeumer.vscode-eslint"
       "SonarSource.sonarlint-vscode"
       "kisstkondoros.codemetrics"
-      "usernamehw.error-lens"];};}
+      "usernamehw.error-lens"
+      "streetsidesoftware.code-spell-checker"
+];};}
