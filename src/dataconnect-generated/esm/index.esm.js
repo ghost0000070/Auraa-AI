@@ -2,8 +2,8 @@ import { queryRef, executeQuery, mutationRef, executeMutation, validateArgs } fr
 
 export const connectorConfig = {
   connector: 'operations1',
-  service: 'auraa-ai-69-3-service',
-  location: 'us-east4'
+  service: 'auraa-ai-69-service',
+  location: 'northamerica-northeast1'
 };
 
 export const createUserRef = (dc) => {

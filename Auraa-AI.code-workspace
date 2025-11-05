@@ -5,6 +5,7 @@
 		}
 	],
 	"settings": {
-		"vercelVSCode.accessToken": "JzD1f4Vy7AFZdhImJCDGWe2w"
+		"vercelVSCode.accessToken": "JzD1f4Vy7AFZdhImJCDGWe2w",
+		"git.ignoreLimitWarning": true
 	}
 }

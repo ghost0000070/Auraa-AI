@@ -1,93 +1,76 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.processAiTeamCommunication = exports.resetAdminPassword = exports.fixAdminAccount = exports.deployAiEmployee = exports.customerPortal = exports.generateChatCompletion = exports.helloGenkitFlow = void 0;
-const firebase_functions_1 = require("firebase-functions");
+exports.processAiTeamCommunication = exports.resetAdminPassword = exports.fixAdminAccount = exports.deployAiEmployee = exports.customerPortal = exports.generateChatCompletion = exports.helloFlow = void 0;
+const v2_1 = require("firebase-functions/v2");
 const app_1 = require("firebase-admin/app");
 const auth_1 = require("firebase-admin/auth");
 const firestore_1 = require("firebase-admin/firestore");
 const vertexai_1 = require("@google-cloud/vertexai");
 const stripe_1 = require("./utils/stripe");
-const functions = __importStar(require("firebase-functions")); // Import for Firestore triggers
+const https_1 = require("firebase-functions/v2/https");
+const v2_2 = require("firebase-functions/v2");
 // Genkit imports
-const genkit_1 = require("genkit");
+const core_1 = require("@genkit-ai/core");
 const googleai_1 = require("@genkit-ai/googleai");
-const https_1 = require("firebase-functions/https");
+const firebase_1 = require("@genkit-ai/firebase");
 const params_1 = require("firebase-functions/params");
 const zod_1 = require("zod");
 // Define the API key secret
 const googleAIapiKey = (0, params_1.defineSecret)("GOOGLE_API_KEY");
 const adminEmail = (0, params_1.defineSecret)("ADMIN_EMAIL");
 const adminTempPassword = (0, params_1.defineSecret)("ADMIN_TEMP_PASSWORD");
+const STRIPE_SECRET_KEY = (0, params_1.defineSecret)("STRIPE_SECRET_KEY");
 // Configure Genkit
-(0, genkit_1.genkit)({
+const firebaseOptions = {
+    flowStateStore: {
+        collection: 'genkit-flows',
+        databaseId: '(default)' // specify your databaseId
+    },
+    traceStore: {
+        collection: 'genkit-traces',
+        databaseId: '(default)' // specify your databaseId
+    },
+    contextStore: {
+        collection: 'genkit-context',
+        databaseId: '(default)' // specify your databaseId
+    }
+};
+(0, core_1.configure)({
     plugins: [
+        (0, firebase_1.firebase)(firebaseOptions),
         (0, googleai_1.googleAI)({
             apiKey: googleAIapiKey.value(),
         }),
     ],
     logLevel: 'debug',
-    flowStateStore: 'firebase', // Using firebase for flow state storage
-    flowStateRetentionInDays: 7,
+    // flowStateStore: 'firebase', // Using firebase for flow state storage
+    // flowStateRetentionInDays: 7, //This is not a supported property
+    enableTracingAndMetrics: true
 });
 (0, app_1.initializeApp)();
 const db = (0, firestore_1.getFirestore)();
 const auth = (0, auth_1.getAuth)();
 // Define your Genkit flow
-const helloFlow = genkit_1.genkit.defineFlow({
+exports.helloFlow = (0, firebase_1.onFlow)({
     name: 'helloFlow',
     inputSchema: zod_1.z.string().describe('The name to greet'),
     outputSchema: zod_1.z.object({ message: zod_1.z.string() }),
+    auth: (user) => {
+        if (!user.email_verified) {
+            throw new https_1.HttpsError('unauthenticated', 'email not verified');
+        }
+    }
 }, async (name) => {
     // make a generation request
-    const result = await genkit_1.genkit.ai.generate({
+    const result = await core_1.core.generate({
         model: googleai_1.gemini15Flash,
         prompt: `Hello Gemini, my name is ${name}`,
     });
     const text = result.text();
-    console.log(text);
+    v2_1.logger.log(text);
     return { message: text };
 });
-// Wrap the flow in onCallGenkit for deployment
-exports.helloGenkitFlow = (0, https_1.onCallGenkit)({
-    secrets: [googleAIapiKey],
-    authPolicy: (0, https_1.hasClaim)('email_verified'), // Example policy: user must have a verified email
-    enforceAppCheck: true, // Enforce App Check
-    consumeAppCheckToken: true,
-}, helloFlow);
-exports.generateChatCompletion = functions.runWith({ enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async (request) => {
+exports.generateChatCompletion = v2_1.https.onCall({ enforceAppCheck: true, consumeAppCheckToken: true }, async (request) => {
     const { prompt, history, model: requestedModel } = request.data;
     // This function currently uses gemini-1.5-flash-001 by default
     // Client-side Gemini-Pro is handled in src/components/ChatInterface.tsx
@@ -97,26 +80,26 @@ exports.generateChatCompletion = functions.runWith({ enforceAppCheck: true, cons
     const vertex_ai = new vertexai_1.VertexAI({ project: process.env.GCLOUD_PROJECT, location: 'us-central1' });
     const generativeModel = vertex_ai.preview.getGenerativeModel({
         model: geminiModelToUse,
-        generationConfig: {
+        generation_config: {
             maxOutputTokens: 2048,
             temperature: 1,
             topP: 0.95,
         },
     });
     const chat = generativeModel.startChat({
-        history: history || [],
+        history: history,
     });
     const result = await chat.sendMessage(prompt);
     const response = result.response;
     if (!response?.candidates?.[0]?.content?.parts?.[0]?.text) {
-        throw new firebase_functions_1.https.HttpsError('internal', 'Failed to generate a valid response from the AI model.');
+        throw new https_1.HttpsError('internal', 'Failed to generate a valid response from the AI model.');
     }
     return { response: response.candidates[0].content.parts[0].text };
 });
-exports.customerPortal = functions.runWith({ enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async (request) => {
+exports.customerPortal = v2_1.https.onCall({ secrets: [STRIPE_SECRET_KEY], enforceAppCheck: true, consumeAppCheckToken: true }, async (request) => {
     const { user_id } = request.data;
     if (!user_id) {
-        throw new firebase_functions_1.https.HttpsError('invalid-argument', 'The function must be called with a user_id.');
+        throw new https_1.HttpsError('invalid-argument', 'The function must be called with a user_id.');
     }
     const customerRef = db.collection('stripe_customers').doc(user_id);
     let customerDoc = await customerRef.get();
@@ -136,32 +119,32 @@ exports.customerPortal = functions.runWith({ enforceAppCheck: true, consumeAppCh
     });
     return { url };
 });
-exports.deployAiEmployee = functions.runWith({ enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async (request) => {
+exports.deployAiEmployee = v2_1.https.onCall({ enforceAppCheck: true, consumeAppCheckToken: true }, async (request) => {
     const { deploymentRequestId } = request.data;
     if (!deploymentRequestId) {
-        throw new firebase_functions_1.https.HttpsError('invalid-argument', 'The function must be called with a deploymentRequestId.');
+        throw new https_1.HttpsError('invalid-argument', 'The function must be called with a deploymentRequestId.');
     }
     // Fetch deployment request from Firestore
     const deploymentRequestRef = db.collection('aiEmployeeDeploymentRequests').doc(deploymentRequestId);
     const deploymentRequestDoc = await deploymentRequestRef.get();
     if (!deploymentRequestDoc.exists) {
-        throw new firebase_functions_1.https.HttpsError('not-found', 'Deployment request not found in Firestore.');
+        throw new https_1.HttpsError('not-found', 'Deployment request not found in Firestore.');
     }
     const deploymentRequest = deploymentRequestDoc.data();
     if (deploymentRequest.status !== 'pending') {
-        throw new firebase_functions_1.https.HttpsError('failed-precondition', `Deployment request has already been processed. Status: ${deploymentRequest.status}`);
+        throw new https_1.HttpsError('failed-precondition', `Deployment request has already been processed. Status: ${deploymentRequest.status}`);
     }
     // Fetch AI helper template from Firestore using the template ID stored in the deployment request
     // Assuming 'ai_helper_template_id' is a string ID within the deploymentRequest document
     const templateId = deploymentRequest.ai_helper_template_id;
     if (!templateId) {
-        throw new firebase_functions_1.https.HttpsError('failed-precondition', 'AI helper template ID is missing in the deployment request.');
+        throw new https_1.HttpsError('failed-precondition', 'AI helper template ID is missing in the deployment request.');
     }
     const templateRef = db.collection('ai_helper_templates').doc(templateId);
     const templateDoc = await templateRef.get();
     if (!templateDoc.exists) {
         await deploymentRequestRef.update({ status: 'rejected', rejection_reason: 'Failed to fetch AI template details from Firestore (template not found).' });
-        throw new firebase_functions_1.https.HttpsError('not-found', 'AI template not found in Firestore.');
+        throw new https_1.HttpsError('not-found', 'AI template not found in Firestore.');
     }
     const template = templateDoc.data();
     try {
@@ -180,14 +163,14 @@ exports.deployAiEmployee = functions.runWith({ enforceAppCheck: true, consumeApp
         });
     }
     catch (error) {
-        console.error('Error creating AI employee record in Firestore:', error);
+        v2_1.logger.error('Error creating AI employee record in Firestore:', error);
         await deploymentRequestRef.update({ status: 'rejected', rejection_reason: 'Failed to create AI employee record in Firestore.' });
-        throw new firebase_functions_1.https.HttpsError('internal', 'Failed to create AI employee in Firestore.');
+        throw new https_1.HttpsError('internal', 'Failed to create AI employee in Firestore.');
     }
     await deploymentRequestRef.update({ status: 'approved' });
     return { success: true, message: 'AI Employee deployed successfully.' };
 });
-exports.fixAdminAccount = functions.runWith({ secrets: [adminEmail, adminTempPassword], enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async () => {
+exports.fixAdminAccount = v2_1.https.onCall({ secrets: [adminEmail, adminTempPassword], enforceAppCheck: true, consumeAppCheckToken: true }, async () => {
     const adminEmailValue = adminEmail.value();
     const tempPasswordValue = adminTempPassword.value();
     try {
@@ -238,12 +221,12 @@ exports.fixAdminAccount = functions.runWith({ secrets: [adminEmail, adminTempPas
             };
         }
         else if (error instanceof Error) {
-            throw new firebase_functions_1.https.HttpsError('internal', error.message);
+            throw new https_1.HttpsError('internal', error.message);
         }
-        throw new firebase_functions_1.https.HttpsError('internal', 'An unknown error occurred.');
+        throw new https_1.HttpsError('internal', 'An unknown error occurred.');
     }
 });
-exports.resetAdminPassword = functions.runWith({ secrets: [adminEmail], enforceAppCheck: true, consumeAppCheckToken: true }).https.onCall(async () => {
+exports.resetAdminPassword = v2_1.https.onCall({ secrets: [adminEmail], enforceAppCheck: true, consumeAppCheckToken: true }, async () => {
     const adminEmailValue = adminEmail.value();
     try {
         const link = await auth.generatePasswordResetLink(adminEmailValue);
@@ -259,22 +242,29 @@ exports.resetAdminPassword = functions.runWith({ secrets: [adminEmail], enforceA
     }
     catch (error) {
         if (error instanceof Error) {
-            throw new firebase_functions_1.https.HttpsError('internal', error.message);
+            throw new https_1.HttpsError('internal', error.message);
         }
-        throw new firebase_functions_1.https.HttpsError('internal', 'An unknown error occurred.');
+        throw new https_1.HttpsError('internal', 'An unknown error occurred.');
     }
 });
 // New Firebase Function to process AI Team Communications
-exports.processAiTeamCommunication = functions.firestore
-    .document('ai_team_communications/{communicationId}')
-    .onCreate(async (snapshot, context) => {
-    const communication = snapshot.data();
-    const communicationId = snapshot.id;
-    console.log(`💬 New AI team communication received: ${communicationId}`);
+exports.processAiTeamCommunication = v2_2.firestore.onDocumentWritten('ai_team_communications/{communicationId}', async (event) => {
+    const snapshot = event.data;
+    if (!snapshot) {
+        v2_1.logger.log('No data associated with the event');
+        return;
+    }
+    const communication = snapshot.after.data();
+    const communicationId = snapshot.after.id;
+    if (!communication) {
+        v2_1.logger.log('No data associated with the event');
+        return;
+    }
+    v2_1.logger.log(`💬 New AI team communication received: ${communicationId}`);
     // Only process if it's a message from a user to an AI employee
     if (communication.sender_employee !== 'User' || !communication.recipient_employee) {
-        console.log('Skipping communication: Not from a user to a specific AI employee.');
-        return null;
+        v2_1.logger.log('Skipping communication: Not from a user to a specific AI employee.');
+        return;
     }
     const recipientEmployeeName = communication.recipient_employee;
     const userId = communication.user_id;
@@ -284,7 +274,7 @@ exports.processAiTeamCommunication = functions.firestore
         const q = aiHelperTemplatesRef.where('name', '==', recipientEmployeeName);
         const templateSnapshot = await q.get();
         if (templateSnapshot.empty) {
-            console.warn(`No AI helper template found for recipient: ${recipientEmployeeName}`);
+            v2_1.logger.warn(`No AI helper template found for recipient: ${recipientEmployeeName}`);
             // Optionally, send a default "I don't understand" message
             await db.collection('ai_team_communications').add({
                 sender_employee: 'System',
@@ -297,7 +287,7 @@ exports.processAiTeamCommunication = functions.firestore
                 created_at: firestore_1.FieldValue.serverTimestamp(),
                 original_communication_id: communicationId,
             });
-            return null;
+            return;
         }
         const aiTemplate = templateSnapshot.docs[0].data();
         // 2. Determine the Gemini model to use
@@ -309,7 +299,7 @@ exports.processAiTeamCommunication = functions.firestore
         const vertex_ai = new vertexai_1.VertexAI({ project: process.env.GCLOUD_PROJECT, location: 'us-central1' });
         const generativeModel = vertex_ai.preview.getGenerativeModel({
             model: geminiModelToUse,
-            generationConfig: {
+            generation_config: {
                 maxOutputTokens: 2048,
                 temperature: 0.7, // Adjust temperature for more creative/less factual responses
                 topP: 0.95,
@@ -322,15 +312,13 @@ exports.processAiTeamCommunication = functions.firestore
             parts: [{ text: msg.content }],
         }));
         // Add the AI employee's persona and skills to the prompt
-        const capabilities = Array.isArray(aiTemplate.capabilities) ? aiTemplate.capabilities.join(', ') : 'a wide range of tasks';
-        const personaPrompt = `You are ${aiTemplate.name}, a ${aiTemplate.category} expert. Your core skills include: ${capabilities}. Your description is: "${aiTemplate.description}". Respond to the user's message concisely and helpfully, leveraging your expertise.`;
-        const parts = [{ text: `${personaPrompt}
-
-User: ${communication.content}` }];
+        const skills = Array.isArray(aiTemplate.skills) ? aiTemplate.skills.join(', ') : 'a wide range of tasks';
+        const personaPrompt = `You are ${aiTemplate.name}, a ${aiTemplate.category} expert. Your core skills include: ${skills}. Your description is: "${aiTemplate.description}". Respond to the user's message concisely and helpfully, leveraging your expertise.`;
+        const parts = [{ text: `${personaPrompt}\n\nUser: ${communication.content}` }];
         const chat = generativeModel.startChat({
             history: chatHistory,
         });
-        const result = await chat.sendMessage({ parts });
+        const result = await chat.sendMessage(parts);
         const aiResponseContent = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!aiResponseContent) {
             throw new Error('Failed to generate a valid response from the AI model.');
@@ -350,11 +338,11 @@ User: ${communication.content}` }];
             is_read: false,
             created_at: firestore_1.FieldValue.serverTimestamp(),
         });
-        console.log(`✅ AI employee "${aiTemplate.name}" responded to communication ${communicationId}`);
-        return null;
+        v2_1.logger.log(`✅ AI employee "${aiTemplate.name}" responded to communication ${communicationId}`);
+        return;
     }
     catch (error) {
-        console.error(`❌ Error processing AI team communication ${communicationId}:`, error);
+        v2_1.logger.error(`❌ Error processing AI team communication ${communicationId}:`, error);
         // Log an error message in communications if AI fails to respond
         await db.collection('ai_team_communications').add({
             sender_employee: 'System',
@@ -367,7 +355,7 @@ User: ${communication.content}` }];
             created_at: firestore_1.FieldValue.serverTimestamp(),
             original_communication_id: communicationId,
         });
-        return null;
+        return;
     }
 });
 //# sourceMappingURL=index.js.map

@@ -1,8 +1,18 @@
-connectorId: operations1
+connectorId: example
 generate:
   javascriptSdk:
     - outputDir: ../../src/dataconnect-generated
       package: "@dataconnect/generated"
       packageJsonDir: ../..
       react: true
+      angular: false
+    - outputDir: ../../functions/src/dataconnect-generated
+      package: "@dataconnect/generated"
+      packageJsonDir: ../../functions
+      react: false
+      angular: false
+    - outputDir: ../../firebase/functions/src/dataconnect-generated
+      package: "@dataconnect/generated"
+      packageJsonDir: ../../firebase/functions
+      react: false
       angular: false
