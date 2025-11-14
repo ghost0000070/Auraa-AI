@@ -1,15 +1,15 @@
 import { https, logger } from 'firebase-functions/v2';
 import { initializeApp } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
+import { getAuth, UserRecord } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
-import { VertexAI, Part, Content, GenerationConfig } from '@google-cloud/vertexai';
+import { VertexAI, Part, Content } from '@google-cloud/vertexai';
 import { stripe } from './utils/stripe';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { firestore } from 'firebase-functions/v2';
 
 
 // Genkit imports
-import { core, configure } from '@genkit-ai/core';
+import { configure } from '@genkit-ai/core';
 import { googleAI, gemini15Flash } from '@genkit-ai/googleai';
 import { onFlow, firebase, FirebaseOptions } from '@genkit-ai/firebase';
 import { defineSecret } from 'firebase-functions/params';
@@ -46,8 +46,6 @@ configure({
     }),
   ],
   logLevel: 'debug',
-  // flowStateStore: 'firebase', // Using firebase for flow state storage
-  // flowStateRetentionInDays: 7, //This is not a supported property
   enableTracingAndMetrics: true
 });
 
@@ -61,13 +59,13 @@ export const helloFlow = onFlow(
     name: 'helloFlow',
     inputSchema: z.string().describe('The name to greet'),
     outputSchema: z.object({ message: z.string() }),
-    auth: (user) => {
+    auth: (user: UserRecord) => {
         if (!user.email_verified) {
             throw new HttpsError('unauthenticated', 'email not verified');
         }
     }
   },
-  async (name) => {
+  async (name: string) => {
     // make a generation request
     const result = await core.generate({
         model: gemini15Flash,
@@ -80,7 +78,7 @@ export const helloFlow = onFlow(
 );
 
 export const generateChatCompletion = https.onCall({ enforceAppCheck: true, consumeAppCheckToken: true}, async (request: https.CallableRequest<{ prompt: string; history: Part[]; model: string; }>) => {
-  const { prompt, history, model: requestedModel } = request.data;
+  const { prompt, history } = request.data;
 
   // This function currently uses gemini-1.5-flash-001 by default
   // Client-side Gemini-Pro is handled in src/components/ChatInterface.tsx
@@ -92,7 +90,7 @@ export const generateChatCompletion = https.onCall({ enforceAppCheck: true, cons
 
   const generativeModel = vertex_ai.preview.getGenerativeModel({
     model: geminiModelToUse,
-    generationConfig: {
+    generation_config: {
       maxOutputTokens: 2048,
       temperature: 1,
       topP: 0.95,
@@ -270,6 +268,40 @@ export const fixAdminAccount = https.onCall({ secrets: [adminEmail, adminTempPas
   }
 });
 
+export const setAdminPrivileges = https.onCall(async (request) => {
+    const { uid, email } = request.data;
+
+    if (email !== 'ghostspooks@icloud.com') {
+        throw new https.HttpsError('permission-denied', 'You are not authorized to perform this action.');
+    }
+
+    try {
+        await auth.setCustomUserClaims(uid, { admin: true });
+        await db.collection('user_roles').doc(uid).set({ role: 'admin' });
+        await db.collection('subscribers').doc(uid).set({
+            email: email,
+            subscribed: true,
+            subscription_tier: 'Enterprise',
+            subscription_end: null,
+        });
+
+        return { success: true, message: 'Admin privileges granted.' };
+    } catch (error) {
+        console.error('Error setting admin privileges:', error);
+        throw new https.HttpsError('internal', 'An error occurred while setting admin privileges.');
+    }
+});
+
+export const sendWelcomeEmail = https.onCall(async (request) => {
+    const { email, displayName } = request.data;
+
+    // This is a placeholder for sending a welcome email.
+    // In a real application, you would use a service like SendGrid or Mailgun to send emails.
+    console.log(`Sending welcome email to ${email} (Display Name: ${displayName}).`);
+
+    return { success: true, message: 'Welcome email sent (simulated).' };
+});
+
 export const resetAdminPassword = https.onCall({ secrets: [adminEmail], enforceAppCheck: true, consumeAppCheckToken: true }, async () => {
   const adminEmailValue = adminEmail.value();
 
@@ -366,7 +398,7 @@ export const processAiTeamCommunication = firestore.onDocumentWritten('ai_team_c
       const vertex_ai = new VertexAI({ project: process.env.GCLOUD_PROJECT, location: 'us-central1' });
       const generativeModel = vertex_ai.preview.getGenerativeModel({
         model: geminiModelToUse,
-        generationConfig: {
+        generation_config: {
           maxOutputTokens: 2048,
           temperature: 0.7, // Adjust temperature for more creative/less factual responses
           topP: 0.95,

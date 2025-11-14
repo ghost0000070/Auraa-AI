@@ -25,7 +25,7 @@ const buildPayload = (employeeId: string, userInput: string) => {
     metrics: ["engagement", "conversion"],
     leadInfo: { name: "John Doe", email: "john.doe@example.com" },
     companyInfo: { name: "Acme Corp", industry: "Manufacturing" },
-    ticketDetails: `The user\'s message is: "${userInput}"`,
+    ticketDetails: `The user's message is: "${userInput}"`,
     knowledgeBase: { faqs: ["FAQ 1", "FAQ 2"], articles: ["Article 1"] },
     systemInfo: { os: "Windows 11", browser: "Chrome 125" },
     // ... add other necessary placeholder data here
@@ -69,8 +69,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
   useEffect(() => {
     const template = aiEmployeeTemplates.find(e => e.id === employeeType);
     const welcomeMessage = template 
-      ? `Hello! I\'m ${template.name}, your new ${template.category} expert. How can I assist you with your business goals today?`
-      : `Hello! I\'m your new AI employee. How can I help you today?`;
+      ? `Hello! I'm ${template.name}, your new ${template.category} expert. How can I assist you with your business goals today?`
+      : `Hello! I'm your new AI employee. How can I help you today?`;
     
     setMessages([{ sender: 'ai', text: welcomeMessage }]);
   }, [employeeType]);
@@ -113,7 +113,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
       setMessages(prev => [...prev, aiMessage]);
 
     } catch (error) {
-      const errorMessage: Message = { sender: 'ai', text: "Sorry, I\'m having trouble processing your request. Please try again later." };
+      const errorMessage: Message = { sender: 'ai', text: "Sorry, I'm having trouble processing your request. Please try again later." };
       setMessages(prev => [...prev, errorMessage]);
       console.error('Error getting AI response:', error);
     } finally {

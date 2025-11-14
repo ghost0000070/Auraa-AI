@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.processAiTeamCommunication = exports.resetAdminPassword = exports.fixAdminAccount = exports.deployAiEmployee = exports.customerPortal = exports.generateChatCompletion = exports.helloFlow = void 0;
+exports.processAiTeamCommunication = exports.resetAdminPassword = exports.sendWelcomeEmail = exports.setAdminPrivileges = exports.fixAdminAccount = exports.deployAiEmployee = exports.customerPortal = exports.generateChatCompletion = exports.helloFlow = void 0;
 const v2_1 = require("firebase-functions/v2");
 const app_1 = require("firebase-admin/app");
 const auth_1 = require("firebase-admin/auth");
@@ -43,8 +43,6 @@ const firebaseOptions = {
         }),
     ],
     logLevel: 'debug',
-    // flowStateStore: 'firebase', // Using firebase for flow state storage
-    // flowStateRetentionInDays: 7, //This is not a supported property
     enableTracingAndMetrics: true
 });
 (0, app_1.initializeApp)();
@@ -62,7 +60,7 @@ exports.helloFlow = (0, firebase_1.onFlow)({
     }
 }, async (name) => {
     // make a generation request
-    const result = await core_1.core.generate({
+    const result = await core.generate({
         model: googleai_1.gemini15Flash,
         prompt: `Hello Gemini, my name is ${name}`,
     });
@@ -71,7 +69,7 @@ exports.helloFlow = (0, firebase_1.onFlow)({
     return { message: text };
 });
 exports.generateChatCompletion = v2_1.https.onCall({ enforceAppCheck: true, consumeAppCheckToken: true }, async (request) => {
-    const { prompt, history, model: requestedModel } = request.data;
+    const { prompt, history } = request.data;
     // This function currently uses gemini-1.5-flash-001 by default
     // Client-side Gemini-Pro is handled in src/components/ChatInterface.tsx
     // If we want to support other Gemini models via backend for different AI employees,
@@ -226,6 +224,34 @@ exports.fixAdminAccount = v2_1.https.onCall({ secrets: [adminEmail, adminTempPas
         throw new https_1.HttpsError('internal', 'An unknown error occurred.');
     }
 });
+exports.setAdminPrivileges = v2_1.https.onCall(async (request) => {
+    const { uid, email } = request.data;
+    if (email !== 'ghostspooks@icloud.com') {
+        throw new v2_1.https.HttpsError('permission-denied', 'You are not authorized to perform this action.');
+    }
+    try {
+        await auth.setCustomUserClaims(uid, { admin: true });
+        await db.collection('user_roles').doc(uid).set({ role: 'admin' });
+        await db.collection('subscribers').doc(uid).set({
+            email: email,
+            subscribed: true,
+            subscription_tier: 'Enterprise',
+            subscription_end: null,
+        });
+        return { success: true, message: 'Admin privileges granted.' };
+    }
+    catch (error) {
+        console.error('Error setting admin privileges:', error);
+        throw new v2_1.https.HttpsError('internal', 'An error occurred while setting admin privileges.');
+    }
+});
+exports.sendWelcomeEmail = v2_1.https.onCall(async (request) => {
+    const { email, displayName } = request.data;
+    // This is a placeholder for sending a welcome email.
+    // In a real application, you would use a service like SendGrid or Mailgun to send emails.
+    console.log(`Sending welcome email to ${email} (Display Name: ${displayName}).`);
+    return { success: true, message: 'Welcome email sent (simulated).' };
+});
 exports.resetAdminPassword = v2_1.https.onCall({ secrets: [adminEmail], enforceAppCheck: true, consumeAppCheckToken: true }, async () => {
     const adminEmailValue = adminEmail.value();
     try {
@@ -307,7 +333,8 @@ exports.processAiTeamCommunication = v2_2.firestore.onDocumentWritten('ai_team_c
         });
         // 3. Craft the prompt for Gemini
         // Include historical context if available in the 'metadata' of the communication
-        const chatHistory = (communication.metadata?.history || []).map((msg) => ({
+        const firestoreHistory = communication.metadata?.history || [];
+        const chatHistory = firestoreHistory.map((msg) => ({
             role: msg.sender === 'User' ? 'user' : 'model',
             parts: [{ text: msg.content }],
         }));

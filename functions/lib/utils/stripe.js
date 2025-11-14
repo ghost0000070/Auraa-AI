@@ -8,6 +8,6 @@ const stripe_1 = __importDefault(require("stripe"));
 const params_1 = require("firebase-functions/params");
 const STRIPE_SECRET_KEY = (0, params_1.defineSecret)("STRIPE_SECRET_KEY");
 exports.stripe = new stripe_1.default(STRIPE_SECRET_KEY.value(), {
-    apiVersion: '2025-10-29.clover',
+    apiVersion: '2024-04-10',
 });
 //# sourceMappingURL=stripe.js.map
