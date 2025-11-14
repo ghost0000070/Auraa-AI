@@ -104,7 +104,7 @@ type AgentAction @table {
   id: ID!
   agentTaskId: ID!
   agentTask: AgentTask!
-    @relation(name: "AgentActionToAgentTask", field: "agentTaskId")
+    @elation(name: "AgentActionToAgentTask", field: "agentTaskId")
   actionType: String!
   parameters: JSON
   result: JSON
