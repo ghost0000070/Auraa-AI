@@ -7,15 +7,25 @@ import { Loader2, Send, User, Bot } from 'lucide-react';
 import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
+// --- Define a more specific type for the placeholder data ---
+interface PlaceholderData {
+  metrics: string[];
+  leadInfo: { name: string; email: string };
+  companyInfo: { name: string; industry: string };
+  ticketDetails: string;
+  knowledgeBase: { faqs: string[]; articles: string[] };
+  systemInfo: { os: string; browser: string };
+}
+
 // --- Helper function to build dynamic payloads ---
 const buildPayload = (employeeId: string, userInput: string) => {
   // This is placeholder data. In a real application, you would fetch this 
   // from your state management, forms, or other relevant sources.
-  const placeholderData: Record<string, any> = {
+  const placeholderData: PlaceholderData = {
     metrics: ["engagement", "conversion"],
     leadInfo: { name: "John Doe", email: "john.doe@example.com" },
     companyInfo: { name: "Acme Corp", industry: "Manufacturing" },
-    ticketDetails: `The user's message is: "${userInput}"`,
+    ticketDetails: `The user\'s message is: "${userInput}"`,
     knowledgeBase: { faqs: ["FAQ 1", "FAQ 2"], articles: ["Article 1"] },
     systemInfo: { os: "Windows 11", browser: "Chrome 125" },
     // ... add other necessary placeholder data here
@@ -59,8 +69,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
   useEffect(() => {
     const template = aiEmployeeTemplates.find(e => e.id === employeeType);
     const welcomeMessage = template 
-      ? `Hello! I'm ${template.name}, your new ${template.category} expert. How can I assist you with your business goals today?`
-      : `Hello! I'm your new AI employee. How can I help you today?`;
+      ? `Hello! I\'m ${template.name}, your new ${template.category} expert. How can I assist you with your business goals today?`
+      : `Hello! I\'m your new AI employee. How can I help you today?`;
     
     setMessages([{ sender: 'ai', text: welcomeMessage }]);
   }, [employeeType]);
@@ -103,7 +113,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
       setMessages(prev => [...prev, aiMessage]);
 
     } catch (error) {
-      const errorMessage: Message = { sender: 'ai', text: "Sorry, I'm having trouble processing your request. Please try again later." };
+      const errorMessage: Message = { sender: 'ai', text: "Sorry, I\'m having trouble processing your request. Please try again later." };
       setMessages(prev => [...prev, errorMessage]);
       console.error('Error getting AI response:', error);
     } finally {

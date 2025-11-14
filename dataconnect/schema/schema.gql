@@ -25,7 +25,8 @@ type AiEmployee @table {
 type Purchase @table {
   id: ID! @id
   aiEmployeeId: ID!
-  aiEmployee: AiEmployee @relation(name: "PurchaseToAiEmployee", field: "aiEmployeeId")
+  aiEmployee: AiEmployee
+    @relation(name: "PurchaseToAiEmployee", field: "aiEmployeeId")
   buyerId: ID!
   buyer: User @relation(name: "PurchaseToUser", field: "buyerId")
   purchaseDate: Timestamp! @default(value: "now()")
@@ -37,7 +38,8 @@ type Purchase @table {
 type Review @table {
   id: ID! @id
   aiEmployeeId: ID!
-  aiEmployee: AiEmployee @relation(name: "ReviewToAiEmployee", field: "aiEmployeeId")
+  aiEmployee: AiEmployee
+    @relation(name: "ReviewToAiEmployee", field: "aiEmployeeId")
   reviewerId: ID!
   reviewer: User @relation(name: "ReviewToUser", field: "reviewerId")
   rating: Int!
@@ -55,7 +57,8 @@ type Skill @table {
 type AiEmployeeSkill @table {
   id: ID! @id
   aiEmployeeId: ID!
-  aiEmployee: AiEmployee @relation(name: "AiEmployeeSkillToAiEmployee", field: "aiEmployeeId")
+  aiEmployee: AiEmployee
+    @relation(name: "AiEmployeeSkillToAiEmployee", field: "aiEmployeeId")
   skillId: ID!
   skill: Skill @relation(name: "AiEmployeeSkillToSkill", field: "skillId")
   enabled: Boolean! @default(value: true)
@@ -98,9 +101,10 @@ type AgentTask @table {
 }
 
 type AgentAction @table {
-  id: ID! @id
+  id: ID!
   agentTaskId: ID!
-  agentTask: AgentTask! @relation(name: "AgentActionToAgentTask", field: "agentTaskId")
+  agentTask: AgentTask!
+    @relation(name: "AgentActionToAgentTask", field: "agentTaskId")
   actionType: String!
   parameters: JSON
   result: JSON
@@ -112,7 +116,8 @@ type AgentAction @table {
 type AgentTaskEvent @table {
   id: ID! @id
   agentTaskId: ID!
-  agentTask: AgentTask! @relation(name: "AgentTaskEventToAgentTask", field: "agentTaskId")
+  agentTask: AgentTask!
+    @relation(name: "AgentTaskEventToAgentTask", field: "agentTaskId")
   eventType: String!
   data: JSON
   createdAt: Timestamp! @default(value: "now()")
