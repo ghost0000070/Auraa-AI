@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/toast-hooks";
 import { db } from "@/firebase";
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 

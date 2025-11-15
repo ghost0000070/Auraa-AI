@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/toast-hooks';
 import { db, functions } from '@/firebase';
 import { collection, query, where, getDocs, addDoc, serverTimestamp, orderBy, limit } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
@@ -73,7 +73,7 @@ export const QuickDeploymentWidget: React.FC = () => {
       });
 
       const deployFunction = httpsCallable(functions, 'deployAiEmployee');
-      await deployFunction({ requestId: newRequestRef.id });
+      await deployFunction({ requestId: newRequest-ref.id });
 
       toast({
         title: "Deployment Successful!",

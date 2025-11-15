@@ -29,5 +29,9 @@
         "genkit",
         "googleai",
         "vertexai"
-    ]
+    ],
+    "sonarlint.connectedMode.project": {
+        "connectionId": "ghost0000070",
+        "projectKey": "ghost0000070_Auraa-AI"
+    }
 }

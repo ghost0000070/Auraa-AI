@@ -1,4 +1,6 @@
-# Auraa AI - AI Employee Platform
+br# Auraa AI - AI Employee Platform
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Auraa AI is a platform designed to deploy and manage autonomous AI employees. These AI agents can be configured with specific skills, assigned to various business tasks, and integrated into existing workflows to automate complex processes.
 
@@ -23,24 +25,43 @@ This project is a React-based web application built with Vite and uses Firebase 
 ### Installation
 
 1. Clone the repository:
-   \`\`\`bash
-   git clone <repository-url>
-   \`\`\`
+   ```bash
+   git clone https://github.com/myuser/myrepo.git
+   ```
 2. Install dependencies:
-   \`\`\`bash
+   ```bash
    npm install
-   \`\`\`
+   ```
 3. Run the development server:
-   \`\`\`bash
+   ```bash
    npm run dev
-   \`\`\`
+   ```
 
 ## Project Structure
 
-- \`src/\`: Contains the main React application source code.
-  - \`components/\`: Reusable React components.
-  - \`lib/\`: Core application logic, including AI employee templates.
-  - \`pages/\`: Top-level page components.
-- \`api/\`: Serverless functions for backend operations (e.g., deploying employees, processing requests).
-- \`docs/\`: Project documentation.
-- \`firebase.json\`: Configuration for Firebase services and deployment rules.
+- `src/`: Contains the main React application source code.
+  - `components/`: Reusable React components.
+  - `lib/`: Core application logic, including AI employee templates.
+  - `pages/`: Top-level page components.
+- `functions/`: Cloud Functions for Firebase.
+- `docs/`: Project documentation.
+- `firebase.json`: Configuration for Firebase services and deployment rules.
+- `PREINSTALL.md`: Pre-installation instructions for the extension.
+- `POSTINSTALL.md`: Post-installation instructions for the extension.
+- `CHANGELOG.md`: All notable changes to this project.
+
+## Deployment
+
+This project is configured for deployment to Firebase Hosting. The GitHub Action in this repository will automatically deploy a preview of your app for each pull request. When a pull request is merged, the action will deploy to the live channel.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Changelog
+
+All notable changes to this project are documented in the [CHANGELOG.md](CHANGELOG.md) file.
+
+## Contact
+
+If you have any questions, you can contact us by email: support@auraa-ai.com

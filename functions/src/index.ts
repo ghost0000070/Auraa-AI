@@ -6,6 +6,7 @@ import { VertexAI, Part, Content } from '@google-cloud/vertexai';
 import { stripe } from './utils/stripe';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { firestore } from 'firebase-functions/v2';
+import * as Anthropic from '@anthropic-ai/sdk';
 
 
 // Genkit imports
@@ -14,6 +15,49 @@ import { googleAI, gemini15Flash } from '@genkit-ai/googleai';
 import { onFlow, firebase, FirebaseOptions } from '@genkit-ai/firebase';
 import { defineSecret } from 'firebase-functions/params';
 import { z } from 'zod';
+import { GenkitError, MessageData } from '@genkit-ai/core';
+import { GenerateRequest } from '@genkit-ai/core/generate';
+import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
+
+const secretManagerClient = new SecretManagerServiceClient();
+
+async function getApiKey(): Promise<string> {
+  const [version] = await secretManagerClient.accessSecretVersion({
+    name: 'projects/auraa-ai-5508554al(c11d3/secrets/ANTHROPIC_API_KEY/versions/latest',
+  });
+
+  const payload = version.payload?.data?.toString();
+  if (!payload) {
+    throw new Error('Missing ANTHROPIC_API_KEY in Secret Manager');
+  }
+  return payload;
+}
+
+// Map Genkit's content parts to Anthropic's format.
+function toAnthropicMessages(messages: MessageData[]): Anthropic.MessageParam[] {
+  const anMessages: Anthropic.MessageParam[] = [];
+  for (const message of messages) {
+    if (message.role === 'system') {
+      // System messages are handled separately in Anthropic's API
+      continue;
+    }
+    const anMessage: Anthropic.MessageParam = {
+      role: message.role === 'user' ? 'user' : 'assistant',
+      content: message.content.map((part) => {
+        if (part.text) {
+          return { type: 'text', text: part.text };
+        }
+        throw new GenkitError({
+          status: 'INVALID_ARGUMENT',
+          message: 'Unsupported message part type.',
+        });
+      }),
+    };
+    anMessages.push(anMessage);
+  }
+  return anMessages;
+}
+
 
 // Define the API key secret
 const googleAIapiKey = defineSecret("GOOGLE_API_KEY");
@@ -78,37 +122,63 @@ export const helloFlow = onFlow(
 );
 
 export const generateChatCompletion = https.onCall({ enforceAppCheck: true, consumeAppCheckToken: true}, async (request: https.CallableRequest<{ prompt: string; history: Part[]; model: string; }>) => {
-  const { prompt, history } = request.data;
+  const { prompt, history, model } = request.data;
 
-  // This function currently uses gemini-1.5-flash-001 by default
-  // Client-side Gemini-Pro is handled in src/components/ChatInterface.tsx
-  // If we want to support other Gemini models via backend for different AI employees,
-  // we would add logic here to map `requestedModel` to a specific Vertex AI model string.
-  const geminiModelToUse = 'gemini-1.5-flash-001';
+  if (model === 'Claude-Sonnet-4-5') {
+    const apiKey = await getApiKey();
+    const anthropic = new Anthropic({ apiKey });
 
-  const vertex_ai = new VertexAI({ project: process.env.GCLOUD_PROJECT, location: 'us-central1' });
+    const modelName = 'claude-3-sonnet-20240229';
+    const systemMessage = history.find(m => m.role === 'system');
+    const userMessages = toAnthropicMessages(history);
 
-  const generativeModel = vertex_ai.preview.getGenerativeModel({
-    model: geminiModelToUse,
-    generation_config: {
-      maxOutputTokens: 2048,
-      temperature: 1,
-      topP: 0.95,
-    },
-  });
+    try {
+      const response = await anthropic.messages.create({
+        model: modelName,
+        max_tokens: 2048,
+        temperature: 1,
+        top_p: 0.95,
+        system: systemMessage?.content[0].text,
+        messages: userMessages,
+      });
 
-  const chat = generativeModel.startChat({
-    history: history as unknown as Content[],
-  });
+      return {
+        response: response.content[0].text,
+      };
+    } catch (e: any) {
+      throw new HttpsError('internal', `[Claude API] ${e.message}`);
+    }
+  } else {
+    // This function currently uses gemini-1.5-flash-001 by default
+    // Client-side Gemini-Pro is handled in src/components/ChatInterface.tsx
+    // If we want to support other Gemini models via backend for different AI employees,
+    // we would add logic here to map `requestedModel` to a specific Vertex AI model string.
+    const geminiModelToUse = 'gemini-1.5-flash-001';
 
-  const result = await chat.sendMessage(prompt);
-  const response = result.response;
+    const vertex_ai = new VertexAI({ project: process.env.GCLOUD_PROJECT, location: 'us-central1' });
 
-  if (!response?.candidates?.[0]?.content?.parts?.[0]?.text) {
-    throw new HttpsError('internal', 'Failed to generate a valid response from the AI model.');
+    const generativeModel = vertex_ai.preview.getGenerativeModel({
+      model: geminiModelToUse,
+      generation_config: {
+        maxOutputTokens: 2048,
+        temperature: 1,
+        topP: 0.95,
+      },
+    });
+
+    const chat = generativeModel.startChat({
+      history: history as unknown as Content[],
+    });
+
+    const result = await chat.sendMessage(prompt);
+    const response = result.response;
+
+    if (!response?.candidates?.[0]?.content?.parts?.[0]?.text) {
+      throw new HttpsError('internal', 'Failed to generate a valid response from the AI model.');
+    }
+
+    return { response: response.candidates[0].content.parts[0].text };
   }
-
-  return { response: response.candidates[0].content.parts[0].text };
 });
 
 export const customerPortal = https.onCall({ secrets: [STRIPE_SECRET_KEY], enforceAppCheck: true, consumeAppCheckToken: true }, async (request: https.CallableRequest<{ user_id: string }>) => {

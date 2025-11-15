@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/firebase";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/toast-hooks";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 

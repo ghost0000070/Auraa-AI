@@ -1,15 +1,16 @@
-'''import * as React from "react"
+import * as React from "react"
+import { type Toast, type ToastAction } from "./use-toast";
 
 type ToasterToast = Required<
   Pick<
-    ToastProps,
+    React.ComponentPropsWithoutRef<typeof Toast>,
     "id" | "title" | "description" | "action"
   >
 > & {
   id: string;
   title?: React.ReactNode;
   description?: React.ReactNode;
-  action?: ToastActionElement;
+  action?: React.ReactElement<typeof ToastAction>;
 };
 
 const TOAST_LIMIT = 10;
@@ -17,13 +18,9 @@ const TOAST_REMOVE_DELAY = 1000000;
 
 type ToastActionElement = React.ReactElement<typeof ToastAction>;
 
-interface ToastProps extends React.ComponentPropsWithoutRef<typeof Toast> {
-  // Add any additional props if necessary
-}
+export let memoryState: State = { toasts: [] };
 
-let memoryState: State = { toasts: [] };
-
-const listeners: Array<(state: State) => void> = [];
+export const listeners: Array<(state: State) => void> = [];
 
 export const toast = (props: ToasterToast) => {
   const toast = { ...props, id: Math.random().toString(36).substr(2, 9) };
@@ -72,4 +69,4 @@ export const reducer = (state: State, action: Action): State => {
     default:
       return state;
   }
-};''
+};

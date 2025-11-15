@@ -1,10 +1,10 @@
 
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
-import { getFunctions } from 'firebase/functions';
+import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getStorage, connectStorageEmulator } from 'firebase/storage';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { getPerformance } from 'firebase/performance';
 import { getVertexAI, getGenerativeModel } from "@firebase/vertexai-preview";
 
@@ -27,5 +27,12 @@ const functions = getFunctions(app);
 const perf = getPerformance(app);
 const vertex = getVertexAI(app);
 const generativeModel = getGenerativeModel(vertex, { model: "gemini-pro" });
+
+if (import.meta.env.DEV) {
+  connectAuthEmulator(auth, "http://localhost:9099");
+  connectFirestoreEmulator(db, "localhost", 8080);
+  connectFunctionsEmulator(functions, "localhost", 5001);
+  connectStorageEmulator(storage, "localhost", 9199);
+}
 
 export { app, analytics, auth, db, storage, functions, generativeModel };
