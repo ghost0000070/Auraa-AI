@@ -145,8 +145,11 @@ export const generateChatCompletion = https.onCall({ enforceAppCheck: true, cons
       return {
         response: response.content[0].text,
       };
-    } catch (e: any) {
-      throw new HttpsError('internal', `[Claude API] ${e.message}`);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        throw new HttpsError('internal', `[Claude API] ${e.message}`);
+      }
+      throw new HttpsError('internal', 'An unknown error occurred in Claude API.');
     }
   } else {
     // This function currently uses gemini-1.5-flash-001 by default

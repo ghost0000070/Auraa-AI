@@ -1,96 +1,3 @@
-type User @table {
-  id: ID! @id
-  email: String! @unique
-  displayName: String
-  photoUrl: String
-  bio: String
-  isSeller: Boolean! @default(value: false)
-  createdAt: Timestamp! @default(value: "now()")
-  updatedAt: Timestamp! @default(value: "now()")
-}
-
-type AiEmployee @table {
-  id: ID! @id
-  name: String!
-  description: String
-  price: Float!
-  category: String
-  capabilities: [String]
-  ownerId: ID!
-  owner: User @relation(name: "AiEmployeeToUser", field: "ownerId")
-  createdAt: Timestamp! @default(value: "now()")
-  updatedAt: Timestamp! @default(value: "now()")
-}
-
-type Purchase @table {
-  id: ID! @id
-  aiEmployeeId: ID!
-  aiEmployee: AiEmployee
-    @relation(name: "PurchaseToAiEmployee", field: "aiEmployeeId")
-  buyerId: ID!
-  buyer: User @relation(name: "PurchaseToUser", field: "buyerId")
-  purchaseDate: Timestamp! @default(value: "now()")
-  quantity: Int!
-  totalPrice: Float!
-  status: String!
-}
-
-type Review @table {
-  id: ID! @id
-  aiEmployeeId: ID!
-  aiEmployee: AiEmployee
-    @relation(name: "ReviewToAiEmployee", field: "aiEmployeeId")
-  reviewerId: ID!
-  reviewer: User @relation(name: "ReviewToUser", field: "reviewerId")
-  rating: Int!
-  comment: String
-  createdAt: Timestamp! @default(value: "now()")
-}
-
-type Skill @table {
-  id: ID! @id
-  name: String!
-  description: String
-  category: String
-}
-
-type AiEmployeeSkill @table {
-  id: ID! @id
-  aiEmployeeId: ID!
-  aiEmployee: AiEmployee
-    @relation(name: "AiEmployeeSkillToAiEmployee", field: "aiEmployeeId")
-  skillId: ID!
-  skill: Skill @relation(name: "AiEmployeeSkillToSkill", field: "skillId")
-  enabled: Boolean! @default(value: true)
-}
-
-type Task @table {
-  id: ID! @id
-  description: String!
-  status: String
-  dueDate: Timestamp
-  userId: ID!
-  user: User @relation(name: "TaskToUser", field: "userId")
-}
-
-type BusinessGoal @table {
-  id: ID! @id
-  title: String!
-  description: String
-  status: String!
-  userId: ID!
-  user: User @relation(name: "BusinessGoalToUser", field: "userId")
-}
-
-type SharedKnowledge @table {
-  id: ID! @id
-  title: String!
-  content: String!
-  source: String
-  userId: ID!
-  user: User @relation(name: "SharedKnowledgeToUser", field: "userId")
-}
-
 type AgentTask @table {
   id: ID! @id
   prompt: String!
@@ -101,7 +8,9 @@ type AgentTask @table {
 }
 
 type AgentAction @table {
-  id: ID!
+  id: ID! @id  agentTaskId: ID!
+  agentTaskId: ID! @id
+
   agentTaskId: ID!
   agentTask: AgentTask!
     @relation(name: "AgentActionToAgentTask", field: "agentTaskId")
@@ -111,14 +20,4 @@ type AgentAction @table {
   status: String!
   createdAt: Timestamp! @default(value: "now()")
   updatedAt: Timestamp! @default(value: "now()")
-}
-
-type AgentTaskEvent @table {
-  id: ID! @id
-  agentTaskId: ID!
-  agentTask: AgentTask!
-    @relation(name: "AgentTaskEventToAgentTask", field: "agentTaskId")
-  eventType: String!
-  data: JSON
-  createdAt: Timestamp! @default(value: "now()")
 }
