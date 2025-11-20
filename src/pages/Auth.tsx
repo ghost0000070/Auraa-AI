@@ -42,24 +42,10 @@ const Auth = () => {
       if (isSignUp) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const newUser = userCredential.user;
-
-        // --- ADMIN PRIVILEGE LOGIC ---
-        if (newUser.email === 'ghostspooks@icloud.com') {
-          try {
-            const setAdmin = httpsCallable(functions, 'setAdminPrivileges');
-            await setAdmin({ uid: newUser.uid, email: newUser.email });
-            toast.success("Admin account created", { description: "Your account has been granted full administrative privileges." });
-            await checkSubscription(); // Refresh subscription status to reflect admin changes
-          } catch (adminError) {
-            console.error('Error setting admin privileges:', adminError);
-            toast.error("Admin Privilege Error", { description: "Your account was created, but we failed to grant administrative privileges. Please contact support." });
-          }
-        } else {
-          await sendEmailVerification(newUser);
-          toast("Check your email", {
-            description: "We've sent you a verification link. Please verify your email before logging in.",
-          });
-        }
+        await sendEmailVerification(newUser);
+        toast("Check your email", {
+          description: "We've sent you a verification link. Please verify your email before logging in.",
+        });
 
       } else {
         await signInWithEmailAndPassword(auth, email, password);
