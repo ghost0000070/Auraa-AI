@@ -1,0 +1,68 @@
+extend type AiEmployee {
+  """
+  ✨ Implicit foreign key field based on `AiEmployee`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID! @fdc_generated(from: "AiEmployee.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type AiEmployeeSkill {
+  """
+  ✨ Implicit foreign key field based on `AiEmployeeSkill`.`aiEmployee`. It must match the value of `AiEmployee`.`id`. See `@ref` for how to customize it.
+  """
+  aiEmployeeId: UUID! @fdc_generated(from: "AiEmployeeSkill.aiEmployee", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `AiEmployeeSkill`.`skill`. It must match the value of `Skill`.`id`. See `@ref` for how to customize it.
+  """
+  skillId: UUID! @fdc_generated(from: "AiEmployeeSkill.skill", purpose: IMPLICIT_REF_FIELD)
+}
+extend type BusinessGoal {
+  """
+  ✨ Implicit foreign key field based on `BusinessGoal`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID! @fdc_generated(from: "BusinessGoal.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type DeploymentRequest {
+  """
+  ✨ Implicit foreign key field based on `DeploymentRequest`.`aiEmployee`. It must match the value of `AiEmployee`.`id`. See `@ref` for how to customize it.
+  """
+  aiEmployeeId: UUID! @fdc_generated(from: "DeploymentRequest.aiEmployee", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `DeploymentRequest`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID! @fdc_generated(from: "DeploymentRequest.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Purchase {
+  """
+  ✨ Implicit foreign key field based on `Purchase`.`aiEmployee`. It must match the value of `AiEmployee`.`id`. See `@ref` for how to customize it.
+  """
+  aiEmployeeId: UUID! @fdc_generated(from: "Purchase.aiEmployee", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Purchase`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID! @fdc_generated(from: "Purchase.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Review {
+  """
+  ✨ Implicit foreign key field based on `Review`.`aiEmployee`. It must match the value of `AiEmployee`.`id`. See `@ref` for how to customize it.
+  """
+  aiEmployeeId: UUID! @fdc_generated(from: "Review.aiEmployee", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `Review`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID! @fdc_generated(from: "Review.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type SharedKnowledge {
+  """
+  ✨ Implicit foreign key field based on `SharedKnowledge`.`sourceEmployee`. It must match the value of `AiEmployee`.`id`. See `@ref` for how to customize it.
+  """
+  sourceEmployeeId: UUID @fdc_generated(from: "SharedKnowledge.sourceEmployee", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `SharedKnowledge`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID! @fdc_generated(from: "SharedKnowledge.user", purpose: IMPLICIT_REF_FIELD)
+}
+extend type Task {
+  """
+  ✨ Implicit foreign key field based on `Task`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID! @fdc_generated(from: "Task.user", purpose: IMPLICIT_REF_FIELD)
+}

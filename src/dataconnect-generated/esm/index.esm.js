@@ -1,20 +1,27 @@
 import { queryRef, executeQuery, mutationRef, executeMutation, validateArgs } from 'firebase/data-connect';
 
+export const TaskStatus = {
+  PENDING: "PENDING",
+  IN_PROGRESS: "IN_PROGRESS",
+  COMPLETED: "COMPLETED",
+  FAILED: "FAILED",
+}
+
 export const connectorConfig = {
-  connector: 'operations1',
+  connector: 'example',
   service: 'auraa-ai-69-service',
   location: 'northamerica-northeast1'
 };
 
-export const createUserRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+export const createUserRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'CreateUser');
+  return mutationRef(dcInstance, 'CreateUser', inputVars);
 }
 createUserRef.operationName = 'CreateUser';
 
-export function createUser(dc) {
-  return executeMutation(createUserRef(dc));
+export function createUser(dcOrVars, vars) {
+  return executeMutation(createUserRef(dcOrVars, vars));
 }
 
 export const listSkillsRef = (dc) => {
@@ -31,9 +38,9 @@ export function listSkills(dc) {
 export const assignSkillToAiEmployeeRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'AssignSkillToAIEmployee', inputVars);
+  return mutationRef(dcInstance, 'AssignSkillToAiEmployee', inputVars);
 }
-assignSkillToAiEmployeeRef.operationName = 'AssignSkillToAIEmployee';
+assignSkillToAiEmployeeRef.operationName = 'AssignSkillToAiEmployee';
 
 export function assignSkillToAiEmployee(dcOrVars, vars) {
   return executeMutation(assignSkillToAiEmployeeRef(dcOrVars, vars));
@@ -48,5 +55,27 @@ listTasksForUserRef.operationName = 'ListTasksForUser';
 
 export function listTasksForUser(dcOrVars, vars) {
   return executeQuery(listTasksForUserRef(dcOrVars, vars));
+}
+
+export const createAgentTaskRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateAgentTask', inputVars);
+}
+createAgentTaskRef.operationName = 'CreateAgentTask';
+
+export function createAgentTask(dcOrVars, vars) {
+  return executeMutation(createAgentTaskRef(dcOrVars, vars));
+}
+
+export const listAgentTasksRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListAgentTasks');
+}
+listAgentTasksRef.operationName = 'ListAgentTasks';
+
+export function listAgentTasks(dc) {
+  return executeQuery(listAgentTasksRef(dc));
 }
 

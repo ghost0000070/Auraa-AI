@@ -1,0 +1,580 @@
+extend type Query {
+  """
+  ✨ Look up a single `AgentTask` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  agentTask(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: AgentTask_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AgentTask_FirstRow
+  ): AgentTask @fdc_generated(from: "AgentTask", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `AiEmployee` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  aiEmployee(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: AiEmployee_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AiEmployee_FirstRow
+  ): AiEmployee @fdc_generated(from: "AiEmployee", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `AiEmployeeSkill` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  aiEmployeeSkill(
+    """
+    The key used to identify the object.
+    """
+    key: AiEmployeeSkill_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: AiEmployeeSkill_FirstRow
+  ): AiEmployeeSkill @fdc_generated(from: "AiEmployeeSkill", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `BusinessGoal` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  businessGoal(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: BusinessGoal_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: BusinessGoal_FirstRow
+  ): BusinessGoal @fdc_generated(from: "BusinessGoal", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `DeploymentRequest` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  deploymentRequest(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: DeploymentRequest_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: DeploymentRequest_FirstRow
+  ): DeploymentRequest @fdc_generated(from: "DeploymentRequest", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Purchase` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  purchase(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Purchase_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Purchase_FirstRow
+  ): Purchase @fdc_generated(from: "Purchase", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Review` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  review(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Review_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Review_FirstRow
+  ): Review @fdc_generated(from: "Review", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `SharedKnowledge` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  sharedKnowledge(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: SharedKnowledge_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: SharedKnowledge_FirstRow
+  ): SharedKnowledge @fdc_generated(from: "SharedKnowledge", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Skill` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  skill(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Skill_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Skill_FirstRow
+  ): Skill @fdc_generated(from: "Skill", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Task` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  task(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Task_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Task_FirstRow
+  ): Task @fdc_generated(from: "Task", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  user(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User @fdc_generated(from: "User", purpose: QUERY_SINGLE)
+  """
+  ✨ List `AgentTask` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  agentTasks(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: AgentTask_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [AgentTask_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: AgentTask_Having
+  ): [AgentTask!]! @fdc_generated(from: "AgentTask", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `AiEmployee` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  aiEmployees(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: AiEmployee_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [AiEmployee_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: AiEmployee_Having
+  ): [AiEmployee!]! @fdc_generated(from: "AiEmployee", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `AiEmployeeSkill` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  aiEmployeeSkills(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: AiEmployeeSkill_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [AiEmployeeSkill_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: AiEmployeeSkill_Having
+  ): [AiEmployeeSkill!]! @fdc_generated(from: "AiEmployeeSkill", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `BusinessGoal` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  businessGoals(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: BusinessGoal_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [BusinessGoal_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: BusinessGoal_Having
+  ): [BusinessGoal!]! @fdc_generated(from: "BusinessGoal", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `DeploymentRequest` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  deploymentRequests(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: DeploymentRequest_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [DeploymentRequest_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: DeploymentRequest_Having
+  ): [DeploymentRequest!]! @fdc_generated(from: "DeploymentRequest", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Purchase` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  purchases(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Purchase_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Purchase_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Purchase_Having
+  ): [Purchase!]! @fdc_generated(from: "Purchase", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Review` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  reviews(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Review_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Review_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Review_Having
+  ): [Review!]! @fdc_generated(from: "Review", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `SharedKnowledge` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  sharedKnowledges(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: SharedKnowledge_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [SharedKnowledge_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: SharedKnowledge_Having
+  ): [SharedKnowledge!]! @fdc_generated(from: "SharedKnowledge", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Skill` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  skills(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Skill_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Skill_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Skill_Having
+  ): [Skill!]! @fdc_generated(from: "Skill", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Task` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  tasks(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Task_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Task_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Task_Having
+  ): [Task!]! @fdc_generated(from: "Task", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `User` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  users(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: User_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [User_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: User_Having
+  ): [User!]! @fdc_generated(from: "User", purpose: QUERY_MULTIPLE)
+}

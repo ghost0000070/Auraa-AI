@@ -8,21 +8,33 @@ export type Int64String = string;
 export type DateString = string;
 
 
+export enum TaskStatus {
+  PENDING = "PENDING",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  FAILED = "FAILED",
+};
 
 
-export interface AIEmployeeSkill_Key {
-  aiEmployeeId: UUIDString;
-  skillId: UUIDString;
-  __typename?: 'AIEmployeeSkill_Key';
+
+export interface AgentTask_Key {
+  id: UUIDString;
+  __typename?: 'AgentTask_Key';
 }
 
-export interface AIEmployee_Key {
+export interface AiEmployeeSkill_Key {
+  aiEmployeeId: UUIDString;
+  skillId: UUIDString;
+  __typename?: 'AiEmployeeSkill_Key';
+}
+
+export interface AiEmployee_Key {
   id: UUIDString;
-  __typename?: 'AIEmployee_Key';
+  __typename?: 'AiEmployee_Key';
 }
 
 export interface AssignSkillToAiEmployeeData {
-  aIEmployeeSkill_insert: AIEmployeeSkill_Key;
+  aiEmployeeSkill_insert: AiEmployeeSkill_Key;
 }
 
 export interface AssignSkillToAiEmployeeVariables {
@@ -30,30 +42,79 @@ export interface AssignSkillToAiEmployeeVariables {
   skillId: UUIDString;
 }
 
+export interface BusinessGoal_Key {
+  id: UUIDString;
+  __typename?: 'BusinessGoal_Key';
+}
+
+export interface CreateAgentTaskData {
+  agentTask_insert: AgentTask_Key;
+}
+
+export interface CreateAgentTaskVariables {
+  prompt: string;
+}
+
 export interface CreateUserData {
   user_insert: User_Key;
+}
+
+export interface CreateUserVariables {
+  displayName?: string | null;
+  email: string;
+}
+
+export interface DeploymentRequest_Key {
+  id: UUIDString;
+  __typename?: 'DeploymentRequest_Key';
+}
+
+export interface ListAgentTasksData {
+  agentTasks: ({
+    id: UUIDString;
+    prompt: string;
+    status?: TaskStatus | null;
+    result?: string | null;
+    createdAt: TimestampString;
+    updatedAt: TimestampString;
+  } & AgentTask_Key)[];
 }
 
 export interface ListSkillsData {
   skills: ({
     id: UUIDString;
     name: string;
-    description: string;
-    category: string;
+    description?: string | null;
+    category?: string | null;
   } & Skill_Key)[];
 }
 
 export interface ListTasksForUserData {
   tasks: ({
     id: UUIDString;
-    description?: string | null;
-    status: string;
+    description: string;
+    status?: TaskStatus | null;
     dueDate?: TimestampString | null;
   } & Task_Key)[];
 }
 
 export interface ListTasksForUserVariables {
   userId: UUIDString;
+}
+
+export interface Purchase_Key {
+  id: UUIDString;
+  __typename?: 'Purchase_Key';
+}
+
+export interface Review_Key {
+  id: UUIDString;
+  __typename?: 'Review_Key';
+}
+
+export interface SharedKnowledge_Key {
+  id: UUIDString;
+  __typename?: 'SharedKnowledge_Key';
 }
 
 export interface Skill_Key {
@@ -73,15 +134,15 @@ export interface User_Key {
 
 interface CreateUserRef {
   /* Allow users to create refs without passing in DataConnect */
-  (): MutationRef<CreateUserData, undefined>;
+  (vars: CreateUserVariables): MutationRef<CreateUserData, CreateUserVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): MutationRef<CreateUserData, undefined>;
+  (dc: DataConnect, vars: CreateUserVariables): MutationRef<CreateUserData, CreateUserVariables>;
   operationName: string;
 }
 export const createUserRef: CreateUserRef;
 
-export function createUser(): MutationPromise<CreateUserData, undefined>;
-export function createUser(dc: DataConnect): MutationPromise<CreateUserData, undefined>;
+export function createUser(vars: CreateUserVariables): MutationPromise<CreateUserData, CreateUserVariables>;
+export function createUser(dc: DataConnect, vars: CreateUserVariables): MutationPromise<CreateUserData, CreateUserVariables>;
 
 interface ListSkillsRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -118,4 +179,28 @@ export const listTasksForUserRef: ListTasksForUserRef;
 
 export function listTasksForUser(vars: ListTasksForUserVariables): QueryPromise<ListTasksForUserData, ListTasksForUserVariables>;
 export function listTasksForUser(dc: DataConnect, vars: ListTasksForUserVariables): QueryPromise<ListTasksForUserData, ListTasksForUserVariables>;
+
+interface CreateAgentTaskRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateAgentTaskVariables): MutationRef<CreateAgentTaskData, CreateAgentTaskVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateAgentTaskVariables): MutationRef<CreateAgentTaskData, CreateAgentTaskVariables>;
+  operationName: string;
+}
+export const createAgentTaskRef: CreateAgentTaskRef;
+
+export function createAgentTask(vars: CreateAgentTaskVariables): MutationPromise<CreateAgentTaskData, CreateAgentTaskVariables>;
+export function createAgentTask(dc: DataConnect, vars: CreateAgentTaskVariables): MutationPromise<CreateAgentTaskData, CreateAgentTaskVariables>;
+
+interface ListAgentTasksRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListAgentTasksData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListAgentTasksData, undefined>;
+  operationName: string;
+}
+export const listAgentTasksRef: ListAgentTasksRef;
+
+export function listAgentTasks(): QueryPromise<ListAgentTasksData, undefined>;
+export function listAgentTasks(dc: DataConnect): QueryPromise<ListAgentTasksData, undefined>;
 

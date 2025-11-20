@@ -1,5 +1,5 @@
 # Generated TypeScript README
-This README will guide you through the process of using the generated JavaScript SDK package for the connector `operations1`. It will also provide examples on how to use your generated SDK to call your Data Connect queries and mutations.
+This README will guide you through the process of using the generated JavaScript SDK package for the connector `example`. It will also provide examples on how to use your generated SDK to call your Data Connect queries and mutations.
 
 **If you're looking for the `React README`, you can find it at [`dataconnect-generated/react/README.md`](./react/README.md)**
 
@@ -12,12 +12,14 @@ This README will guide you through the process of using the generated JavaScript
 - [**Queries**](#queries)
   - [*ListSkills*](#listskills)
   - [*ListTasksForUser*](#listtasksforuser)
+  - [*ListAgentTasks*](#listagenttasks)
 - [**Mutations**](#mutations)
   - [*CreateUser*](#createuser)
-  - [*AssignSkillToAIEmployee*](#assignskilltoaiemployee)
+  - [*AssignSkillToAiEmployee*](#assignskilltoaiemployee)
+  - [*CreateAgentTask*](#createagenttask)
 
 # Accessing the connector
-A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `operations1`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
+A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `example`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
 
 You can use this generated SDK by importing from the package `@dataconnect/generated` as shown below. Both CommonJS and ESM imports are supported.
 
@@ -59,7 +61,7 @@ The following is true for both the action shortcut function and the `QueryRef` f
 - If the Query accepts arguments, both the action shortcut function and the `QueryRef` function accept a single argument: an object that contains all the required variables (and the optional variables) for the Query
 - Both functions can be called with or without passing in a `DataConnect` instance as an argument. If no `DataConnect` argument is passed in, then the generated SDK will call `getDataConnect(connectorConfig)` behind the scenes for you.
 
-Below are examples of how to use the `operations1` connector's generated functions to execute each query. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#using-queries).
+Below are examples of how to use the `example` connector's generated functions to execute each query. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#using-queries).
 
 ## ListSkills
 You can execute the `ListSkills` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
@@ -101,8 +103,8 @@ export interface ListSkillsData {
   skills: ({
     id: UUIDString;
     name: string;
-    description: string;
-    category: string;
+    description?: string | null;
+    category?: string | null;
   } & Skill_Key)[];
 }
 ```
@@ -202,8 +204,8 @@ The `data` property is an object of type `ListTasksForUserData`, which is define
 export interface ListTasksForUserData {
   tasks: ({
     id: UUIDString;
-    description?: string | null;
-    status: string;
+    description: string;
+    status?: TaskStatus | null;
     dueDate?: TimestampString | null;
   } & Task_Key)[];
 }
@@ -271,6 +273,104 @@ executeQuery(ref).then((response) => {
 });
 ```
 
+## ListAgentTasks
+You can execute the `ListAgentTasks` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listAgentTasks(): QueryPromise<ListAgentTasksData, undefined>;
+
+interface ListAgentTasksRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListAgentTasksData, undefined>;
+}
+export const listAgentTasksRef: ListAgentTasksRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listAgentTasks(dc: DataConnect): QueryPromise<ListAgentTasksData, undefined>;
+
+interface ListAgentTasksRef {
+  ...
+  (dc: DataConnect): QueryRef<ListAgentTasksData, undefined>;
+}
+export const listAgentTasksRef: ListAgentTasksRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listAgentTasksRef:
+```typescript
+const name = listAgentTasksRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListAgentTasks` query has no variables.
+### Return Type
+Recall that executing the `ListAgentTasks` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListAgentTasksData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListAgentTasksData {
+  agentTasks: ({
+    id: UUIDString;
+    prompt: string;
+    status?: TaskStatus | null;
+    result?: string | null;
+    createdAt: TimestampString;
+    updatedAt: TimestampString;
+  } & AgentTask_Key)[];
+}
+```
+### Using `ListAgentTasks`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listAgentTasks } from '@dataconnect/generated';
+
+
+// Call the `listAgentTasks()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listAgentTasks();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listAgentTasks(dataConnect);
+
+console.log(data.agentTasks);
+
+// Or, you can use the `Promise` API.
+listAgentTasks().then((response) => {
+  const data = response.data;
+  console.log(data.agentTasks);
+});
+```
+
+### Using `ListAgentTasks`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listAgentTasksRef } from '@dataconnect/generated';
+
+
+// Call the `listAgentTasksRef()` function to get a reference to the query.
+const ref = listAgentTasksRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listAgentTasksRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.agentTasks);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.agentTasks);
+});
+```
+
 # Mutations
 
 There are two ways to execute a Data Connect Mutation using the generated Web SDK:
@@ -284,27 +384,27 @@ The following is true for both the action shortcut function and the `MutationRef
 - If the Mutation accepts arguments, both the action shortcut function and the `MutationRef` function accept a single argument: an object that contains all the required variables (and the optional variables) for the Mutation
 - Both functions can be called with or without passing in a `DataConnect` instance as an argument. If no `DataConnect` argument is passed in, then the generated SDK will call `getDataConnect(connectorConfig)` behind the scenes for you.
 
-Below are examples of how to use the `operations1` connector's generated functions to execute each mutation. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#using-mutations).
+Below are examples of how to use the `example` connector's generated functions to execute each mutation. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#using-mutations).
 
 ## CreateUser
 You can execute the `CreateUser` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-createUser(): MutationPromise<CreateUserData, undefined>;
+createUser(vars: CreateUserVariables): MutationPromise<CreateUserData, CreateUserVariables>;
 
 interface CreateUserRef {
   ...
   /* Allow users to create refs without passing in DataConnect */
-  (): MutationRef<CreateUserData, undefined>;
+  (vars: CreateUserVariables): MutationRef<CreateUserData, CreateUserVariables>;
 }
 export const createUserRef: CreateUserRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
 ```typescript
-createUser(dc: DataConnect): MutationPromise<CreateUserData, undefined>;
+createUser(dc: DataConnect, vars: CreateUserVariables): MutationPromise<CreateUserData, CreateUserVariables>;
 
 interface CreateUserRef {
   ...
-  (dc: DataConnect): MutationRef<CreateUserData, undefined>;
+  (dc: DataConnect, vars: CreateUserVariables): MutationRef<CreateUserData, CreateUserVariables>;
 }
 export const createUserRef: CreateUserRef;
 ```
@@ -316,7 +416,14 @@ console.log(name);
 ```
 
 ### Variables
-The `CreateUser` mutation has no variables.
+The `CreateUser` mutation requires an argument of type `CreateUserVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface CreateUserVariables {
+  displayName?: string | null;
+  email: string;
+}
+```
 ### Return Type
 Recall that executing the `CreateUser` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
 
@@ -330,21 +437,28 @@ export interface CreateUserData {
 
 ```typescript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, createUser } from '@dataconnect/generated';
+import { connectorConfig, createUser, CreateUserVariables } from '@dataconnect/generated';
 
+// The `CreateUser` mutation requires an argument of type `CreateUserVariables`:
+const createUserVars: CreateUserVariables = {
+  displayName: ..., // optional
+  email: ..., 
+};
 
 // Call the `createUser()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
-const { data } = await createUser();
+const { data } = await createUser(createUserVars);
+// Variables can be defined inline as well.
+const { data } = await createUser({ displayName: ..., email: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
-const { data } = await createUser(dataConnect);
+const { data } = await createUser(dataConnect, createUserVars);
 
 console.log(data.user_insert);
 
 // Or, you can use the `Promise` API.
-createUser().then((response) => {
+createUser(createUserVars).then((response) => {
   const data = response.data;
   console.log(data.user_insert);
 });
@@ -354,15 +468,22 @@ createUser().then((response) => {
 
 ```typescript
 import { getDataConnect, executeMutation } from 'firebase/data-connect';
-import { connectorConfig, createUserRef } from '@dataconnect/generated';
+import { connectorConfig, createUserRef, CreateUserVariables } from '@dataconnect/generated';
 
+// The `CreateUser` mutation requires an argument of type `CreateUserVariables`:
+const createUserVars: CreateUserVariables = {
+  displayName: ..., // optional
+  email: ..., 
+};
 
 // Call the `createUserRef()` function to get a reference to the mutation.
-const ref = createUserRef();
+const ref = createUserRef(createUserVars);
+// Variables can be defined inline as well.
+const ref = createUserRef({ displayName: ..., email: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
-const ref = createUserRef(dataConnect);
+const ref = createUserRef(dataConnect, createUserVars);
 
 // Call `executeMutation()` on the reference to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
@@ -377,8 +498,8 @@ executeMutation(ref).then((response) => {
 });
 ```
 
-## AssignSkillToAIEmployee
-You can execute the `AssignSkillToAIEmployee` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+## AssignSkillToAiEmployee
+You can execute the `AssignSkillToAiEmployee` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 assignSkillToAiEmployee(vars: AssignSkillToAiEmployeeVariables): MutationPromise<AssignSkillToAiEmployeeData, AssignSkillToAiEmployeeVariables>;
 
@@ -407,7 +528,7 @@ console.log(name);
 ```
 
 ### Variables
-The `AssignSkillToAIEmployee` mutation requires an argument of type `AssignSkillToAiEmployeeVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `AssignSkillToAiEmployee` mutation requires an argument of type `AssignSkillToAiEmployeeVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface AssignSkillToAiEmployeeVariables {
@@ -416,21 +537,21 @@ export interface AssignSkillToAiEmployeeVariables {
 }
 ```
 ### Return Type
-Recall that executing the `AssignSkillToAIEmployee` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+Recall that executing the `AssignSkillToAiEmployee` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
 
 The `data` property is an object of type `AssignSkillToAiEmployeeData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface AssignSkillToAiEmployeeData {
-  aIEmployeeSkill_insert: AIEmployeeSkill_Key;
+  aiEmployeeSkill_insert: AiEmployeeSkill_Key;
 }
 ```
-### Using `AssignSkillToAIEmployee`'s action shortcut function
+### Using `AssignSkillToAiEmployee`'s action shortcut function
 
 ```typescript
 import { getDataConnect } from 'firebase/data-connect';
 import { connectorConfig, assignSkillToAiEmployee, AssignSkillToAiEmployeeVariables } from '@dataconnect/generated';
 
-// The `AssignSkillToAIEmployee` mutation requires an argument of type `AssignSkillToAiEmployeeVariables`:
+// The `AssignSkillToAiEmployee` mutation requires an argument of type `AssignSkillToAiEmployeeVariables`:
 const assignSkillToAiEmployeeVars: AssignSkillToAiEmployeeVariables = {
   aiEmployeeId: ..., 
   skillId: ..., 
@@ -446,22 +567,22 @@ const { data } = await assignSkillToAiEmployee({ aiEmployeeId: ..., skillId: ...
 const dataConnect = getDataConnect(connectorConfig);
 const { data } = await assignSkillToAiEmployee(dataConnect, assignSkillToAiEmployeeVars);
 
-console.log(data.aIEmployeeSkill_insert);
+console.log(data.aiEmployeeSkill_insert);
 
 // Or, you can use the `Promise` API.
 assignSkillToAiEmployee(assignSkillToAiEmployeeVars).then((response) => {
   const data = response.data;
-  console.log(data.aIEmployeeSkill_insert);
+  console.log(data.aiEmployeeSkill_insert);
 });
 ```
 
-### Using `AssignSkillToAIEmployee`'s `MutationRef` function
+### Using `AssignSkillToAiEmployee`'s `MutationRef` function
 
 ```typescript
 import { getDataConnect, executeMutation } from 'firebase/data-connect';
 import { connectorConfig, assignSkillToAiEmployeeRef, AssignSkillToAiEmployeeVariables } from '@dataconnect/generated';
 
-// The `AssignSkillToAIEmployee` mutation requires an argument of type `AssignSkillToAiEmployeeVariables`:
+// The `AssignSkillToAiEmployee` mutation requires an argument of type `AssignSkillToAiEmployeeVariables`:
 const assignSkillToAiEmployeeVars: AssignSkillToAiEmployeeVariables = {
   aiEmployeeId: ..., 
   skillId: ..., 
@@ -480,12 +601,121 @@ const ref = assignSkillToAiEmployeeRef(dataConnect, assignSkillToAiEmployeeVars)
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await executeMutation(ref);
 
-console.log(data.aIEmployeeSkill_insert);
+console.log(data.aiEmployeeSkill_insert);
 
 // Or, you can use the `Promise` API.
 executeMutation(ref).then((response) => {
   const data = response.data;
-  console.log(data.aIEmployeeSkill_insert);
+  console.log(data.aiEmployeeSkill_insert);
+});
+```
+
+## CreateAgentTask
+You can execute the `CreateAgentTask` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+createAgentTask(vars: CreateAgentTaskVariables): MutationPromise<CreateAgentTaskData, CreateAgentTaskVariables>;
+
+interface CreateAgentTaskRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateAgentTaskVariables): MutationRef<CreateAgentTaskData, CreateAgentTaskVariables>;
+}
+export const createAgentTaskRef: CreateAgentTaskRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+createAgentTask(dc: DataConnect, vars: CreateAgentTaskVariables): MutationPromise<CreateAgentTaskData, CreateAgentTaskVariables>;
+
+interface CreateAgentTaskRef {
+  ...
+  (dc: DataConnect, vars: CreateAgentTaskVariables): MutationRef<CreateAgentTaskData, CreateAgentTaskVariables>;
+}
+export const createAgentTaskRef: CreateAgentTaskRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the createAgentTaskRef:
+```typescript
+const name = createAgentTaskRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `CreateAgentTask` mutation requires an argument of type `CreateAgentTaskVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface CreateAgentTaskVariables {
+  prompt: string;
+}
+```
+### Return Type
+Recall that executing the `CreateAgentTask` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `CreateAgentTaskData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface CreateAgentTaskData {
+  agentTask_insert: AgentTask_Key;
+}
+```
+### Using `CreateAgentTask`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, createAgentTask, CreateAgentTaskVariables } from '@dataconnect/generated';
+
+// The `CreateAgentTask` mutation requires an argument of type `CreateAgentTaskVariables`:
+const createAgentTaskVars: CreateAgentTaskVariables = {
+  prompt: ..., 
+};
+
+// Call the `createAgentTask()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await createAgentTask(createAgentTaskVars);
+// Variables can be defined inline as well.
+const { data } = await createAgentTask({ prompt: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await createAgentTask(dataConnect, createAgentTaskVars);
+
+console.log(data.agentTask_insert);
+
+// Or, you can use the `Promise` API.
+createAgentTask(createAgentTaskVars).then((response) => {
+  const data = response.data;
+  console.log(data.agentTask_insert);
+});
+```
+
+### Using `CreateAgentTask`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, createAgentTaskRef, CreateAgentTaskVariables } from '@dataconnect/generated';
+
+// The `CreateAgentTask` mutation requires an argument of type `CreateAgentTaskVariables`:
+const createAgentTaskVars: CreateAgentTaskVariables = {
+  prompt: ..., 
+};
+
+// Call the `createAgentTaskRef()` function to get a reference to the mutation.
+const ref = createAgentTaskRef(createAgentTaskVars);
+// Variables can be defined inline as well.
+const ref = createAgentTaskRef({ prompt: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = createAgentTaskRef(dataConnect, createAgentTaskVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.agentTask_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.agentTask_insert);
 });
 ```
 

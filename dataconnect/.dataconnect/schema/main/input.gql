@@ -1,0 +1,4575 @@
+"""
+✨ `AgentTask_KeyOutput` returns the primary key fields of table type `AgentTask`.
+
+It has the same format as `AgentTask_Key`, but is only used as mutation return value.
+"""
+scalar AgentTask_KeyOutput
+"""
+✨ `AiEmployee_KeyOutput` returns the primary key fields of table type `AiEmployee`.
+
+It has the same format as `AiEmployee_Key`, but is only used as mutation return value.
+"""
+scalar AiEmployee_KeyOutput
+"""
+✨ `AiEmployeeSkill_KeyOutput` returns the primary key fields of table type `AiEmployeeSkill`.
+
+It has the same format as `AiEmployeeSkill_Key`, but is only used as mutation return value.
+"""
+scalar AiEmployeeSkill_KeyOutput
+"""
+✨ `BusinessGoal_KeyOutput` returns the primary key fields of table type `BusinessGoal`.
+
+It has the same format as `BusinessGoal_Key`, but is only used as mutation return value.
+"""
+scalar BusinessGoal_KeyOutput
+"""
+✨ `DeploymentRequest_KeyOutput` returns the primary key fields of table type `DeploymentRequest`.
+
+It has the same format as `DeploymentRequest_Key`, but is only used as mutation return value.
+"""
+scalar DeploymentRequest_KeyOutput
+"""
+✨ `DeploymentStatus_Expr` is a server value variant of enum type `DeploymentStatus`.
+
+It accepts a CEL expression.
+"""
+scalar DeploymentStatus_Expr
+"""
+✨ `GoalStatus_Expr` is a server value variant of enum type `GoalStatus`.
+
+It accepts a CEL expression.
+"""
+scalar GoalStatus_Expr
+"""
+✨ `Purchase_KeyOutput` returns the primary key fields of table type `Purchase`.
+
+It has the same format as `Purchase_Key`, but is only used as mutation return value.
+"""
+scalar Purchase_KeyOutput
+"""
+✨ `PurchaseStatus_Expr` is a server value variant of enum type `PurchaseStatus`.
+
+It accepts a CEL expression.
+"""
+scalar PurchaseStatus_Expr
+"""
+✨ `RequestStatus_Expr` is a server value variant of enum type `RequestStatus`.
+
+It accepts a CEL expression.
+"""
+scalar RequestStatus_Expr
+"""
+✨ `Review_KeyOutput` returns the primary key fields of table type `Review`.
+
+It has the same format as `Review_Key`, but is only used as mutation return value.
+"""
+scalar Review_KeyOutput
+"""
+✨ `SharedKnowledge_KeyOutput` returns the primary key fields of table type `SharedKnowledge`.
+
+It has the same format as `SharedKnowledge_Key`, but is only used as mutation return value.
+"""
+scalar SharedKnowledge_KeyOutput
+"""
+✨ `Skill_KeyOutput` returns the primary key fields of table type `Skill`.
+
+It has the same format as `Skill_Key`, but is only used as mutation return value.
+"""
+scalar Skill_KeyOutput
+"""
+✨ `Task_KeyOutput` returns the primary key fields of table type `Task`.
+
+It has the same format as `Task_Key`, but is only used as mutation return value.
+"""
+scalar Task_KeyOutput
+"""
+✨ `TaskStatus_Expr` is a server value variant of enum type `TaskStatus`.
+
+It accepts a CEL expression.
+"""
+scalar TaskStatus_Expr
+"""
+✨ `User_KeyOutput` returns the primary key fields of table type `User`.
+
+It has the same format as `User_Key`, but is only used as mutation return value.
+"""
+scalar User_KeyOutput
+"""
+✨ Generated data input type for table 'AgentTask'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input AgentTask_Data {
+  """
+  ✨ Generated from Field `AgentTask`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `AgentTask`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `AgentTask`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `AgentTask`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `AgentTask`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `AgentTask`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `AgentTask`.`prompt` of type `String!`
+  """
+  prompt: String
+  """
+  ✨ `_expr` server value variant of `prompt` (✨ Generated from Field `AgentTask`.`prompt` of type `String!`)
+  """
+  prompt_expr: String_Expr
+  """
+  ✨ Generated from Field `AgentTask`.`result` of type `String`
+  """
+  result: String
+  """
+  ✨ `_expr` server value variant of `result` (✨ Generated from Field `AgentTask`.`result` of type `String`)
+  """
+  result_expr: String_Expr
+  """
+  ✨ Generated from Field `AgentTask`.`status` of type `TaskStatus`
+  """
+  status: TaskStatus
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `AgentTask`.`status` of type `TaskStatus`)
+  """
+  status_expr: TaskStatus_Expr
+  """
+  ✨ Generated from Field `AgentTask`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `updatedAt` (✨ Generated from Field `AgentTask`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `updatedAt` (✨ Generated from Field `AgentTask`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `updatedAt` (✨ Generated from Field `AgentTask`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_update: [Timestamp_Update!]
+}
+"""
+✨ Generated filter input type for table 'AgentTask'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input AgentTask_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [AgentTask_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: AgentTask_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [AgentTask_Filter!]
+  """
+  ✨ Generated from Field `AgentTask`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`prompt` of type `String!`
+  """
+  prompt: String_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`result` of type `String`
+  """
+  result: String_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`status` of type `TaskStatus`
+  """
+  status: TaskStatus_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp_Filter
+}
+"""
+✨ Generated first-row input type for table 'AgentTask'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input AgentTask_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [AgentTask_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: AgentTask_Filter
+}
+"""
+✨ Generated having input type for table 'AgentTask'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input AgentTask_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [AgentTask_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: AgentTask_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [AgentTask_Having!]
+  """
+  ✨ Generated from Field `AgentTask`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`prompt_count` of type `Int!`
+  """
+  prompt_count: Int_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`result_count` of type `Int!`
+  """
+  result_count: Int_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `AgentTask`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'AgentTask'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input AgentTask_Key {
+  """
+  ✨ Generated from Field `AgentTask`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `AgentTask`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'AgentTask'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input AgentTask_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: AgentTask_Filter
+}
+"""
+✨ Generated order input type for table 'AgentTask'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input AgentTask_Order {
+  """
+  ✨ Generated from Field `AgentTask`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`prompt` of type `String!`
+  """
+  prompt: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`result` of type `String`
+  """
+  result: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`status` of type `TaskStatus`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`prompt_count` of type `Int!`
+  """
+  prompt_count: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`result_count` of type `Int!`
+  """
+  result_count: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `AgentTask`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'AiEmployee'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input AiEmployee_Data {
+  """
+  ✨ Generated from Field `AiEmployee`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `AiEmployee`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `AiEmployee`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `AiEmployee`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `AiEmployee`.`user` of type `User!`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `AiEmployee`.`apiEndpoints` of type `Any`
+  """
+  apiEndpoints: Any
+  """
+  ✨ `_expr` server value variant of `apiEndpoints` (✨ Generated from Field `AiEmployee`.`apiEndpoints` of type `Any`)
+  """
+  apiEndpoints_expr: Any_Expr
+  """
+  ✨ Generated from Field `AiEmployee`.`capabilities` of type `[String]`
+  """
+  capabilities: [String!]
+  """
+  ✨ `_update` server value variant of `capabilities` (✨ Generated from Field `AiEmployee`.`capabilities` of type `[String]`)
+  """
+  capabilities_update: [String_ListUpdate!]
+  """
+  ✨ Generated from Field `AiEmployee`.`category` of type `String`
+  """
+  category: String
+  """
+  ✨ `_expr` server value variant of `category` (✨ Generated from Field `AiEmployee`.`category` of type `String`)
+  """
+  category_expr: String_Expr
+  """
+  ✨ Generated from Field `AiEmployee`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `AiEmployee`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `AiEmployee`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `AiEmployee`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentCost` of type `Float`
+  """
+  deploymentCost: Float
+  """
+  ✨ `_expr` server value variant of `deploymentCost` (✨ Generated from Field `AiEmployee`.`deploymentCost` of type `Float`)
+  """
+  deploymentCost_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `deploymentCost` (✨ Generated from Field `AiEmployee`.`deploymentCost` of type `Float`)
+  """
+  deploymentCost_update: [Float_Update!]
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentStatus` of type `DeploymentStatus`
+  """
+  deploymentStatus: DeploymentStatus
+  """
+  ✨ `_expr` server value variant of `deploymentStatus` (✨ Generated from Field `AiEmployee`.`deploymentStatus` of type `DeploymentStatus`)
+  """
+  deploymentStatus_expr: DeploymentStatus_Expr
+  """
+  ✨ Generated from Field `AiEmployee`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `AiEmployee`.`description` of type `String`)
+  """
+  description_expr: String_Expr
+  """
+  ✨ Generated from Field `AiEmployee`.`isPremium` of type `Boolean`
+  """
+  isPremium: Boolean
+  """
+  ✨ `_expr` server value variant of `isPremium` (✨ Generated from Field `AiEmployee`.`isPremium` of type `Boolean`)
+  """
+  isPremium_expr: Boolean_Expr
+  """
+  ✨ Generated from Field `AiEmployee`.`model` of type `String`
+  """
+  model: String
+  """
+  ✨ `_expr` server value variant of `model` (✨ Generated from Field `AiEmployee`.`model` of type `String`)
+  """
+  model_expr: String_Expr
+  """
+  ✨ Generated from Field `AiEmployee`.`monthlyCost` of type `Float`
+  """
+  monthlyCost: Float
+  """
+  ✨ `_expr` server value variant of `monthlyCost` (✨ Generated from Field `AiEmployee`.`monthlyCost` of type `Float`)
+  """
+  monthlyCost_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `monthlyCost` (✨ Generated from Field `AiEmployee`.`monthlyCost` of type `Float`)
+  """
+  monthlyCost_update: [Float_Update!]
+  """
+  ✨ Generated from Field `AiEmployee`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `AiEmployee`.`name` of type `String!`)
+  """
+  name_expr: String_Expr
+  """
+  ✨ Generated from Field `AiEmployee`.`personality` of type `String`
+  """
+  personality: String
+  """
+  ✨ `_expr` server value variant of `personality` (✨ Generated from Field `AiEmployee`.`personality` of type `String`)
+  """
+  personality_expr: String_Expr
+  """
+  ✨ Generated from Field `AiEmployee`.`price` of type `Float!`
+  """
+  price: Float
+  """
+  ✨ `_expr` server value variant of `price` (✨ Generated from Field `AiEmployee`.`price` of type `Float!`)
+  """
+  price_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `price` (✨ Generated from Field `AiEmployee`.`price` of type `Float!`)
+  """
+  price_update: [Float_Update!]
+  """
+  ✨ Generated from Field `AiEmployee`.`trainingData` of type `[String]`
+  """
+  trainingData: [String!]
+  """
+  ✨ `_update` server value variant of `trainingData` (✨ Generated from Field `AiEmployee`.`trainingData` of type `[String]`)
+  """
+  trainingData_update: [String_ListUpdate!]
+  """
+  ✨ Generated from Field `AiEmployee`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `updatedAt` (✨ Generated from Field `AiEmployee`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `updatedAt` (✨ Generated from Field `AiEmployee`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `updatedAt` (✨ Generated from Field `AiEmployee`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_update: [Timestamp_Update!]
+}
+"""
+✨ Generated filter input type for table 'AiEmployee'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input AiEmployee_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [AiEmployee_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: AiEmployee_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [AiEmployee_Filter!]
+  """
+  ✨ Generated from Field `AiEmployee`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`userId` of type `UUID!`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`apiEndpoints` of type `Any`
+  """
+  apiEndpoints: Any_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`capabilities` of type `[String]`
+  """
+  capabilities: String_ListFilter
+  """
+  ✨ Generated from Field `AiEmployee`.`category` of type `String`
+  """
+  category: String_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentCost` of type `Float`
+  """
+  deploymentCost: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentStatus` of type `DeploymentStatus`
+  """
+  deploymentStatus: DeploymentStatus_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`isPremium` of type `Boolean`
+  """
+  isPremium: Boolean_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`model` of type `String`
+  """
+  model: String_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`monthlyCost` of type `Float`
+  """
+  monthlyCost: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`personality` of type `String`
+  """
+  personality: String_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`price` of type `Float!`
+  """
+  price: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`trainingData` of type `[String]`
+  """
+  trainingData: String_ListFilter
+  """
+  ✨ Generated from Field `AiEmployee`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`aiEmployeeSkills_on_aiEmployee` of type `[AiEmployeeSkill!]!`
+  """
+  aiEmployeeSkills_on_aiEmployee: AiEmployeeSkill_ListFilter
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentRequests_on_aiEmployee` of type `[DeploymentRequest!]!`
+  """
+  deploymentRequests_on_aiEmployee: DeploymentRequest_ListFilter
+  """
+  ✨ Generated from Field `AiEmployee`.`purchases_on_aiEmployee` of type `[Purchase!]!`
+  """
+  purchases_on_aiEmployee: Purchase_ListFilter
+  """
+  ✨ Generated from Field `AiEmployee`.`reviews_on_aiEmployee` of type `[Review!]!`
+  """
+  reviews_on_aiEmployee: Review_ListFilter
+  """
+  ✨ Generated from Field `AiEmployee`.`sharedKnowledges_on_sourceEmployee` of type `[SharedKnowledge!]!`
+  """
+  sharedKnowledges_on_sourceEmployee: SharedKnowledge_ListFilter
+  """
+  ✨ Generated from Field `AiEmployee`.`skills_via_AiEmployeeSkill` of type `[Skill!]!`
+  """
+  skills_via_AiEmployeeSkill: Skill_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'AiEmployee'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input AiEmployee_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [AiEmployee_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: AiEmployee_Filter
+}
+"""
+✨ Generated having input type for table 'AiEmployee'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input AiEmployee_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [AiEmployee_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: AiEmployee_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [AiEmployee_Having!]
+  """
+  ✨ Generated from Field `AiEmployee`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`apiEndpoints_count` of type `Int!`
+  """
+  apiEndpoints_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`category_count` of type `Int!`
+  """
+  category_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentCost_count` of type `Int!`
+  """
+  deploymentCost_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentStatus_count` of type `Int!`
+  """
+  deploymentStatus_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`isPremium_count` of type `Int!`
+  """
+  isPremium_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`model_count` of type `Int!`
+  """
+  model_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`monthlyCost_count` of type `Int!`
+  """
+  monthlyCost_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`personality_count` of type `Int!`
+  """
+  personality_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`price_count` of type `Int!`
+  """
+  price_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentCost_sum` of type `Float`
+  """
+  deploymentCost_sum: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`monthlyCost_sum` of type `Float`
+  """
+  monthlyCost_sum: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`price_sum` of type `Float`
+  """
+  price_sum: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentCost_avg` of type `Float`
+  """
+  deploymentCost_avg: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`monthlyCost_avg` of type `Float`
+  """
+  monthlyCost_avg: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`price_avg` of type `Float`
+  """
+  price_avg: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`apiEndpoints_min` of type `Any`
+  """
+  apiEndpoints_min: Any_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentCost_min` of type `Float`
+  """
+  deploymentCost_min: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`monthlyCost_min` of type `Float`
+  """
+  monthlyCost_min: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`price_min` of type `Float`
+  """
+  price_min: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`apiEndpoints_max` of type `Any`
+  """
+  apiEndpoints_max: Any_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentCost_max` of type `Float`
+  """
+  deploymentCost_max: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`monthlyCost_max` of type `Float`
+  """
+  monthlyCost_max: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`price_max` of type `Float`
+  """
+  price_max: Float_Filter
+  """
+  ✨ Generated from Field `AiEmployee`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'AiEmployee'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input AiEmployee_Key {
+  """
+  ✨ Generated from Field `AiEmployee`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `AiEmployee`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'AiEmployee'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input AiEmployee_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: AiEmployee_Filter
+}
+"""
+✨ Generated order input type for table 'AiEmployee'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input AiEmployee_Order {
+  """
+  ✨ Generated from Field `AiEmployee`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`userId` of type `UUID!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `AiEmployee`.`apiEndpoints` of type `Any`
+  """
+  apiEndpoints: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`category` of type `String`
+  """
+  category: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentCost` of type `Float`
+  """
+  deploymentCost: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentStatus` of type `DeploymentStatus`
+  """
+  deploymentStatus: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`isPremium` of type `Boolean`
+  """
+  isPremium: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`model` of type `String`
+  """
+  model: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`monthlyCost` of type `Float`
+  """
+  monthlyCost: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`personality` of type `String`
+  """
+  personality: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`price` of type `Float!`
+  """
+  price: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`apiEndpoints_count` of type `Int!`
+  """
+  apiEndpoints_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`category_count` of type `Int!`
+  """
+  category_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentCost_count` of type `Int!`
+  """
+  deploymentCost_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentStatus_count` of type `Int!`
+  """
+  deploymentStatus_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`isPremium_count` of type `Int!`
+  """
+  isPremium_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`model_count` of type `Int!`
+  """
+  model_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`monthlyCost_count` of type `Int!`
+  """
+  monthlyCost_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`personality_count` of type `Int!`
+  """
+  personality_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`price_count` of type `Int!`
+  """
+  price_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentCost_sum` of type `Float`
+  """
+  deploymentCost_sum: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`monthlyCost_sum` of type `Float`
+  """
+  monthlyCost_sum: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`price_sum` of type `Float`
+  """
+  price_sum: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentCost_avg` of type `Float`
+  """
+  deploymentCost_avg: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`monthlyCost_avg` of type `Float`
+  """
+  monthlyCost_avg: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`price_avg` of type `Float`
+  """
+  price_avg: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`apiEndpoints_min` of type `Any`
+  """
+  apiEndpoints_min: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentCost_min` of type `Float`
+  """
+  deploymentCost_min: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`monthlyCost_min` of type `Float`
+  """
+  monthlyCost_min: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`price_min` of type `Float`
+  """
+  price_min: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`apiEndpoints_max` of type `Any`
+  """
+  apiEndpoints_max: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`deploymentCost_max` of type `Float`
+  """
+  deploymentCost_max: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`monthlyCost_max` of type `Float`
+  """
+  monthlyCost_max: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`price_max` of type `Float`
+  """
+  price_max: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployee`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'AiEmployeeSkill'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input AiEmployeeSkill_Data {
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`aiEmployeeId` of type `UUID!`
+  """
+  aiEmployeeId: UUID
+  """
+  ✨ `_expr` server value variant of `aiEmployeeId` (✨ Generated from Field `AiEmployeeSkill`.`aiEmployeeId` of type `UUID!`)
+  """
+  aiEmployeeId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`skillId` of type `UUID!`
+  """
+  skillId: UUID
+  """
+  ✨ `_expr` server value variant of `skillId` (✨ Generated from Field `AiEmployeeSkill`.`skillId` of type `UUID!`)
+  """
+  skillId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`aiEmployee` of type `AiEmployee!`
+  """
+  aiEmployee: AiEmployee_Key
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`skill` of type `Skill!`
+  """
+  skill: Skill_Key
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`enabled` of type `Boolean`
+  """
+  enabled: Boolean
+  """
+  ✨ `_expr` server value variant of `enabled` (✨ Generated from Field `AiEmployeeSkill`.`enabled` of type `Boolean`)
+  """
+  enabled_expr: Boolean_Expr
+}
+"""
+✨ Generated filter input type for table 'AiEmployeeSkill'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input AiEmployeeSkill_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [AiEmployeeSkill_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: AiEmployeeSkill_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [AiEmployeeSkill_Filter!]
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`aiEmployeeId` of type `UUID!`
+  """
+  aiEmployeeId: UUID_Filter
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`skillId` of type `UUID!`
+  """
+  skillId: UUID_Filter
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`aiEmployee` of type `AiEmployee!`
+  """
+  aiEmployee: AiEmployee_Filter
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`skill` of type `Skill!`
+  """
+  skill: Skill_Filter
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`enabled` of type `Boolean`
+  """
+  enabled: Boolean_Filter
+}
+"""
+✨ Generated first-row input type for table 'AiEmployeeSkill'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input AiEmployeeSkill_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [AiEmployeeSkill_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: AiEmployeeSkill_Filter
+}
+"""
+✨ Generated having input type for table 'AiEmployeeSkill'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input AiEmployeeSkill_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [AiEmployeeSkill_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: AiEmployeeSkill_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [AiEmployeeSkill_Having!]
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`aiEmployeeId_count` of type `Int!`
+  """
+  aiEmployeeId_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`enabled_count` of type `Int!`
+  """
+  enabled_count: Int_Filter
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`skillId_count` of type `Int!`
+  """
+  skillId_count: Int_Filter
+}
+"""
+✨ Generated key input type for table 'AiEmployeeSkill'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input AiEmployeeSkill_Key {
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`aiEmployeeId` of type `UUID!`
+  """
+  aiEmployeeId: UUID
+  """
+  ✨ `_expr` server value variant of `aiEmployeeId` (✨ Generated from Field `AiEmployeeSkill`.`aiEmployeeId` of type `UUID!`)
+  """
+  aiEmployeeId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`skillId` of type `UUID!`
+  """
+  skillId: UUID
+  """
+  ✨ `_expr` server value variant of `skillId` (✨ Generated from Field `AiEmployeeSkill`.`skillId` of type `UUID!`)
+  """
+  skillId_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'AiEmployeeSkill'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input AiEmployeeSkill_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: AiEmployeeSkill_Filter
+}
+"""
+✨ Generated order input type for table 'AiEmployeeSkill'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input AiEmployeeSkill_Order {
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`aiEmployeeId` of type `UUID!`
+  """
+  aiEmployeeId: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`skillId` of type `UUID!`
+  """
+  skillId: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`aiEmployee` of type `AiEmployee!`
+  """
+  aiEmployee: AiEmployee_Order
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`skill` of type `Skill!`
+  """
+  skill: Skill_Order
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`enabled` of type `Boolean`
+  """
+  enabled: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`aiEmployeeId_count` of type `Int!`
+  """
+  aiEmployeeId_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`enabled_count` of type `Int!`
+  """
+  enabled_count: OrderDirection
+  """
+  ✨ Generated from Field `AiEmployeeSkill`.`skillId_count` of type `Int!`
+  """
+  skillId_count: OrderDirection
+}
+"""
+✨ Generated data input type for table 'BusinessGoal'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input BusinessGoal_Data {
+  """
+  ✨ Generated from Field `BusinessGoal`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `BusinessGoal`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `BusinessGoal`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `BusinessGoal`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `BusinessGoal`.`user` of type `User!`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `BusinessGoal`.`assignedEmployees` of type `[String]`
+  """
+  assignedEmployees: [String!]
+  """
+  ✨ `_update` server value variant of `assignedEmployees` (✨ Generated from Field `BusinessGoal`.`assignedEmployees` of type `[String]`)
+  """
+  assignedEmployees_update: [String_ListUpdate!]
+  """
+  ✨ Generated from Field `BusinessGoal`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `BusinessGoal`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `BusinessGoal`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `BusinessGoal`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `BusinessGoal`.`currentValue` of type `Float`
+  """
+  currentValue: Float
+  """
+  ✨ `_expr` server value variant of `currentValue` (✨ Generated from Field `BusinessGoal`.`currentValue` of type `Float`)
+  """
+  currentValue_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `currentValue` (✨ Generated from Field `BusinessGoal`.`currentValue` of type `Float`)
+  """
+  currentValue_update: [Float_Update!]
+  """
+  ✨ Generated from Field `BusinessGoal`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `BusinessGoal`.`description` of type `String`)
+  """
+  description_expr: String_Expr
+  """
+  ✨ Generated from Field `BusinessGoal`.`goalName` of type `String`
+  """
+  goalName: String
+  """
+  ✨ `_expr` server value variant of `goalName` (✨ Generated from Field `BusinessGoal`.`goalName` of type `String`)
+  """
+  goalName_expr: String_Expr
+  """
+  ✨ Generated from Field `BusinessGoal`.`goalType` of type `String`
+  """
+  goalType: String
+  """
+  ✨ `_expr` server value variant of `goalType` (✨ Generated from Field `BusinessGoal`.`goalType` of type `String`)
+  """
+  goalType_expr: String_Expr
+  """
+  ✨ Generated from Field `BusinessGoal`.`progressHistory` of type `Any`
+  """
+  progressHistory: Any
+  """
+  ✨ `_expr` server value variant of `progressHistory` (✨ Generated from Field `BusinessGoal`.`progressHistory` of type `Any`)
+  """
+  progressHistory_expr: Any_Expr
+  """
+  ✨ Generated from Field `BusinessGoal`.`status` of type `GoalStatus!`
+  """
+  status: GoalStatus
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `BusinessGoal`.`status` of type `GoalStatus!`)
+  """
+  status_expr: GoalStatus_Expr
+  """
+  ✨ Generated from Field `BusinessGoal`.`targetValue` of type `Float`
+  """
+  targetValue: Float
+  """
+  ✨ `_expr` server value variant of `targetValue` (✨ Generated from Field `BusinessGoal`.`targetValue` of type `Float`)
+  """
+  targetValue_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `targetValue` (✨ Generated from Field `BusinessGoal`.`targetValue` of type `Float`)
+  """
+  targetValue_update: [Float_Update!]
+  """
+  ✨ Generated from Field `BusinessGoal`.`title` of type `String`
+  """
+  title: String
+  """
+  ✨ `_expr` server value variant of `title` (✨ Generated from Field `BusinessGoal`.`title` of type `String`)
+  """
+  title_expr: String_Expr
+  """
+  ✨ Generated from Field `BusinessGoal`.`unit` of type `String`
+  """
+  unit: String
+  """
+  ✨ `_expr` server value variant of `unit` (✨ Generated from Field `BusinessGoal`.`unit` of type `String`)
+  """
+  unit_expr: String_Expr
+  """
+  ✨ Generated from Field `BusinessGoal`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `updatedAt` (✨ Generated from Field `BusinessGoal`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `updatedAt` (✨ Generated from Field `BusinessGoal`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `updatedAt` (✨ Generated from Field `BusinessGoal`.`updatedAt` of type `Timestamp!`)
+  """
+  updatedAt_update: [Timestamp_Update!]
+}
+"""
+✨ Generated filter input type for table 'BusinessGoal'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input BusinessGoal_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [BusinessGoal_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: BusinessGoal_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [BusinessGoal_Filter!]
+  """
+  ✨ Generated from Field `BusinessGoal`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`userId` of type `UUID!`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`assignedEmployees` of type `[String]`
+  """
+  assignedEmployees: String_ListFilter
+  """
+  ✨ Generated from Field `BusinessGoal`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`currentValue` of type `Float`
+  """
+  currentValue: Float_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`goalName` of type `String`
+  """
+  goalName: String_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`goalType` of type `String`
+  """
+  goalType: String_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`progressHistory` of type `Any`
+  """
+  progressHistory: Any_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`status` of type `GoalStatus!`
+  """
+  status: GoalStatus_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`targetValue` of type `Float`
+  """
+  targetValue: Float_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`title` of type `String`
+  """
+  title: String_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`unit` of type `String`
+  """
+  unit: String_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: Timestamp_Filter
+}
+"""
+✨ Generated first-row input type for table 'BusinessGoal'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input BusinessGoal_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [BusinessGoal_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: BusinessGoal_Filter
+}
+"""
+✨ Generated having input type for table 'BusinessGoal'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input BusinessGoal_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [BusinessGoal_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: BusinessGoal_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [BusinessGoal_Having!]
+  """
+  ✨ Generated from Field `BusinessGoal`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`currentValue_count` of type `Int!`
+  """
+  currentValue_count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`goalName_count` of type `Int!`
+  """
+  goalName_count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`goalType_count` of type `Int!`
+  """
+  goalType_count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`progressHistory_count` of type `Int!`
+  """
+  progressHistory_count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`targetValue_count` of type `Int!`
+  """
+  targetValue_count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`title_count` of type `Int!`
+  """
+  title_count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`unit_count` of type `Int!`
+  """
+  unit_count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`currentValue_sum` of type `Float`
+  """
+  currentValue_sum: Float_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`targetValue_sum` of type `Float`
+  """
+  targetValue_sum: Float_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`currentValue_avg` of type `Float`
+  """
+  currentValue_avg: Float_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`targetValue_avg` of type `Float`
+  """
+  targetValue_avg: Float_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`currentValue_min` of type `Float`
+  """
+  currentValue_min: Float_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`progressHistory_min` of type `Any`
+  """
+  progressHistory_min: Any_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`targetValue_min` of type `Float`
+  """
+  targetValue_min: Float_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`currentValue_max` of type `Float`
+  """
+  currentValue_max: Float_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`progressHistory_max` of type `Any`
+  """
+  progressHistory_max: Any_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`targetValue_max` of type `Float`
+  """
+  targetValue_max: Float_Filter
+  """
+  ✨ Generated from Field `BusinessGoal`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'BusinessGoal'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input BusinessGoal_Key {
+  """
+  ✨ Generated from Field `BusinessGoal`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `BusinessGoal`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'BusinessGoal'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input BusinessGoal_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: BusinessGoal_Filter
+}
+"""
+✨ Generated order input type for table 'BusinessGoal'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input BusinessGoal_Order {
+  """
+  ✨ Generated from Field `BusinessGoal`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`userId` of type `UUID!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `BusinessGoal`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`currentValue` of type `Float`
+  """
+  currentValue: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`goalName` of type `String`
+  """
+  goalName: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`goalType` of type `String`
+  """
+  goalType: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`progressHistory` of type `Any`
+  """
+  progressHistory: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`status` of type `GoalStatus!`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`targetValue` of type `Float`
+  """
+  targetValue: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`title` of type `String`
+  """
+  title: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`unit` of type `String`
+  """
+  unit: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`updatedAt` of type `Timestamp!`
+  """
+  updatedAt: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`currentValue_count` of type `Int!`
+  """
+  currentValue_count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`goalName_count` of type `Int!`
+  """
+  goalName_count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`goalType_count` of type `Int!`
+  """
+  goalType_count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`progressHistory_count` of type `Int!`
+  """
+  progressHistory_count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`targetValue_count` of type `Int!`
+  """
+  targetValue_count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`title_count` of type `Int!`
+  """
+  title_count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`unit_count` of type `Int!`
+  """
+  unit_count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`updatedAt_count` of type `Int!`
+  """
+  updatedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`currentValue_sum` of type `Float`
+  """
+  currentValue_sum: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`targetValue_sum` of type `Float`
+  """
+  targetValue_sum: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`currentValue_avg` of type `Float`
+  """
+  currentValue_avg: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`targetValue_avg` of type `Float`
+  """
+  targetValue_avg: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`currentValue_min` of type `Float`
+  """
+  currentValue_min: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`progressHistory_min` of type `Any`
+  """
+  progressHistory_min: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`targetValue_min` of type `Float`
+  """
+  targetValue_min: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`updatedAt_min` of type `Timestamp`
+  """
+  updatedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`currentValue_max` of type `Float`
+  """
+  currentValue_max: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`progressHistory_max` of type `Any`
+  """
+  progressHistory_max: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`targetValue_max` of type `Float`
+  """
+  targetValue_max: OrderDirection
+  """
+  ✨ Generated from Field `BusinessGoal`.`updatedAt_max` of type `Timestamp`
+  """
+  updatedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'DeploymentRequest'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input DeploymentRequest_Data {
+  """
+  ✨ Generated from Field `DeploymentRequest`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `DeploymentRequest`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `DeploymentRequest`.`aiEmployeeId` of type `UUID!`
+  """
+  aiEmployeeId: UUID
+  """
+  ✨ `_expr` server value variant of `aiEmployeeId` (✨ Generated from Field `DeploymentRequest`.`aiEmployeeId` of type `UUID!`)
+  """
+  aiEmployeeId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `DeploymentRequest`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `DeploymentRequest`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `DeploymentRequest`.`aiEmployee` of type `AiEmployee!`
+  """
+  aiEmployee: AiEmployee_Key
+  """
+  ✨ Generated from Field `DeploymentRequest`.`user` of type `User!`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `DeploymentRequest`.`requestDate` of type `Timestamp!`
+  """
+  requestDate: Timestamp
+  """
+  ✨ `_expr` server value variant of `requestDate` (✨ Generated from Field `DeploymentRequest`.`requestDate` of type `Timestamp!`)
+  """
+  requestDate_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `requestDate` (✨ Generated from Field `DeploymentRequest`.`requestDate` of type `Timestamp!`)
+  """
+  requestDate_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `requestDate` (✨ Generated from Field `DeploymentRequest`.`requestDate` of type `Timestamp!`)
+  """
+  requestDate_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `DeploymentRequest`.`status` of type `RequestStatus!`
+  """
+  status: RequestStatus
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `DeploymentRequest`.`status` of type `RequestStatus!`)
+  """
+  status_expr: RequestStatus_Expr
+}
+"""
+✨ Generated filter input type for table 'DeploymentRequest'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input DeploymentRequest_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [DeploymentRequest_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: DeploymentRequest_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [DeploymentRequest_Filter!]
+  """
+  ✨ Generated from Field `DeploymentRequest`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `DeploymentRequest`.`aiEmployeeId` of type `UUID!`
+  """
+  aiEmployeeId: UUID_Filter
+  """
+  ✨ Generated from Field `DeploymentRequest`.`userId` of type `UUID!`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `DeploymentRequest`.`aiEmployee` of type `AiEmployee!`
+  """
+  aiEmployee: AiEmployee_Filter
+  """
+  ✨ Generated from Field `DeploymentRequest`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `DeploymentRequest`.`requestDate` of type `Timestamp!`
+  """
+  requestDate: Timestamp_Filter
+  """
+  ✨ Generated from Field `DeploymentRequest`.`status` of type `RequestStatus!`
+  """
+  status: RequestStatus_Filter
+}
+"""
+✨ Generated first-row input type for table 'DeploymentRequest'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input DeploymentRequest_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [DeploymentRequest_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: DeploymentRequest_Filter
+}
+"""
+✨ Generated having input type for table 'DeploymentRequest'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input DeploymentRequest_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [DeploymentRequest_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: DeploymentRequest_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [DeploymentRequest_Having!]
+  """
+  ✨ Generated from Field `DeploymentRequest`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `DeploymentRequest`.`aiEmployeeId_count` of type `Int!`
+  """
+  aiEmployeeId_count: Int_Filter
+  """
+  ✨ Generated from Field `DeploymentRequest`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `DeploymentRequest`.`requestDate_count` of type `Int!`
+  """
+  requestDate_count: Int_Filter
+  """
+  ✨ Generated from Field `DeploymentRequest`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `DeploymentRequest`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `DeploymentRequest`.`requestDate_min` of type `Timestamp`
+  """
+  requestDate_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `DeploymentRequest`.`requestDate_max` of type `Timestamp`
+  """
+  requestDate_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'DeploymentRequest'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input DeploymentRequest_Key {
+  """
+  ✨ Generated from Field `DeploymentRequest`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `DeploymentRequest`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'DeploymentRequest'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input DeploymentRequest_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: DeploymentRequest_Filter
+}
+"""
+✨ Generated order input type for table 'DeploymentRequest'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input DeploymentRequest_Order {
+  """
+  ✨ Generated from Field `DeploymentRequest`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `DeploymentRequest`.`aiEmployeeId` of type `UUID!`
+  """
+  aiEmployeeId: OrderDirection
+  """
+  ✨ Generated from Field `DeploymentRequest`.`userId` of type `UUID!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `DeploymentRequest`.`aiEmployee` of type `AiEmployee!`
+  """
+  aiEmployee: AiEmployee_Order
+  """
+  ✨ Generated from Field `DeploymentRequest`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `DeploymentRequest`.`requestDate` of type `Timestamp!`
+  """
+  requestDate: OrderDirection
+  """
+  ✨ Generated from Field `DeploymentRequest`.`status` of type `RequestStatus!`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `DeploymentRequest`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `DeploymentRequest`.`aiEmployeeId_count` of type `Int!`
+  """
+  aiEmployeeId_count: OrderDirection
+  """
+  ✨ Generated from Field `DeploymentRequest`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `DeploymentRequest`.`requestDate_count` of type `Int!`
+  """
+  requestDate_count: OrderDirection
+  """
+  ✨ Generated from Field `DeploymentRequest`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `DeploymentRequest`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `DeploymentRequest`.`requestDate_min` of type `Timestamp`
+  """
+  requestDate_min: OrderDirection
+  """
+  ✨ Generated from Field `DeploymentRequest`.`requestDate_max` of type `Timestamp`
+  """
+  requestDate_max: OrderDirection
+}
+"""
+✨ Generated filter input type for table 'DeploymentStatus'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input DeploymentStatus_Filter {
+  """
+  Match if field is exactly equal to provided value.
+  """
+  eq: DeploymentStatus
+  """
+  ✨ `_expr` server value variant of `eq` (Match if field is exactly equal to provided value.)
+  """
+  eq_expr: DeploymentStatus_Expr
+  """
+  Match if field is not equal to provided value.
+  """
+  ne: DeploymentStatus
+  """
+  ✨ `_expr` server value variant of `ne` (Match if field is not equal to provided value.)
+  """
+  ne_expr: DeploymentStatus_Expr
+  """
+  When true, match if field `IS NULL`. When false, match if field is `NOT NULL`.
+  """
+  isNull: Boolean
+  """
+  Match if field value is among the provided list of values.
+  """
+  in: [DeploymentStatus!]
+  """
+  Match if field value is not among the provided list of values.
+  """
+  nin: [DeploymentStatus!]
+  """
+  Match if field value is greater than the provided value, based on index ordering of supported enum values.
+  """
+  gt: DeploymentStatus
+  """
+  ✨ `_expr` server value variant of `gt` (Match if field value is greater than the provided value, based on index ordering of supported enum values.)
+  """
+  gt_expr: DeploymentStatus_Expr
+  """
+  Match if field is greater than or equal to the provided value.
+  """
+  ge: DeploymentStatus
+  """
+  ✨ `_expr` server value variant of `ge` (Match if field is greater than or equal to the provided value.)
+  """
+  ge_expr: DeploymentStatus_Expr
+  """
+  Match if field value is less than the provided value, based on index ordering of supported enum values.
+  """
+  lt: DeploymentStatus
+  """
+  ✨ `_expr` server value variant of `lt` (Match if field value is less than the provided value, based on index ordering of supported enum values.)
+  """
+  lt_expr: DeploymentStatus_Expr
+  """
+  Match if field is less than or equal to the provided value, based on index ordering of supported enum values.
+  """
+  le: DeploymentStatus
+  """
+  ✨ `_expr` server value variant of `le` (Match if field is less than or equal to the provided value, based on index ordering of supported enum values.)
+  """
+  le_expr: DeploymentStatus_Expr
+}
+"""
+✨ Generated list filter input type for table 'DeploymentStatus'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input DeploymentStatus_ListFilter {
+  """
+  Match if list field contains the provided value as a member.
+  """
+  includes: DeploymentStatus
+  """
+  ✨ `_expr` server value variant of `includes` (Match if list field contains the provided value as a member.)
+  """
+  includes_expr: DeploymentStatus_Expr
+  """
+  Match if list field contains all of the provided values as members.
+  """
+  includesAll: [DeploymentStatus!]
+  """
+  Match if list field does not contain the provided value as a member.
+  """
+  excludes: DeploymentStatus
+  """
+  ✨ `_expr` server value variant of `excludes` (Match if list field does not contain the provided value as a member.)
+  """
+  excludes_expr: DeploymentStatus_Expr
+  """
+  Match if list field does not contain any of the provided values as members.
+  """
+  excludesAll: [DeploymentStatus!]
+  """
+  The desired number of enum values that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: DeploymentStatus_Filter
+}
+"""
+✨ Generated filter input type for table 'GoalStatus'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input GoalStatus_Filter {
+  """
+  Match if field is exactly equal to provided value.
+  """
+  eq: GoalStatus
+  """
+  ✨ `_expr` server value variant of `eq` (Match if field is exactly equal to provided value.)
+  """
+  eq_expr: GoalStatus_Expr
+  """
+  Match if field is not equal to provided value.
+  """
+  ne: GoalStatus
+  """
+  ✨ `_expr` server value variant of `ne` (Match if field is not equal to provided value.)
+  """
+  ne_expr: GoalStatus_Expr
+  """
+  When true, match if field `IS NULL`. When false, match if field is `NOT NULL`.
+  """
+  isNull: Boolean
+  """
+  Match if field value is among the provided list of values.
+  """
+  in: [GoalStatus!]
+  """
+  Match if field value is not among the provided list of values.
+  """
+  nin: [GoalStatus!]
+  """
+  Match if field value is greater than the provided value, based on index ordering of supported enum values.
+  """
+  gt: GoalStatus
+  """
+  ✨ `_expr` server value variant of `gt` (Match if field value is greater than the provided value, based on index ordering of supported enum values.)
+  """
+  gt_expr: GoalStatus_Expr
+  """
+  Match if field is greater than or equal to the provided value.
+  """
+  ge: GoalStatus
+  """
+  ✨ `_expr` server value variant of `ge` (Match if field is greater than or equal to the provided value.)
+  """
+  ge_expr: GoalStatus_Expr
+  """
+  Match if field value is less than the provided value, based on index ordering of supported enum values.
+  """
+  lt: GoalStatus
+  """
+  ✨ `_expr` server value variant of `lt` (Match if field value is less than the provided value, based on index ordering of supported enum values.)
+  """
+  lt_expr: GoalStatus_Expr
+  """
+  Match if field is less than or equal to the provided value, based on index ordering of supported enum values.
+  """
+  le: GoalStatus
+  """
+  ✨ `_expr` server value variant of `le` (Match if field is less than or equal to the provided value, based on index ordering of supported enum values.)
+  """
+  le_expr: GoalStatus_Expr
+}
+"""
+✨ Generated list filter input type for table 'GoalStatus'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input GoalStatus_ListFilter {
+  """
+  Match if list field contains the provided value as a member.
+  """
+  includes: GoalStatus
+  """
+  ✨ `_expr` server value variant of `includes` (Match if list field contains the provided value as a member.)
+  """
+  includes_expr: GoalStatus_Expr
+  """
+  Match if list field contains all of the provided values as members.
+  """
+  includesAll: [GoalStatus!]
+  """
+  Match if list field does not contain the provided value as a member.
+  """
+  excludes: GoalStatus
+  """
+  ✨ `_expr` server value variant of `excludes` (Match if list field does not contain the provided value as a member.)
+  """
+  excludes_expr: GoalStatus_Expr
+  """
+  Match if list field does not contain any of the provided values as members.
+  """
+  excludesAll: [GoalStatus!]
+  """
+  The desired number of enum values that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: GoalStatus_Filter
+}
+"""
+✨ Generated data input type for table 'Purchase'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Purchase_Data {
+  """
+  ✨ Generated from Field `Purchase`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Purchase`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Purchase`.`aiEmployeeId` of type `UUID!`
+  """
+  aiEmployeeId: UUID
+  """
+  ✨ `_expr` server value variant of `aiEmployeeId` (✨ Generated from Field `Purchase`.`aiEmployeeId` of type `UUID!`)
+  """
+  aiEmployeeId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Purchase`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Purchase`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Purchase`.`aiEmployee` of type `AiEmployee!`
+  """
+  aiEmployee: AiEmployee_Key
+  """
+  ✨ Generated from Field `Purchase`.`user` of type `User!`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `Purchase`.`purchaseDate` of type `Timestamp!`
+  """
+  purchaseDate: Timestamp
+  """
+  ✨ `_expr` server value variant of `purchaseDate` (✨ Generated from Field `Purchase`.`purchaseDate` of type `Timestamp!`)
+  """
+  purchaseDate_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `purchaseDate` (✨ Generated from Field `Purchase`.`purchaseDate` of type `Timestamp!`)
+  """
+  purchaseDate_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `purchaseDate` (✨ Generated from Field `Purchase`.`purchaseDate` of type `Timestamp!`)
+  """
+  purchaseDate_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Purchase`.`quantity` of type `Int!`
+  """
+  quantity: Int
+  """
+  ✨ `_expr` server value variant of `quantity` (✨ Generated from Field `Purchase`.`quantity` of type `Int!`)
+  """
+  quantity_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `quantity` (✨ Generated from Field `Purchase`.`quantity` of type `Int!`)
+  """
+  quantity_update: [Int_Update!]
+  """
+  ✨ Generated from Field `Purchase`.`status` of type `PurchaseStatus!`
+  """
+  status: PurchaseStatus
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `Purchase`.`status` of type `PurchaseStatus!`)
+  """
+  status_expr: PurchaseStatus_Expr
+  """
+  ✨ Generated from Field `Purchase`.`totalPrice` of type `Float!`
+  """
+  totalPrice: Float
+  """
+  ✨ `_expr` server value variant of `totalPrice` (✨ Generated from Field `Purchase`.`totalPrice` of type `Float!`)
+  """
+  totalPrice_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `totalPrice` (✨ Generated from Field `Purchase`.`totalPrice` of type `Float!`)
+  """
+  totalPrice_update: [Float_Update!]
+}
+"""
+✨ Generated filter input type for table 'Purchase'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Purchase_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Purchase_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Purchase_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Purchase_Filter!]
+  """
+  ✨ Generated from Field `Purchase`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Purchase`.`aiEmployeeId` of type `UUID!`
+  """
+  aiEmployeeId: UUID_Filter
+  """
+  ✨ Generated from Field `Purchase`.`userId` of type `UUID!`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `Purchase`.`aiEmployee` of type `AiEmployee!`
+  """
+  aiEmployee: AiEmployee_Filter
+  """
+  ✨ Generated from Field `Purchase`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `Purchase`.`purchaseDate` of type `Timestamp!`
+  """
+  purchaseDate: Timestamp_Filter
+  """
+  ✨ Generated from Field `Purchase`.`quantity` of type `Int!`
+  """
+  quantity: Int_Filter
+  """
+  ✨ Generated from Field `Purchase`.`status` of type `PurchaseStatus!`
+  """
+  status: PurchaseStatus_Filter
+  """
+  ✨ Generated from Field `Purchase`.`totalPrice` of type `Float!`
+  """
+  totalPrice: Float_Filter
+}
+"""
+✨ Generated first-row input type for table 'Purchase'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Purchase_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Purchase_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Purchase_Filter
+}
+"""
+✨ Generated having input type for table 'Purchase'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Purchase_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Purchase_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Purchase_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Purchase_Having!]
+  """
+  ✨ Generated from Field `Purchase`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Purchase`.`aiEmployeeId_count` of type `Int!`
+  """
+  aiEmployeeId_count: Int_Filter
+  """
+  ✨ Generated from Field `Purchase`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Purchase`.`purchaseDate_count` of type `Int!`
+  """
+  purchaseDate_count: Int_Filter
+  """
+  ✨ Generated from Field `Purchase`.`quantity_count` of type `Int!`
+  """
+  quantity_count: Int_Filter
+  """
+  ✨ Generated from Field `Purchase`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `Purchase`.`totalPrice_count` of type `Int!`
+  """
+  totalPrice_count: Int_Filter
+  """
+  ✨ Generated from Field `Purchase`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `Purchase`.`quantity_sum` of type `Int`
+  """
+  quantity_sum: Int_Filter
+  """
+  ✨ Generated from Field `Purchase`.`totalPrice_sum` of type `Float`
+  """
+  totalPrice_sum: Float_Filter
+  """
+  ✨ Generated from Field `Purchase`.`quantity_avg` of type `Float`
+  """
+  quantity_avg: Float_Filter
+  """
+  ✨ Generated from Field `Purchase`.`totalPrice_avg` of type `Float`
+  """
+  totalPrice_avg: Float_Filter
+  """
+  ✨ Generated from Field `Purchase`.`purchaseDate_min` of type `Timestamp`
+  """
+  purchaseDate_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Purchase`.`quantity_min` of type `Int`
+  """
+  quantity_min: Int_Filter
+  """
+  ✨ Generated from Field `Purchase`.`totalPrice_min` of type `Float`
+  """
+  totalPrice_min: Float_Filter
+  """
+  ✨ Generated from Field `Purchase`.`purchaseDate_max` of type `Timestamp`
+  """
+  purchaseDate_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Purchase`.`quantity_max` of type `Int`
+  """
+  quantity_max: Int_Filter
+  """
+  ✨ Generated from Field `Purchase`.`totalPrice_max` of type `Float`
+  """
+  totalPrice_max: Float_Filter
+}
+"""
+✨ Generated key input type for table 'Purchase'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Purchase_Key {
+  """
+  ✨ Generated from Field `Purchase`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Purchase`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Purchase'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Purchase_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Purchase_Filter
+}
+"""
+✨ Generated order input type for table 'Purchase'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Purchase_Order {
+  """
+  ✨ Generated from Field `Purchase`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`aiEmployeeId` of type `UUID!`
+  """
+  aiEmployeeId: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`userId` of type `UUID!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`aiEmployee` of type `AiEmployee!`
+  """
+  aiEmployee: AiEmployee_Order
+  """
+  ✨ Generated from Field `Purchase`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `Purchase`.`purchaseDate` of type `Timestamp!`
+  """
+  purchaseDate: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`quantity` of type `Int!`
+  """
+  quantity: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`status` of type `PurchaseStatus!`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`totalPrice` of type `Float!`
+  """
+  totalPrice: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`aiEmployeeId_count` of type `Int!`
+  """
+  aiEmployeeId_count: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`purchaseDate_count` of type `Int!`
+  """
+  purchaseDate_count: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`quantity_count` of type `Int!`
+  """
+  quantity_count: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`totalPrice_count` of type `Int!`
+  """
+  totalPrice_count: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`quantity_sum` of type `Int`
+  """
+  quantity_sum: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`totalPrice_sum` of type `Float`
+  """
+  totalPrice_sum: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`quantity_avg` of type `Float`
+  """
+  quantity_avg: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`totalPrice_avg` of type `Float`
+  """
+  totalPrice_avg: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`purchaseDate_min` of type `Timestamp`
+  """
+  purchaseDate_min: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`quantity_min` of type `Int`
+  """
+  quantity_min: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`totalPrice_min` of type `Float`
+  """
+  totalPrice_min: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`purchaseDate_max` of type `Timestamp`
+  """
+  purchaseDate_max: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`quantity_max` of type `Int`
+  """
+  quantity_max: OrderDirection
+  """
+  ✨ Generated from Field `Purchase`.`totalPrice_max` of type `Float`
+  """
+  totalPrice_max: OrderDirection
+}
+"""
+✨ Generated filter input type for table 'PurchaseStatus'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input PurchaseStatus_Filter {
+  """
+  Match if field is exactly equal to provided value.
+  """
+  eq: PurchaseStatus
+  """
+  ✨ `_expr` server value variant of `eq` (Match if field is exactly equal to provided value.)
+  """
+  eq_expr: PurchaseStatus_Expr
+  """
+  Match if field is not equal to provided value.
+  """
+  ne: PurchaseStatus
+  """
+  ✨ `_expr` server value variant of `ne` (Match if field is not equal to provided value.)
+  """
+  ne_expr: PurchaseStatus_Expr
+  """
+  When true, match if field `IS NULL`. When false, match if field is `NOT NULL`.
+  """
+  isNull: Boolean
+  """
+  Match if field value is among the provided list of values.
+  """
+  in: [PurchaseStatus!]
+  """
+  Match if field value is not among the provided list of values.
+  """
+  nin: [PurchaseStatus!]
+  """
+  Match if field value is greater than the provided value, based on index ordering of supported enum values.
+  """
+  gt: PurchaseStatus
+  """
+  ✨ `_expr` server value variant of `gt` (Match if field value is greater than the provided value, based on index ordering of supported enum values.)
+  """
+  gt_expr: PurchaseStatus_Expr
+  """
+  Match if field is greater than or equal to the provided value.
+  """
+  ge: PurchaseStatus
+  """
+  ✨ `_expr` server value variant of `ge` (Match if field is greater than or equal to the provided value.)
+  """
+  ge_expr: PurchaseStatus_Expr
+  """
+  Match if field value is less than the provided value, based on index ordering of supported enum values.
+  """
+  lt: PurchaseStatus
+  """
+  ✨ `_expr` server value variant of `lt` (Match if field value is less than the provided value, based on index ordering of supported enum values.)
+  """
+  lt_expr: PurchaseStatus_Expr
+  """
+  Match if field is less than or equal to the provided value, based on index ordering of supported enum values.
+  """
+  le: PurchaseStatus
+  """
+  ✨ `_expr` server value variant of `le` (Match if field is less than or equal to the provided value, based on index ordering of supported enum values.)
+  """
+  le_expr: PurchaseStatus_Expr
+}
+"""
+✨ Generated list filter input type for table 'PurchaseStatus'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input PurchaseStatus_ListFilter {
+  """
+  Match if list field contains the provided value as a member.
+  """
+  includes: PurchaseStatus
+  """
+  ✨ `_expr` server value variant of `includes` (Match if list field contains the provided value as a member.)
+  """
+  includes_expr: PurchaseStatus_Expr
+  """
+  Match if list field contains all of the provided values as members.
+  """
+  includesAll: [PurchaseStatus!]
+  """
+  Match if list field does not contain the provided value as a member.
+  """
+  excludes: PurchaseStatus
+  """
+  ✨ `_expr` server value variant of `excludes` (Match if list field does not contain the provided value as a member.)
+  """
+  excludes_expr: PurchaseStatus_Expr
+  """
+  Match if list field does not contain any of the provided values as members.
+  """
+  excludesAll: [PurchaseStatus!]
+  """
+  The desired number of enum values that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: PurchaseStatus_Filter
+}
+"""
+✨ Generated filter input type for table 'RequestStatus'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input RequestStatus_Filter {
+  """
+  Match if field is exactly equal to provided value.
+  """
+  eq: RequestStatus
+  """
+  ✨ `_expr` server value variant of `eq` (Match if field is exactly equal to provided value.)
+  """
+  eq_expr: RequestStatus_Expr
+  """
+  Match if field is not equal to provided value.
+  """
+  ne: RequestStatus
+  """
+  ✨ `_expr` server value variant of `ne` (Match if field is not equal to provided value.)
+  """
+  ne_expr: RequestStatus_Expr
+  """
+  When true, match if field `IS NULL`. When false, match if field is `NOT NULL`.
+  """
+  isNull: Boolean
+  """
+  Match if field value is among the provided list of values.
+  """
+  in: [RequestStatus!]
+  """
+  Match if field value is not among the provided list of values.
+  """
+  nin: [RequestStatus!]
+  """
+  Match if field value is greater than the provided value, based on index ordering of supported enum values.
+  """
+  gt: RequestStatus
+  """
+  ✨ `_expr` server value variant of `gt` (Match if field value is greater than the provided value, based on index ordering of supported enum values.)
+  """
+  gt_expr: RequestStatus_Expr
+  """
+  Match if field is greater than or equal to the provided value.
+  """
+  ge: RequestStatus
+  """
+  ✨ `_expr` server value variant of `ge` (Match if field is greater than or equal to the provided value.)
+  """
+  ge_expr: RequestStatus_Expr
+  """
+  Match if field value is less than the provided value, based on index ordering of supported enum values.
+  """
+  lt: RequestStatus
+  """
+  ✨ `_expr` server value variant of `lt` (Match if field value is less than the provided value, based on index ordering of supported enum values.)
+  """
+  lt_expr: RequestStatus_Expr
+  """
+  Match if field is less than or equal to the provided value, based on index ordering of supported enum values.
+  """
+  le: RequestStatus
+  """
+  ✨ `_expr` server value variant of `le` (Match if field is less than or equal to the provided value, based on index ordering of supported enum values.)
+  """
+  le_expr: RequestStatus_Expr
+}
+"""
+✨ Generated list filter input type for table 'RequestStatus'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input RequestStatus_ListFilter {
+  """
+  Match if list field contains the provided value as a member.
+  """
+  includes: RequestStatus
+  """
+  ✨ `_expr` server value variant of `includes` (Match if list field contains the provided value as a member.)
+  """
+  includes_expr: RequestStatus_Expr
+  """
+  Match if list field contains all of the provided values as members.
+  """
+  includesAll: [RequestStatus!]
+  """
+  Match if list field does not contain the provided value as a member.
+  """
+  excludes: RequestStatus
+  """
+  ✨ `_expr` server value variant of `excludes` (Match if list field does not contain the provided value as a member.)
+  """
+  excludes_expr: RequestStatus_Expr
+  """
+  Match if list field does not contain any of the provided values as members.
+  """
+  excludesAll: [RequestStatus!]
+  """
+  The desired number of enum values that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: RequestStatus_Filter
+}
+"""
+✨ Generated data input type for table 'Review'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Review_Data {
+  """
+  ✨ Generated from Field `Review`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Review`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Review`.`aiEmployeeId` of type `UUID!`
+  """
+  aiEmployeeId: UUID
+  """
+  ✨ `_expr` server value variant of `aiEmployeeId` (✨ Generated from Field `Review`.`aiEmployeeId` of type `UUID!`)
+  """
+  aiEmployeeId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Review`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Review`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Review`.`aiEmployee` of type `AiEmployee!`
+  """
+  aiEmployee: AiEmployee_Key
+  """
+  ✨ Generated from Field `Review`.`user` of type `User!`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `Review`.`comment` of type `String`
+  """
+  comment: String
+  """
+  ✨ `_expr` server value variant of `comment` (✨ Generated from Field `Review`.`comment` of type `String`)
+  """
+  comment_expr: String_Expr
+  """
+  ✨ Generated from Field `Review`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Review`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Review`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `Review`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Review`.`rating` of type `Int!`
+  """
+  rating: Int
+  """
+  ✨ `_expr` server value variant of `rating` (✨ Generated from Field `Review`.`rating` of type `Int!`)
+  """
+  rating_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `rating` (✨ Generated from Field `Review`.`rating` of type `Int!`)
+  """
+  rating_update: [Int_Update!]
+}
+"""
+✨ Generated filter input type for table 'Review'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Review_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Review_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Review_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Review_Filter!]
+  """
+  ✨ Generated from Field `Review`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Review`.`aiEmployeeId` of type `UUID!`
+  """
+  aiEmployeeId: UUID_Filter
+  """
+  ✨ Generated from Field `Review`.`userId` of type `UUID!`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `Review`.`aiEmployee` of type `AiEmployee!`
+  """
+  aiEmployee: AiEmployee_Filter
+  """
+  ✨ Generated from Field `Review`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `Review`.`comment` of type `String`
+  """
+  comment: String_Filter
+  """
+  ✨ Generated from Field `Review`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Review`.`rating` of type `Int!`
+  """
+  rating: Int_Filter
+}
+"""
+✨ Generated first-row input type for table 'Review'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Review_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Review_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Review_Filter
+}
+"""
+✨ Generated having input type for table 'Review'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Review_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Review_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Review_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Review_Having!]
+  """
+  ✨ Generated from Field `Review`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Review`.`aiEmployeeId_count` of type `Int!`
+  """
+  aiEmployeeId_count: Int_Filter
+  """
+  ✨ Generated from Field `Review`.`comment_count` of type `Int!`
+  """
+  comment_count: Int_Filter
+  """
+  ✨ Generated from Field `Review`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Review`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Review`.`rating_count` of type `Int!`
+  """
+  rating_count: Int_Filter
+  """
+  ✨ Generated from Field `Review`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `Review`.`rating_sum` of type `Int`
+  """
+  rating_sum: Int_Filter
+  """
+  ✨ Generated from Field `Review`.`rating_avg` of type `Float`
+  """
+  rating_avg: Float_Filter
+  """
+  ✨ Generated from Field `Review`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Review`.`rating_min` of type `Int`
+  """
+  rating_min: Int_Filter
+  """
+  ✨ Generated from Field `Review`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Review`.`rating_max` of type `Int`
+  """
+  rating_max: Int_Filter
+}
+"""
+✨ Generated key input type for table 'Review'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Review_Key {
+  """
+  ✨ Generated from Field `Review`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Review`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Review'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Review_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Review_Filter
+}
+"""
+✨ Generated order input type for table 'Review'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Review_Order {
+  """
+  ✨ Generated from Field `Review`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`aiEmployeeId` of type `UUID!`
+  """
+  aiEmployeeId: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`userId` of type `UUID!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`aiEmployee` of type `AiEmployee!`
+  """
+  aiEmployee: AiEmployee_Order
+  """
+  ✨ Generated from Field `Review`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `Review`.`comment` of type `String`
+  """
+  comment: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`rating` of type `Int!`
+  """
+  rating: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`aiEmployeeId_count` of type `Int!`
+  """
+  aiEmployeeId_count: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`comment_count` of type `Int!`
+  """
+  comment_count: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`rating_count` of type `Int!`
+  """
+  rating_count: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`rating_sum` of type `Int`
+  """
+  rating_sum: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`rating_avg` of type `Float`
+  """
+  rating_avg: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`rating_min` of type `Int`
+  """
+  rating_min: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `Review`.`rating_max` of type `Int`
+  """
+  rating_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'SharedKnowledge'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input SharedKnowledge_Data {
+  """
+  ✨ Generated from Field `SharedKnowledge`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `SharedKnowledge`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `SharedKnowledge`.`sourceEmployeeId` of type `UUID`
+  """
+  sourceEmployeeId: UUID
+  """
+  ✨ `_expr` server value variant of `sourceEmployeeId` (✨ Generated from Field `SharedKnowledge`.`sourceEmployeeId` of type `UUID`)
+  """
+  sourceEmployeeId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `SharedKnowledge`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `SharedKnowledge`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `SharedKnowledge`.`sourceEmployee` of type `AiEmployee`
+  """
+  sourceEmployee: AiEmployee_Key
+  """
+  ✨ Generated from Field `SharedKnowledge`.`user` of type `User!`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `SharedKnowledge`.`confidenceScore` of type `Float`
+  """
+  confidenceScore: Float
+  """
+  ✨ `_expr` server value variant of `confidenceScore` (✨ Generated from Field `SharedKnowledge`.`confidenceScore` of type `Float`)
+  """
+  confidenceScore_expr: Float_Expr
+  """
+  ✨ `_update` server value variant of `confidenceScore` (✨ Generated from Field `SharedKnowledge`.`confidenceScore` of type `Float`)
+  """
+  confidenceScore_update: [Float_Update!]
+  """
+  ✨ Generated from Field `SharedKnowledge`.`content` of type `String!`
+  """
+  content: String
+  """
+  ✨ `_expr` server value variant of `content` (✨ Generated from Field `SharedKnowledge`.`content` of type `String!`)
+  """
+  content_expr: String_Expr
+  """
+  ✨ Generated from Field `SharedKnowledge`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `SharedKnowledge`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `SharedKnowledge`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `SharedKnowledge`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `SharedKnowledge`.`isVerified` of type `Boolean`
+  """
+  isVerified: Boolean
+  """
+  ✨ `_expr` server value variant of `isVerified` (✨ Generated from Field `SharedKnowledge`.`isVerified` of type `Boolean`)
+  """
+  isVerified_expr: Boolean_Expr
+  """
+  ✨ Generated from Field `SharedKnowledge`.`knowledgeType` of type `String`
+  """
+  knowledgeType: String
+  """
+  ✨ `_expr` server value variant of `knowledgeType` (✨ Generated from Field `SharedKnowledge`.`knowledgeType` of type `String`)
+  """
+  knowledgeType_expr: String_Expr
+  """
+  ✨ Generated from Field `SharedKnowledge`.`metadata` of type `Any`
+  """
+  metadata: Any
+  """
+  ✨ `_expr` server value variant of `metadata` (✨ Generated from Field `SharedKnowledge`.`metadata` of type `Any`)
+  """
+  metadata_expr: Any_Expr
+  """
+  ✨ Generated from Field `SharedKnowledge`.`relevanceTags` of type `[String]`
+  """
+  relevanceTags: [String!]
+  """
+  ✨ `_update` server value variant of `relevanceTags` (✨ Generated from Field `SharedKnowledge`.`relevanceTags` of type `[String]`)
+  """
+  relevanceTags_update: [String_ListUpdate!]
+  """
+  ✨ Generated from Field `SharedKnowledge`.`title` of type `String`
+  """
+  title: String
+  """
+  ✨ `_expr` server value variant of `title` (✨ Generated from Field `SharedKnowledge`.`title` of type `String`)
+  """
+  title_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'SharedKnowledge'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input SharedKnowledge_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [SharedKnowledge_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: SharedKnowledge_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [SharedKnowledge_Filter!]
+  """
+  ✨ Generated from Field `SharedKnowledge`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`sourceEmployeeId` of type `UUID`
+  """
+  sourceEmployeeId: UUID_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`userId` of type `UUID!`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`sourceEmployee` of type `AiEmployee`
+  """
+  sourceEmployee: AiEmployee_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`confidenceScore` of type `Float`
+  """
+  confidenceScore: Float_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`content` of type `String!`
+  """
+  content: String_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`isVerified` of type `Boolean`
+  """
+  isVerified: Boolean_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`knowledgeType` of type `String`
+  """
+  knowledgeType: String_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`metadata` of type `Any`
+  """
+  metadata: Any_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`relevanceTags` of type `[String]`
+  """
+  relevanceTags: String_ListFilter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`title` of type `String`
+  """
+  title: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'SharedKnowledge'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input SharedKnowledge_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [SharedKnowledge_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: SharedKnowledge_Filter
+}
+"""
+✨ Generated having input type for table 'SharedKnowledge'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input SharedKnowledge_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [SharedKnowledge_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: SharedKnowledge_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [SharedKnowledge_Having!]
+  """
+  ✨ Generated from Field `SharedKnowledge`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`confidenceScore_count` of type `Int!`
+  """
+  confidenceScore_count: Int_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`content_count` of type `Int!`
+  """
+  content_count: Int_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`isVerified_count` of type `Int!`
+  """
+  isVerified_count: Int_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`knowledgeType_count` of type `Int!`
+  """
+  knowledgeType_count: Int_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`metadata_count` of type `Int!`
+  """
+  metadata_count: Int_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`sourceEmployeeId_count` of type `Int!`
+  """
+  sourceEmployeeId_count: Int_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`title_count` of type `Int!`
+  """
+  title_count: Int_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`confidenceScore_sum` of type `Float`
+  """
+  confidenceScore_sum: Float_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`confidenceScore_avg` of type `Float`
+  """
+  confidenceScore_avg: Float_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`confidenceScore_min` of type `Float`
+  """
+  confidenceScore_min: Float_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`metadata_min` of type `Any`
+  """
+  metadata_min: Any_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`confidenceScore_max` of type `Float`
+  """
+  confidenceScore_max: Float_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `SharedKnowledge`.`metadata_max` of type `Any`
+  """
+  metadata_max: Any_Filter
+}
+"""
+✨ Generated key input type for table 'SharedKnowledge'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input SharedKnowledge_Key {
+  """
+  ✨ Generated from Field `SharedKnowledge`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `SharedKnowledge`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'SharedKnowledge'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input SharedKnowledge_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: SharedKnowledge_Filter
+}
+"""
+✨ Generated order input type for table 'SharedKnowledge'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input SharedKnowledge_Order {
+  """
+  ✨ Generated from Field `SharedKnowledge`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`sourceEmployeeId` of type `UUID`
+  """
+  sourceEmployeeId: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`userId` of type `UUID!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`sourceEmployee` of type `AiEmployee`
+  """
+  sourceEmployee: AiEmployee_Order
+  """
+  ✨ Generated from Field `SharedKnowledge`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `SharedKnowledge`.`confidenceScore` of type `Float`
+  """
+  confidenceScore: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`content` of type `String!`
+  """
+  content: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`isVerified` of type `Boolean`
+  """
+  isVerified: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`knowledgeType` of type `String`
+  """
+  knowledgeType: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`metadata` of type `Any`
+  """
+  metadata: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`title` of type `String`
+  """
+  title: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`confidenceScore_count` of type `Int!`
+  """
+  confidenceScore_count: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`content_count` of type `Int!`
+  """
+  content_count: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`isVerified_count` of type `Int!`
+  """
+  isVerified_count: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`knowledgeType_count` of type `Int!`
+  """
+  knowledgeType_count: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`metadata_count` of type `Int!`
+  """
+  metadata_count: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`sourceEmployeeId_count` of type `Int!`
+  """
+  sourceEmployeeId_count: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`title_count` of type `Int!`
+  """
+  title_count: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`confidenceScore_sum` of type `Float`
+  """
+  confidenceScore_sum: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`confidenceScore_avg` of type `Float`
+  """
+  confidenceScore_avg: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`confidenceScore_min` of type `Float`
+  """
+  confidenceScore_min: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`metadata_min` of type `Any`
+  """
+  metadata_min: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`confidenceScore_max` of type `Float`
+  """
+  confidenceScore_max: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `SharedKnowledge`.`metadata_max` of type `Any`
+  """
+  metadata_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Skill'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Skill_Data {
+  """
+  ✨ Generated from Field `Skill`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Skill`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Skill`.`category` of type `String`
+  """
+  category: String
+  """
+  ✨ `_expr` server value variant of `category` (✨ Generated from Field `Skill`.`category` of type `String`)
+  """
+  category_expr: String_Expr
+  """
+  ✨ Generated from Field `Skill`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Skill`.`description` of type `String`)
+  """
+  description_expr: String_Expr
+  """
+  ✨ Generated from Field `Skill`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Skill`.`name` of type `String!`)
+  """
+  name_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Skill'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Skill_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Skill_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Skill_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Skill_Filter!]
+  """
+  ✨ Generated from Field `Skill`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Skill`.`category` of type `String`
+  """
+  category: String_Filter
+  """
+  ✨ Generated from Field `Skill`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `Skill`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `Skill`.`aiEmployeeSkills_on_skill` of type `[AiEmployeeSkill!]!`
+  """
+  aiEmployeeSkills_on_skill: AiEmployeeSkill_ListFilter
+  """
+  ✨ Generated from Field `Skill`.`aiEmployees_via_AiEmployeeSkill` of type `[AiEmployee!]!`
+  """
+  aiEmployees_via_AiEmployeeSkill: AiEmployee_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Skill'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Skill_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Skill_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Skill_Filter
+}
+"""
+✨ Generated having input type for table 'Skill'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Skill_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Skill_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Skill_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Skill_Having!]
+  """
+  ✨ Generated from Field `Skill`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Skill`.`category_count` of type `Int!`
+  """
+  category_count: Int_Filter
+  """
+  ✨ Generated from Field `Skill`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `Skill`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Skill`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+}
+"""
+✨ Generated key input type for table 'Skill'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Skill_Key {
+  """
+  ✨ Generated from Field `Skill`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Skill`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Skill'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Skill_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Skill_Filter
+}
+"""
+✨ Generated order input type for table 'Skill'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Skill_Order {
+  """
+  ✨ Generated from Field `Skill`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Skill`.`category` of type `String`
+  """
+  category: OrderDirection
+  """
+  ✨ Generated from Field `Skill`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `Skill`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Skill`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Skill`.`category_count` of type `Int!`
+  """
+  category_count: OrderDirection
+  """
+  ✨ Generated from Field `Skill`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `Skill`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Skill`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Task'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Task_Data {
+  """
+  ✨ Generated from Field `Task`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Task`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Task`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Task`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Task`.`user` of type `User!`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `Task`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Task`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Task`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `Task`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Task`.`description` of type `String!`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Task`.`description` of type `String!`)
+  """
+  description_expr: String_Expr
+  """
+  ✨ Generated from Field `Task`.`dueDate` of type `Timestamp`
+  """
+  dueDate: Timestamp
+  """
+  ✨ `_expr` server value variant of `dueDate` (✨ Generated from Field `Task`.`dueDate` of type `Timestamp`)
+  """
+  dueDate_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `dueDate` (✨ Generated from Field `Task`.`dueDate` of type `Timestamp`)
+  """
+  dueDate_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `dueDate` (✨ Generated from Field `Task`.`dueDate` of type `Timestamp`)
+  """
+  dueDate_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Task`.`status` of type `TaskStatus`
+  """
+  status: TaskStatus
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `Task`.`status` of type `TaskStatus`)
+  """
+  status_expr: TaskStatus_Expr
+}
+"""
+✨ Generated filter input type for table 'Task'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Task_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Task_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Task_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Task_Filter!]
+  """
+  ✨ Generated from Field `Task`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Task`.`userId` of type `UUID!`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `Task`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `Task`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Task`.`description` of type `String!`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `Task`.`dueDate` of type `Timestamp`
+  """
+  dueDate: Timestamp_Filter
+  """
+  ✨ Generated from Field `Task`.`status` of type `TaskStatus`
+  """
+  status: TaskStatus_Filter
+}
+"""
+✨ Generated first-row input type for table 'Task'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Task_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Task_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Task_Filter
+}
+"""
+✨ Generated having input type for table 'Task'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Task_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Task_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Task_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Task_Having!]
+  """
+  ✨ Generated from Field `Task`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`dueDate_count` of type `Int!`
+  """
+  dueDate_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Task`.`dueDate_min` of type `Timestamp`
+  """
+  dueDate_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Task`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Task`.`dueDate_max` of type `Timestamp`
+  """
+  dueDate_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'Task'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Task_Key {
+  """
+  ✨ Generated from Field `Task`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Task`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Task'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Task_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Task_Filter
+}
+"""
+✨ Generated order input type for table 'Task'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Task_Order {
+  """
+  ✨ Generated from Field `Task`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`userId` of type `UUID!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `Task`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`description` of type `String!`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`dueDate` of type `Timestamp`
+  """
+  dueDate: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`status` of type `TaskStatus`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`dueDate_count` of type `Int!`
+  """
+  dueDate_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`dueDate_min` of type `Timestamp`
+  """
+  dueDate_min: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`dueDate_max` of type `Timestamp`
+  """
+  dueDate_max: OrderDirection
+}
+"""
+✨ Generated filter input type for table 'TaskStatus'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input TaskStatus_Filter {
+  """
+  Match if field is exactly equal to provided value.
+  """
+  eq: TaskStatus
+  """
+  ✨ `_expr` server value variant of `eq` (Match if field is exactly equal to provided value.)
+  """
+  eq_expr: TaskStatus_Expr
+  """
+  Match if field is not equal to provided value.
+  """
+  ne: TaskStatus
+  """
+  ✨ `_expr` server value variant of `ne` (Match if field is not equal to provided value.)
+  """
+  ne_expr: TaskStatus_Expr
+  """
+  When true, match if field `IS NULL`. When false, match if field is `NOT NULL`.
+  """
+  isNull: Boolean
+  """
+  Match if field value is among the provided list of values.
+  """
+  in: [TaskStatus!]
+  """
+  Match if field value is not among the provided list of values.
+  """
+  nin: [TaskStatus!]
+  """
+  Match if field value is greater than the provided value, based on index ordering of supported enum values.
+  """
+  gt: TaskStatus
+  """
+  ✨ `_expr` server value variant of `gt` (Match if field value is greater than the provided value, based on index ordering of supported enum values.)
+  """
+  gt_expr: TaskStatus_Expr
+  """
+  Match if field is greater than or equal to the provided value.
+  """
+  ge: TaskStatus
+  """
+  ✨ `_expr` server value variant of `ge` (Match if field is greater than or equal to the provided value.)
+  """
+  ge_expr: TaskStatus_Expr
+  """
+  Match if field value is less than the provided value, based on index ordering of supported enum values.
+  """
+  lt: TaskStatus
+  """
+  ✨ `_expr` server value variant of `lt` (Match if field value is less than the provided value, based on index ordering of supported enum values.)
+  """
+  lt_expr: TaskStatus_Expr
+  """
+  Match if field is less than or equal to the provided value, based on index ordering of supported enum values.
+  """
+  le: TaskStatus
+  """
+  ✨ `_expr` server value variant of `le` (Match if field is less than or equal to the provided value, based on index ordering of supported enum values.)
+  """
+  le_expr: TaskStatus_Expr
+}
+"""
+✨ Generated list filter input type for table 'TaskStatus'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input TaskStatus_ListFilter {
+  """
+  Match if list field contains the provided value as a member.
+  """
+  includes: TaskStatus
+  """
+  ✨ `_expr` server value variant of `includes` (Match if list field contains the provided value as a member.)
+  """
+  includes_expr: TaskStatus_Expr
+  """
+  Match if list field contains all of the provided values as members.
+  """
+  includesAll: [TaskStatus!]
+  """
+  Match if list field does not contain the provided value as a member.
+  """
+  excludes: TaskStatus
+  """
+  ✨ `_expr` server value variant of `excludes` (Match if list field does not contain the provided value as a member.)
+  """
+  excludes_expr: TaskStatus_Expr
+  """
+  Match if list field does not contain any of the provided values as members.
+  """
+  excludesAll: [TaskStatus!]
+  """
+  The desired number of enum values that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: TaskStatus_Filter
+}
+"""
+✨ Generated data input type for table 'User'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input User_Data {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `User`.`bio` of type `String`
+  """
+  bio: String
+  """
+  ✨ `_expr` server value variant of `bio` (✨ Generated from Field `User`.`bio` of type `String`)
+  """
+  bio_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `User`.`displayName` of type `String`
+  """
+  displayName: String
+  """
+  ✨ `_expr` server value variant of `displayName` (✨ Generated from Field `User`.`displayName` of type `String`)
+  """
+  displayName_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: String
+  """
+  ✨ `_expr` server value variant of `email` (✨ Generated from Field `User`.`email` of type `String!`)
+  """
+  email_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`isSeller` of type `Boolean!`
+  """
+  isSeller: Boolean
+  """
+  ✨ `_expr` server value variant of `isSeller` (✨ Generated from Field `User`.`isSeller` of type `Boolean!`)
+  """
+  isSeller_expr: Boolean_Expr
+  """
+  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  """
+  photoUrl: String
+  """
+  ✨ `_expr` server value variant of `photoUrl` (✨ Generated from Field `User`.`photoUrl` of type `String`)
+  """
+  photoUrl_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'User'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [User_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: User_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [User_Filter!]
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `User`.`bio` of type `String`
+  """
+  bio: String_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`displayName` of type `String`
+  """
+  displayName: String_Filter
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: String_Filter
+  """
+  ✨ Generated from Field `User`.`isSeller` of type `Boolean!`
+  """
+  isSeller: Boolean_Filter
+  """
+  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  """
+  photoUrl: String_Filter
+  """
+  ✨ Generated from Field `User`.`aiEmployees_on_user` of type `[AiEmployee!]!`
+  """
+  aiEmployees_on_user: AiEmployee_ListFilter
+  """
+  ✨ Generated from Field `User`.`businessGoals_on_user` of type `[BusinessGoal!]!`
+  """
+  businessGoals_on_user: BusinessGoal_ListFilter
+  """
+  ✨ Generated from Field `User`.`deploymentRequests_on_user` of type `[DeploymentRequest!]!`
+  """
+  deploymentRequests_on_user: DeploymentRequest_ListFilter
+  """
+  ✨ Generated from Field `User`.`purchases_on_user` of type `[Purchase!]!`
+  """
+  purchases_on_user: Purchase_ListFilter
+  """
+  ✨ Generated from Field `User`.`reviews_on_user` of type `[Review!]!`
+  """
+  reviews_on_user: Review_ListFilter
+  """
+  ✨ Generated from Field `User`.`sharedKnowledges_on_user` of type `[SharedKnowledge!]!`
+  """
+  sharedKnowledges_on_user: SharedKnowledge_ListFilter
+  """
+  ✨ Generated from Field `User`.`tasks_on_user` of type `[Task!]!`
+  """
+  tasks_on_user: Task_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'User'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input User_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [User_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: User_Filter
+}
+"""
+✨ Generated having input type for table 'User'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [User_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: User_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [User_Having!]
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`bio_count` of type `Int!`
+  """
+  bio_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`displayName_count` of type `Int!`
+  """
+  displayName_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`isSeller_count` of type `Int!`
+  """
+  isSeller_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`photoUrl_count` of type `Int!`
+  """
+  photoUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'User'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input User_Key {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'User'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input User_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: User_Filter
+}
+"""
+✨ Generated order input type for table 'User'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input User_Order {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `User`.`bio` of type `String`
+  """
+  bio: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `User`.`displayName` of type `String`
+  """
+  displayName: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: OrderDirection
+  """
+  ✨ Generated from Field `User`.`isSeller` of type `Boolean!`
+  """
+  isSeller: OrderDirection
+  """
+  ✨ Generated from Field `User`.`photoUrl` of type `String`
+  """
+  photoUrl: OrderDirection
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`bio_count` of type `Int!`
+  """
+  bio_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`displayName_count` of type `Int!`
+  """
+  displayName_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`isSeller_count` of type `Int!`
+  """
+  isSeller_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`photoUrl_count` of type `Int!`
+  """
+  photoUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+}

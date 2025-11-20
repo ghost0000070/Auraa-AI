@@ -1,9 +1,5 @@
-mutation CreateUser @auth(level: USER) {
-  user_insert(data: {displayName: "New User", email: "newuser@example.com"}) {
-    id
-    email
-    displayName
-  }
+mutation CreateUser($displayName: String, $email: String!) @auth(level: USER) {
+  user_insert(data: {displayName: $displayName, email: $email})
 }
 
 query ListSkills @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
@@ -15,15 +11,12 @@ query ListSkills @auth(level: PUBLIC, insecureReason: "This operation is safe to
   }
 }
 
-mutation AssignSkillToAiEmployee($aiEmployeeId: ID!, $skillId: ID!) @auth(level: USER) {
-  aiEmployeeSkill_insert(data: {aiEmployeeId: $aiEmployeeId, skillId: $skillId}) {
-    id
-    enabled
-  }
+mutation AssignSkillToAiEmployee($aiEmployeeId: UUID!, $skillId: UUID!) @auth(level: USER) {
+  aiEmployeeSkill_insert(data: {aiEmployeeId: $aiEmployeeId, skillId: $skillId})
 }
 
-query ListTasksForUser($userId: ID!) @auth(level: USER) {
-  tasks(where: {userId: {eq: $userId}}) {
+query ListTasksForUser($userId: UUID!) @auth(level: USER) {
+  tasks(where: {user: {id: {eq: $userId}}}) {
     id
     description
     status
@@ -34,12 +27,7 @@ query ListTasksForUser($userId: ID!) @auth(level: USER) {
 # Agent Automation Operations
 
 mutation CreateAgentTask($prompt: String!) @auth(level: USER) {
-  agentTask_insert(data: {prompt: $prompt, status: "PENDING"}) {
-    id
-    prompt
-    status
-    createdAt
-  }
+  agentTask_insert(data: {prompt: $prompt, status: PENDING})
 }
 
 query ListAgentTasks @auth(level: USER) {
