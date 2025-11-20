@@ -1,6 +1,5 @@
 {
   "firebase_hosting": {
     "deploymentHostingUrl": "https://auraa-ai-69.web.app"
-  },
-  "cloud_run_deploy": {}
+  }
 }

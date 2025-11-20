@@ -1,8 +1,8 @@
-I1120 00:21:03.367272     685 load.go:31] Reloading schema and connectors...
-E1120 00:21:03.384488     685 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
-E1120 00:21:03.384526     685 load.go:73] Could not load sources: 
+I1120 00:36:02.995646   12088 load.go:31] Reloading schema and connectors...
+E1120 00:36:02.998031   12088 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1120 00:36:02.998087   12088 load.go:73] Could not load sources: 
 Errors: schema/schema.gql:11:15: Undefined type JSON.
-I1120 00:21:03.384860     685 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+I1120 00:36:02.998460   12088 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
 Generated sources: prelude.gql [73219B] 
-I1120 00:21:03.421819     685 load.go:74] Finished reloading
-I1120 00:21:03.438038     685 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+I1120 00:36:02.998498   12088 load.go:74] Finished reloading
+I1120 00:36:03.004094   12088 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50002
