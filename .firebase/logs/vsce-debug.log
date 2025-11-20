@@ -5750,3 +5750,549 @@ I1119 12:39:46.873881    5827 load.go:74] Finished reloading
 I1119 12:39:46.883326    5827 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
  {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 12:39:46.871307    5827 load.go:31] Reloading schema and connectors...\nE1119 12:39:46.873533    5827 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 12:39:46.873573    5827 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:12: Undefined directive id.\nI1119 12:39:46.873849    5827 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 12:39:46.873881    5827 load.go:74] Finished reloading\nI1119 12:39:46.883326    5827 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
 [error] [Firebase Plugin] error:  {}
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[debug] [2025-11-19T12:47:22.571Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-19T12:47:26.583Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-19T12:47:26.584Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-19T12:47:26.585Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-19T12:47:26.588Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T12:47:26.588Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T12:47:26.589Z] > refreshing access token with scopes: []
+[debug] [2025-11-19T12:47:26.590Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-19T12:47:26.591Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-19T12:47:26.632Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[debug] [2025-11-19T12:47:26.776Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-19T12:47:26.776Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-19T12:49:34.383Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50001
+[debug] [2025-11-19T12:49:34.414Z] W1119 12:49:34.412638   24409 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W1119 12:49:34.412638   24409 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\n"}}
+[debug] [2025-11-19T12:49:34.415Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-19T12:49:34.415Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-19T12:49:34.416Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-19T12:49:34.455Z] I1119 12:49:34.435755   24417 load.go:31] Reloading schema and connectors...
+E1119 12:49:34.437881   24417 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 12:49:34.437919   24417 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:12: Undefined directive id.
+I1119 12:49:34.438243   24417 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 12:49:34.438273   24417 load.go:74] Finished reloading
+I1119 12:49:34.444081   24417 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 12:49:34.435755   24417 load.go:31] Reloading schema and connectors...\nE1119 12:49:34.437881   24417 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 12:49:34.437919   24417 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:12: Undefined directive id.\nI1119 12:49:34.438243   24417 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 12:49:34.438273   24417 load.go:74] Finished reloading\nI1119 12:49:34.444081   24417 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[error] [Firebase Plugin] error:  {}
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2025-11-19T12:51:45.088Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-19T12:51:49.454Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-19T12:51:49.455Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-19T12:51:49.456Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-19T12:51:49.459Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T12:51:49.459Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T12:51:49.460Z] > refreshing access token with scopes: []
+[debug] [2025-11-19T12:51:49.462Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-19T12:51:49.462Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-19T12:51:49.493Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[debug] [2025-11-19T12:51:49.674Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-19T12:51:49.674Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-19T12:51:50.866Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50001
+[debug] [2025-11-19T12:51:50.935Z] W1119 12:51:50.934337   25750 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W1119 12:51:50.934337   25750 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\n"}}
+[debug] [2025-11-19T12:51:50.937Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-19T12:51:50.937Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-19T12:51:50.937Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-19T12:51:51.003Z] I1119 12:51:50.962578   25759 load.go:31] Reloading schema and connectors...
+E1119 12:51:50.967684   25759 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 12:51:50.967713   25759 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:12: Undefined directive id.
+I1119 12:51:50.967973   25759 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 12:51:50.967999   25759 load.go:74] Finished reloading
+I1119 12:51:50.974393   25759 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 12:51:50.962578   25759 load.go:31] Reloading schema and connectors...\nE1119 12:51:50.967684   25759 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 12:51:50.967713   25759 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:12: Undefined directive id.\nI1119 12:51:50.967973   25759 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 12:51:50.967999   25759 load.go:74] Finished reloading\nI1119 12:51:50.974393   25759 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[error] [Firebase Plugin] error:  {}
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2025-11-19T12:58:09.933Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-19T12:58:14.308Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-19T12:58:14.309Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-19T12:58:14.310Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-19T12:58:14.313Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T12:58:14.313Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T12:58:14.314Z] > refreshing access token with scopes: []
+[debug] [2025-11-19T12:58:14.316Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-19T12:58:14.316Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-19T12:58:14.348Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[debug] [2025-11-19T12:58:14.498Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-19T12:58:14.498Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-19T12:58:15.116Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50001
+[debug] [2025-11-19T12:58:15.139Z] W1119 12:58:15.138069   28199 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W1119 12:58:15.138069   28199 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\n"}}
+[debug] [2025-11-19T12:58:15.140Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-19T12:58:15.140Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-19T12:58:15.141Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-19T12:58:15.163Z] I1119 12:58:15.157539   28209 load.go:31] Reloading schema and connectors...
+E1119 12:58:15.160113   28209 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 12:58:15.160453   28209 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:12: Undefined directive id.
+I1119 12:58:15.160815   28209 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 12:58:15.160845   28209 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 12:58:15.157539   28209 load.go:31] Reloading schema and connectors...\nE1119 12:58:15.160113   28209 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 12:58:15.160453   28209 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:12: Undefined directive id.\nI1119 12:58:15.160815   28209 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 12:58:15.160845   28209 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T12:58:15.166Z] I1119 12:58:15.164851   28209 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 12:58:15.164851   28209 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[error] [Firebase Plugin] error:  {}
+[debug] [2025-11-19T12:59:35.170Z] I1119 12:59:35.170573   28209 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 12:59:35.170573   28209 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-19T12:59:35.172Z] E1119 12:59:35.172022   28209 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 12:59:35.172052   28209 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:23:1: Expected Name, found <EOF>
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E1119 12:59:35.172022   28209 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 12:59:35.172052   28209 load.go:73] Could not load sources: \nErrors: schema/schema.gql:23:1: Expected Name, found <EOF>\n"}}
+[debug] [2025-11-19T12:59:35.172Z] I1119 12:59:35.172334   28209 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 12:59:35.172356   28209 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 12:59:35.172334   28209 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 12:59:35.172356   28209 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T12:59:45.162Z] I1119 12:59:45.162287   28209 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 12:59:45.162287   28209 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-19T12:59:45.163Z] E1119 12:59:45.163844   28209 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 12:59:45.163877   28209 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:12: Undefined directive id.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E1119 12:59:45.163844   28209 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 12:59:45.163877   28209 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:12: Undefined directive id.\n"}}
+[debug] [2025-11-19T12:59:45.164Z] I1119 12:59:45.164175   28209 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 12:59:45.164197   28209 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 12:59:45.164175   28209 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 12:59:45.164197   28209 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T13:13:43.148Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-19T13:13:47.276Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-19T13:13:47.278Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-19T13:13:47.278Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-19T13:13:47.282Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T13:13:47.282Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T13:13:47.283Z] > refreshing access token with scopes: []
+[debug] [2025-11-19T13:13:47.284Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-19T13:13:47.285Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-19T13:13:47.317Z] [Firebase Plugin] VSCode notification server listening on port 40002
+[debug] [2025-11-19T13:13:47.416Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-19T13:13:47.416Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-19T13:13:49.028Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50002
+[debug] [2025-11-19T13:13:49.054Z] W1119 13:13:49.052713   52703 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W1119 13:13:49.052713   52703 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\n"}}
+[debug] [2025-11-19T13:13:49.056Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-19T13:13:49.056Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-19T13:13:49.056Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50002","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50002\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-19T13:13:49.087Z] I1119 13:13:49.075817   52712 load.go:31] Reloading schema and connectors...
+E1119 13:13:49.077989   52712 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 13:13:49.078025   52712 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:12: Undefined directive id.
+I1119 13:13:49.078378   52712 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 13:13:49.078418   52712 load.go:74] Finished reloading
+I1119 13:13:49.082289   52712 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50002
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 13:13:49.075817   52712 load.go:31] Reloading schema and connectors...\nE1119 13:13:49.077989   52712 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 13:13:49.078025   52712 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:12: Undefined directive id.\nI1119 13:13:49.078378   52712 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 13:13:49.078418   52712 load.go:74] Finished reloading\nI1119 13:13:49.082289   52712 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50002\n"}}
+[error] [Firebase Plugin] error:  {}
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2025-11-19T13:19:19.571Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-19T13:19:23.666Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-19T13:19:23.667Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-19T13:19:23.668Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-19T13:19:23.671Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T13:19:23.671Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T13:19:23.672Z] > refreshing access token with scopes: []
+[debug] [2025-11-19T13:19:23.674Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-19T13:19:23.674Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-19T13:19:23.705Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[debug] [2025-11-19T13:19:23.875Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-19T13:19:23.875Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-19T13:19:25.867Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50001
+[debug] [2025-11-19T13:19:25.893Z] W1119 13:19:25.892155   54866 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W1119 13:19:25.892155   54866 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\n"}}
+[debug] [2025-11-19T13:19:25.894Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-19T13:19:25.895Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-19T13:19:25.895Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-19T13:19:25.971Z] I1119 13:19:25.916523   54875 load.go:31] Reloading schema and connectors...
+E1119 13:19:25.919565   54875 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 13:19:25.919603   54875 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:12: Undefined directive id.
+I1119 13:19:25.919931   54875 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 13:19:25.919961   54875 load.go:74] Finished reloading
+I1119 13:19:25.924638   54875 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 13:19:25.916523   54875 load.go:31] Reloading schema and connectors...\nE1119 13:19:25.919565   54875 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 13:19:25.919603   54875 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:12: Undefined directive id.\nI1119 13:19:25.919931   54875 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 13:19:25.919961   54875 load.go:74] Finished reloading\nI1119 13:19:25.924638   54875 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[error] [Firebase Plugin] error:  {}
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2025-11-19T19:12:52.635Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-19T19:13:13.569Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-19T19:13:13.571Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-19T19:13:13.572Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-19T19:13:13.576Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T19:13:13.576Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T19:13:13.577Z] > refreshing access token with scopes: []
+[debug] [2025-11-19T19:13:13.579Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-19T19:13:13.579Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-19T19:13:13.620Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[debug] [2025-11-19T19:13:13.758Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-19T19:13:13.759Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-19T19:13:14.537Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50001
+[debug] [2025-11-19T19:13:15.922Z] W1119 19:13:15.919937    1120 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W1119 19:13:15.919937    1120 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\n"}}
+[debug] [2025-11-19T19:13:15.923Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-19T19:13:15.924Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-19T19:13:15.924Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-19T19:13:15.986Z] I1119 19:13:15.961732    1136 load.go:31] Reloading schema and connectors...
+E1119 19:13:15.966488    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:13:15.966534    1136 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:12: Undefined directive id.
+I1119 19:13:15.966855    1136 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:13:15.966909    1136 load.go:74] Finished reloading
+I1119 19:13:15.973205    1136 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:13:15.961732    1136 load.go:31] Reloading schema and connectors...\nE1119 19:13:15.966488    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:13:15.966534    1136 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:12: Undefined directive id.\nI1119 19:13:15.966855    1136 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:13:15.966909    1136 load.go:74] Finished reloading\nI1119 19:13:15.973205    1136 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[error] [Firebase Plugin] error:  {}
+[debug] [2025-11-19T19:17:05.733Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-19T19:17:11.679Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-19T19:17:11.681Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-19T19:17:11.682Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-19T19:17:11.686Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T19:17:11.686Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T19:17:11.687Z] > refreshing access token with scopes: []
+[debug] [2025-11-19T19:17:11.689Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-19T19:17:11.689Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-19T19:17:11.730Z] [Firebase Plugin] VSCode notification server listening on port 40002
+[debug] [2025-11-19T19:17:11.835Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-19T19:17:11.836Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-19T19:17:12.399Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50002
+[debug] [2025-11-19T19:17:12.472Z] W1119 19:17:12.469658    3132 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W1119 19:17:12.469658    3132 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\n"}}
+[debug] [2025-11-19T19:17:12.474Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-19T19:17:12.474Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-19T19:17:12.475Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50002","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50002\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-19T19:17:12.510Z] I1119 19:17:12.499506    3142 load.go:31] Reloading schema and connectors...
+E1119 19:17:12.501317    3142 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:17:12.501356    3142 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:12: Undefined directive id.
+I1119 19:17:12.501722    3142 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:17:12.501752    3142 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:17:12.499506    3142 load.go:31] Reloading schema and connectors...\nE1119 19:17:12.501317    3142 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:17:12.501356    3142 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:12: Undefined directive id.\nI1119 19:17:12.501722    3142 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:17:12.501752    3142 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T19:17:12.536Z] I1119 19:17:12.526011    3142 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50002
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:17:12.526011    3142 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50002\n"}}
+[error] [Firebase Plugin] error:  {}
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2025-11-19T19:17:34.019Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-19T19:17:38.981Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-19T19:17:38.983Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-19T19:17:38.983Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-19T19:17:38.987Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T19:17:38.987Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T19:17:38.988Z] > refreshing access token with scopes: []
+[debug] [2025-11-19T19:17:38.990Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-19T19:17:38.990Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-19T19:17:39.032Z] [Firebase Plugin] VSCode notification server listening on port 40002
+[debug] [2025-11-19T19:17:39.183Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-19T19:17:39.184Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-19T19:17:40.062Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50002
+[debug] [2025-11-19T19:17:40.103Z] W1119 19:17:40.101920    3761 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W1119 19:17:40.101920    3761 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\n"}}
+[debug] [2025-11-19T19:17:40.105Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-19T19:17:40.105Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-19T19:17:40.106Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50002","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50002\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-19T19:17:40.368Z] I1119 19:17:40.156527    3768 load.go:31] Reloading schema and connectors...
+E1119 19:17:40.159385    3768 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:17:40.159464    3768 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:12: Undefined directive id.
+I1119 19:17:40.159851    3768 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:17:40.159905    3768 load.go:74] Finished reloading
+I1119 19:17:40.165971    3768 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50002
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:17:40.156527    3768 load.go:31] Reloading schema and connectors...\nE1119 19:17:40.159385    3768 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:17:40.159464    3768 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:12: Undefined directive id.\nI1119 19:17:40.159851    3768 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:17:40.159905    3768 load.go:74] Finished reloading\nI1119 19:17:40.165971    3768 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50002\n"}}
+[error] [Firebase Plugin] error:  {}
+[debug] [2025-11-19T19:22:55.968Z] I1119 19:22:55.968399    1136 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:22:55.968399    1136 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-19T19:22:55.970Z] E1119 19:22:55.970429    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:22:55.970476    1136 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:12: Undefined directive id.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E1119 19:22:55.970429    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:22:55.970476    1136 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:12: Undefined directive id.\n"}}
+[debug] [2025-11-19T19:22:55.971Z] I1119 19:22:55.970864    1136 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:22:55.970915    1136 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:22:55.970864    1136 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:22:55.970915    1136 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T19:23:00.170Z] I1119 19:23:00.169968    3768 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:23:00.169968    3768 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-19T19:23:00.171Z] E1119 19:23:00.171525    3768 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:23:00.171556    3768 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:12: Undefined directive id.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E1119 19:23:00.171525    3768 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:23:00.171556    3768 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:12: Undefined directive id.\n"}}
+[debug] [2025-11-19T19:23:00.172Z] I1119 19:23:00.171949    3768 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:23:00.171978    3768 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:23:00.171949    3768 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:23:00.171978    3768 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T19:24:15.968Z] I1119 19:24:15.968184    1136 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:24:15.968184    1136 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-19T19:24:15.969Z] E1119 19:24:15.969841    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:24:15.969886    1136 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:14:26: Undefined directive relation.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E1119 19:24:15.969841    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:24:15.969886    1136 load.go:73] Could not load sources: \nErrors: schema/schema.gql:14:26: Undefined directive relation.\n"}}
+[debug] [2025-11-19T19:24:15.970Z] I1119 19:24:15.970177    1136 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:24:15.970204    1136 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:24:15.970177    1136 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:24:15.970204    1136 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T19:24:20.170Z] I1119 19:24:20.170084    3768 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:24:20.170084    3768 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-19T19:24:20.172Z] E1119 19:24:20.172075    3768 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:24:20.172115    3768 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:14:26: Undefined directive relation.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E1119 19:24:20.172075    3768 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:24:20.172115    3768 load.go:73] Could not load sources: \nErrors: schema/schema.gql:14:26: Undefined directive relation.\n"}}
+[debug] [2025-11-19T19:24:20.173Z] I1119 19:24:20.172430    3768 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:24:20.172463    3768 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:24:20.172430    3768 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:24:20.172463    3768 load.go:74] Finished reloading\n"}}
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2025-11-19T19:27:21.685Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-19T19:27:27.548Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-19T19:27:27.550Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-19T19:27:27.550Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-19T19:27:27.554Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T19:27:27.555Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-19T19:27:27.555Z] > refreshing access token with scopes: []
+[debug] [2025-11-19T19:27:27.558Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-19T19:27:27.558Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-19T19:27:27.600Z] [Firebase Plugin] VSCode notification server listening on port 40002
+[debug] [2025-11-19T19:27:27.716Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-19T19:27:27.716Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-19T19:27:28.484Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50002
+[debug] [2025-11-19T19:27:28.516Z] W1119 19:27:28.515288    7797 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W1119 19:27:28.515288    7797 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\n"}}
+[debug] [2025-11-19T19:27:28.518Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-19T19:27:28.518Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-19T19:27:28.519Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50002","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50002\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-19T19:27:28.790Z] I1119 19:27:28.544004    7804 load.go:31] Reloading schema and connectors...
+E1119 19:27:28.546324    7804 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:27:28.546368    7804 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:14:26: Undefined directive relation.
+I1119 19:27:28.546771    7804 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:27:28.546811    7804 load.go:74] Finished reloading
+I1119 19:27:28.558454    7804 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50002
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:27:28.544004    7804 load.go:31] Reloading schema and connectors...\nE1119 19:27:28.546324    7804 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:27:28.546368    7804 load.go:73] Could not load sources: \nErrors: schema/schema.gql:14:26: Undefined directive relation.\nI1119 19:27:28.546771    7804 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:27:28.546811    7804 load.go:74] Finished reloading\nI1119 19:27:28.558454    7804 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50002\n"}}
+[error] [Firebase Plugin] error:  {}
+[debug] [2025-11-19T19:28:25.976Z] I1119 19:28:25.976388    1136 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:28:25.976388    1136 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-19T19:28:25.978Z] E1119 19:28:25.978288    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:28:25.978324    1136 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:12:12: Undefined directive id.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E1119 19:28:25.978288    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:28:25.978324    1136 load.go:73] Could not load sources: \nErrors: schema/schema.gql:12:12: Undefined directive id.\n"}}
+[debug] [2025-11-19T19:28:25.979Z] I1119 19:28:25.978707    1136 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:28:25.978745    1136 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:28:25.978707    1136 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:28:25.978745    1136 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T19:28:28.555Z] I1119 19:28:28.547434    7804 load.go:31] Reloading schema and connectors...
+E1119 19:28:28.550371    7804 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:28:28.550405    7804 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:12:12: Undefined directive id.
+I1119 19:28:28.550741    7804 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:28:28.550765    7804 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:28:28.547434    7804 load.go:31] Reloading schema and connectors...\nE1119 19:28:28.550371    7804 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:28:28.550405    7804 load.go:73] Could not load sources: \nErrors: schema/schema.gql:12:12: Undefined directive id.\nI1119 19:28:28.550741    7804 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:28:28.550765    7804 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T19:28:45.967Z] I1119 19:28:45.967668    1136 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:28:45.967668    1136 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-19T19:28:45.970Z] E1119 19:28:45.969900    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:28:45.969938    1136 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:14:26: Undefined directive relation.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E1119 19:28:45.969900    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:28:45.969938    1136 load.go:73] Could not load sources: \nErrors: schema/schema.gql:14:26: Undefined directive relation.\n"}}
+[debug] [2025-11-19T19:28:45.970Z] I1119 19:28:45.970403    1136 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:28:45.970439    1136 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:28:45.970403    1136 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:28:45.970439    1136 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T19:28:48.556Z] I1119 19:28:48.556542    7804 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:28:48.556542    7804 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-19T19:28:48.558Z] E1119 19:28:48.558401    7804 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:28:48.558439    7804 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:14:26: Undefined directive relation.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E1119 19:28:48.558401    7804 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:28:48.558439    7804 load.go:73] Could not load sources: \nErrors: schema/schema.gql:14:26: Undefined directive relation.\n"}}
+[debug] [2025-11-19T19:28:48.559Z] I1119 19:28:48.558891    7804 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:28:48.558925    7804 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:28:48.558891    7804 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:28:48.558925    7804 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T19:28:58.547Z] I1119 19:28:58.547703    7804 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:28:58.547703    7804 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-19T19:28:58.549Z] E1119 19:28:58.549561    7804 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:28:58.549600    7804 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:12:12: Undefined directive id.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E1119 19:28:58.549561    7804 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:28:58.549600    7804 load.go:73] Could not load sources: \nErrors: schema/schema.gql:12:12: Undefined directive id.\n"}}
+[debug] [2025-11-19T19:28:58.550Z] I1119 19:28:58.549936    7804 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:28:58.549967    7804 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:28:58.549936    7804 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:28:58.549967    7804 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T19:29:05.976Z] I1119 19:29:05.976582    1136 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:29:05.976582    1136 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-19T19:29:05.979Z] E1119 19:29:05.979817    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:29:05.979867    1136 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:12:12: Undefined directive id.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E1119 19:29:05.979817    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:29:05.979867    1136 load.go:73] Could not load sources: \nErrors: schema/schema.gql:12:12: Undefined directive id.\n"}}
+[debug] [2025-11-19T19:29:05.980Z] I1119 19:29:05.980220    1136 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:29:05.980248    1136 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:29:05.980220    1136 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:29:05.980248    1136 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T19:29:38.556Z] I1119 19:29:38.556662    7804 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:29:38.556662    7804 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-19T19:29:38.558Z] E1119 19:29:38.558325    7804 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:29:38.558358    7804 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:15: Undefined type JSON.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E1119 19:29:38.558325    7804 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:29:38.558358    7804 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:15: Undefined type JSON.\n"}}
+[debug] [2025-11-19T19:29:38.559Z] I1119 19:29:38.558670    7804 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:29:38.558702    7804 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:29:38.558670    7804 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:29:38.558702    7804 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-19T19:29:45.968Z] I1119 19:29:45.968494    1136 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:29:45.968494    1136 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-19T19:29:45.970Z] E1119 19:29:45.970111    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1119 19:29:45.970143    1136 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:15: Undefined type JSON.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E1119 19:29:45.970111    1136 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1119 19:29:45.970143    1136 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:15: Undefined type JSON.\n"}}
+[debug] [2025-11-19T19:29:45.970Z] I1119 19:29:45.970462    1136 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1119 19:29:45.970492    1136 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1119 19:29:45.970462    1136 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1119 19:29:45.970492    1136 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-20T00:20:46.396Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-20T00:20:52.947Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-20T00:20:52.948Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-20T00:20:52.949Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-20T00:20:52.953Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-20T00:20:52.953Z] Checked if tokens are valid: false, expires at: 1763241094661
+[debug] [2025-11-20T00:20:52.954Z] > refreshing access token with scopes: []
+[debug] [2025-11-20T00:20:52.956Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-20T00:20:52.957Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-20T00:20:52.998Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[debug] [2025-11-20T00:20:55.690Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-20T00:20:55.691Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-20T00:20:58.804Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50001
+[debug] [2025-11-20T00:21:03.346Z] W1120 00:21:03.344165     656 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"W1120 00:21:03.344165     656 build.go:56] Failed to construct deployment metadata: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\n"}}
+[debug] [2025-11-20T00:21:03.347Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-20T00:21:03.348Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-20T00:21:03.348Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-20T00:21:03.427Z] I1120 00:21:03.367272     685 load.go:31] Reloading schema and connectors...
+E1120 00:21:03.384488     685 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service "auraa-ai-69-service". No service has a schema.
+E1120 00:21:03.384526     685 load.go:73] Could not load sources: 
+Errors: schema/schema.gql:11:15: Undefined type JSON.
+I1120 00:21:03.384860     685 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] 
+I1120 00:21:03.421819     685 load.go:74] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1120 00:21:03.367272     685 load.go:31] Reloading schema and connectors...\nE1120 00:21:03.384488     685 load.go:63] Could not generate extensions: rpc error: code = NotFound desc = no schema found for service \"auraa-ai-69-service\". No service has a schema.\nE1120 00:21:03.384526     685 load.go:73] Could not load sources: \nErrors: schema/schema.gql:11:15: Undefined type JSON.\nI1120 00:21:03.384860     685 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] \nI1120 00:21:03.421819     685 load.go:74] Finished reloading\n"}}
+[debug] [2025-11-20T00:21:03.449Z] I1120 00:21:03.438038     685 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1120 00:21:03.438038     685 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[error] [Firebase Plugin] error:  {}

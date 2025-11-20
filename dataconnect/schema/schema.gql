@@ -1,23 +1,14 @@
-type AgentTask @table {
-  id: ID! @id
+type AgentTask @collection(name: "agent_tasks") {
+  id: ID!
   prompt: String!
   status: String!
   result: String
-  createdAt: Timestamp! @default(value: "now()")
-  updatedAt: Timestamp! @default(value: "now()")
 }
 
-type AgentAction @table {
-  id: ID! @id  agentTaskId: ID!
-  agentTaskId: ID! @id
-
-  agentTaskId: ID!
-  agentTask: AgentTask!
-    @relation(name: "AgentActionToAgentTask", field: "agentTaskId")
+type AgentAction @collection(name: "agent_actions") {
+  id: ID!
   actionType: String!
   parameters: JSON
   result: JSON
   status: String!
-  createdAt: Timestamp! @default(value: "now()")
-  updatedAt: Timestamp! @default(value: "now()")
 }
