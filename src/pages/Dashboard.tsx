@@ -19,7 +19,9 @@ export default function Dashboard() {
   const { user, loading, subscriptionStatus } = useAuth();
   const navigate = useNavigate();
 
-  const isSubscriber = subscriptionStatus?.subscribed;
+  // If user is owner, they are always subscribed
+  const isOwner = user?.email === 'ghostspooks@icloud.com';
+  const isSubscriber = isOwner || subscriptionStatus?.subscribed;
 
   useEffect(() => {
     if (!loading && !user) {

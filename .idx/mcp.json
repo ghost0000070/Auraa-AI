@@ -33,7 +33,8 @@
       "firestore_delete_document",
       "firestore_get_documents",
       "firestore_list_collections",
-      "firebase_get_sdk_config"
+      "firebase_get_sdk_config",
+      "firestore_query_collection"
     ]
   }
 }
