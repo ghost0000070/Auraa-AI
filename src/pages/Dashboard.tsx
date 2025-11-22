@@ -16,8 +16,10 @@ import { AnalyticsSection } from '@/components/AnalyticsSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Dashboard() {
-  const { user, loading, isSubscriber } = useAuth();
+  const { user, loading, subscriptionStatus } = useAuth();
   const navigate = useNavigate();
+
+  const isSubscriber = subscriptionStatus?.subscribed;
 
   useEffect(() => {
     if (!loading && !user) {

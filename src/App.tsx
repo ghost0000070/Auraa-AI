@@ -17,11 +17,10 @@ import AITeamCoordination from './pages/AITeamCoordination';
 import AITeamWorkflows from './pages/AITeamWorkflows';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import IntegrationsPage from "./pages/IntegrationsPage";
-import PuterFirebaseIntegration from "./components/PuterFirebaseIntegration"; // Import the new component
+import PuterFirebaseIntegration from "./components/PuterFirebaseIntegration"; 
 import { AITeamDebugger } from "./components/AITeamDebugger";
 import AITeamDashboard from "./components/AITeamDashboard";
 import Marketplace from './pages/Marketplace';
-import Admin from './pages/Admin';
 
 const App: React.FC = () => {
   return (
@@ -33,7 +32,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/puter-firebase-integration" element={<PuterFirebaseIntegration />} /> {/* Add the new route */}
+              <Route path="/puter-firebase-integration" element={<PuterFirebaseIntegration />} />
 
               {/* Protected Routes */}
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -49,7 +48,6 @@ const App: React.FC = () => {
               <Route path="/ai-team-debugger" element={<ProtectedRoute><AITeamDebugger /></ProtectedRoute>} />
               <Route path="/ai-team-dashboard" element={<ProtectedRoute><AITeamDashboard /></ProtectedRoute>} />
               <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
-              <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
 
             </Routes>
           </main>
