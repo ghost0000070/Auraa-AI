@@ -6,13 +6,12 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, Users, Zap, BarChart3, Settings, Bot, Workflow, Brain, Network, TrendingUp, Shield } from "lucide-react";
+import { ChevronDown, Users, Zap, BarChart3, Settings, Bot, Workflow, Brain, Network, TrendingUp } from "lucide-react";
 
 export const Header = () => {
-  const { user, isAdmin, subscriptionStatus, signOut } = useAuth();
+  const { user, subscriptionStatus, signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleAuthClick = () => {
@@ -113,12 +112,6 @@ export const Header = () => {
               <Button variant="ghost" onClick={() => navigate('/marketplace')} className="text-muted-foreground hover:text-foreground">
                 Marketplace
               </Button>
-              {isAdmin && (
-                <Button variant="ghost" onClick={() => navigate('/admin')} className="text-muted-foreground hover:text-foreground">
-                  <Shield className="w-4 h-4 mr-2" />
-                  Admin
-                </Button>
-              )}
             </>
           ) : (
             <>

@@ -82,13 +82,13 @@ export const AIEmployeesSection = () => {
       });
     }
 
-    toast.info("Contact Sales", {
-      description: "Custom AI Employee creation requires consultation. Redirecting to contact form...",
+    toast.info("Request Submitted", {
+      description: "Redirecting you to our custom AI request form...",
     });
 
-    // Redirect to contact form with pre-filled context
+    // Redirect to contact form instead of mailto
     setTimeout(() => {
-      window.open('mailto:sales@auraa.ai?subject=Custom AI Employee Creation&body=I am interested in creating custom AI employees for my organization.', '_blank');
+      navigate('/contact');
     }, 1500);
   };
 
