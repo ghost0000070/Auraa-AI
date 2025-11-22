@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { db } from '@/firebase';
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, Timestamp } from 'firebase/firestore';
 import { useToast } from '@/components/ui/use-toast';
 import { 
   Clock, 
@@ -16,9 +16,18 @@ import {
   Calendar,
   Activity,
   TrendingUp,
-  AlertTriangle
+  AlertTriangle,
+  ArrowRight
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface DeploymentRequest {
   id: string;
@@ -66,18 +75,21 @@ export const DeploymentDashboard: React.FC = () => {
         return {
           id: d.id,
           ...request,
-          createdAt: request.createdAt?.toDate(),
+          createdAt: request.createdAt instanceof Timestamp ? request.createdAt.toDate() : new Date(request.createdAt),
         } as DeploymentRequest;
       }));
       setDeploymentRequests(requestsData);
 
       const employeesQuery = query(collection(db, 'deployedEmployees'), where('userId', '==', user.uid));
       const employeesSnapshot = await getDocs(employeesQuery);
-      const employeesData = employeesSnapshot.docs.map(d => ({
-        id: d.id,
-        ...d.data(),
-        deployedAt: d.data().deployedAt?.toDate(),
-      }) as DeployedEmployee);
+      const employeesData = employeesSnapshot.docs.map(d => {
+          const employee = d.data();
+          return {
+            id: d.id,
+            ...employee,
+            deployedAt: employee.deployedAt instanceof Timestamp ? employee.deployedAt.toDate() : new Date(employee.deployedAt),
+          } as DeployedEmployee;
+      });
       setDeployedEmployees(employeesData);
 
       const pending = requestsData.filter(r => r.status === 'pending').length;
@@ -138,7 +150,46 @@ export const DeploymentDashboard: React.FC = () => {
       <h1 className="text-3xl font-bold mb-4">Deployment Dashboard</h1>
       {/* Cards for stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {/* Stats cards */}
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Pending Requests</CardTitle>
+                <Clock className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{stats.pending}</div>
+                <p className="text-xs text-muted-foreground">Awaiting approval</p>
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Approved Requests</CardTitle>
+                <CheckCircle className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{stats.approved}</div>
+                <p className="text-xs text-muted-foreground">Ready to deploy</p>
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active Employees</CardTitle>
+                <Zap className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{stats.active}</div>
+                <p className="text-xs text-muted-foreground">Currently working</p>
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Activity</CardTitle>
+                <Activity className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{stats.total}</div>
+                <p className="text-xs text-muted-foreground">Total records</p>
+            </CardContent>
+        </Card>
       </div>
 
       <Tabs defaultValue="requests">
@@ -153,7 +204,39 @@ export const DeploymentDashboard: React.FC = () => {
               <CardDescription>Review and manage pending, approved, and rejected deployment requests.</CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Table of deployment requests */}
+              {loading ? (
+                  <div className="p-4 text-center text-sm text-gray-500">Loading...</div>
+              ) : deploymentRequests.length === 0 ? (
+                  <div className="p-4 text-center text-sm text-gray-500">No deployment requests found.</div>
+              ) : (
+                  <Table>
+                      <TableHeader>
+                          <TableRow>
+                              <TableHead>Employee Name</TableHead>
+                              <TableHead>Category</TableHead>
+                              <TableHead>Business Name</TableHead>
+                              <TableHead>Status</TableHead>
+                              <TableHead>Requested At</TableHead>
+                          </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                          {deploymentRequests.map((request) => (
+                              <TableRow key={request.id}>
+                                  <TableCell className="font-medium">{request.employeeName}</TableCell>
+                                  <TableCell>{request.employeeCategory}</TableCell>
+                                  <TableCell>{request.businessName}</TableCell>
+                                  <TableCell>
+                                      <Badge variant="outline" className={`flex items-center gap-1 w-fit ${getStatusColor(request.status)}`}>
+                                          {getStatusIcon(request.status)}
+                                          <span className="capitalize">{request.status}</span>
+                                      </Badge>
+                                  </TableCell>
+                                  <TableCell>{request.createdAt ? formatDistanceToNow(request.createdAt, { addSuffix: true }) : 'N/A'}</TableCell>
+                              </TableRow>
+                          ))}
+                      </TableBody>
+                  </Table>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -164,7 +247,49 @@ export const DeploymentDashboard: React.FC = () => {
               <CardDescription>Monitor the status and performance of your deployed AI employees.</CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Table of deployed employees */}
+             {loading ? (
+                  <div className="p-4 text-center text-sm text-gray-500">Loading...</div>
+              ) : deployedEmployees.length === 0 ? (
+                  <div className="p-4 text-center text-sm text-gray-500">No deployed employees found.</div>
+              ) : (
+                  <Table>
+                      <TableHeader>
+                          <TableRow>
+                              <TableHead>Employee Name</TableHead>
+                              <TableHead>Type</TableHead>
+                              <TableHead>Status</TableHead>
+                              <TableHead>Deployed At</TableHead>
+                              <TableHead>Performance</TableHead>
+                          </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                          {deployedEmployees.map((employee) => (
+                              <TableRow key={employee.id}>
+                                  <TableCell className="font-medium">{employee.employeeName}</TableCell>
+                                  <TableCell>{employee.employeeType}</TableCell>
+                                  <TableCell>
+                                      <Badge variant="outline" className={`flex items-center gap-1 w-fit ${getStatusColor(employee.status)}`}>
+                                          {getStatusIcon(employee.status)}
+                                          <span className="capitalize">{employee.status}</span>
+                                      </Badge>
+                                  </TableCell>
+                                  <TableCell>{employee.deployedAt ? formatDistanceToNow(employee.deployedAt, { addSuffix: true }) : 'N/A'}</TableCell>
+                                  <TableCell>
+                                    {employee.performanceMetrics ? (
+                                        <div className="flex flex-col text-xs">
+                                            {Object.entries(employee.performanceMetrics).slice(0, 2).map(([key, value]) => (
+                                                <span key={key}>{key}: {String(value)}</span>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <span className="text-gray-400 text-xs">No metrics yet</span>
+                                    )}
+                                  </TableCell>
+                              </TableRow>
+                          ))}
+                      </TableBody>
+                  </Table>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

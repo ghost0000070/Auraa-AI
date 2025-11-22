@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { db } from '../firebase'; // Import your initialized Firestore instance
-import { collection, addDoc, Timestamp } from 'firebase/firestore'; // Firestore functions
-import { Button } from '@/components/ui/button'; // Assuming you have a Button component
-import { Textarea } from '@/components/ui/textarea'; // Assuming you have a Textarea component
+import { db, functions } from '../firebase';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from "@/components/ui/use-toast";
 import { Clipboard, Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
@@ -19,39 +20,33 @@ const PuterFirebaseIntegration: React.FC = () => {
     setGeneratedScript('');
     
     try {
-      // 1. Store the user's request in Firestore
-      const docRef = await addDoc(collection(db, "puter-script-requests"), {
+      // 1. Store the user's request in Firestore for auditing/history
+      await addDoc(collection(db, "puter-script-requests"), {
         prompt: inputText,
-        status: "pending",
+        status: "processing",
         createdAt: Timestamp.now(),
       });
       
-      // 2. (Next Step) - A backend process (e.g., Firebase Function) would listen 
-      //    to this collection, generate the script, and update the document.
-      // 3. For now, we'll simulate this with a placeholder script.
-      const placeholderScript = `
-        # Your generated Puter script will appear here.
-        # This is a placeholder. In a real application, a backend process
-        # would generate this script based on your prompt: "${inputText}"
-        
-        # Example:
-        # p.echo("Hello from a generated script!");
-      `.trim();
+      // 2. Call the Cloud Function to generate the script using Genkit + Gemini
+      const generateScript = httpsCallable(functions, 'generatePuterScript');
+      const result = await generateScript({ prompt: inputText });
       
-      setGeneratedScript(placeholderScript);
+      const { script } = result.data as { script: string };
+      
+      setGeneratedScript(script);
       
       toast({
-        title: 'Script Request Submitted',
-        description: 'Your request has been sent. The script will be generated shortly.',
+        title: 'Script Generated',
+        description: 'Your Puter script is ready.',
       });
 
     } catch (err) {
-      console.error("Error submitting script request: ", err);
+      console.error("Error generating script: ", err);
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       setError(errorMessage);
       toast({
         title: 'Error',
-        description: 'Failed to submit your script request. Please try again.',
+        description: 'Failed to generate script. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -71,14 +66,14 @@ const PuterFirebaseIntegration: React.FC = () => {
     <div className="p-4 border rounded-lg shadow-sm">
       <h2 className="text-xl font-semibold mb-4">Puter Script Generator</h2>
       <p className="mb-4 text-sm text-gray-600">
-        Describe the task you want to automate, and we'll generate a Puter script for you.
+        Describe the task you want to automate, and we'll generate a Puter script for you using AI.
       </p>
       
       <div className="grid w-full gap-2">
         <Label htmlFor="prompt">Task Description</Label>
         <Textarea
           id="prompt"
-          placeholder="e.g., 'Open notepad and type Hello World'"
+          placeholder="e.g., 'Open notepad and type Hello World', 'List all files in my documents folder'"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           rows={4}
@@ -104,16 +99,16 @@ const PuterFirebaseIntegration: React.FC = () => {
       {generatedScript && (
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-2">Generated Script:</h3>
-          <div className="relative p-4 bg-gray-900 text-white rounded-md font-mono text-sm">
+          <div className="relative p-4 bg-gray-900 text-white rounded-md font-mono text-sm overflow-x-auto">
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-2 right-2 h-7 w-7"
+              className="absolute top-2 right-2 h-7 w-7 text-gray-300 hover:text-white hover:bg-gray-800"
               onClick={copyToClipboard}
             >
               <Clipboard className="h-4 w-4" />
             </Button>
-            <pre><code>{generatedScript}</code></pre>
+            <pre className="whitespace-pre-wrap"><code>{generatedScript}</code></pre>
           </div>
         </div>
       )}

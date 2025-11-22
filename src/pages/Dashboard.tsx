@@ -4,12 +4,16 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/toast-hooks";
-import { db } from "@/firebase";
-import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db, functions } from "@/firebase";
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
 
 import AITeamDashboard from '@/components/AITeamDashboard';
 import { QuickDeploymentWidget } from '@/components/QuickDeploymentWidget';
 import { AITeamDebugger } from '@/components/AITeamDebugger';
+import { DeploymentDashboard } from '@/components/DeploymentDashboard';
+import { AnalyticsSection } from '@/components/AnalyticsSection';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Dashboard() {
   const { user, loading, isSubscriber } = useAuth();
@@ -31,26 +35,31 @@ export default function Dashboard() {
     }
 
     try {
-      const response = await fetch('/api/customer-portal', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user_id: user.uid }),
+      const createPortalSession = httpsCallable(functions, 'createCustomerPortalSession');
+      const result = await createPortalSession({ 
+          returnUrl: window.location.href 
       });
-      const { url } = await response.json();
+      
+      const { url } = result.data as { url: string };
       window.location.href = url;
     } catch (error) {
       console.error("Error creating customer portal session:", error);
       toast({
         title: "Error",
-        description: "Could not create a customer portal session.",
+        description: "Could not create a customer portal session. Please try again later.",
         variant: "destructive",
       });
     }
   };
   
-  const handleDeploy = async (template) => {
+  // Define type for template
+  interface Template {
+      id: string;
+      name: string;
+      // other properties
+  }
+
+  const handleDeploy = async (template: Template) => {
     if (!user) {
         toast({
             title: "Authentication Error",
@@ -109,17 +118,35 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className="grid gap-6 md:grid-cols-3">
-            <div className="md:col-span-2">
-                <AITeamDashboard />
-            </div>
-            <div className="md:col-span-1">
-                <QuickDeploymentWidget onDeploy={handleDeploy} />
-                <div className="mt-6">
-                  <AITeamDebugger />
+        <Tabs defaultValue="team">
+            <TabsList className="mb-4">
+                <TabsTrigger value="team">Team Dashboard</TabsTrigger>
+                <TabsTrigger value="deployment">Deployment</TabsTrigger>
+                <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="team">
+                <div className="grid gap-6 md:grid-cols-3">
+                    <div className="md:col-span-2">
+                        <AITeamDashboard />
+                    </div>
+                    <div className="md:col-span-1">
+                        <QuickDeploymentWidget onDeploy={handleDeploy} />
+                        <div className="mt-6">
+                        <AITeamDebugger />
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </TabsContent>
+            
+            <TabsContent value="deployment">
+                <DeploymentDashboard />
+            </TabsContent>
+            
+            <TabsContent value="analytics">
+                <AnalyticsSection />
+            </TabsContent>
+        </Tabs>
 
       </main>
     </div>

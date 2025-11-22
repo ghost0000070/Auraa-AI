@@ -131,11 +131,11 @@ const BusinessIntelligence = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/auth');
+      // Allow time for auth to initialize
       return;
     }
     fetchData();
-  }, [user, navigate, fetchData]);
+  }, [user, fetchData]);
 
   const createGoal = async () => {
     try {

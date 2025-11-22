@@ -9,10 +9,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, Users, Zap, BarChart3, Settings, Bot, Workflow, Brain, Network, TrendingUp } from "lucide-react";
+import { ChevronDown, Users, Zap, BarChart3, Settings, Bot, Workflow, Brain, Network, TrendingUp, Shield } from "lucide-react";
 
 export const Header = () => {
-  const { user, subscriptionStatus, signOut } = useAuth();
+  const { user, isAdmin, subscriptionStatus, signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleAuthClick = () => {
@@ -113,6 +113,12 @@ export const Header = () => {
               <Button variant="ghost" onClick={() => navigate('/marketplace')} className="text-muted-foreground hover:text-foreground">
                 Marketplace
               </Button>
+              {isAdmin && (
+                <Button variant="ghost" onClick={() => navigate('/admin')} className="text-muted-foreground hover:text-foreground">
+                  <Shield className="w-4 h-4 mr-2" />
+                  Admin
+                </Button>
+              )}
             </>
           ) : (
             <>
@@ -140,9 +146,7 @@ export const Header = () => {
                   {subscriptionStatus.subscription_tier} Plan
                 </Badge>
               )}
-              <span className="text-sm text-muted-foreground">
-                {user.email}
-              </span>
+              
               <Button variant="ghost" onClick={handleAuthClick}>
                 Sign Out
               </Button>

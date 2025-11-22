@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { db } from '@/firebase';
-import { collection, query, orderBy, limit as firestoreLimit, getDocs } from 'firebase/firestore';
+import { collection, query, orderBy, limit as firestoreLimit, getDocs, where } from 'firebase/firestore';
+import { useAuth } from '@/hooks/useAuth';
 
 interface AgentTask {
   id: string;
@@ -12,15 +13,19 @@ interface AgentTask {
 }
 
 export function useAgentTasks(limit = 50) {
+  const { user } = useAuth();
   const [tasks, setTasks] = useState<AgentTask[]>([]);
   const [loading, setLoading] = useState(false);
 
   const load = useCallback(async () => {
+    if (!user) return;
+    
     setLoading(true);
     try {
       const tasksQuery = query(
         collection(db, 'agent_tasks'),
-        orderBy('created_at', 'desc'),
+        where('owner_user', '==', user.uid), // Ensure we only get tasks for the current user
+        orderBy('createdAt', 'desc'), // Note: Ensure your Firestore indexes support this composite query
         firestoreLimit(limit)
       );
       const querySnapshot = await getDocs(tasksQuery);
@@ -31,9 +36,13 @@ export function useAgentTasks(limit = 50) {
     } finally {
       setLoading(false);
     }
-  }, [limit]);
+  }, [user, limit]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { 
+      if (user) {
+          load(); 
+      }
+  }, [load, user]);
 
   return { tasks, loading, reload: load };
 }

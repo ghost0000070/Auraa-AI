@@ -80,7 +80,7 @@ const BusinessProfile = () => {
           websiteUrl: data.websiteUrl || '',
           brandVoice: data.brandVoice || '',
           businessData: data.businessData || {},
-          isDefault: data.isDefault || true
+          isDefault: data.isDefault !== undefined ? data.isDefault : true
         });
       }
     } catch (error) {
@@ -95,13 +95,12 @@ const BusinessProfile = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/auth');
+      // Allow time for auth to initialize
       return;
     }
-
     fetchBusinessProfile();
     trackPageView();
-  }, [user, navigate, fetchBusinessProfile, trackPageView]);
+  }, [user, fetchBusinessProfile, trackPageView]);
 
   const handleInputChange = (field: keyof BusinessProfile, value: string) => {
     setProfile(prev => ({
@@ -163,6 +162,7 @@ const BusinessProfile = () => {
         description: "Your business profile has been saved successfully.",
       });
 
+      // Navigate after successful save
       navigate('/dashboard');
 
     } catch (error) {
@@ -175,6 +175,7 @@ const BusinessProfile = () => {
     }
   };
 
+  // Ensure we show loading state while auth is initializing or profile is loading
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-950 flex items-center justify-center">

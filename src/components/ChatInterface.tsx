@@ -6,44 +6,61 @@ import { useAuth } from '@/hooks/useAuth';
 import { Loader2, Send, User, Bot } from 'lucide-react';
 import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/firebase';
 
-// --- Define a more specific type for the placeholder data ---
-interface PlaceholderData {
-  metrics: string[];
-  leadInfo: { name: string; email: string };
-  companyInfo: { name: string; industry: string };
-  ticketDetails: string;
-  knowledgeBase: { faqs: string[]; articles: string[] };
-  systemInfo: { os: string; browser: string };
-}
+// Helper function to fetch real context data
+const buildContextPayload = async (employeeId: string, userId: string, userInput: string) => {
+  // 1. Basic User & Company Info (from business profile)
+  let companyContext = {};
+  try {
+      const profileDoc = await getDoc(doc(db, 'businessProfiles', userId));
+      if (profileDoc.exists()) {
+          const data = profileDoc.data();
+          companyContext = {
+              companyName: data.name,
+              industry: data.industry,
+              audience: data.targetAudience
+          };
+      }
+  } catch (e) {
+      console.warn("Could not fetch business profile", e);
+  }
 
-// --- Helper function to build dynamic payloads ---
-const buildPayload = (employeeId: string, userInput: string) => {
-  // This is placeholder data. In a real application, you would fetch this 
-  // from your state management, forms, or other relevant sources.
-  const placeholderData: PlaceholderData = {
-    metrics: ["engagement", "conversion"],
-    leadInfo: { name: "John Doe", email: "john.doe@example.com" },
-    companyInfo: { name: "Acme Corp", industry: "Manufacturing" },
-    ticketDetails: `The user's message is: "${userInput}"`,
-    knowledgeBase: { faqs: ["FAQ 1", "FAQ 2"], articles: ["Article 1"] },
-    systemInfo: { os: "Windows 11", browser: "Chrome 125" },
-    // ... add other necessary placeholder data here
-  };
+  // 2. Dynamic Context based on Employee Role
+  const specificContext: Record<string, unknown> = {};
 
   switch (employeeId) {
     case 'marketing-guru':
-      return { data: userInput, metrics: placeholderData.metrics };
+      // Fetch recent marketing campaigns or metrics if available
+      specificContext.marketingGoals = ["increase_engagement", "brand_awareness"]; // This could come from a 'marketing_goals' collection
+      break;
+    
     case 'sales-strategist':
-      return { leadInfo: placeholderData.leadInfo, companyInfo: placeholderData.companyInfo };
+      // Context might include recent lead stats
+      specificContext.leadStats = { recentLeads: 5, conversionRate: "2.4%" }; 
+      break;
+
     case 'support-shield':
-      return { ticketDetails: placeholderData.ticketDetails, knowledgeBase: placeholderData.knowledgeBase };
+      // Context might include open ticket counts
+      specificContext.openTickets = 3; 
+      break;
+
     case 'it-support-specialist':
-        return { issueDescription: userInput, systemInfo: placeholderData.systemInfo };
-    // Add cases for all other AI employee types...
+        specificContext.userSystem = navigator.userAgent;
+        break;
+        
     default:
-      return { data: userInput }; // Default payload for simple flows
+      break;
   }
+
+  return {
+    userInput,
+    userId,
+    timestamp: new Date().toISOString(),
+    companyContext,
+    ...specificContext
+  };
 };
 
 
@@ -98,22 +115,34 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
       }
 
       const functions = getFunctions();
-      const flowName = template.apiEndpoints.generateContent || template.apiEndpoints.analyzeData || template.apiEndpoints.automateTask;
-      if (!flowName) {
-        throw new Error("No API endpoint defined for this employee.");
-      }
+      // Determine the best function to call based on the employee's capabilities
+      // For a chat interface, we might want a unified 'chatWithEmployee' function, 
+      // but if we reuse existing ones:
+      const flowName = template.apiEndpoints.generateContent || template.apiEndpoints.analyzeData || 'menuSuggestion'; // Fallback to a generic one if specific not found
       
       const callFlow = httpsCallable(functions, flowName);
-      const payload = buildPayload(employeeType, currentInput);
+      
+      // Build the dynamic payload
+      const payload = await buildContextPayload(employeeType, user.uid, currentInput);
       
       const result = await callFlow(payload);
 
-      const aiResponseText = result.data as string;
+      // The response structure depends on the cloud function. 
+      // Assuming it returns text or an object with text.
+      let aiResponseText = "I processed your request.";
+      if (typeof result.data === 'string') {
+          aiResponseText = result.data;
+      } else if (result.data && typeof result.data === 'object' && 'text' in result.data) {
+          aiResponseText = (result.data as { text: string }).text;
+      } else if (result.data && typeof result.data === 'object' && 'result' in result.data) {
+          aiResponseText = JSON.stringify((result.data as { result: unknown }).result);
+      }
+
       const aiMessage: Message = { sender: 'ai', text: aiResponseText };
       setMessages(prev => [...prev, aiMessage]);
 
     } catch (error) {
-      const errorMessage: Message = { sender: 'ai', text: "Sorry, I'm having trouble processing your request. Please try again later." };
+      const errorMessage: Message = { sender: 'ai', text: "Sorry, I'm having trouble processing your request right now. Please try again later." };
       setMessages(prev => [...prev, errorMessage]);
       console.error('Error getting AI response:', error);
     } finally {
