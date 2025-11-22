@@ -1,4 +1,4 @@
-br# Auraa AI - AI Employee Platform
+# Auraa AI - AI Employee Platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -46,8 +46,6 @@ This project is a React-based web application built with Vite and uses Firebase 
 - `functions/`: Cloud Functions for Firebase.
 - `docs/`: Project documentation.
 - `firebase.json`: Configuration for Firebase services and deployment rules.
-- `PREINSTALL.md`: Pre-installation instructions for the extension.
-- `POSTINSTALL.md`: Post-installation instructions for the extension.
 - `CHANGELOG.md`: All notable changes to this project.
 
 ## Deployment
