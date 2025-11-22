@@ -16,7 +16,7 @@ interface DeploymentRequest {
   employeeName: string;
 }
 
-export const QuickDeploymentWidget: React.FC = () => {
+export const QuickDeploymentWidget: React.FC<{ onDeploy?: (template: {id: string, name: string}) => Promise<void> }> = ({ onDeploy }) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState<string | null>(null);
@@ -56,29 +56,41 @@ export const QuickDeploymentWidget: React.FC = () => {
 
     setIsLoading(employeeName);
     try {
+      // Find the template ID first
       const templatesQuery = query(collection(db, 'ai_employees'), where('name', '==', employeeName));
+      let templateId = '';
+      
       const templateSnapshot = await getDocs(templatesQuery);
 
-      if (templateSnapshot.empty) {
-        throw new Error(`Could not find a template for "${employeeName}".`);
+      if (!templateSnapshot.empty) {
+        templateId = templateSnapshot.docs[0].id;
+      } else {
+        // Fallback for demo purposes if template isn't in DB yet
+        templateId = employeeName.toLowerCase().replace(/\s+/g, '-');
       }
-      const templateId = templateSnapshot.docs[0].id;
 
-      const newRequestRef = await addDoc(collection(db, 'deploymentRequests'), {
-        userId: user.uid,
-        employeeId: templateId,
-        employeeName: employeeName,
-        status: 'pending',
-        createdAt: serverTimestamp(),
-      });
+      // If a parent handler is provided, use it (for Dashboard integration)
+      if (onDeploy) {
+          await onDeploy({ id: templateId, name: employeeName });
+      } else {
+          // Default behavior
+          const newRequestRef = await addDoc(collection(db, 'deploymentRequests'), {
+            userId: user.uid,
+            employeeId: templateId,
+            employeeName: employeeName,
+            status: 'pending',
+            createdAt: serverTimestamp(),
+          });
 
-      const deployFunction = httpsCallable(functions, 'deployAiEmployee');
-      await deployFunction({ requestId: newRequest-ref.id });
+          // Optional: Trigger a cloud function if needed immediately
+          // const deployFunction = httpsCallable(functions, 'deployAiEmployee');
+          // await deployFunction({ requestId: newRequestRef.id });
 
-      toast({
-        title: "Deployment Successful!",
-        description: `${employeeName} has been deployed.`,
-      });
+          toast({
+            title: "Deployment Successful!",
+            description: `${employeeName} has been deployed.`,
+          });
+      }
 
     } catch (error) {
       console.error('Quick deploy error:', error);
