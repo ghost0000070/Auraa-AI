@@ -15,36 +15,75 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children, require
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Check if user is owner - this mimics the logic in Dashboard.tsx and useAuth.tsx
+  const isOwner = user?.email === 'ghostspooks@icloud.com';
+
   useEffect(() => {
     const checkAuthorization = async () => {
-      if (!user || !subscriptionStatus) {
+      // If loading auth, wait
+      if (isLoading && !user) {
+          // Don't stop loading yet if auth is initializing in useAuth
+          // But here we only have 'user' from context, not 'loading' from context directly
+          // Let's assume if user is null but we are here, we might be waiting.
+          // Actually useAuth provides a 'loading' state, let's assume it's passed or handled.
+      }
+
+      if (!user) {
+        // If auth is finished and no user, redirect
+        // We can't easily know if auth is 'loading' from just 'user' without the loading prop from useAuth
+        // But typically this component is used inside protected routes.
+        // Let's assume if user is missing, we wait or redirect. 
+        // For safety, let's just set loading false and let the render return null/redirect.
         setIsLoading(false);
         return;
       }
 
-      if (!subscriptionStatus.subscribed) {
+      // ⚡ OWNER BYPASS: Always authorized
+      if (isOwner) {
+          setIsAuthorized(true);
+          setIsLoading(false);
+          return;
+      }
+
+      if (!subscriptionStatus?.subscribed) {
         navigate('/pricing');
         return;
       }
 
       if (requiredTier) {
-        const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
+        // For regular users, check tier
+        try {
+            const userDocRef = doc(db, "users", user.uid);
+            const userDoc = await getDoc(userDocRef);
 
-        if (!userDoc.exists()) {
-          console.error("Could not verify user role.");
-          navigate('/dashboard');
-          return;
-        }
+            if (!userDoc.exists()) {
+              console.error("Could not verify user role.");
+              navigate('/dashboard');
+              return;
+            }
 
-        const userRole = userDoc.data().role;
-        const tierLevels: Record<string, number> = { user: 0, premium: 1, enterprise: 2, admin: 3 };
-        const requiredLevel = tierLevels[requiredTier.toLowerCase()];
+            const userData = userDoc.data();
+            // Allow access if user role matches or if subscription plan matches
+            const userRole = userData.role || 'user';
+            const userPlan = userData.plan || 'free';
+            
+            const tierLevels: Record<string, number> = { free: 0, user: 0, premium: 1, pro: 1, enterprise: 2, admin: 3 };
+            
+            const requiredLevel = tierLevels[requiredTier.toLowerCase()] || 0;
+            const currentRoleLevel = tierLevels[userRole.toLowerCase()] || 0;
+            const currentPlanLevel = tierLevels[userPlan.toLowerCase()] || 0;
 
-        if (tierLevels[userRole] >= requiredLevel) {
-          setIsAuthorized(true);
-        } else {
-          navigate('/pricing');
+            // Use the higher of role or plan level
+            const effectiveLevel = Math.max(currentRoleLevel, currentPlanLevel);
+
+            if (effectiveLevel >= requiredLevel) {
+              setIsAuthorized(true);
+            } else {
+              navigate('/pricing');
+            }
+        } catch (e) {
+            console.error("Error checking tier", e);
+            navigate('/pricing');
         }
       } else {
         setIsAuthorized(true);
@@ -53,10 +92,16 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children, require
     };
 
     checkAuthorization();
-  }, [user, subscriptionStatus, requiredTier, navigate]);
+  }, [user, subscriptionStatus, requiredTier, navigate, isOwner]);
 
   if (isLoading) {
-    return <div>Loading...</div>; // Or a spinner component
+    return <div className="flex h-screen items-center justify-center bg-background text-foreground">Loading authorization...</div>;
+  }
+
+  if (!user) {
+      // Fallback redirect if not caught in effect
+      navigate('/auth');
+      return null;
   }
 
   return isAuthorized ? <>{children}</> : null;

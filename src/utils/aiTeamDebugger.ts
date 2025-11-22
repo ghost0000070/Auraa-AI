@@ -5,18 +5,6 @@ import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
 import { HttpsCallableResult } from 'firebase/functions';
 
 export class AITeamDebugger {
-  testCommunications() {
-      throw new Error('Method not implemented.');
-  }
-  testTaskingSystem() {
-      throw new Error('Method not implemented.');
-  }
-  testDeployment() {
-      throw new Error('Method not implemented.');
-  }
-  testVertexAI() {
-      throw new Error('Method not implemented.');
-  }
   private static instance: AITeamDebugger;
 
   static getInstance(): AITeamDebugger {
@@ -26,17 +14,77 @@ export class AITeamDebugger {
     return AITeamDebugger.instance;
   }
 
+  async testCommunications() {
+      console.log("💬 Testing AI Communication System...");
+      try {
+          const q = query(collection(db, 'ai_team_communications'), limit(5));
+          const snap = await getDocs(q);
+          console.log(`✅ Found ${snap.size} communication logs.`);
+          return { success: true, count: snap.size };
+      } catch (e) {
+          console.error("💥 Communication System Error:", e);
+          return { success: false, error: e instanceof Error ? e.message : "Unknown error" };
+      }
+  }
+
+  async testTaskingSystem() {
+      console.log("⚡ Testing Tasking System (via analyzeMarketingData)...");
+      try {
+          const fn = httpsCallable(functions, 'analyzeMarketingData');
+          // Sending a valid mock payload to ensure the AI has something to process
+          const result = await fn({ 
+              test: true, 
+              metrics: { spend: 1000, revenue: 5000 },
+              channel: "Social Media" 
+          });
+          console.log("✅ Task System Response:", result.data);
+          return { success: true, result: result.data };
+      } catch (e) {
+          console.error("💥 Task System Error:", e);
+          return { success: false, error: e instanceof Error ? e.message : "Unknown error" };
+      }
+  }
+
+  async testDeployment() {
+      console.log("🚀 Testing Deployment Records...");
+      try {
+          const q = query(collection(db, 'aiEmployees'), limit(5));
+          const snap = await getDocs(q);
+          console.log(`✅ Found ${snap.size} deployed agents.`);
+          return { success: true, count: snap.size };
+      } catch (e) {
+           console.error("💥 Deployment Record Error:", e);
+           return { success: false, error: e instanceof Error ? e.message : "Unknown error" };
+      }
+  }
+  
+  async testVertexAI() {
+      console.log("🧠 Testing AI Model Availability (Claude/Gemini)...");
+      try {
+          const fn = httpsCallable(functions, 'aiChat');
+          const result = await fn({ prompt: "System Status Check", personality: "System Admin" });
+          console.log("✅ AI Model Response:", result.data);
+          return { success: true, result: result.data };
+      } catch (e) {
+          console.error("💥 AI Model Error:", e);
+          return { success: false, error: e instanceof Error ? e.message : "Unknown error" };
+      }
+  }
+
   async testDatabaseConnections() {
     console.log('🔍 Testing database connections...');
 
     const collections = [
       'workflows',
       'aiTeamExecutions',
-      'aiTeamCommunications',
+      'ai_team_communications',
       'businessGoals',
       'aiSharedKnowledge',
       'externalIntegrations',
-      'businessIntelligence'
+      'businessIntelligence',
+      'agent_tasks',
+      'agent_metrics',
+      'aiEmployees'
     ] as const;
 
     interface CollectionTestResult {
@@ -163,19 +211,14 @@ export class AITeamDebugger {
       try {
         console.log(`🧪 Testing personality: ${employee.personality}`);
 
-        const response = await fetch('/api/generate-chat-completion', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ prompt: testPrompt, personality: employee.personality })
+        // UPDATED: Use Firebase Functions callable instead of fetch API
+        const generateChat = httpsCallable(functions, 'generateChatCompletion');
+        const result = await generateChat({ 
+            prompt: testPrompt, 
+            personality: employee.personality 
         });
 
-        if (!response.ok) {
-          throw new Error(`API returned ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = result.data as { completion: { text: string } };
         console.log(`🎨 ${employee.name} responded:`, data.completion.text);
 
       } catch (err: unknown) {
@@ -197,6 +240,12 @@ export class AITeamDebugger {
     // Test cloud functions
     console.log('🚀 Testing cloud functions...');
     const functionResults = await this.testCloudFunctions();
+    
+    // Test Specific Subsystems
+    await this.testCommunications();
+    await this.testTaskingSystem();
+    await this.testDeployment();
+    await this.testVertexAI();
 
     // Test AI personalities
     await this.testAIPersonalities();

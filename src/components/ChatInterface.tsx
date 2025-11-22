@@ -5,9 +5,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2, Send, User, Bot } from 'lucide-react';
 import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
-import { getFunctions, httpsCallable } from 'firebase/functions';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
+import { TemplateIcon } from './TemplateIcon';
+import { AIEngine } from '@/lib/ai-engine'; // Import client-side AI Engine
 
 // Helper function to fetch real context data
 const buildContextPayload = async (employeeId: string, userId: string, userInput: string) => {
@@ -32,17 +33,14 @@ const buildContextPayload = async (employeeId: string, userId: string, userInput
 
   switch (employeeId) {
     case 'marketing-guru':
-      // Fetch recent marketing campaigns or metrics if available
-      specificContext.marketingGoals = ["increase_engagement", "brand_awareness"]; // This could come from a 'marketing_goals' collection
+      specificContext.marketingGoals = ["increase_engagement", "brand_awareness"];
       break;
     
     case 'sales-strategist':
-      // Context might include recent lead stats
       specificContext.leadStats = { recentLeads: 5, conversionRate: "2.4%" }; 
       break;
 
     case 'support-shield':
-      // Context might include open ticket counts
       specificContext.openTickets = 3; 
       break;
 
@@ -82,15 +80,15 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const template = aiEmployeeTemplates.find(e => e.id === employeeType);
 
   useEffect(() => {
-    const template = aiEmployeeTemplates.find(e => e.id === employeeType);
     const welcomeMessage = template 
       ? `Hello! I'm ${template.name}, your new ${template.category} expert. How can I assist you with your business goals today?`
       : `Hello! I'm your new AI employee. How can I help you today?`;
     
     setMessages([{ sender: 'ai', text: welcomeMessage }]);
-  }, [employeeType]);
+  }, [employeeType, template]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -109,40 +107,36 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
     setIsLoading(true);
 
     try {
-      const template = aiEmployeeTemplates.find(e => e.id === employeeType);
       if (!template) {
         throw new Error("AI Employee template not found.");
       }
-
-      const functions = getFunctions();
-      // Determine the best function to call based on the employee's capabilities
-      // For a chat interface, we might want a unified 'chatWithEmployee' function, 
-      // but if we reuse existing ones:
-      const flowName = template.apiEndpoints.generateContent || template.apiEndpoints.analyzeData || 'menuSuggestion'; // Fallback to a generic one if specific not found
       
-      const callFlow = httpsCallable(functions, flowName);
-      
-      // Build the dynamic payload
+      // Build context for the AI
       const payload = await buildContextPayload(employeeType, user.uid, currentInput);
       
-      const result = await callFlow(payload);
+      // Construct a rich system context string for Puter AI
+      const contextString = JSON.stringify({
+          role: template.name || "AI Assistant",
+          profession: template.category,
+          personality: template.personality,
+          skills: template.skills,
+          businessContext: payload.companyContext,
+          specificContext: payload
+      }, null, 2);
 
-      // The response structure depends on the cloud function. 
-      // Assuming it returns text or an object with text.
-      let aiResponseText = "I processed your request.";
-      if (typeof result.data === 'string') {
-          aiResponseText = result.data;
-      } else if (result.data && typeof result.data === 'object' && 'text' in result.data) {
-          aiResponseText = (result.data as { text: string }).text;
-      } else if (result.data && typeof result.data === 'object' && 'result' in result.data) {
-          aiResponseText = JSON.stringify((result.data as { result: unknown }).result);
-      }
+      // Use client-side AIEngine instead of Cloud Functions
+      const result = await AIEngine.generateChatCompletion(
+          currentInput, 
+          contextString // Passing detailed context as 'personality'
+      );
+
+      let aiResponseText = result.completion.text;
 
       const aiMessage: Message = { sender: 'ai', text: aiResponseText };
       setMessages(prev => [...prev, aiMessage]);
 
     } catch (error) {
-      const errorMessage: Message = { sender: 'ai', text: "Sorry, I'm having trouble processing your request right now. Please try again later." };
+      const errorMessage: Message = { sender: 'ai', text: "Sorry, I'm having trouble connecting to my neural network right now. Please try again later." };
       setMessages(prev => [...prev, errorMessage]);
       console.error('Error getting AI response:', error);
     } finally {
@@ -158,7 +152,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
             <div key={index} className={`flex items-start gap-3 ${message.sender === 'user' ? 'justify-end' : ''}`}>
               {message.sender === 'ai' && (
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white flex-shrink-0">
-                  <Bot size={20} />
+                  {template ? <TemplateIcon icon={template.icon} className="w-5 h-5" /> : <Bot size={20} />}
                 </div>
               )}
               <div className={`p-3 rounded-lg max-w-lg ${message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-slate-800 text-slate-200'}`}>
@@ -178,7 +172,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
         <form onSubmit={handleSendMessage} className="relative">
           <Textarea
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => setInputText(e)}
             placeholder="Type your message..."
             className="w-full pr-20 resize-none bg-slate-800 border-slate-600 text-slate-200"
             onKeyDown={(e) => {
@@ -195,4 +189,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
       </div>
     </Card>
   );
+  
+  function setInputText(e: React.ChangeEvent<HTMLTextAreaElement>) {
+      setInput(e.target.value);
+  }
 };
