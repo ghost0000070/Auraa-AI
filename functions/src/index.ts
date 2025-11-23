@@ -3,7 +3,7 @@ import {googleAI} from "@genkit-ai/google-genai";
 import { https } from "firebase-functions/v2";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import { stripe } from "./utils/stripe.js";
-import { defineSecret } from "firebase-functions/params";
+import { defineSecret, SecretParam } from "firebase-functions/params";
 import { enableFirebaseTelemetry } from "@genkit-ai/firebase";
 import * as admin from 'firebase-admin';
 import Anthropic from '@anthropic-ai/sdk';
@@ -44,10 +44,6 @@ const menuSuggestionFlow = ai.defineFlow({
   }
 );
 
-export const menuSuggestion = https.onCall({ secrets: [apiKey] }, async (request) => {
-    return await menuSuggestionFlow(request.data);
-});
-
 const puterScriptFlow = ai.defineFlow({
     name: "puterScriptFlow",
     inputSchema: z.object({ prompt: z.string() }),
@@ -58,6 +54,66 @@ const puterScriptFlow = ai.defineFlow({
         prompt: `Generate a Puter.js script for: "${prompt}". Return only raw code.`,
     });
     return { script: result.text };
+});
+
+
+
+// --- Claude Sonnet 3.5 Integration ---
+
+async function callClaudeSonnet(prompt: string, system: string, apiKey: string) {
+    // STRICT MODE: Require API Key
+    if (!apiKey || apiKey === 'demo' || apiKey === 'DEMO') {
+        throw new Error("CRITICAL: Anthropic API Key is missing in backend secrets.");
+    }
+
+    const client = new Anthropic({ apiKey });
+    const msg = await client.messages.create({
+        model: "claude-3-5-sonnet-20240620",
+        max_tokens: 2048,
+        temperature: 0.7,
+        system: system,
+        messages: [{ role: "user", content: prompt }]
+    });
+    
+    if (msg.content[0].type === 'text') return msg.content[0].text;
+    throw new Error("Unexpected response format.");
+}
+
+const executeTask = async (taskName: string, data: unknown, context: string, anthropicKey: SecretParam) => {
+    try {
+        const prompt = JSON.stringify(data);
+        const system = `You are an expert AI employee performing: ${taskName}. Context: ${context}. Use Claude 3.5 Sonnet. Return valid JSON only.`;
+        
+        const result = await callClaudeSonnet(prompt, system, anthropicKey.value());
+        
+        let parsedResult;
+        try { parsedResult = JSON.parse(result); } catch (e) { parsedResult = { text_output: result }; }
+
+        return {
+            success: true,
+            task: taskName,
+            result: parsedResult,
+            timestamp: new Date().toISOString(),
+            model: "claude-3-5-sonnet"
+        };
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+    }
+};
+
+
+export const menuSuggestion = https.onCall({ secrets: [apiKey] }, async (request) => {
+    // Verify user is authenticated
+    if (!request.auth) {
+      throw new https.HttpsError('unauthenticated', 'User must be authenticated');
+    }
+    
+    try {
+      return await menuSuggestionFlow(request.data);
+    } catch (error) {
+      console.error("Error in menuSuggestion function:", error);
+      throw new https.HttpsError('internal', 'Failed to generate menu suggestion');
+    }
 });
 
 export const generatePuterScript = https.onCall({ secrets: [apiKey] }, async (request) => {
@@ -124,49 +180,6 @@ export const deployAiEmployee = https.onCall(async (request) => {
         throw new https.HttpsError('internal', 'Failed to deploy AI employee.');
     }
 });
-
-// --- Claude Sonnet 3.5 Integration ---
-
-async function callClaudeSonnet(prompt: string, system: string, apiKey: string) {
-    // STRICT MODE: Require API Key
-    if (!apiKey || apiKey === 'demo' || apiKey === 'DEMO') {
-        throw new Error("CRITICAL: Anthropic API Key is missing in backend secrets.");
-    }
-
-    const client = new Anthropic({ apiKey });
-    const msg = await client.messages.create({
-        model: "claude-3-5-sonnet-20240620",
-        max_tokens: 2048,
-        temperature: 0.7,
-        system: system,
-        messages: [{ role: "user", content: prompt }]
-    });
-    
-    if (msg.content[0].type === 'text') return msg.content[0].text;
-    throw new Error("Unexpected response format.");
-}
-
-const executeTask = async (taskName: string, data: any, context: string, anthropicKey: any) => {
-    try {
-        const prompt = JSON.stringify(data);
-        const system = `You are an expert AI employee performing: ${taskName}. Context: ${context}. Use Claude 3.5 Sonnet. Return valid JSON only.`;
-        
-        const result = await callClaudeSonnet(prompt, system, anthropicKey.value());
-        
-        let parsedResult;
-        try { parsedResult = JSON.parse(result); } catch (e) { parsedResult = { text_output: result }; }
-
-        return {
-            success: true,
-            task: taskName,
-            result: parsedResult,
-            timestamp: new Date().toISOString(),
-            model: "claude-3-5-sonnet"
-        };
-    } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
-    }
-};
 
 // 1. Chat
 export const generateChatCompletion = https.onCall({ secrets: [anthropicApiKey] }, async (request) => {

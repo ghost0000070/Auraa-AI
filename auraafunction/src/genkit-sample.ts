@@ -21,9 +21,11 @@ const apiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 import {enableFirebaseTelemetry} from "@genkit-ai/firebase";
 enableFirebaseTelemetry();
 
+import { googleAI } from "@genkit-ai/googleai";
+
 const ai = genkit({
   plugins: [
-    /* Add your plugins here. */
+    googleAI({ apiKey: apiKey.value() }),
   ],
 });
 
@@ -38,7 +40,7 @@ const menuSuggestionFlow = ai.defineFlow({
     const prompt =
       `Suggest an item for the menu of a ${subject} themed restaurant`;
     const { response, stream } = ai.generateStream({
-      model: '' /* TODO: Set a model. */,
+      model: 'googleai/gemini-1.5-flash',
       prompt: prompt,
       config: {
         temperature: 1,

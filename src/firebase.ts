@@ -29,10 +29,10 @@ const vertex = getVertexAI(app);
 const generativeModel = getGenerativeModel(vertex, { model: "gemini-pro" });
 
 if (import.meta.env.DEV) {
-  connectAuthEmulator(auth, "http://localhost:9099");
-  connectFirestoreEmulator(db, "localhost", 8080);
-  connectFunctionsEmulator(functions, "localhost", 5001);
-  connectStorageEmulator(storage, "localhost", 9199);
+  connectAuthEmulator(auth, "http://127.0.0.1:9099");
+  connectFirestoreEmulator(db, "127.0.0.1", 8080);
+  connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+  connectStorageEmulator(storage, "127.0.0.1", 9199);
 }
 
 export { app, analytics, auth, db, storage, functions, generativeModel };

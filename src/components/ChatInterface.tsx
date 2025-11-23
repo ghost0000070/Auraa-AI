@@ -130,7 +130,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
           contextString // Passing detailed context as 'personality'
       );
 
-      let aiResponseText = result.completion.text;
+      const aiResponseText = result.completion.text;
 
       const aiMessage: Message = { sender: 'ai', text: aiResponseText };
       setMessages(prev => [...prev, aiMessage]);

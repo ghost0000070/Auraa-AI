@@ -108,33 +108,33 @@ export interface User_Key {
   __typename?: 'User_Key';
 }
 
-/** Generated Node Admin SDK operation action function for the 'CreateUser' Mutation. Allow users to execute without passing in DataConnect. */
-export function createUser(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateUserData>>;
 /** Generated Node Admin SDK operation action function for the 'CreateUser' Mutation. Allow users to pass in custom DataConnect instances. */
+export function createUser(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateUserData>>;
+/** Generated Node Admin SDK operation action function for the 'CreateUser' Mutation. Allow users to execute without passing in DataConnect. */
 export function createUser(options?: OperationOptions): Promise<ExecuteOperationResponse<CreateUserData>>;
 
-/** Generated Node Admin SDK operation action function for the 'ListSkills' Query. Allow users to execute without passing in DataConnect. */
-export function listSkills(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListSkillsData>>;
 /** Generated Node Admin SDK operation action function for the 'ListSkills' Query. Allow users to pass in custom DataConnect instances. */
+export function listSkills(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListSkillsData>>;
+/** Generated Node Admin SDK operation action function for the 'ListSkills' Query. Allow users to execute without passing in DataConnect. */
 export function listSkills(options?: OperationOptions): Promise<ExecuteOperationResponse<ListSkillsData>>;
 
-/** Generated Node Admin SDK operation action function for the 'AssignSkillToAiEmployee' Mutation. Allow users to execute without passing in DataConnect. */
-export function assignSkillToAiEmployee(dc: DataConnect, vars: AssignSkillToAiEmployeeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AssignSkillToAiEmployeeData>>;
 /** Generated Node Admin SDK operation action function for the 'AssignSkillToAiEmployee' Mutation. Allow users to pass in custom DataConnect instances. */
+export function assignSkillToAiEmployee(dc: DataConnect, vars: AssignSkillToAiEmployeeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AssignSkillToAiEmployeeData>>;
+/** Generated Node Admin SDK operation action function for the 'AssignSkillToAiEmployee' Mutation. Allow users to execute without passing in DataConnect. */
 export function assignSkillToAiEmployee(vars: AssignSkillToAiEmployeeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AssignSkillToAiEmployeeData>>;
 
-/** Generated Node Admin SDK operation action function for the 'ListTasksForUser' Query. Allow users to execute without passing in DataConnect. */
-export function listTasksForUser(dc: DataConnect, vars: ListTasksForUserVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTasksForUserData>>;
 /** Generated Node Admin SDK operation action function for the 'ListTasksForUser' Query. Allow users to pass in custom DataConnect instances. */
+export function listTasksForUser(dc: DataConnect, vars: ListTasksForUserVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTasksForUserData>>;
+/** Generated Node Admin SDK operation action function for the 'ListTasksForUser' Query. Allow users to execute without passing in DataConnect. */
 export function listTasksForUser(vars: ListTasksForUserVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTasksForUserData>>;
 
-/** Generated Node Admin SDK operation action function for the 'CreateAgentTask' Mutation. Allow users to execute without passing in DataConnect. */
-export function createAgentTask(dc: DataConnect, vars: CreateAgentTaskVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateAgentTaskData>>;
 /** Generated Node Admin SDK operation action function for the 'CreateAgentTask' Mutation. Allow users to pass in custom DataConnect instances. */
+export function createAgentTask(dc: DataConnect, vars: CreateAgentTaskVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateAgentTaskData>>;
+/** Generated Node Admin SDK operation action function for the 'CreateAgentTask' Mutation. Allow users to execute without passing in DataConnect. */
 export function createAgentTask(vars: CreateAgentTaskVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateAgentTaskData>>;
 
-/** Generated Node Admin SDK operation action function for the 'ListAgentTasks' Query. Allow users to execute without passing in DataConnect. */
-export function listAgentTasks(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListAgentTasksData>>;
 /** Generated Node Admin SDK operation action function for the 'ListAgentTasks' Query. Allow users to pass in custom DataConnect instances. */
+export function listAgentTasks(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListAgentTasksData>>;
+/** Generated Node Admin SDK operation action function for the 'ListAgentTasks' Query. Allow users to execute without passing in DataConnect. */
 export function listAgentTasks(options?: OperationOptions): Promise<ExecuteOperationResponse<ListAgentTasksData>>;
 

@@ -1,5 +1,4 @@
-
-interface PuterChatResponse {
+export interface PuterChatResponse {
     message: {
         content: Array<{
             text: string;
@@ -7,17 +6,18 @@ interface PuterChatResponse {
     };
 }
 
-interface PuterAI {
-    chat(prompt: string, options?: { model?: string; stream?: boolean }): Promise<PuterChatResponse | AsyncIterable<any>>;
+export interface PuterAI {
+    chat(prompt: string, options?: { model?: string; stream?: boolean }): Promise<PuterChatResponse | AsyncIterable<unknown>>;
 }
 
-interface Puter {
+export interface Puter {
     ai: PuterAI;
     print: (text: string) => void;
 }
 
-interface Window {
-    puter: Puter;
+declare global {
+    interface Window {
+        puter: Puter;
+    }
+    const puter: Puter;
 }
-
-declare const puter: Puter;

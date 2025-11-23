@@ -1,72 +1,52 @@
-import * as React from "react"
-import { type Toast, type ToastAction } from "./use-toast";
-
-type ToasterToast = Required<
-  Pick<
-    React.ComponentPropsWithoutRef<typeof Toast>,
-    "id" | "title" | "description" | "action"
-  >
-> & {
-  id: string;
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-  action?: React.ReactElement<typeof ToastAction>;
-};
+import { State, Action } from './use-toast';
 
 const TOAST_LIMIT = 10;
-const TOAST_REMOVE_DELAY = 1000000;
-
-type ToastActionElement = React.ReactElement<typeof ToastAction>;
-
-export let memoryState: State = { toasts: [] };
-
-export const listeners: Array<(state: State) => void> = [];
-
-export const toast = (props: ToasterToast) => {
-  const toast = { ...props, id: Math.random().toString(36).substr(2, 9) };
-  memoryState = reducer(memoryState, { type: "ADD_TOAST", toast });
-  listeners.forEach((listener) => {
-    listener(memoryState);
-  });
-};
-
-export const dismiss = (id: string) => {
-  memoryState = reducer(memoryState, { type: "DISMISS_TOAST", toastId: id });
-  listeners.forEach((listener) => {
-    listener(memoryState);
-  });
-};
-
-interface State {
-  toasts: ToasterToast[];
-}
-
-type Action =
-  | { type: "ADD_TOAST"; toast: ToasterToast }
-  | { type: "DISMISS_TOAST"; toastId: string }
-  | { type: "REMOVE_TOAST"; toastId: string };
 
 export const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case "ADD_TOAST":
-      return {
-        ...state,
-        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
-      };
-
-    case "DISMISS_TOAST":
-      return {
-        ...state,
-        toasts: state.toasts.map((t) =>
-          t.id === action.toastId ? { ...t, open: false } : t
-        ),
-      };
-    case "REMOVE_TOAST":
-      return {
-        ...state,
-        toasts: state.toasts.filter((t) => t.id !== action.toastId),
-      };
-    default:
-      return state;
+    switch (action.type) {
+      case "ADD_TOAST":
+        return {
+          ...state,
+          toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
+        }
+  
+      case "UPDATE_TOAST":
+        return {
+          ...state,
+          toasts: state.toasts.map((t) => 
+            t.id === action.toast.id ? { ...t, ...action.toast } : t
+          ),
+        }
+  
+      case "DISMISS_TOAST": {
+        const { toastId } = action
+  
+        
+  
+        return {
+          ...state,
+          toasts: state.toasts.map((t) => 
+            t.id === toastId || toastId === undefined
+              ? {
+                  ...t,
+                  open: false,
+                }
+              : t
+          ),
+        }
+      }
+      case "REMOVE_TOAST":
+        if (action.toastId === undefined) {
+          return {
+            ...state,
+            toasts: [],
+          }
+        }
+        return {
+          ...state,
+          toasts: state.toasts.filter((t) => t.id !== action.toastId),
+        }
+      default:
+        return state
+    }
   }
-};

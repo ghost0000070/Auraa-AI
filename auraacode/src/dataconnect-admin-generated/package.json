@@ -5,7 +5,9 @@
   "description": "Generated Admin SDK For example",
   "license": "Apache-2.0",
   "engines": {
-    "node": " >=18.0"
+  "engines": {
+    "node": ">=18.0"
+  },
   },
   "typings": "index.d.ts",
   "module": "esm/index.esm.js",

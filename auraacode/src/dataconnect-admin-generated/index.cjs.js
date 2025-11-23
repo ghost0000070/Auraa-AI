@@ -8,16 +8,16 @@ const connectorConfig = {
 exports.connectorConfig = connectorConfig;
 
 function createUser(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
   dcInstance.useGen(true);
-  return dcInstance.executeMutation('CreateUser', {}, inputOpts);
+  return dcInstance.executeMutation('CreateUser', inputVars, inputOpts);
 };
 exports.createUser = createUser;
 
 function listSkills(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
   dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListSkills', {}, inputOpts);
+  return dcInstance.executeQuery('ListSkills', inputVars, inputOpts);
 };
 exports.listSkills = listSkills;
 
@@ -43,8 +43,8 @@ function createAgentTask(dcOrVarsOrOptions, varsOrOptions, options) {
 exports.createAgentTask = createAgentTask;
 
 function listAgentTasks(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
   dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListAgentTasks', {}, inputOpts);
+  return dcInstance.executeQuery('ListAgentTasks', inputVars, inputOpts);
 };
 exports.listAgentTasks = listAgentTasks;
