@@ -1,21 +1,21 @@
-I1123 17:03:42.061393   34452 load.go:31] Reloading schema and connectors...
-I1123 17:03:42.146297   34452 control.go:94] [/emulator/auraa-ai-69-service 1081] UpdateResources(): done
+I1124 07:44:14.822204   20572 load.go:31] Reloading schema and connectors...
+I1124 07:44:15.029512   20572 control.go:94] [/emulator/auraa-ai-69-service 3889] UpdateResources(): done
 Main schema: sources: schema/schema.gql [3302B] 
 Connector "example": sources: example/operations1.gql [118B] 
-I1123 17:03:42.215460   34452 codegen.go:80] [connector "example" javascriptSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-generated"
-I1123 17:03:42.221549   34452 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
-I1123 17:03:42.222379   34452 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
-I1123 17:03:42.224380   34452 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
-Generated sources: prelude.gql [73219B] main/implicit.gql [3462B] main/input.gql [139345B] main/relation.gql [63034B] main/query.gql [14128B] main/mutation.gql [38394B] 
-I1123 17:03:42.229794   34452 collector.go:107] connector "example" javascriptSdk wrote into "/home/user/Auraa-AI/src/dataconnect-generated"
-Generated sources: index.cjs.js [743B] package.json [863B] react/esm/index.esm.js [590B] react/README.md [12935B] .guides/usage.md [1619B] .guides/config.json [236B] index.d.ts [2147B] esm/package.json [17B] README.md [8420B] react/package.json [460B] react/index.cjs.js [620B] .guides/setup.md [1682B] esm/index.esm.js [641B] react/index.d.ts [799B] react/esm/package.json [17B] 
-I1123 17:03:42.231207   34452 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
-I1123 17:03:42.231564   34452 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
-Generated sources: index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] package.json [632B] 
-I1123 17:03:42.232462   34452 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
-I1123 17:03:42.232968   34452 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
+I1124 07:44:15.301546   20572 codegen.go:80] [connector "example" javascriptSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-generated"
+I1124 07:44:15.313669   20572 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
+I1124 07:44:15.315482   20572 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
+I1124 07:44:15.321169   20572 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: main/relation.gql [63034B] main/query.gql [14128B] main/mutation.gql [38394B] main/implicit.gql [3462B] main/input.gql [139345B] prelude.gql [73219B] 
+I1124 07:44:15.327701   20572 collector.go:107] connector "example" javascriptSdk wrote into "/home/user/Auraa-AI/src/dataconnect-generated"
+Generated sources: README.md [8420B] react/index.cjs.js [620B] index.d.ts [2147B] index.cjs.js [743B] package.json [863B] react/index.d.ts [799B] react/esm/package.json [17B] react/esm/index.esm.js [590B] react/package.json [460B] .guides/usage.md [1619B] .guides/setup.md [1682B] react/README.md [12935B] esm/index.esm.js [641B] esm/package.json [17B] .guides/config.json [236B] 
+I1124 07:44:15.339890   20572 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I1124 07:44:15.340451   20572 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
 Generated sources: index.cjs.js [620B] package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] 
-I1123 17:03:42.235221   34452 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
-I1123 17:03:42.235262   34452 load.go:109] Finished reloading
-I1123 17:03:42.240600   34452 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
-I1123 17:03:42.418956   34452 engine.go:171] [/emulator/auraa-ai-69-service 1081] ExecuteGraphqlRead IntrospectionQuery: succeeded. 
+I1124 07:44:15.352937   20572 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I1124 07:44:15.353535   20572 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
+Generated sources: package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] 
+I1124 07:44:15.357258   20572 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I1124 07:44:15.357297   20572 load.go:109] Finished reloading
+I1124 07:44:15.369393   20572 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+I1124 07:44:15.666234   20572 engine.go:171] [/emulator/auraa-ai-69-service 3889] ExecuteGraphqlRead IntrospectionQuery: succeeded. 

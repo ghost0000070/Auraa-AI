@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from "@/components/ui/use-toast";
 import { Clipboard, Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
+import { usePuter } from '@/hooks/usePuter'; // Import the new hook
 
 const PuterFirebaseIntegration: React.FC = () => {
   const [inputText, setInputText] = useState<string>('');
@@ -14,22 +15,30 @@ const PuterFirebaseIntegration: React.FC = () => {
   const [generatedScript, setGeneratedScript] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
+  // Use the new usePuter hook
+  const { username: puterUsername, authToken, error: puterError, isLoading: puterIsLoading } = usePuter();
+
   const handleGenerateScript = async () => {
     setIsLoading(true);
     setError(null);
     setGeneratedScript('');
     
     try {
-      // 1. Store the user's request in Firestore for auditing/history
+      // 1. Store the user's request in Firestore
       await addDoc(collection(db, "puter-script-requests"), {
         prompt: inputText,
         status: "processing",
         createdAt: Timestamp.now(),
+        puterUsername, // Optionally store the Puter username
       });
       
-      // 2. Call the Cloud Function to generate the script using Genkit + Gemini
+      // 2. Call the Cloud Function
       const generateScript = httpsCallable(functions, 'generatePuterScript');
-      const result = await generateScript({ prompt: inputText });
+      const result = await generateScript({ 
+        prompt: inputText,
+        // Pass the auth token to the function if needed by the backend
+        // authToken: authToken 
+      });
       
       const { script } = result.data as { script: string };
       
@@ -65,7 +74,12 @@ const PuterFirebaseIntegration: React.FC = () => {
   return (
     <div className="p-4 border rounded-lg shadow-sm">
       <h2 className="text-xl font-semibold mb-4">Puter Script Generator</h2>
-      <p className="mb-4 text-sm text-gray-600">
+
+      {puterIsLoading && <p className="mb-2 text-sm text-gray-500">Connecting to Puter...</p>}
+      {puterError && <p className="mb-2 text-sm text-red-600">{puterError}</p>}
+      {puterUsername && <p className="mb-2 text-sm text-green-600">Connected to Puter as: <strong>{puterUsername}</strong></p>}
+
+      <p className="my-4 text-sm text-gray-600">
         Describe the task you want to automate, and we'll generate a Puter script for you using AI.
       </p>
       
@@ -77,8 +91,9 @@ const PuterFirebaseIntegration: React.FC = () => {
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           rows={4}
+          disabled={!puterUsername} // Disable if not connected to Puter
         />
-        <Button onClick={handleGenerateScript} disabled={isLoading || !inputText.trim()}>
+        <Button onClick={handleGenerateScript} disabled={isLoading || !inputText.trim() || !puterUsername}>
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -33,5 +33,6 @@
     "sonarlint.connectedMode.project": {
         "connectionId": "ghost0000070",
         "projectKey": "ghost0000070_Auraa-AI"
-    }
+    },
+    "geminicodeassist.rules": "never use place holders or mock data\nalways code properly\n\n\n\n\n"
 }

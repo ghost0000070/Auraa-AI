@@ -1,19 +1,33 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
     // Business Profiles: Users can only read/write their own profile
     match /businessProfiles/{userId} {
       allow read, write: if request.auth.uid == userId;
     }
 
-    // User Analytics: Authenticated users can create events
-    match /user_analytics/{analyticsId} {
-      allow create: if request.auth != null;
+    // Deployment Requests: Users can manage their own requests
+    match /deploymentRequests/{requestId} {
+      allow read, write: if request.auth.uid == resource.data.userId;
     }
 
-    // Users Collection: Users can only read their own data
+    // Deployed Employees: Users can manage their own employees
+    match /deployedEmployees/{employeeId} {
+      allow read, write: if request.auth.uid == resource.data.userId;
+    }
+
+    // User Analytics: Only admins can read/write analytics
+    match /user_analytics/{analyticsId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Users Collection: Users can read their own data, admins can read any
     match /users/{userId} {
-      allow read: if request.auth.uid == userId;
+      allow read: if request.auth.uid == userId || isAdmin();
     }
 
     // Power-Ups: Users can manage their own power-ups
@@ -23,12 +37,13 @@ service cloud.firestore {
 
     // Website Integrations: Users can manage their own integrations
     match /websiteIntegrations/{integrationId} {
-      allow read, create: if request.auth.uid == request.resource.data.userId;
+      allow create: if request.auth.uid == request.resource.data.userId;
+      allow read, update: if request.auth.uid == resource.data.userId;
     }
 
-    // Platform Stats: Allow all authenticated users to read
+    // Platform Stats: Only admins can read
     match /platform_stats/{statId} {
-      allow read: if request.auth != null;
+      allow read: if isAdmin();
     }
   }
 }

@@ -6,8 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Toaster } from '@/components/ui/toaster';
 import { toast } from 'sonner';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, AuthError, sendEmailVerification } from 'firebase/auth';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, AuthError, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '@/firebase'; // Import the configured auth instance
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,23 +15,17 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const { user, checkSubscription } = useAuth();
-  const auth = getAuth();
-  const functions = getFunctions();
+  const { user } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
-    }
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
         navigate('/dashboard');
       }
     });
-
     return () => unsubscribe();
-  }, [user, navigate, auth]);
+  }, [user, navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,21 +35,41 @@ const Auth = () => {
     try {
       if (isSignUp) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const newUser = userCredential.user;
-        await sendEmailVerification(newUser);
+        await sendEmailVerification(userCredential.user);
         toast("Check your email", {
           description: "We've sent you a verification link. Please verify your email before logging in.",
         });
-
+        setIsSignUp(false); // Switch to sign-in view after successful sign-up
       } else {
         await signInWithEmailAndPassword(auth, email, password);
-        // onAuthStateChanged will handle navigation to /dashboard
       }
     } catch (err) {
       const authError = err as AuthError;
-      console.error('Authentication error:', authError);
       setError(authError.message);
       toast.error("Authentication Error", {
+        description: authError.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!email) {
+      toast.error("Email is required for password reset.");
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast.success("Password Reset Email Sent", {
+        description: `If an account exists for ${email}, you will receive a password reset link. Please check your inbox.`,
+      });
+    } catch (err) {
+      const authError = err as AuthError;
+      setError(authError.message);
+      toast.error("Password Reset Error", {
         description: authError.message,
       });
     } finally {
@@ -69,18 +83,12 @@ const Auth = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-8 h-8 rounded-lg overflow-hidden">
-              <img
-                src="/auraa-uploads/b67b6e27-f714-4f69-87f2-eded4b8eb656.png"
-                alt="Auraa Logo"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <span className="text-xl font-bold text-gradient">Auraa-AI Employees</span>
+            <img src="/auraa-logo.svg" alt="Auraa Logo" className="w-8 h-8" />
+            <span className="text-xl font-bold text-gradient">Auraa</span>
           </div>
-          <CardTitle>{isSignUp ? 'Create Account' : 'Welcome Back'}</CardTitle>
+          <CardTitle>{isSignUp ? 'Create an Account' : 'Welcome Back'}</CardTitle>
           <CardDescription>
-            {isSignUp ? 'Sign up to get started with AI workforce' : 'Sign in to your account'}
+            {isSignUp ? 'Sign up to build and deploy your AI workforce.' : 'Sign in to manage your AI employees.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -92,30 +100,57 @@ const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                aria-label='Email'
               />
             </div>
-            <div>
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            {error && <p style={{ color: 'red', fontSize: '0.8rem' }}>{error}</p>}
+            {!isSignUp && (
+              <div>
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  aria-label='Password'
+                />
+              </div>
+            )}
+            {isSignUp && (
+                 <div>
+                 <Input
+                   type="password"
+                   placeholder="Create a password"
+                   value={password}
+                   onChange={(e) => setPassword(e.target.value)}
+                   required
+                   aria-label='Create a password'
+                 />
+               </div>
+            )}
+            {error && <p className="text-red-500 text-sm">{error}</p>}
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Loading...' : (isSignUp ? 'Sign Up' : 'Sign In')}
+              {isLoading ? 'Processing...' : (isSignUp ? 'Sign Up' : 'Sign In')}
             </Button>
           </form>
-          <div className="mt-4 text-center">
+
+          <div className="mt-4 text-center text-sm">
             <Button
-              variant="ghost"
+              variant="link"
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm"
+              className='text-muted-foreground'
             >
-              {isSignUp ? 'Already have an account? Sign in' : 'Need an account? Sign up'}
+              {isSignUp ? 'Already have an account? Sign In' : "Don\'t have an account? Sign Up"}
             </Button>
+            {!isSignUp && (
+              <Button
+                variant="link"
+                onClick={handlePasswordReset}
+                disabled={isLoading}
+                className='w-full text-xs text-muted-foreground'
+              >
+                Forgot Password?
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

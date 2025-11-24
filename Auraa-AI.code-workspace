@@ -10,6 +10,13 @@
 		"cSpell.words": [
 			"puter",
 			"UNDEPLOYED"
-		]
+		],
+		"geminicodeassist.updateChannel": "Default",
+		"geminicodeassist.inlineSuggestions.suggestionSpeed": "Fast",
+		"geminicodeassist.inlineSuggestions.nextEditPredictions": true,
+		"geminicodeassist.codeGenerationPaneViewEnabled": true,
+		"geminicodeassist.agentYoloMode": true,
+		"geminicodeassist.agentDebugMode": true,
+		"geminicodeassist.rules": "never use place holders or mock data\nalways code properly\n\n\n\n\n"
 	}
 }

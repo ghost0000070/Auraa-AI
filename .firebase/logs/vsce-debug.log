@@ -9282,3 +9282,355 @@ I1123 17:03:42.235262   34452 load.go:109] Finished reloading
 [debug] [2025-11-23T17:05:27.991Z] [Firebase Plugin] Received emulators shutdown notification.
 [debug] [2025-11-23T17:06:02.006Z] [Firebase Plugin] Received CLI notification.
 [debug] [2025-11-23T17:06:02.010Z] [Firebase Plugin] Received emulators shutdown notification.
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2025-11-24T06:20:15.396Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-24T06:20:25.784Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-24T06:20:25.785Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-24T06:20:25.786Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-24T06:20:25.791Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T06:20:25.791Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T06:20:25.792Z] > refreshing access token with scopes: []
+[debug] [2025-11-24T06:20:25.795Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-24T06:20:25.795Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-24T06:20:25.835Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[debug] [2025-11-24T06:20:25.986Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-24T06:20:25.986Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-24T06:20:27.336Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50001
+[debug] [2025-11-24T06:20:38.007Z] I1124 06:20:37.893360     449 control.go:94] [/emulator/auraa-ai-69-service c470] UpdateResources(): done
+Main schema: sources: schema/schema.gql [3302B] 
+Connector "example": sources: example/operations1.gql [118B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:37.893360     449 control.go:94] [/emulator/auraa-ai-69-service c470] UpdateResources(): done\nMain schema: sources: schema/schema.gql [3302B] \nConnector \"example\": sources: example/operations1.gql [118B] \n"}}
+[debug] [2025-11-24T06:20:38.009Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-24T06:20:38.009Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-24T06:20:38.009Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-24T06:20:38.061Z] I1124 06:20:38.031166     460 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:38.031166     460 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-24T06:20:38.219Z] I1124 06:20:38.179045     460 control.go:94] [/emulator/auraa-ai-69-service 14f0] UpdateResources(): done
+Main schema: sources: schema/schema.gql [3302B] 
+Connector "example": sources: example/operations1.gql [118B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:38.179045     460 control.go:94] [/emulator/auraa-ai-69-service 14f0] UpdateResources(): done\nMain schema: sources: schema/schema.gql [3302B] \nConnector \"example\": sources: example/operations1.gql [118B] \n"}}
+[debug] [2025-11-24T06:20:38.292Z] I1124 06:20:38.292149     460 codegen.go:80] [connector "example" javascriptSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-generated"
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:38.292149     460 codegen.go:80] [connector \"example\" javascriptSdk] Generating sources into \"/home/user/Auraa-AI/src/dataconnect-generated\"\n"}}
+[debug] [2025-11-24T06:20:38.466Z] I1124 06:20:38.466117     460 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:38.466117     460 codegen.go:80] [connector \"example\" adminSdk] Generating sources into \"/home/user/Auraa-AI/src/dataconnect-admin-generated\"\n"}}
+[debug] [2025-11-24T06:20:38.467Z] I1124 06:20:38.467273     460 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:38.467273     460 codegen.go:80] [connector \"example\" adminSdk] Generating sources into \"/home/user/Auraa-AI/functions/src/dataconnect-admin-generated\"\n"}}
+[debug] [2025-11-24T06:20:39.896Z] I1124 06:20:39.885519     460 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: main/mutation.gql [38394B] prelude.gql [73219B] main/implicit.gql [3462B] main/input.gql [139345B] main/relation.gql [63034B] main/query.gql [14128B] 
+I1124 06:20:39.886565     460 collector.go:107] connector "example" javascriptSdk wrote into "/home/user/Auraa-AI/src/dataconnect-generated"
+Generated sources: esm/index.esm.js [641B] esm/package.json [17B] package.json [863B] react/index.d.ts [799B] .guides/setup.md [1682B] react/esm/index.esm.js [590B] react/README.md [12935B] index.d.ts [2147B] index.cjs.js [743B] README.md [8420B] react/esm/package.json [17B] react/index.cjs.js [620B] react/package.json [460B] .guides/usage.md [1619B] .guides/config.json [236B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:39.885519     460 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: main/mutation.gql [38394B] prelude.gql [73219B] main/implicit.gql [3462B] main/input.gql [139345B] main/relation.gql [63034B] main/query.gql [14128B] \nI1124 06:20:39.886565     460 collector.go:107] connector \"example\" javascriptSdk wrote into \"/home/user/Auraa-AI/src/dataconnect-generated\"\nGenerated sources: esm/index.esm.js [641B] esm/package.json [17B] package.json [863B] react/index.d.ts [799B] .guides/setup.md [1682B] react/esm/index.esm.js [590B] react/README.md [12935B] index.d.ts [2147B] index.cjs.js [743B] README.md [8420B] react/esm/package.json [17B] react/index.cjs.js [620B] react/package.json [460B] .guides/usage.md [1619B] .guides/config.json [236B] \n"}}
+[debug] [2025-11-24T06:20:39.951Z] I1124 06:20:39.951459     460 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:39.951459     460 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation\n"}}
+[debug] [2025-11-24T06:20:39.952Z] I1124 06:20:39.951862     460 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
+Generated sources: index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] package.json [632B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:39.951862     460 collector.go:107] connector \"example\" adminSdk wrote into \"/home/user/Auraa-AI/src/dataconnect-admin-generated\"\nGenerated sources: index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] package.json [632B] \n"}}
+[debug] [2025-11-24T06:20:39.953Z] I1124 06:20:39.953490     460 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:39.953490     460 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation\n"}}
+[debug] [2025-11-24T06:20:39.954Z] I1124 06:20:39.953827     460 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
+Generated sources: index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] package.json [632B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:39.953827     460 collector.go:107] connector \"example\" adminSdk wrote into \"/home/user/Auraa-AI/functions/src/dataconnect-admin-generated\"\nGenerated sources: index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] package.json [632B] \n"}}
+[debug] [2025-11-24T06:20:40.006Z] I1124 06:20:40.006286     460 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I1124 06:20:40.006351     460 load.go:109] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:40.006286     460 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation\nI1124 06:20:40.006351     460 load.go:109] Finished reloading\n"}}
+[debug] [2025-11-24T06:20:40.053Z] I1124 06:20:40.052890     460 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:40.052890     460 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[debug] [2025-11-24T06:20:40.178Z] I1124 06:20:40.178273     460 engine.go:171] [/emulator/auraa-ai-69-service 14f0] ExecuteGraphqlRead IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:20:40.178273     460 engine.go:171] [/emulator/auraa-ai-69-service 14f0] ExecuteGraphqlRead IntrospectionQuery: succeeded. \n"}}
+[debug] [2025-11-24T06:27:25.558Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-24T06:27:32.279Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-24T06:27:32.280Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-24T06:27:32.281Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-24T06:27:32.284Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T06:27:32.285Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T06:27:32.285Z] > refreshing access token with scopes: []
+[debug] [2025-11-24T06:27:32.287Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-24T06:27:32.287Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-24T06:27:32.327Z] [Firebase Plugin] VSCode notification server listening on port 40002
+[debug] [2025-11-24T06:27:32.560Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-24T06:27:32.561Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-24T06:27:38.560Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50002
+[debug] [2025-11-24T06:27:38.702Z] I1124 06:27:38.662517    2433 control.go:94] [/emulator/auraa-ai-69-service 70c8] UpdateResources(): done
+Main schema: sources: schema/schema.gql [3302B] 
+Connector "example": sources: example/operations1.gql [118B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:27:38.662517    2433 control.go:94] [/emulator/auraa-ai-69-service 70c8] UpdateResources(): done\nMain schema: sources: schema/schema.gql [3302B] \nConnector \"example\": sources: example/operations1.gql [118B] \n"}}
+[debug] [2025-11-24T06:27:38.703Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-24T06:27:38.703Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-24T06:27:38.704Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50002","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50002\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-24T06:27:39.051Z] I1124 06:27:38.740263    2447 load.go:31] Reloading schema and connectors...
+I1124 06:27:38.863950    2447 control.go:94] [/emulator/auraa-ai-69-service 2eba] UpdateResources(): done
+Main schema: sources: schema/schema.gql [3302B] 
+Connector "example": sources: example/operations1.gql [118B] 
+I1124 06:27:38.975962    2447 codegen.go:80] [connector "example" javascriptSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-generated"
+I1124 06:27:38.981980    2447 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
+I1124 06:27:38.983160    2447 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
+I1124 06:27:38.985208    2447 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [73219B] main/input.gql [139345B] main/relation.gql [63034B] main/query.gql [14128B] main/mutation.gql [38394B] main/implicit.gql [3462B] 
+I1124 06:27:38.988682    2447 collector.go:107] connector "example" javascriptSdk wrote into "/home/user/Auraa-AI/src/dataconnect-generated"
+Generated sources: package.json [863B] react/package.json [460B] react/esm/package.json [17B] react/README.md [12935B] .guides/usage.md [1619B] esm/index.esm.js [641B] index.cjs.js [743B] README.md [8420B] react/index.d.ts [799B] react/esm/index.esm.js [590B] .guides/config.json [236B] esm/package.json [17B] react/index.cjs.js [620B] .guides/setup.md [1682B] index.d.ts [2147B] 
+I1124 06:27:38.990121    2447 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I1124 06:27:38.990504    2447 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
+Generated sources: index.cjs.js [620B] package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] 
+I1124 06:27:38.994533    2447 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I1124 06:27:38.994939    2447 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
+Generated sources: index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] package.json [632B] 
+I1124 06:27:39.003074    2447 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I1124 06:27:39.003111    2447 load.go:109] Finished reloading
+I1124 06:27:39.008637    2447 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50002
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:27:38.740263    2447 load.go:31] Reloading schema and connectors...\nI1124 06:27:38.863950    2447 control.go:94] [/emulator/auraa-ai-69-service 2eba] UpdateResources(): done\nMain schema: sources: schema/schema.gql [3302B] \nConnector \"example\": sources: example/operations1.gql [118B] \nI1124 06:27:38.975962    2447 codegen.go:80] [connector \"example\" javascriptSdk] Generating sources into \"/home/user/Auraa-AI/src/dataconnect-generated\"\nI1124 06:27:38.981980    2447 codegen.go:80] [connector \"example\" adminSdk] Generating sources into \"/home/user/Auraa-AI/src/dataconnect-admin-generated\"\nI1124 06:27:38.983160    2447 codegen.go:80] [connector \"example\" adminSdk] Generating sources into \"/home/user/Auraa-AI/functions/src/dataconnect-admin-generated\"\nI1124 06:27:38.985208    2447 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: prelude.gql [73219B] main/input.gql [139345B] main/relation.gql [63034B] main/query.gql [14128B] main/mutation.gql [38394B] main/implicit.gql [3462B] \nI1124 06:27:38.988682    2447 collector.go:107] connector \"example\" javascriptSdk wrote into \"/home/user/Auraa-AI/src/dataconnect-generated\"\nGenerated sources: package.json [863B] react/package.json [460B] react/esm/package.json [17B] react/README.md [12935B] .guides/usage.md [1619B] esm/index.esm.js [641B] index.cjs.js [743B] README.md [8420B] react/index.d.ts [799B] react/esm/index.esm.js [590B] .guides/config.json [236B] esm/package.json [17B] react/index.cjs.js [620B] .guides/setup.md [1682B] index.d.ts [2147B] \nI1124 06:27:38.990121    2447 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation\nI1124 06:27:38.990504    2447 collector.go:107] connector \"example\" adminSdk wrote into \"/home/user/Auraa-AI/src/dataconnect-admin-generated\"\nGenerated sources: index.cjs.js [620B] package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] \nI1124 06:27:38.994533    2447 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation\nI1124 06:27:38.994939    2447 collector.go:107] connector \"example\" adminSdk wrote into \"/home/user/Auraa-AI/functions/src/dataconnect-admin-generated\"\nGenerated sources: index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] package.json [632B] \nI1124 06:27:39.003074    2447 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation\nI1124 06:27:39.003111    2447 load.go:109] Finished reloading\nI1124 06:27:39.008637    2447 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50002\n"}}
+[debug] [2025-11-24T06:27:39.345Z] I1124 06:27:39.336678    2447 engine.go:171] [/emulator/auraa-ai-69-service 2eba] ExecuteGraphqlRead IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 06:27:39.336678    2447 engine.go:171] [/emulator/auraa-ai-69-service 2eba] ExecuteGraphqlRead IntrospectionQuery: succeeded. \n"}}
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2025-11-24T06:33:26.606Z] [Firebase Plugin] Value of process.env.MONOSPACE_ENV: true
+[debug] [2025-11-24T06:33:26.607Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-24T06:33:26.609Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-24T06:33:26.610Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-24T06:33:26.611Z] [Firebase Plugin] Value of process.env.MONOSPACE_ENV: true
+[debug] [2025-11-24T06:33:26.611Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-24T06:33:26.612Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-24T06:33:26.612Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-24T06:33:26.613Z] Emulator locator file path: /tmp/hub-auraa-ai-69.json
+[debug] [2025-11-24T06:33:26.614Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T06:33:26.614Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T06:33:26.614Z] > refreshing access token with scopes: []
+[debug] [2025-11-24T06:33:26.616Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-24T06:33:26.616Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-24T06:33:26.619Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T06:33:26.619Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T06:33:26.619Z] > refreshing access token with scopes: []
+[debug] [2025-11-24T06:33:26.620Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-24T06:33:26.620Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-24T06:33:26.750Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-24T06:33:26.751Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-24T06:33:26.756Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-24T06:33:26.756Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-24T06:34:37.336Z] Emulator locator file path: /tmp/hub-auraa-ai-69.json
+[info] ✔  Wrote .gemini/extensions/firebase/gemini-extension.json 
+[info] ✔  Wrote .gemini/extensions/firebase/contexts/FIREBASE-BASE.md 
+[info] ✔  Wrote .gemini/extensions/firebase/FIREBASE.md 
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2025-11-24T07:34:14.277Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-24T07:34:22.962Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-24T07:34:22.963Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-24T07:34:22.964Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-24T07:34:22.968Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T07:34:22.968Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T07:34:22.969Z] > refreshing access token with scopes: []
+[debug] [2025-11-24T07:34:22.971Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-24T07:34:22.972Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-24T07:34:23.021Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[debug] [2025-11-24T07:34:23.162Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-24T07:34:23.164Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-24T07:34:23.616Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50001
+[debug] [2025-11-24T07:34:23.773Z] I1124 07:34:23.730101   16693 control.go:94] [/emulator/auraa-ai-69-service 484b] UpdateResources(): done
+Main schema: sources: schema/schema.gql [3302B] 
+Connector "example": sources: example/operations1.gql [118B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:34:23.730101   16693 control.go:94] [/emulator/auraa-ai-69-service 484b] UpdateResources(): done\nMain schema: sources: schema/schema.gql [3302B] \nConnector \"example\": sources: example/operations1.gql [118B] \n"}}
+[debug] [2025-11-24T07:34:23.775Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-24T07:34:23.775Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-24T07:34:23.776Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-24T07:34:23.812Z] I1124 07:34:23.802799   16703 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:34:23.802799   16703 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-24T07:34:25.298Z] I1124 07:34:23.914036   16703 control.go:94] [/emulator/auraa-ai-69-service d1a1] UpdateResources(): done
+Main schema: sources: schema/schema.gql [3302B] 
+Connector "example": sources: example/operations1.gql [118B] 
+I1124 07:34:24.046322   16703 codegen.go:80] [connector "example" javascriptSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-generated"
+I1124 07:34:24.060617   16703 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
+I1124 07:34:24.062413   16703 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
+I1124 07:34:24.065253   16703 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: main/implicit.gql [3462B] main/input.gql [139345B] main/relation.gql [63034B] main/query.gql [14128B] main/mutation.gql [38394B] prelude.gql [73219B] 
+I1124 07:34:24.073128   16703 collector.go:107] connector "example" javascriptSdk wrote into "/home/user/Auraa-AI/src/dataconnect-generated"
+Generated sources: package.json [863B] react/index.d.ts [799B] react/esm/index.esm.js [590B] .guides/setup.md [1682B] index.cjs.js [743B] README.md [8420B] react/package.json [460B] react/esm/package.json [17B] esm/index.esm.js [641B] react/index.cjs.js [620B] .guides/usage.md [1619B] .guides/config.json [236B] react/README.md [12935B] index.d.ts [2147B] esm/package.json [17B] 
+I1124 07:34:24.074886   16703 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I1124 07:34:24.075386   16703 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
+Generated sources: index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] package.json [632B] 
+I1124 07:34:24.078396   16703 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I1124 07:34:24.078841   16703 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
+Generated sources: esm/package.json [17B] index.cjs.js [620B] package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] 
+I1124 07:34:24.084626   16703 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I1124 07:34:24.084655   16703 load.go:109] Finished reloading
+I1124 07:34:24.091694   16703 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:34:23.914036   16703 control.go:94] [/emulator/auraa-ai-69-service d1a1] UpdateResources(): done\nMain schema: sources: schema/schema.gql [3302B] \nConnector \"example\": sources: example/operations1.gql [118B] \nI1124 07:34:24.046322   16703 codegen.go:80] [connector \"example\" javascriptSdk] Generating sources into \"/home/user/Auraa-AI/src/dataconnect-generated\"\nI1124 07:34:24.060617   16703 codegen.go:80] [connector \"example\" adminSdk] Generating sources into \"/home/user/Auraa-AI/src/dataconnect-admin-generated\"\nI1124 07:34:24.062413   16703 codegen.go:80] [connector \"example\" adminSdk] Generating sources into \"/home/user/Auraa-AI/functions/src/dataconnect-admin-generated\"\nI1124 07:34:24.065253   16703 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: main/implicit.gql [3462B] main/input.gql [139345B] main/relation.gql [63034B] main/query.gql [14128B] main/mutation.gql [38394B] prelude.gql [73219B] \nI1124 07:34:24.073128   16703 collector.go:107] connector \"example\" javascriptSdk wrote into \"/home/user/Auraa-AI/src/dataconnect-generated\"\nGenerated sources: package.json [863B] react/index.d.ts [799B] react/esm/index.esm.js [590B] .guides/setup.md [1682B] index.cjs.js [743B] README.md [8420B] react/package.json [460B] react/esm/package.json [17B] esm/index.esm.js [641B] react/index.cjs.js [620B] .guides/usage.md [1619B] .guides/config.json [236B] react/README.md [12935B] index.d.ts [2147B] esm/package.json [17B] \nI1124 07:34:24.074886   16703 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation\nI1124 07:34:24.075386   16703 collector.go:107] connector \"example\" adminSdk wrote into \"/home/user/Auraa-AI/src/dataconnect-admin-generated\"\nGenerated sources: index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] package.json [632B] \nI1124 07:34:24.078396   16703 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation\nI1124 07:34:24.078841   16703 collector.go:107] connector \"example\" adminSdk wrote into \"/home/user/Auraa-AI/functions/src/dataconnect-admin-generated\"\nGenerated sources: esm/package.json [17B] index.cjs.js [620B] package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] \nI1124 07:34:24.084626   16703 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation\nI1124 07:34:24.084655   16703 load.go:109] Finished reloading\nI1124 07:34:24.091694   16703 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[debug] [2025-11-24T07:34:25.475Z] I1124 07:34:25.462480   16703 engine.go:171] [/emulator/auraa-ai-69-service d1a1] ExecuteGraphqlRead IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:34:25.462480   16703 engine.go:171] [/emulator/auraa-ai-69-service d1a1] ExecuteGraphqlRead IntrospectionQuery: succeeded. \n"}}
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2025-11-24T07:43:27.443Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-24T07:43:36.546Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-24T07:43:36.548Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-24T07:43:36.549Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-24T07:43:36.553Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T07:43:36.553Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T07:43:36.554Z] > refreshing access token with scopes: []
+[debug] [2025-11-24T07:43:36.556Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-24T07:43:36.556Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-24T07:43:36.600Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[debug] [2025-11-24T07:43:36.749Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-24T07:43:36.750Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-24T07:43:37.272Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50001
+[debug] [2025-11-24T07:43:37.434Z] I1124 07:43:37.390683   19758 control.go:94] [/emulator/auraa-ai-69-service 22a1] UpdateResources(): done
+Main schema: sources: schema/schema.gql [3302B] 
+Connector "example": sources: example/operations1.gql [118B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:43:37.390683   19758 control.go:94] [/emulator/auraa-ai-69-service 22a1] UpdateResources(): done\nMain schema: sources: schema/schema.gql [3302B] \nConnector \"example\": sources: example/operations1.gql [118B] \n"}}
+[debug] [2025-11-24T07:43:37.436Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-24T07:43:37.436Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-24T07:43:37.437Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-24T07:43:37.504Z] I1124 07:43:37.462614   19768 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:43:37.462614   19768 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-24T07:43:37.557Z] I1124 07:43:37.557161   19768 control.go:94] [/emulator/auraa-ai-69-service 7ab5] UpdateResources(): done
+Main schema: sources: schema/schema.gql [3302B] 
+Connector "example": sources: example/operations1.gql [118B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:43:37.557161   19768 control.go:94] [/emulator/auraa-ai-69-service 7ab5] UpdateResources(): done\nMain schema: sources: schema/schema.gql [3302B] \nConnector \"example\": sources: example/operations1.gql [118B] \n"}}
+[debug] [2025-11-24T07:43:39.026Z] I1124 07:43:37.681112   19768 codegen.go:80] [connector "example" javascriptSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-generated"
+I1124 07:43:37.692127   19768 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
+I1124 07:43:37.693896   19768 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
+I1124 07:43:37.696755   19768 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: main/input.gql [139345B] main/relation.gql [63034B] main/query.gql [14128B] main/mutation.gql [38394B] prelude.gql [73219B] main/implicit.gql [3462B] 
+I1124 07:43:37.699214   19768 collector.go:107] connector "example" javascriptSdk wrote into "/home/user/Auraa-AI/src/dataconnect-generated"
+Generated sources: react/index.d.ts [799B] README.md [8420B] react/package.json [460B] index.cjs.js [743B] package.json [863B] react/esm/package.json [17B] react/index.cjs.js [620B] react/esm/index.esm.js [590B] .guides/usage.md [1619B] .guides/config.json [236B] index.d.ts [2147B] react/README.md [12935B] .guides/setup.md [1682B] esm/index.esm.js [641B] esm/package.json [17B] 
+I1124 07:43:37.700721   19768 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I1124 07:43:37.701140   19768 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
+Generated sources: package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] 
+I1124 07:43:37.703757   19768 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I1124 07:43:37.708363   19768 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
+Generated sources: esm/package.json [17B] index.cjs.js [620B] package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] 
+I1124 07:43:37.715830   19768 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I1124 07:43:37.715858   19768 load.go:109] Finished reloading
+I1124 07:43:37.723172   19768 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:43:37.681112   19768 codegen.go:80] [connector \"example\" javascriptSdk] Generating sources into \"/home/user/Auraa-AI/src/dataconnect-generated\"\nI1124 07:43:37.692127   19768 codegen.go:80] [connector \"example\" adminSdk] Generating sources into \"/home/user/Auraa-AI/src/dataconnect-admin-generated\"\nI1124 07:43:37.693896   19768 codegen.go:80] [connector \"example\" adminSdk] Generating sources into \"/home/user/Auraa-AI/functions/src/dataconnect-admin-generated\"\nI1124 07:43:37.696755   19768 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: main/input.gql [139345B] main/relation.gql [63034B] main/query.gql [14128B] main/mutation.gql [38394B] prelude.gql [73219B] main/implicit.gql [3462B] \nI1124 07:43:37.699214   19768 collector.go:107] connector \"example\" javascriptSdk wrote into \"/home/user/Auraa-AI/src/dataconnect-generated\"\nGenerated sources: react/index.d.ts [799B] README.md [8420B] react/package.json [460B] index.cjs.js [743B] package.json [863B] react/esm/package.json [17B] react/index.cjs.js [620B] react/esm/index.esm.js [590B] .guides/usage.md [1619B] .guides/config.json [236B] index.d.ts [2147B] react/README.md [12935B] .guides/setup.md [1682B] esm/index.esm.js [641B] esm/package.json [17B] \nI1124 07:43:37.700721   19768 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation\nI1124 07:43:37.701140   19768 collector.go:107] connector \"example\" adminSdk wrote into \"/home/user/Auraa-AI/src/dataconnect-admin-generated\"\nGenerated sources: package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] \nI1124 07:43:37.703757   19768 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation\nI1124 07:43:37.708363   19768 collector.go:107] connector \"example\" adminSdk wrote into \"/home/user/Auraa-AI/functions/src/dataconnect-admin-generated\"\nGenerated sources: esm/package.json [17B] index.cjs.js [620B] package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] \nI1124 07:43:37.715830   19768 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation\nI1124 07:43:37.715858   19768 load.go:109] Finished reloading\nI1124 07:43:37.723172   19768 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[debug] [2025-11-24T07:43:39.123Z] I1124 07:43:39.121402   19768 engine.go:171] [/emulator/auraa-ai-69-service 7ab5] ExecuteGraphqlRead IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:43:39.121402   19768 engine.go:171] [/emulator/auraa-ai-69-service 7ab5] ExecuteGraphqlRead IntrospectionQuery: succeeded. \n"}}
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
+[debug] [2025-11-24T07:44:07.441Z] [Firebase Plugin] Activating Firebase extension.
+[debug] [2025-11-24T07:44:13.778Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-11-24T07:44:13.779Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-11-24T07:44:13.780Z] > authorizing via signed-in user (owner@auraa-ai.com)
+[debug] [2025-11-24T07:44:13.784Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T07:44:13.784Z] Checked if tokens are valid: false, expires at: 1763843511321
+[debug] [2025-11-24T07:44:13.785Z] > refreshing access token with scopes: []
+[debug] [2025-11-24T07:44:13.787Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-24T07:44:13.788Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-24T07:44:13.827Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[debug] [2025-11-24T07:44:14.160Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2025-11-24T07:44:14.161Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] [Firebase Plugin] requireAuth error: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-11-24T07:44:14.612Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"projects"}
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.17.0) on port 50001
+[debug] [2025-11-24T07:44:14.790Z] I1124 07:44:14.742864   20562 control.go:94] [/emulator/auraa-ai-69-service 519a] UpdateResources(): done
+Main schema: sources: schema/schema.gql [3302B] 
+Connector "example": sources: example/operations1.gql [118B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:44:14.742864   20562 control.go:94] [/emulator/auraa-ai-69-service 519a] UpdateResources(): done\nMain schema: sources: schema/schema.gql [3302B] \nConnector \"example\": sources: example/operations1.gql [118B] \n"}}
+[debug] [2025-11-24T07:44:14.791Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-24T07:44:14.792Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-11-24T07:44:14.792Z] Starting Data Connect Emulator with command {"binary":"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=/home/user/Auraa-AI/dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"/home/user/.cache/firebase/emulators/dataconnect-emulator-2.17.0\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=/home/user/Auraa-AI/dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to dataconnect-debug.log"}}
+[debug] [2025-11-24T07:44:14.919Z] I1124 07:44:14.822204   20572 load.go:31] Reloading schema and connectors...
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:44:14.822204   20572 load.go:31] Reloading schema and connectors...\n"}}
+[debug] [2025-11-24T07:44:15.106Z] I1124 07:44:15.029512   20572 control.go:94] [/emulator/auraa-ai-69-service 3889] UpdateResources(): done
+Main schema: sources: schema/schema.gql [3302B] 
+Connector "example": sources: example/operations1.gql [118B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:44:15.029512   20572 control.go:94] [/emulator/auraa-ai-69-service 3889] UpdateResources(): done\nMain schema: sources: schema/schema.gql [3302B] \nConnector \"example\": sources: example/operations1.gql [118B] \n"}}
+[debug] [2025-11-24T07:44:15.304Z] I1124 07:44:15.301546   20572 codegen.go:80] [connector "example" javascriptSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-generated"
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:44:15.301546   20572 codegen.go:80] [connector \"example\" javascriptSdk] Generating sources into \"/home/user/Auraa-AI/src/dataconnect-generated\"\n"}}
+[debug] [2025-11-24T07:44:15.316Z] I1124 07:44:15.313669   20572 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
+I1124 07:44:15.315482   20572 codegen.go:80] [connector "example" adminSdk] Generating sources into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:44:15.313669   20572 codegen.go:80] [connector \"example\" adminSdk] Generating sources into \"/home/user/Auraa-AI/src/dataconnect-admin-generated\"\nI1124 07:44:15.315482   20572 codegen.go:80] [connector \"example\" adminSdk] Generating sources into \"/home/user/Auraa-AI/functions/src/dataconnect-admin-generated\"\n"}}
+[debug] [2025-11-24T07:44:15.321Z] I1124 07:44:15.321169   20572 collector.go:107] schema extensions wrote into "/home/user/Auraa-AI/dataconnect/.dataconnect/schema"
+Generated sources: main/relation.gql [63034B] main/query.gql [14128B] main/mutation.gql [38394B] main/implicit.gql [3462B] main/input.gql [139345B] prelude.gql [73219B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:44:15.321169   20572 collector.go:107] schema extensions wrote into \"/home/user/Auraa-AI/dataconnect/.dataconnect/schema\"\nGenerated sources: main/relation.gql [63034B] main/query.gql [14128B] main/mutation.gql [38394B] main/implicit.gql [3462B] main/input.gql [139345B] prelude.gql [73219B] \n"}}
+[debug] [2025-11-24T07:44:15.332Z] I1124 07:44:15.327701   20572 collector.go:107] connector "example" javascriptSdk wrote into "/home/user/Auraa-AI/src/dataconnect-generated"
+Generated sources: README.md [8420B] react/index.cjs.js [620B] index.d.ts [2147B] index.cjs.js [743B] package.json [863B] react/index.d.ts [799B] react/esm/package.json [17B] react/esm/index.esm.js [590B] react/package.json [460B] .guides/usage.md [1619B] .guides/setup.md [1682B] react/README.md [12935B] esm/index.esm.js [641B] esm/package.json [17B] .guides/config.json [236B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:44:15.327701   20572 collector.go:107] connector \"example\" javascriptSdk wrote into \"/home/user/Auraa-AI/src/dataconnect-generated\"\nGenerated sources: README.md [8420B] react/index.cjs.js [620B] index.d.ts [2147B] index.cjs.js [743B] package.json [863B] react/index.d.ts [799B] react/esm/package.json [17B] react/esm/index.esm.js [590B] react/package.json [460B] .guides/usage.md [1619B] .guides/setup.md [1682B] react/README.md [12935B] esm/index.esm.js [641B] esm/package.json [17B] .guides/config.json [236B] \n"}}
+[debug] [2025-11-24T07:44:15.344Z] I1124 07:44:15.339890   20572 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I1124 07:44:15.340451   20572 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/src/dataconnect-admin-generated"
+Generated sources: index.cjs.js [620B] package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:44:15.339890   20572 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation\nI1124 07:44:15.340451   20572 collector.go:107] connector \"example\" adminSdk wrote into \"/home/user/Auraa-AI/src/dataconnect-admin-generated\"\nGenerated sources: index.cjs.js [620B] package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] \n"}}
+[debug] [2025-11-24T07:44:15.354Z] I1124 07:44:15.352937   20572 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I1124 07:44:15.353535   20572 collector.go:107] connector "example" adminSdk wrote into "/home/user/Auraa-AI/functions/src/dataconnect-admin-generated"
+Generated sources: package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:44:15.352937   20572 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation\nI1124 07:44:15.353535   20572 collector.go:107] connector \"example\" adminSdk wrote into \"/home/user/Auraa-AI/functions/src/dataconnect-admin-generated\"\nGenerated sources: package.json [632B] index.d.ts [2054B] esm/index.esm.js [543B] esm/package.json [17B] index.cjs.js [620B] \n"}}
+[debug] [2025-11-24T07:44:15.357Z] I1124 07:44:15.357258   20572 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I1124 07:44:15.357297   20572 load.go:109] Finished reloading
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:44:15.357258   20572 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation\nI1124 07:44:15.357297   20572 load.go:109] Finished reloading\n"}}
+[debug] [2025-11-24T07:44:15.375Z] I1124 07:44:15.369393   20572 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:44:15.369393   20572 dev.go:105] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[debug] [2025-11-24T07:44:15.666Z] I1124 07:44:15.666234   20572 engine.go:171] [/emulator/auraa-ai-69-service 3889] ExecuteGraphqlRead IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I1124 07:44:15.666234   20572 engine.go:171] [/emulator/auraa-ai-69-service 3889] ExecuteGraphqlRead IntrospectionQuery: succeeded. \n"}}
+[info] [Firebase Plugin] Stopping Data Connect toolkit
+[warn] ⚠  Data Connect Emulator has exited upon receiving signal: SIGINT 
