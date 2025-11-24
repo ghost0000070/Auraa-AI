@@ -69,7 +69,7 @@ const puterScriptFlow = ai.defineFlow({
  * @throws {Error} If the API response is in an unexpected format.
  */
 async function callClaudeSonnet(prompt: string, system: string, apiKey: string) {
-  if (!apiKey || apiKey === "demo" || apiKey === "DEMO") {
+  if (!apiKey || apiKey.toLowerCase() === "demo") {
     throw new https.HttpsError(
         "failed-precondition",
         "Anthropic API Key is missing or is a demo key.",
@@ -96,7 +96,7 @@ async function callClaudeSonnet(prompt: string, system: string, apiKey: string) 
  * @param {string} taskName The name of the task.
  * @param {unknown} data The data for the task.
  * @param {string} context The context or instructions for the task.
- * @param {{ value: () => string; }} anthropicKey The secret for the API key.
+ * @param {{value: () => string}} anthropicKey The secret for the API key.
  * @return {Promise<object>} The result of the task execution.
  * @throws {https.HttpsError} Throws an error if the task fails.
  */
@@ -358,7 +358,7 @@ export const handleSupportTicket = https.onCall(
     async (req) => executeTask(
         "handleSupportTicket",
         req.data,
-        "Handle a customer support ticket by providing a helpful and empathetic response.",
+        "Handle a customer support ticket by providing a helpful response.",
         anthropicApiKey,
     ),
 );
