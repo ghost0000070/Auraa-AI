@@ -2,16 +2,11 @@
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2023"],
-    // When using moduleResolution node16, module must be Node16 to avoid TS5110
-    "module": "Node16",
-    "moduleResolution": "node16",
+    "moduleResolution": "node",
+    "strict": true,
     "skipLibCheck": true,
-    "noEmit": true,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "types": ["node"],
-    /* Keep strict for config correctness */
-    "strict": true
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "tailwind.config.ts", "postcss.config.js"]
 }

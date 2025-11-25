@@ -33,6 +33,7 @@ jobs:
         uses: w9jds/firebase-action@master
         with:
           action: deploy
-          project: ${{ secrets.FIREBASE_PROJECT_ID }}
-          service_account: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          only: hosting
+          args: --only hosting
+        env:
+          # yamllint disable-line rule:truthy
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

@@ -14,7 +14,7 @@ vi.mock('@/firebase', () => ({
 vi.mock('firebase/auth', async () => {
     const actual = await vi.importActual('firebase/auth');
     return {
-        ...(actual as any),
+        ...(actual as Record<string, unknown>),
         onAuthStateChanged: vi.fn((auth, callback) => {
             // Simulate a logged-in user
             callback({ uid: 'test-user' });
@@ -26,7 +26,7 @@ vi.mock('firebase/auth', async () => {
 vi.mock('firebase/firestore', async () => {
     const actual = await vi.importActual('firebase/firestore');
     return {
-        ...(actual as any),
+        ...(actual as Record<string, unknown>),
         getDoc: vi.fn(() => Promise.resolve({
             exists: () => true,
             data: () => ({

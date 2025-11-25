@@ -54,7 +54,7 @@ const puterScriptFlow = ai.defineFlow({
 }, async ({prompt}) => {
   const result = await ai.generate({
     model: "googleai/gemini-1.5-flash",
-    prompt: `Generate a Puter.js script for: \"${prompt}\". Only raw code.`,
+    prompt: `Generate a Puter.js script for: "${prompt}". Only raw code.`,
   });
   return {script: result.text};
 });
@@ -351,6 +351,125 @@ export const generateChatCompletion = https.onCall(
         throw new https.HttpsError(
             "internal",
             "The AI is currently unavailable. Please try again later.",
+        );
+      }
+    });
+
+// --- Stripe Checkout & Payment Functions ---
+
+export const createCheckoutSession = https.onCall(
+    {secrets: [stripeSecretKey]},
+    async (request) => {
+      if (!request.auth) {
+        throw new https.HttpsError("unauthenticated", "User must be authenticated.");
+      }
+
+      const {priceId, successUrl, cancelUrl} = request.data;
+
+      if (!priceId || !successUrl || !cancelUrl) {
+        throw new https.HttpsError(
+            "invalid-argument",
+            "priceId, successUrl, and cancelUrl are required parameters.",
+        );
+      }
+
+      try {
+        const userId = request.auth.uid;
+        const userDoc = await db.collection("users").doc(userId).get();
+        let customerId = userDoc.data()?.stripeId;
+
+        // Create customer if doesn't exist
+        if (!customerId) {
+          const customer = await stripe.customers.create({
+            email: request.auth.token.email,
+            metadata: {userId},
+          });
+          customerId = customer.id;
+          await db.collection("users").doc(userId).update({stripeId: customerId});
+        }
+
+        const session = await stripe.checkout.sessions.create({
+          customer: customerId,
+          payment_method_types: ["card"],
+          line_items: [
+            {
+              price: priceId,
+              quantity: 1,
+            },
+          ],
+          mode: "subscription",
+          success_url: successUrl,
+          cancel_url: cancelUrl,
+        });
+
+        return {url: session.url};
+      } catch (error) {
+        console.error("Stripe Checkout Error:", error);
+        if (error instanceof https.HttpsError) {
+          throw error;
+        }
+        throw new https.HttpsError(
+            "internal",
+            "Failed to create checkout session.",
+        );
+      }
+    });
+
+// --- Website Scraping Function ---
+
+export const scrapeWebsite = https.onCall(
+    async (request) => {
+      if (!request.auth) {
+        throw new https.HttpsError(
+            "unauthenticated",
+            "User must be authenticated.",
+        );
+      }
+
+      const {url} = request.data;
+      if (!url) {
+        throw new https.HttpsError(
+            "invalid-argument",
+            "URL is a required parameter.",
+        );
+      }
+
+      try {
+        const userId = request.auth.uid;
+
+        // Validate URL format
+        new URL(url); // This will throw if URL is invalid
+
+        // Store scrape request in Firestore
+        await db.collection("websiteIntegrations").add({
+          userId,
+          url,
+          status: "pending",
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+
+        // TODO: Implement actual scraping logic (using puppeteer, cheerio, etc.)
+        // For now, this just logs the request and stores it
+        console.log(`Website scraping initiated for URL: ${url} by user: ${userId}`);
+
+        return {
+          success: true,
+          message: "Website scraping has been queued. You'll be notified when complete.",
+        };
+      } catch (error) {
+        console.error("Website Scraping Error:", error);
+        if (error instanceof https.HttpsError) {
+          throw error;
+        }
+        if (error instanceof TypeError) {
+          throw new https.HttpsError(
+              "invalid-argument",
+              "Invalid URL format provided.",
+          );
+        }
+        throw new https.HttpsError(
+            "internal",
+            "Failed to initiate website scraping.",
         );
       }
     });

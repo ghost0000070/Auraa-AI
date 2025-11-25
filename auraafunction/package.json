@@ -13,7 +13,7 @@
   },
   "name": "functions",
   "engines": {
-    "node": "22"
+    "node": ">=22"
   },
   "dependencies": {
     "@dataconnect/admin-generated": "file:src/dataconnect-admin-generated",

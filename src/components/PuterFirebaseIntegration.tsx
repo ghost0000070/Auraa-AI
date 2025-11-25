@@ -4,7 +4,7 @@ import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/toast-hooks";
 import { Clipboard, Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { usePuter } from '@/hooks/usePuter'; // Import the new hook

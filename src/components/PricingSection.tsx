@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/firebase";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/toast-hooks";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
