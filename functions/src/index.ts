@@ -236,116 +236,123 @@ export const createCustomerPortalSession = https.onCall(
         if (error instanceof https.HttpsError) {
           throw error;
         }
-        throw a new https.HttpsError(
+        throw new https.HttpsError(
             "internal",
             "Failed to create customer portal session.",
         );
       }
     });
 
-    export const createCheckoutSession = https.onCall(
-      {secrets: [stripeSecretKey]},
-      async (request) => {
-        if (!request.auth) {
-          throw new https.HttpsError("unauthenticated", "Auth required.");
-        }
-        if (!request.data.priceId) {
-          throw new https.HttpsError(
-              "invalid-argument",
-              "priceId is a required parameter.",
-          );
-        }
-        if (!request.data.successUrl || !request.data.cancelUrl) {
-          throw new https.HttpsError(
-              "invalid-argument",
-              "successUrl and cancelUrl are required parameters.",
-          );
-        }
-    
-        const userId = request.auth.uid;
-        try {
-          const userDoc = await db.collection("users").doc(userId).get();
-          let stripeId = userDoc.data()?.stripeId;
-    
-          if (!stripeId) {
-            const customer = await stripe.customers.create({
-              email: request.auth.token.email,
-              metadata: {userId},
-            });
-            stripeId = customer.id;
-            await userDoc.ref.update({stripeId});
-          }
-    
-          const session = await stripe.checkout.sessions.create({
-            payment_method_types: ["card"],
-            mode: "subscription",
-            customer: stripeId,
-            line_items: [
-              {
-                price: request.data.priceId,
-                quantity: 1,
-              },
-            ],
-            success_url: request.data.successUrl,
-            cancel_url: request.data.cancelUrl,
-          });
-    
-          return {sessionId: session.id};
-        } catch (error) {
-          console.error("Stripe Checkout Session Error:", error);
-          if (error instanceof https.HttpsError) {
-            throw error;
-          }
-          throw new https.HttpsError(
-              "internal",
-              "Failed to create checkout session.",
-          );
-        }
-      });
+export const createCheckoutSession = https.onCall(
+    {secrets: [stripeSecretKey]},
+    async (request) => {
+      if (!request.auth) {
+        throw new https.HttpsError("unauthenticated", "Auth required.");
+      }
+      if (!request.data.priceId) {
+        throw new https.HttpsError(
+            "invalid-argument",
+            "priceId is a required parameter.",
+        );
+      }
+      if (!request.data.successUrl || !request.data.cancelUrl) {
+        throw new https.HttpsError(
+            "invalid-argument",
+            "successUrl and cancelUrl are required parameters.",
+        );
+      }
 
-      export const stripeWebhook = https.onRequest(
-        {secrets: [stripeSecretKey, stripeWebhookSecret]},
-        async (request, response) => {
-          const sig = request.headers["stripe-signature"];
-          let event;
-      
+      const userId = request.auth.uid;
+      try {
+        const userDoc = await db.collection("users").doc(userId).get();
+        let stripeId = userDoc.data()?.stripeId;
+
+        if (!stripeId) {
+          const customer = await stripe.customers.create({
+            email: request.auth.token.email,
+            metadata: {userId},
+          });
+          stripeId = customer.id;
+          await userDoc.ref.update({stripeId});
+        }
+
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ["card"],
+          mode: "subscription",
+          customer: stripeId,
+          line_items: [
+            {
+              price: request.data.priceId,
+              quantity: 1,
+            },
+          ],
+          success_url: request.data.successUrl,
+          cancel_url: request.data.cancelUrl,
+        });
+
+        return {sessionId: session.id};
+      } catch (error) {
+        console.error("Stripe Checkout Session Error:", error);
+        if (error instanceof https.HttpsError) {
+          throw error;
+        }
+        throw new https.HttpsError(
+            "internal",
+            "Failed to create checkout session.",
+        );
+      }
+    });
+
+export const stripeWebhook = https.onRequest(
+    {secrets: [stripeSecretKey, stripeWebhookSecret]},
+    async (request, response) => {
+      const sig = request.headers["stripe-signature"];
+      let event: Stripe.Event;
+
+      try {
+        event = stripe.webhooks.constructEvent(
+          request.rawBody.toString(),
+          sig,
+          stripeWebhookSecret.value()
+        ) as Stripe.Event;
+      } catch (err:any) {
+        console.error("Webhook signature verification failed.", err);
+        response.status(400).send(`Webhook Error: ${err.message}`);
+        return;
+      }
+
+      // Handle the event
+      switch (event.type) {
+        case "checkout.session.completed":
+          const session = event.data.object as Stripe.Checkout.Session;
+          const customerId = session.customer as string;
+
           try {
-            event = stripe.webhooks.constructEvent(request.rawBody, sig, stripeWebhookSecret.value());
-          } catch (err) {
-            console.error("Webhook signature verification failed.", err);
-            response.status(400).send(`Webhook Error: ${err.message}`);
-            return;
-          }
-      
-          // Handle the event
-          switch (event.type) {
-            case "checkout.session.completed":
-              const session = event.data.object as Stripe.Checkout.Session;
-              const customerId = session.customer as string;
-      
-              try {
-                // Retrieve the user from your database using the customer ID
-                const usersQuery = await db.collection("users").where("stripeId", "==", customerId).get();
-                if (usersQuery.empty) {
-                  console.error("No user found with Stripe customer ID:", customerId);
-                  break;
-                }
-      
-                const userDoc = usersQuery.docs[0];
-                await userDoc.ref.update({ is_active: true });
-                console.log(`Successfully activated subscription for user ${userDoc.id}`);
-              } catch (error) {
-                console.error("Error updating user subscription status:", error);
-              }
+            // Retrieve the user from your database using the customer ID
+            const usersQuery = await db
+              .collection("users")
+              .where("stripeId", "==", customerId)
+              .get();
+            if (usersQuery.empty) {
+              console.error("No user found with Stripe customer ID:", customerId);
               break;
-            // Add other event types to handle here
-            default:
-              console.log(`Unhandled event type ${event.type}`);
+            }
+
+            const userDoc = usersQuery.docs[0];
+            await userDoc.ref.update({ is_active: true });
+            console.log(`Successfully activated subscription for user ${userDoc.id}`);
+          } catch (error) {
+            console.error("Error updating user subscription status:", error);
           }
-      
-          response.json({received: true});
-        },
-      );
+          break;
+        // Add other event types to handle here
+        default:
+          console.log(`Unhandled event type ${event.type}`);
+      }
+
+      response.json({ received: true });
+    }
+);
 
 export const updatePlatformStats = onSchedule("every 24 hours", async () => {
   try {

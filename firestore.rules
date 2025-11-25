@@ -1,30 +1,36 @@
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // Helper function to check ownership
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // Helper function to check ownership of deployed employee
+    function isEmployeeOwner(employeeId) {
+        return get(/databases/$(database)/documents/deployedEmployees/$(employeeId)).data.userId == request.auth.uid;
+    }
 
     // Default deny all access
     match /{document=**} {
       allow read, write: if false;
     }
 
-    // Users can read and update their own profile, but not delete it.
-    // New users can create their own profile.
+    // Users: Can only read/write their own user document.
+    // This allows them to update their own profile information but not others.
     match /users/{userId} {
-      allow read, update: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null;
+      allow read, write: if isOwner(userId);
     }
 
-    // Users can create, read, and update their own business profile.
+    // Business Profiles: Users can only create, read, and update their own business profile.
     match /businessProfiles/{userId} {
-       allow read, update, create: if request.auth != null && request.auth.uid == userId;
+       allow read, update, create: if isOwner(userId);
     }
 
-    // Users can create and read their own deployed employees.
-    // Updates and deletes are disallowed to prevent tampering.
+    // Deployed Employees: Users can manage their own deployed employees.
     match /deployedEmployees/{employeeId} {
-      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read, write: if request.auth != null && isEmployeeOwner(employeeId);
     }
     
     // Users can create analytics events, but not read or modify them.
@@ -48,7 +54,7 @@ service cloud.firestore {
     match /platform_stats/{statId} {
         allow read, write: if false;
     }
-    
+
     // Stripe customer data is not client-accessible.
     match /customers/{userId} {
         allow read, write: if false;

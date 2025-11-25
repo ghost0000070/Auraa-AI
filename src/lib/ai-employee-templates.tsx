@@ -1,3 +1,4 @@
+
 import {
   Megaphone,
   DollarSign,
@@ -19,9 +20,22 @@ import {
   Stethoscope,
   MessageSquareText,
   Workflow,
+  Icon as LucideIcon,
 } from "lucide-react";
 
-export const templates = [
+export interface AITemplate {
+  id: string;
+  name: string;
+  description: string;
+  Icon: LucideIcon;
+  category: string;
+  exampleTasks: string[];
+  backendTask: string;
+  personality?: string;
+  skills?: string[];
+}
+
+export const templates: AITemplate[] = [
   {
     id: "1",
     name: "Marketing Pro",

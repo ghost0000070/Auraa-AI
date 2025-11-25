@@ -1,94 +1,87 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { httpsCallable } from "firebase/functions";
-import { functions } from "@/firebase";
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
-const plans = [
-  {
-    name: "Standard",
-    price: "$10",
-    priceId: "price_1PJNybF4O9ATi3lMTsV0Ea5Z",
-    features: [
-      "Access to all AI Employees",
-      "Up to 1,000 requests per month",
-      "Standard support",
-    ],
-  },
-  {
-    name: "Premium",
-    price: "$25",
-    priceId: "price_1PJNzwF4O9ATi3lM4nK5p2I3",
-    features: [
-      "Access to all AI Employees",
-      "Unlimited requests",
-      "Priority support",
-      "Custom AI Employee creation",
-    ],
-  },
-];
-
-export const PricingPage = () => {
-  const { user } = useAuth();
+const PricingPage = () => {
+  const { user, subscriptionStatus } = useAuth();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubscribe = async (priceId: string) => {
+  const premiumPriceId = 'price_1Oxx1WE07jSj9L3g8S1JyM1' // Replace with your actual Price ID
+
+  useEffect(() => {
     if (!user) {
-      navigate("/auth");
+      navigate('/auth');
+    }
+  }, [user, navigate]);
+
+  const handleCheckout = async () => {
+    if (!user) {
+      toast.error("You must be logged in to subscribe.");
       return;
     }
 
-    const createCheckoutSession = httpsCallable(
-      functions,
-      "createCheckoutSession"
-    );
-
+    setIsLoading(true);
     try {
-      const result = await createCheckoutSession({ priceId });
-      const data = result.data as { url: string };
-      window.location.href = data.url;
+      // Call the createCheckoutSession function
+      const response = await fetch('/api/createCheckoutSession', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId: premiumPriceId,
+          successUrl: `${window.location.origin}/dashboard`,
+          cancelUrl: `${window.location.origin}/pricing`,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.sessionId) {
+        // Redirect to Stripe Checkout
+        window.location.href = `https://checkout.stripe.com/session/${data.sessionId}`;
+      } else {
+        toast.error("Failed to initiate checkout.");
+      }
     } catch (error) {
-      console.error("Error creating checkout session:", error);
-      toast.error("An error occurred while creating the checkout session.");
+      console.error("Checkout Error:", error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto py-20 px-6">
-      <div className="text-center mb-16">
-        <h2 className="text-4xl md:text-5xl font-bold mb-6">
-          Choose Your Plan
-        </h2>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Unlock the full potential of Auraa with our subscription plans.
-        </p>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {plans.map((plan) => (
-          <Card key={plan.name} className="flex flex-col">
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-center">{plan.name}</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col flex-grow">
-              <p className="text-5xl font-bold text-center mb-6">{plan.price}<span className="text-lg font-normal">/month</span></p>
-              <ul className="space-y-4 mb-8">
-                {plan.features.map((feature, index) => (
-                  <li key={index} className="flex items-center">
-                    <CheckCircle className="w-6 h-6 text-green-500 mr-3" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button onClick={() => handleSubscribe(plan.priceId)} className="w-full mt-auto">
-                Subscribe
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="container mx-auto py-8">
+        <h1 className="text-3xl font-bold text-center mb-6">Pricing & Subscription</h1>
+        
+        <Card className="max-w-md mx-auto">
+          <CardContent className="p-6">
+            <div className="mb-4">
+              <h2 className="text-2xl font-semibold">Premium Plan</h2>
+              <p className="text-muted-foreground">Unlock all features and AI employees.</p>
+            </div>
+
+            <div className="text-center">
+              <p className="text-3xl font-bold">$29.99 / month</p>
+              {subscriptionStatus?.subscribed ? (
+                <p className="text-green-500">You are already subscribed!</p>
+              ) : (
+                <Button onClick={handleCheckout} disabled={isLoading}>
+                  {isLoading ? 'Loading...' : 'Subscribe Now'}
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
 };
+
+export default PricingPage;
