@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, XCircle, Clock, Zap } from 'lucide-react';
 import { db } from "@/firebase";
-import { collection, getDocs, doc, setDoc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '@/hooks/useAuth';
 import SubscriptionGuard from "@/components/SubscriptionGuard";
 import { Header } from "@/components/Header";

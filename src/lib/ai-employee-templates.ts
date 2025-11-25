@@ -1,13 +1,42 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.templates = void 0;
-var lucide_react_1 = require("lucide-react");
-exports.templates = [
+
+import {
+  Megaphone,
+  DollarSign,
+  MessageSquareText,
+  Database,
+  Users,
+  Code,
+  GanttChart,
+  Scale,
+  PiggyBank,
+  CalendarDays,
+  Settings,
+  Boxes,
+  ShieldCheck,
+  FlaskConical,
+  Stethoscope,
+  Workflow,
+  Icon as LucideIcon,
+} from "lucide-react";
+
+export interface AITemplate {
+  id: string;
+  name: string;
+  description: string;
+  Icon: LucideIcon;
+  category: string;
+  exampleTasks: string[];
+  backendTask: string;
+  personality?: string;
+  skills?: string[];
+}
+
+export const templates: AITemplate[] = [
     {
         id: "1",
         name: "Marketing Pro",
         description: "Generates marketing copy, analyzes data, and suggests campaigns.",
-        Icon: lucide_react_1.Megaphone,
+        Icon: Megaphone,
         category: "Marketing",
         exampleTasks: [
             "Analyze recent campaign data for our new product.",
@@ -20,7 +49,7 @@ exports.templates = [
         id: "2",
         name: "Sales Sidekick",
         description: "Automates sales outreach, tracks leads, and manages contacts.",
-        Icon: lucide_react_1.DollarSign,
+        Icon: DollarSign,
         category: "Sales",
         exampleTasks: [
             "Draft a follow-up email to the lead from yesterday.",
@@ -33,7 +62,7 @@ exports.templates = [
         id: "3",
         name: "Support Specialist",
         description: "Handles customer support tickets and provides assistance.",
-        Icon: lucide_react_1.MessageSquareText,
+        Icon: MessageSquareText,
         category: "Support",
         exampleTasks: [
             "Respond to the customer ticket regarding a billing issue.",
@@ -46,7 +75,7 @@ exports.templates = [
         id: "4",
         name: "Business Analyst",
         description: "Analyzes business data to find actionable insights.",
-        Icon: lucide_react_1.Database,
+        Icon: Database,
         category: "Business",
         exampleTasks: [
             "Analyze the sales data from the last quarter.",
@@ -59,7 +88,7 @@ exports.templates = [
         id: "5",
         name: "HR Helper",
         description: "Automates repetitive HR tasks and manages employee data.",
-        Icon: lucide_react_1.Users,
+        Icon: Users,
         category: "HR",
         exampleTasks: [
             "Draft a job description for a new software engineer role.",
@@ -72,7 +101,7 @@ exports.templates = [
         id: "6",
         name: "Code Companion",
         description: "Generates code snippets and assists with development tasks.",
-        Icon: lucide_react_1.Code,
+        Icon: Code,
         category: "Development",
         exampleTasks: [
             "Write a Python script to scrape data from a website.",
@@ -85,7 +114,7 @@ exports.templates = [
         id: "7",
         name: "Project Planner",
         description: "Manages and prioritizes project tasks, deadlines, and resources.",
-        Icon: lucide_react_1.GanttChart,
+        Icon: GanttChart,
         category: "Project Management",
         exampleTasks: [
             "Create a project plan for our new mobile app.",
@@ -98,7 +127,7 @@ exports.templates = [
         id: "8",
         name: "Legal Eagle",
         description: "Reviews legal documents and provides analysis.",
-        Icon: lucide_react_1.Scale,
+        Icon: Scale,
         category: "Legal",
         exampleTasks: [
             "Review our new terms of service for potential issues.",
@@ -111,7 +140,7 @@ exports.templates = [
         id: "9",
         name: "Finance Guru",
         description: "Analyzes financial data and generates reports.",
-        Icon: lucide_react_1.PiggyBank,
+        Icon: PiggyBank,
         category: "Finance",
         exampleTasks: [
             "Analyze our spending from the last quarter.",
@@ -124,7 +153,7 @@ exports.templates = [
         id: "10",
         name: "Personal Assistant",
         description: "Organizes and manages personal tasks and schedules.",
-        Icon: lucide_react_1.CalendarDays,
+        Icon: CalendarDays,
         category: "Personal",
         exampleTasks: [
             "Schedule a meeting with my team for tomorrow afternoon.",
@@ -137,7 +166,7 @@ exports.templates = [
         id: "11",
         name: "IT Troubleshooter",
         description: "Troubleshoots and resolves IT issues.",
-        Icon: lucide_react_1.Settings,
+        Icon: Settings,
         category: "IT",
         exampleTasks: [
             "Troubleshoot my slow internet connection.",
@@ -150,7 +179,7 @@ exports.templates = [
         id: "12",
         name: "Supply Chain Optimizer",
         description: "Optimizes a supply chain for efficiency and cost savings.",
-        Icon: lucide_react_1.Boxes,
+        Icon: Boxes,
         category: "Operations",
         exampleTasks: [
             "Analyze our current shipping routes and suggest improvements.",
@@ -163,7 +192,7 @@ exports.templates = [
         id: "13",
         name: "Security Sentinel",
         description: "Analyzes potential security threats and recommends actions.",
-        Icon: lucide_react_1.ShieldCheck,
+        Icon: ShieldCheck,
         category: "Security",
         exampleTasks: [
             "Investigate the suspicious email I received this morning.",
@@ -176,7 +205,7 @@ exports.templates = [
         id: "14",
         name: "Product Pioneer",
         description: "Analyzes customer feedback for product improvement ideas.",
-        Icon: lucide_react_1.FlaskConical,
+        Icon: FlaskConical,
         category: "Product",
         exampleTasks: [
             "Summarize the customer feedback from our latest survey.",
@@ -189,12 +218,12 @@ exports.templates = [
         id: "15",
         name: "Healthcare Hero",
         description: "Manages and updates patient medical records.",
-        Icon: lucide_react_1.Stethoscope,
+        Icon: Stethoscope,
         category: "Healthcare",
         exampleTasks: [
-            "Update the patient\'s medical history with their latest test results.",
+            "Update the patient's medical history with their latest test results.",
             "Schedule a follow-up appointment for the patient.",
-            "Create a summary of the patient\'s recent visit.",
+            "Create a summary of the patient's recent visit.",
         ],
         backendTask: "managePatientRecords",
     },
@@ -202,7 +231,7 @@ exports.templates = [
         id: "16",
         name: "AI Team Orchestrator",
         description: "Orchestrates a team of AI agents to accomplish a goal.",
-        Icon: lucide_react_1.Workflow,
+        Icon: Workflow,
         category: "AI",
         exampleTasks: [
             "Coordinate the marketing and sales teams to launch a new product.",

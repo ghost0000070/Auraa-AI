@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Zap, Users, BarChart, PenTool } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
+import { templates as aiEmployeeTemplates } from '@/lib/ai-employee-templates';
 
 const AITeamWorkflows: React.FC = () => {
     const navigate = useNavigate();

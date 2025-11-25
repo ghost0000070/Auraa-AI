@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import React, { useState } from 'react';
 import AddWebsiteIntegration from '@/components/integrations/AddWebsiteIntegration';
 import { FirebaseWebsiteIntegrations } from '@/components/integrations/FirebaseWebsiteIntegrations';
 import { useAgentTasks } from '@/hooks/useAgentTasks';
