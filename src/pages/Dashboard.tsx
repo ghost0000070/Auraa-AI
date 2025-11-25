@@ -1,33 +1,19 @@
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/toast-hooks";
-import { db, functions } from "@/firebase";
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { functions } from "@/firebase";
 import { httpsCallable } from 'firebase/functions';
 
 import AITeamDashboard from '@/components/AITeamDashboard';
 import { QuickDeploymentWidget } from '@/components/QuickDeploymentWidget';
-import { AITeamDebugger } from '@/components/AITeamDebugger';
 import { DeploymentDashboard } from '@/components/DeploymentDashboard';
 import { AnalyticsSection } from '@/components/AnalyticsSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Dashboard() {
-  const { user, loading, subscriptionStatus } = useAuth();
-  const navigate = useNavigate();
+  const { user, loading, isAdmin, subscriptionStatus, signOut } = useAuth();
 
-  // If user is owner, they are always subscribed
-  const isOwner = user?.email === 'ghostspooks@icloud.com';
-  const isSubscriber = isOwner || subscriptionStatus?.subscribed;
-
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
+  const isSubscriber = isAdmin || subscriptionStatus?.subscribed;
 
   const handleStripePortal = async () => {
     if (!user) {
@@ -56,11 +42,9 @@ export default function Dashboard() {
     }
   };
   
-  // Define type for template
   interface Template {
       id: string;
       name: string;
-      // other properties
   }
 
   const handleDeploy = async (template: Template) => {
@@ -74,21 +58,22 @@ export default function Dashboard() {
     }
 
     try {
-        await addDoc(collection(db, 'aiEmployeeDeploymentRequests'), {
-            user_id: user.uid,
-            ai_helper_template_id: template.id,
-            status: 'pending',
-            created_at: serverTimestamp(),
+        const deployFunction = httpsCallable(functions, 'deployAiEmployee');
+        const result = await deployFunction({
+            deploymentRequest: {
+                ai_helper_template_id: template.id,
+                name: template.name,
+            }
         });
         toast({
-            title: "Deployment Requested",
-            description: `Your request to deploy ${template.name} has been submitted.`,
+            title: "Deployment Successful",
+            description: (result.data as { message: string }).message,
         });
     } catch (error) {
-        console.error("Error creating deployment request: ", error);
+        console.error("Error deploying AI employee:", error);
         toast({
             title: "Deployment Error",
-            description: "There was an error submitting your deployment request.",
+            description: "There was an error deploying your AI employee.",
             variant: "destructive",
         });
     }
@@ -109,9 +94,7 @@ export default function Dashboard() {
         <h1 className="text-2xl font-bold">Auraa Dashboard</h1>
         <div className="flex items-center space-x-4">
           <Button onClick={handleStripePortal}>Manage Subscription</Button>
-          <Link to="/auth">
-            <Button variant="outline">Logout</Button>
-          </Link>
+          <Button variant="outline" onClick={signOut}>Logout</Button>
         </div>
       </header>
 
@@ -136,9 +119,6 @@ export default function Dashboard() {
                     </div>
                     <div className="md:col-span-1">
                         <QuickDeploymentWidget onDeploy={handleDeploy} />
-                        <div className="mt-6">
-                        <AITeamDebugger />
-                        </div>
                     </div>
                 </div>
             </TabsContent>

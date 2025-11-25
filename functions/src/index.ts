@@ -27,7 +27,7 @@ const ai = genkit({
   ],
 });
 
-// --- Existing Genkit Flows ---
+// --- Genkit Flows ---
 const menuSuggestionFlow = ai.defineFlow({
   name: "menuSuggestionFlow",
   inputSchema: z.string().describe("A restaurant theme").default("seafood"),
@@ -54,25 +54,18 @@ const puterScriptFlow = ai.defineFlow({
 }, async ({prompt}) => {
   const result = await ai.generate({
     model: "googleai/gemini-1.5-flash",
-    prompt: `Generate a Puter.js script for: "${prompt}". Only raw code.`,
+    prompt: `Generate a Puter.js script for: \"${prompt}\". Only raw code.`,
   });
   return {script: result.text};
 });
 
-/**
- * Calls the Claude Sonnet 3.5 model from Anthropic.
- * @param {string} prompt The user's prompt.
- * @param {string} system The system prompt to guide the AI.
- * @param {string} apiKey The Anthropic API key.
- * @return {Promise<string>} The AI's response text.
- * @throws {https.HttpsError} If the API key is missing or a demo key.
- * @throws {Error} If the API response is in an unexpected format.
- */
+// --- Helper Functions ---
+
 async function callClaudeSonnet(prompt: string, system: string, apiKey: string) {
-  if (!apiKey || apiKey.toLowerCase() === "demo") {
+  if (!apiKey) {
     throw new https.HttpsError(
         "failed-precondition",
-        "Anthropic API Key is missing or is a demo key.",
+        "Anthropic API Key is missing.",
     );
   }
 
@@ -91,53 +84,89 @@ async function callClaudeSonnet(prompt: string, system: string, apiKey: string) 
   throw new Error("Unexpected response format from Anthropic API.");
 }
 
-/**
- * Executes a given task by calling an AI model.
- * @param {string} taskName The name of the task.
- * @param {unknown} data The data for the task.
- * @param {string} context The context or instructions for the task.
- * @param {{value: () => string}} anthropicKey The secret for the API key.
- * @return {Promise<object>} The result of the task execution.
- * @throws {https.HttpsError} Throws an error if the task fails.
- */
-const executeTask = async (
-    taskName: string,
-    data: unknown,
-    context: string,
-    anthropicKey: { value: () => string },
-) => {
-  try {
-    const prompt = JSON.stringify(data);
-    const system = `You are an expert AI employee performing: ${taskName}. ` +
-      `Context: ${context}. Use Claude 3.5 Sonnet. Return valid JSON only.`;
-    const result = await callClaudeSonnet(prompt, system, anthropicKey.value());
-
-    let parsedResult;
-    try {
-      parsedResult = JSON.parse(result);
-    } catch (e) {
-      parsedResult = {textOutput: result};
-    }
-
-    return {
-      success: true,
-      task: taskName,
-      result: parsedResult,
-      timestamp: new Date().toISOString(),
-      model: "claude-3-5-sonnet",
-    };
-  } catch (error) {
-    console.error(`Error in ${taskName}:`, error);
-    if (error instanceof https.HttpsError) {
-      throw error;
-    }
-    throw new https.HttpsError(
-        "internal",
-        `An error occurred while executing ${taskName}.`,
-    );
-  }
+const taskContexts: Record<string, string> = {
+    workflowExecution: "Analyze the provided workflow and suggest improvements.",
+    businessSync: "Synchronize data with external business systems.",
+    analyzeMarketingData: "Analyze marketing data to identify trends and insights.",
+    automateSalesOutreach: "Automate sales outreach emails and follow-ups.",
+    handleSupportTicket: "Handle a customer support ticket by providing a helpful response.",
+    analyzeBusinessData: "Analyze business data to find actionable insights.",
+    automateHrTasks: "Automate repetitive HR tasks.",
+    generateCode: "Generate code based on the provided specifications.",
+    manageProjectTasks: "Manage and prioritize project tasks.",
+    analyzeLegalDocument: "Review a legal document for potential issues.",
+    analyzeFinancialData: "Analyze financial data and generate a report.",
+    managePersonalTasks: "Organize and manage personal tasks.",
+    resolveItIssue: "Troubleshoot and resolve an IT issue.",
+    optimizeSupplyChain: "Optimize a supply chain for efficiency and cost savings.",
+    analyzeSecurityThreat: "Analyze a potential security threat and recommend actions.",
+    analyzeProductFeedback: "Analyze customer feedback for product improvement ideas.",
+    managePatientRecords: "Manage and update patient medical records.",
+    orchestrateAiTeam: "Orchestrate a team of AI agents to accomplish a goal.",
 };
 
+async function checkSubscription(userId: string): Promise<void> {
+    const userDoc = await db.collection("users").doc(userId).get();
+    if (!userDoc.exists || !userDoc.data()?.is_active) {
+        throw new https.HttpsError(
+            "failed-precondition",
+            "A active subscription is required to perform this action.",
+        );
+    }
+}
+
+// --- Callable Functions ---
+
+export const executeAiTask = https.onCall(
+    {secrets: [anthropicApiKey]},
+    async (request) => {
+        if (!request.auth) {
+            throw new https.HttpsError("unauthenticated", "User must be authenticated.");
+        }
+
+        const userId = request.auth.uid;
+        await checkSubscription(userId);
+
+        const {taskName, data} = request.data;
+
+        if (!taskName || !taskContexts[taskName]) {
+            throw new https.HttpsError("invalid-argument", `Invalid task name: ${taskName}`);
+        }
+
+        const context = taskContexts[taskName];
+
+        try {
+            const prompt = JSON.stringify(data);
+            const system = `You are an expert AI employee performing: ${taskName}. Context: ${context}. Use Claude 3.5 Sonnet. Return valid JSON only.`;
+            const result = await callClaudeSonnet(prompt, system, anthropicApiKey.value());
+
+            let parsedResult;
+            try {
+                parsedResult = JSON.parse(result);
+            } catch (e) {
+                console.warn("AI output was not valid JSON, returning as text.", {taskName, result});
+                parsedResult = {textOutput: result};
+            }
+
+            return {
+                success: true,
+                task: taskName,
+                result: parsedResult,
+                timestamp: new Date().toISOString(),
+                model: "claude-3-5-sonnet",
+            };
+        } catch (error) {
+            console.error(`Error in ${taskName} for user ${userId}:`, error);
+            if (error instanceof https.HttpsError) {
+                throw error;
+            }
+            throw new https.HttpsError(
+                "internal",
+                `An error occurred while executing ${taskName}.`,
+            );
+        }
+    },
+);
 
 export const menuSuggestion = https.onCall(
     {secrets: [apiKey]},
@@ -241,44 +270,55 @@ export const deployAiEmployee = https.onCall(async (request) => {
   if (!request.auth) {
     throw new https.HttpsError("unauthenticated", "User must be logged in.");
   }
+  const userId = request.auth.uid; // Use authenticated user's ID
 
-  const {deploymentRequest} = request.data;
-  const {
-    user_id: userId,
-    ai_helper_template_id: aiHelperTemplateId,
-    deployment_config: deploymentConfig,
-    name,
-  } = deploymentRequest;
+  const deploymentRequestSchema = z.object({
+      ai_helper_template_id: z.string(),
+      deployment_config: z.record(z.unknown()).optional(),
+      name: z.string().min(1, "Deployment name cannot be empty."),
+  });
 
-  if (!name) {
-    throw new https.HttpsError(
-        "invalid-argument",
-        "The deployment request must include a name.",
-    );
+  const parseResult = deploymentRequestSchema.safeParse(request.data.deploymentRequest);
+
+  if (!parseResult.success) {
+      throw new https.HttpsError(
+          "invalid-argument",
+          "Invalid deployment request: " + parseResult.error.flatten().fieldErrors,
+      );
   }
+
+  const {
+      ai_helper_template_id: aiHelperTemplateId,
+      deployment_config: deploymentConfig,
+      name,
+  } = parseResult.data;
 
   try {
-    await db.collection("deployedEmployees").add({
-      userId: userId,
-      templateId: aiHelperTemplateId,
-      name: name,
-      status: "active",
-      deploymentConfig: deploymentConfig || {},
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
+      const deploymentData = {
+          userId: userId, // Securely set the user ID
+          templateId: aiHelperTemplateId,
+          name: name,
+          status: "active",
+          deploymentConfig: deploymentConfig || {},
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      };
+      await db.collection("deployedEmployees").add(deploymentData);
 
-    await db.collection("deploymentRequests").add({
-      ...deploymentRequest,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      status: "completed",
-    });
+      // Also record the original, validated request for logging
+      await db.collection("deploymentRequests").add({
+          ...parseResult.data,
+          userId: userId, // Ensure logged request also has correct user ID
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          status: "completed",
+      });
 
-    return {success: true};
+      return {success: true, message: `AI Employee '${name}' deployed successfully.`};
   } catch (error) {
-    console.error("Deployment error:", error);
-    throw new https.HttpsError("internal", "Failed to deploy AI employee.");
+      console.error("Deployment error:", error);
+      throw new https.HttpsError("internal", "Failed to deploy AI employee.");
   }
 });
+
 
 // --- Primary AI Functions ---
 
@@ -314,168 +354,3 @@ export const generateChatCompletion = https.onCall(
         );
       }
     });
-
-// --- Task-Specific AI Functions ---
-
-export const workflowExecution = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "workflowExecution",
-        req.data,
-        "Analyze the provided workflow and suggest improvements.",
-        anthropicApiKey,
-    ),
-);
-export const businessSync = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "businessSync",
-        req.data,
-        "Synchronize data with external business systems.",
-        anthropicApiKey,
-    ),
-);
-export const analyzeMarketingData = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "analyzeMarketingData",
-        req.data,
-        "Analyze marketing data to identify trends and insights.",
-        anthropicApiKey,
-    ),
-);
-export const automateSalesOutreach = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "automateSalesOutreach",
-        req.data,
-        "Automate sales outreach emails and follow-ups.",
-        anthropicApiKey,
-    ),
-);
-export const handleSupportTicket = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "handleSupportTicket",
-        req.data,
-        "Handle a customer support ticket by providing a helpful response.",
-        anthropicApiKey,
-    ),
-);
-export const analyzeBusinessData = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "analyzeBusinessData",
-        req.data,
-        "Analyze business data to find actionable insights.",
-        anthropicApiKey,
-    ),
-);
-export const automateHrTasks = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "automateHrTasks",
-        req.data,
-        "Automate repetitive HR tasks.",
-        anthropicApiKey,
-    ),
-);
-export const generateCode = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "generateCode",
-        req.data,
-        "Generate code based on the provided specifications.",
-        anthropicApiKey,
-    ),
-);
-export const manageProjectTasks = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "manageProjectTasks",
-        req.data,
-        "Manage and prioritize project tasks.",
-        anthropicApiKey,
-    ),
-);
-export const analyzeLegalDocument = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "analyzeLegalDocument",
-        req.data,
-        "Review a legal document for potential issues.",
-        anthropicApiKey,
-    ),
-);
-export const analyzeFinancialData = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "analyzeFinancialData",
-        req.data,
-        "Analyze financial data and generate a report.",
-        anthropicApiKey,
-    ),
-);
-export const managePersonalTasks = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "managePersonalTasks",
-        req.data,
-        "Organize and manage personal tasks.",
-        anthropicApiKey,
-    ),
-);
-export const resolveItIssue = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "resolveItIssue",
-        req.data,
-        "Troubleshoot and resolve an IT issue.",
-        anthropicApiKey,
-    ),
-);
-export const optimizeSupplyChain = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "optimizeSupplyChain",
-        req.data,
-        "Optimize a supply chain for efficiency and cost savings.",
-        anthropicApiKey,
-    ),
-);
-export const analyzeSecurityThreat = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "analyzeSecurityThreat",
-        req.data,
-        "Analyze a potential security threat and recommend actions.",
-        anthropicApiKey,
-    ),
-);
-export const analyzeProductFeedback = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "analyzeProductFeedback",
-        req.data,
-        "Analyze customer feedback for product improvement ideas.",
-        anthropicApiKey,
-    ),
-);
-export const managePatientRecords = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "managePatientRecords",
-        req.data,
-        "Manage and update patient medical records.",
-        anthropicApiKey,
-    ),
-);
-export const orchestrateAiTeam = https.onCall(
-    {secrets: [anthropicApiKey]},
-    async (req) => executeTask(
-        "orchestrateAiTeam",
-        req.data,
-        "Orchestrate a team of AI agents to accomplish a goal.",
-        anthropicApiKey,
-    ),
-);

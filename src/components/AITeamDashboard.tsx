@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot, doc, getDoc, query, where, orderBy, updateDoc, Timestamp, limit } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, orderBy, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from "sonner";
+import { formatDistanceToNow } from 'date-fns';
 import { 
-  Activity, 
-  Code, 
-  ChevronDown,
-  ChevronUp,
-  AlertCircle,
-  Users,
-  CheckCircle,
-  Clock,
-  TrendingUp,
-  MessageSquare
+  Activity, Code, ChevronDown, ChevronUp, AlertCircle, ArrowRight, CheckCircle, Clock, TrendingUp, MessageSquare, Loader2 
 } from 'lucide-react';
 import {
   Collapsible,
@@ -30,14 +22,11 @@ interface AgentTask {
   id: string;
   action: string;
   status: 'success' | 'running' | 'queued' | 'error';
-  parameters: {
-    url?: string;
-    [key: string]: unknown;
-  };
+  parameters: { url?: string; [key: string]: unknown; };
   result?: unknown;
   error?: string;
-  finished_at?: Timestamp;
-  createdAt: Timestamp;
+  finished_at?: { seconds: number; nanoseconds: number; };
+  createdAt: { seconds: number; nanoseconds: number; };
 }
 
 interface Communication {
@@ -46,14 +35,14 @@ interface Communication {
   recipient_employee: string;
   content: string;
   is_read: boolean;
-  created_at?: Timestamp;
+  created_at?: { seconds: number; nanoseconds: number; };
 }
 
 interface Metric {
   id: string;
   name: string;
   value: number;
-  timestamp: Timestamp;
+  timestamp: { seconds: number; nanoseconds: number; };
 }
 
 interface Employee {
@@ -65,147 +54,106 @@ interface Employee {
   currentTask?: string;
 }
 
-const AITeamDashboard = () => {
+const AITeamDashboard: React.FC = () => {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<AgentTask[]>([]);
   const [communications, setCommunications] = useState<Communication[]>([]);
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [expandedTask, setExpandedTask] = useState<string | null>(null);
+  const [loading, setLoading] = useState<Record<string, boolean>>({
+    tasks: true, comms: true, metrics: true, employees: true
+  });
+
+  const handleLoading = (section: string, status: boolean) => {
+    setLoading(prev => ({...prev, [section]: status}));
+  }
+  
+  const allDataLoaded = Object.values(loading).every(v => !v);
 
   useEffect(() => {
     if (user) {
-      const tasksQuery = query(
-        collection(db, 'agent_tasks'),
-        where('owner_user', '==', user.uid),
-        orderBy('createdAt', 'desc')
-      );
-      
-      const commsQuery = query(
-        collection(db, 'ai_team_communications'),
-        where('user_id', '==', user.uid),
-        orderBy('created_at', 'desc')
-      );
+      const collections = [
+        { name: 'agent_tasks', stateSetter: setTasks, orderByField: 'createdAt' },
+        { name: 'ai_team_communications', stateSetter: setCommunications, orderByField: 'created_at' },
+        { name: 'agent_metrics', stateSetter: setMetrics, orderByField: 'timestamp' },
+        { name: 'aiEmployees', stateSetter: setEmployees, isUserScoped: true },
+      ];
 
-      const metricsQuery = query(
-        collection(db, 'agent_metrics'),
-        where('user_id', '==', user.uid),
-        orderBy('timestamp', 'desc')
-      );
+      const unsubscribes = collections.map(({ name, stateSetter, orderByField, isUserScoped }) => {
+        handleLoading(name, true);
+        const userField = isUserScoped ? 'userId' : 'owner_user';
+        
+        let q = query(
+          collection(db, name),
+          where(userField, '==', user.uid)
+        );
 
-      const employeesQuery = query(
-        collection(db, 'aiEmployees'), // Assuming this is the collection for employees
-        where('userId', '==', user.uid)
-      );
-
-      const unsubscribeTasks = onSnapshot(tasksQuery, (snapshot) => {
-        const tasksData = snapshot.docs.map(docSnapshot => ({ id: docSnapshot.id, ...docSnapshot.data() } as AgentTask));
-        setTasks(tasksData);
-      }, (error) => {
-        console.error("Error fetching agent tasks: ", error);
-        toast.error("Failed to fetch agent tasks.");
-      });
-
-      const unsubscribeComms = onSnapshot(commsQuery, async (snapshot) => {
-        try {
-          const commsData = await Promise.all(snapshot.docs.map(async (docSnapshot) => {
-            const comm = { id: docSnapshot.id, ...docSnapshot.data() } as Communication;
-            if (!comm.is_read && comm.recipient_employee === 'User') {
-              let senderName = comm.sender_employee;
-              if(senderName && senderName !== 'System') {
-                  try {
-                      const employeeDocRef = doc(db, 'aiEmployees', senderName);
-                      const employeeDoc = await getDoc(employeeDocRef);
-                      if (employeeDoc.exists()) {
-                          const employeeData = employeeDoc.data() as { name?: string };
-                          if (employeeData?.name) {
-                            senderName = employeeData.name;
-                          }
-                      }
-                  } catch(e) {
-                      console.error(`Error fetching employee document for ${senderName}:`, e);
-                      // Fallback to original sender name
-                  }
-              }
-
-              toast(`New Message from ${senderName}`, {
-                description: comm.content,
-              });
-              await updateDoc(docSnapshot.ref, { is_read: true });
-            }
-            return comm;
-          }));
-          setCommunications(commsData);
-        } catch (error) {
-          console.error("Error processing communications: ", error);
-          toast.error("Failed to process team communications.");
+        if(orderByField) {
+            q = query(q, orderBy(orderByField, 'desc'));
         }
-      }, (error) => {
-        console.error("Error fetching team communications: ", error);
-        toast.error("Failed to fetch team communications.");
+
+        return onSnapshot(q, async (snapshot) => {
+          const data = await Promise.all(snapshot.docs.map(async (docSnapshot) => {
+            const item = { id: docSnapshot.id, ...docSnapshot.data() };
+            if (name === 'ai_team_communications' && !item.is_read) {
+              await handleNewCommunication(item as Communication, docSnapshot.ref);
+            }
+            return item;
+          }));
+          stateSetter(data as any);
+          handleLoading(name, false);
+        }, (error) => {
+          console.error(`Error fetching ${name}: `, error);
+          toast.error(`Failed to fetch ${name.replace(/_/g, ' ')}.`);
+          handleLoading(name, false);
+        });
       });
 
-      const unsubscribeMetrics = onSnapshot(metricsQuery, (snapshot) => {
-        const metricsData = snapshot.docs.map(docSnapshot => ({ id: docSnapshot.id, ...docSnapshot.data() } as Metric));
-        setMetrics(metricsData);
-      }, (error) => {
-        console.error("Error fetching performance metrics: ", error);
-        toast.error("Failed to fetch performance metrics.");
-      });
-
-      const unsubscribeEmployees = onSnapshot(employeesQuery, (snapshot) => {
-        const employeesData = snapshot.docs.map(docSnapshot => ({ 
-            id: docSnapshot.id, 
-            ...docSnapshot.data(),
-            // Mocking some data if not present in DB yet for visualization
-            status: docSnapshot.data().status || 'idle',
-            role: docSnapshot.data().role || 'AI Agent'
-        } as Employee));
-        setEmployees(employeesData);
-      });
-
-      return () => {
-        unsubscribeTasks();
-        unsubscribeComms();
-        unsubscribeMetrics();
-        unsubscribeEmployees();
-      };
+      return () => unsubscribes.forEach(unsub => unsub());
     }
   }, [user]);
 
+  async function handleNewCommunication(comm: Communication, ref: any) {
+      let senderName = comm.sender_employee;
+      if(senderName && senderName !== 'System' && senderName !== 'User') {
+          try {
+              const employeeDoc = await getDoc(doc(db, 'aiEmployees', senderName));
+              if (employeeDoc.exists()) {
+                  senderName = employeeDoc.data().name || senderName;
+              }
+          } catch(e) {
+              console.error(`Error fetching employee name for ${senderName}:`, e);
+          }
+      }
+      toast(`New Message from ${senderName}`, { description: comm.content });
+      await updateDoc(ref, { is_read: true });
+  }
+
+  // Render helpers and constants
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'success':
-      case 'active':
-        return 'bg-green-500';
-      case 'running':
-      case 'idle':
-        return 'bg-blue-500';
-      case 'queued':
-        return 'bg-yellow-500';
-      case 'error':
-      case 'offline':
-        return 'bg-red-500';
-      default:
-        return 'bg-gray-500';
+    const colors: Record<string, string> = {
+      success: 'bg-green-500', active: 'bg-green-500',
+      running: 'bg-blue-500', idle: 'bg-blue-500',
+      queued: 'bg-yellow-500',
+      error: 'bg-red-500', offline: 'bg-red-500',
+      default: 'bg-gray-500'
     }
+    return colors[status] || colors.default;
   };
   
   const getIconForAction = (action: string) => {
-    switch(action) {
-      case 'scrape_dashboard':
-      case 'login_and_scrape':
-        return <Activity className="h-5 w-5 mr-2" />;
-      default:
-        return <Code className="h-5 w-5 mr-2" />;
+    const icons: Record<string, React.ReactNode> = {
+      'scrape_dashboard': <Activity className="h-5 w-5 mr-2" />,
+      'login_and_scrape': <Activity className="h-5 w-5 mr-2" />
     }
+    return icons[action] || <Code className="h-5 w-5 mr-2" />;
   }
 
   const toggleExpand = (taskId: string) => {
     setExpandedTask(expandedTask === taskId ? null : taskId);
   };
 
-  // Calculate stats for charts
   const taskStatusCounts = tasks.reduce((acc, task) => {
     acc[task.status] = (acc[task.status] || 0) + 1;
     return acc;
@@ -213,10 +161,17 @@ const AITeamDashboard = () => {
 
   const totalTasks = tasks.length;
 
+  if (!allDataLoaded) {
+      return (
+          <div className="flex justify-center items-center min-h-[400px]">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="ml-2">Loading dashboard data...</p>
+          </div>
+      );
+  }
+
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-      
-      {/* Team Overview Section */}
       <Card className="lg:col-span-2">
         <CardHeader>
           <CardTitle>Team Overview</CardTitle>
@@ -224,7 +179,7 @@ const AITeamDashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {employees.length === 0 ? (
+            {loading.employees ? <p>Loading employees...</p> : employees.length === 0 ? (
                  <div className="col-span-2 text-center text-gray-500 py-8">
                     No employees found. Deploy an agent to see them here.
                  </div>
@@ -258,94 +213,94 @@ const AITeamDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Task Distribution / Stats */}
       <Card>
         <CardHeader>
             <CardTitle>Task Distribution</CardTitle>
         </CardHeader>
         <CardContent>
-            <div className="space-y-4">
-                <div className="flex justify-between items-center text-sm">
-                    <span className="flex items-center"><CheckCircle className="w-4 h-4 mr-2 text-green-500"/> Success</span>
-                    <span>{taskStatusCounts['success'] || 0}</span>
-                </div>
-                <Progress value={totalTasks > 0 ? ((taskStatusCounts['success'] || 0) / totalTasks) * 100 : 0} className="h-2" />
-                
-                <div className="flex justify-between items-center text-sm">
-                    <span className="flex items-center"><Activity className="w-4 h-4 mr-2 text-blue-500"/> Running</span>
-                    <span>{taskStatusCounts['running'] || 0}</span>
-                </div>
-                 <Progress value={totalTasks > 0 ? ((taskStatusCounts['running'] || 0) / totalTasks) * 100 : 0} className="h-2" />
+            {loading.tasks ? <p>Loading tasks...</p> : totalTasks === 0 ? <p className='text-center text-gray-500'>No tasks yet.</p> : (
+                <div className="space-y-4">
+                    <div className="flex justify-between items-center text-sm">
+                        <span className="flex items-center"><CheckCircle className="w-4 h-4 mr-2 text-green-500"/> Success</span>
+                        <span>{taskStatusCounts['success'] || 0}</span>
+                    </div>
+                    <Progress value={(taskStatusCounts['success'] || 0) / totalTasks * 100} className="h-2" />
+                    
+                    <div className="flex justify-between items-center text-sm">
+                        <span className="flex items-center"><Activity className="w-4 h-4 mr-2 text-blue-500"/> Running</span>
+                        <span>{taskStatusCounts['running'] || 0}</span>
+                    </div>
+                    <Progress value={(taskStatusCounts['running'] || 0) / totalTasks * 100} className="h-2" />
 
-                <div className="flex justify-between items-center text-sm">
-                    <span className="flex items-center"><Clock className="w-4 h-4 mr-2 text-yellow-500"/> Queued</span>
-                    <span>{taskStatusCounts['queued'] || 0}</span>
-                </div>
-                 <Progress value={totalTasks > 0 ? ((taskStatusCounts['queued'] || 0) / totalTasks) * 100 : 0} className="h-2" />
+                    <div className="flex justify-between items-center text-sm">
+                        <span className="flex items-center"><Clock className="w-4 h-4 mr-2 text-yellow-500"/> Queued</span>
+                        <span>{taskStatusCounts['queued'] || 0}</span>
+                    </div>
+                    <Progress value={(taskStatusCounts['queued'] || 0) / totalTasks * 100} className="h-2" />
 
-                <div className="flex justify-between items-center text-sm">
-                    <span className="flex items-center"><AlertCircle className="w-4 h-4 mr-2 text-red-500"/> Failed</span>
-                    <span>{taskStatusCounts['error'] || 0}</span>
+                    <div className="flex justify-between items-center text-sm">
+                        <span className="flex items-center"><AlertCircle className="w-4 h-4 mr-2 text-red-500"/> Failed</span>
+                        <span>{taskStatusCounts['error'] || 0}</span>
+                    </div>
+                    <Progress value={(taskStatusCounts['error'] || 0) / totalTasks * 100} className="h-2" />
                 </div>
-                 <Progress value={totalTasks > 0 ? ((taskStatusCounts['error'] || 0) / totalTasks) * 100 : 0} className="h-2" />
-            </div>
+            )}
         </CardContent>
       </Card>
-
       <Card className="lg:col-span-2">
         <CardHeader>
           <CardTitle>AI Agent Tasks</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4 max-h-[600px] overflow-y-auto">
-            {tasks.length === 0 ? (
+            {loading.tasks ? <p>Loading tasks...</p> : tasks.length === 0 ? (
                  <div className="text-center text-gray-500 py-8">No tasks recorded yet.</div>
             ) : (
                 tasks.map((task) => (
                 <Collapsible key={task.id} open={expandedTask === task.id} onOpenChange={() => toggleExpand(task.id)}>
                     <Card className="w-full">
-                    <CollapsibleTrigger asChild>
-                        <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-50 transition-colors">
-                        <div className="flex items-center">
-                            {getIconForAction(task.action)}
-                            <span className="font-semibold">{task.action?.replace(/_/g, ' ')}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <span className="text-xs text-gray-400 hidden sm:inline-block">
-                                {task.createdAt ? new Date(task.createdAt.seconds * 1000).toLocaleString() : ''}
-                            </span>
-                            <Badge className={`${getStatusColor(task.status)} text-white`}>{task.status}</Badge>
-                            <Button variant="ghost" size="sm" className="p-0 w-8 h-8">
-                            {expandedTask === task.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                            </Button>
-                        </div>
-                        </div>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                        <div className="p-4 border-t bg-gray-50/50">
-                        <p className="mb-2"><strong>ID:</strong> <span className="text-xs font-mono">{task.id}</span></p>
-                        {task.parameters?.url && <p className="mb-2"><strong>Target:</strong> <a href={task.parameters.url} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">{task.parameters.url}</a></p>}
-                        
-                        {task.result && (
-                            <div className="mt-2">
-                                <strong>Result:</strong>
-                                <pre className="mt-1 p-2 bg-gray-900 text-gray-100 rounded text-xs overflow-auto max-h-60">
-                                    {JSON.stringify(task.result, null, 2)}
-                                </pre>
+                        <CollapsibleTrigger asChild>
+                            <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-50 transition-colors">
+                                <div className="flex items-center">
+                                    {getIconForAction(task.action)}
+                                    <span className="font-semibold">{task.action?.replace(/_/g, ' ')}</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-xs text-gray-400 hidden sm:inline-block">
+                                        {task.createdAt ? new Date(task.createdAt.seconds * 1000).toLocaleString() : ''}
+                                    </span>
+                                    <Badge className={`${getStatusColor(task.status)} text-white`}>{task.status}</Badge>
+                                    <Button variant="ghost" size="sm" className="p-0 w-8 h-8">
+                                    {expandedTask === task.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                    </Button>
+                                </div>
                             </div>
-                        )}
-                        
-                        {task.error && (
-                            <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
-                                <strong>Error:</strong> {task.error}
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                            <div className="p-4 border-t bg-gray-50/50">
+                                <p className="mb-2"><strong>ID:</strong> <span className="text-xs font-mono">{task.id}</span></p>
+                                {task.parameters?.url && <p className="mb-2"><strong>Target:</strong> <a href={task.parameters.url} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">{task.parameters.url}</a></p>}
+                                
+                                {task.result && (
+                                    <div className="mt-2">
+                                        <strong>Result:</strong>
+                                        <pre className="mt-1 p-2 bg-gray-900 text-gray-100 rounded text-xs overflow-auto max-h-60">
+                                            {JSON.stringify(task.result, null, 2)}
+                                        </pre>
+                                    </div>
+                                )}
+                                
+                                {task.error && (
+                                    <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+                                        <strong>Error:</strong> {task.error}
+                                    </div>
+                                )}
+                                
+                                <p className="text-xs text-gray-500 mt-2 text-right">
+                                    Finished: {task.finished_at ? new Date(task.finished_at.seconds * 1000).toLocaleString() : 'N/A'}
+                                </p>
                             </div>
-                        )}
-                        
-                        <p className="text-xs text-gray-500 mt-2 text-right">
-                            Finished: {task.finished_at ? new Date(task.finished_at.seconds * 1000).toLocaleString() : 'N/A'}
-                        </p>
-                        </div>
-                    </CollapsibleContent>
+                        </CollapsibleContent>
                     </Card>
                 </Collapsible>
                 ))
@@ -361,7 +316,7 @@ const AITeamDashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
-            {communications.length === 0 ? (
+            {loading.comms ? <p>Loading communications...</p> : communications.length === 0 ? (
                 <div className="text-center text-gray-500 py-8 flex flex-col items-center">
                     <MessageSquare className="w-8 h-8 mb-2 opacity-20"/>
                     <p>No communications yet.</p>
@@ -397,7 +352,7 @@ const AITeamDashboard = () => {
         </CardHeader>
         <CardContent>
            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {metrics.length === 0 ? (
+              {loading.metrics ? <p>Loading metrics...</p> : metrics.length === 0 ? (
                   <div className="col-span-4 text-center text-gray-500 py-4">No metrics available.</div>
               ) : (
                   metrics.slice(0, 4).map(metric => (
@@ -421,9 +376,5 @@ const AITeamDashboard = () => {
     </div>
   );
 };
-
-// Helper for relative time if not imported
-import { formatDistanceToNow } from 'date-fns';
-import { ArrowRight } from 'lucide-react';
 
 export default AITeamDashboard;

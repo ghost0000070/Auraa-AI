@@ -5,22 +5,40 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/toast-hooks';
 import { db, functions } from '@/firebase';
-import { collection, query, where, getDocs, addDoc, serverTimestamp, orderBy, limit } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy, limit, Timestamp } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { Rocket, Loader2, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
+
+interface EmployeeTemplate {
+  id: string;
+  name: string;
+}
 
 interface DeploymentRequest {
   id: string;
   status: string;
-  createdAt: string;
+  createdAt: Timestamp;
   employeeName: string;
 }
 
-export const QuickDeploymentWidget: React.FC<{ onDeploy?: (template: {id: string, name: string}) => Promise<void> }> = ({ onDeploy }) => {
+export const QuickDeploymentWidget: React.FC = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [templates, setTemplates] = useState<EmployeeTemplate[]>([]);
   const [recentRequests, setRecentRequests] = useState<DeploymentRequest[]>([]);
+
+  const fetchTemplates = useCallback(async () => {
+    try {
+      const templatesQuery = query(collection(db, 'ai_employee_templates'));
+      const snapshot = await getDocs(templatesQuery);
+      const templatesData = snapshot.docs.map(doc => ({ id: doc.id, name: doc.data().name as string }));
+      setTemplates(templatesData);
+    } catch (error) {
+      console.error('Error fetching templates:', error);
+      toast({ title: "Error", description: "Could not fetch employee templates.", variant: "destructive" });
+    }
+  }, [toast]);
 
   const fetchRecentRequests = useCallback(async () => {
     if (!user) return;
@@ -36,62 +54,35 @@ export const QuickDeploymentWidget: React.FC<{ onDeploy?: (template: {id: string
       setRecentRequests(requests);
     } catch (error) {
       console.error('Error fetching requests:', error);
-      toast({
-        title: "Error",
-        description: "Could not fetch recent deployment requests.",
-        variant: "destructive"
-      });
     }
-  }, [user, toast]);
+  }, [user]);
 
   useEffect(() => {
+    fetchTemplates();
     fetchRecentRequests();
-  }, [fetchRecentRequests]);
+  }, [fetchTemplates, fetchRecentRequests]);
 
-  const handleQuickDeploy = async (employeeName: string) => {
+  const handleQuickDeploy = async (template: EmployeeTemplate) => {
     if (!user) {
       toast({ title: "Authentication Error", description: "You must be logged in to deploy.", variant: "destructive" });
       return;
     }
 
-    setIsLoading(employeeName);
+    setIsLoading(template.name);
     try {
-      // Find the template ID first
-      const templatesQuery = query(collection(db, 'ai_employees'), where('name', '==', employeeName));
-      let templateId = '';
-      
-      const templateSnapshot = await getDocs(templatesQuery);
+        const deployFunction = httpsCallable(functions, 'deployAiEmployee');
+        const result = await deployFunction({
+            deploymentRequest: {
+                ai_helper_template_id: template.id,
+                name: template.name,
+            }
+        });
 
-      if (!templateSnapshot.empty) {
-        templateId = templateSnapshot.docs[0].id;
-      } else {
-        // Fallback for demo purposes if template isn't in DB yet
-        templateId = employeeName.toLowerCase().replace(/\s+/g, '-');
-      }
-
-      // If a parent handler is provided, use it (for Dashboard integration)
-      if (onDeploy) {
-          await onDeploy({ id: templateId, name: employeeName });
-      } else {
-          // Default behavior
-          const newRequestRef = await addDoc(collection(db, 'deploymentRequests'), {
-            userId: user.uid,
-            employeeId: templateId,
-            employeeName: employeeName,
-            status: 'pending',
-            createdAt: serverTimestamp(),
-          });
-
-          // Optional: Trigger a cloud function if needed immediately
-          // const deployFunction = httpsCallable(functions, 'deployAiEmployee');
-          // await deployFunction({ requestId: newRequestRef.id });
-
-          toast({
-            title: "Deployment Successful!",
-            description: `${employeeName} has been deployed.`,
-          });
-      }
-
+        toast({ 
+          title: "Deployment Requested", 
+          description: (result.data as { message: string }).message 
+        });
+        
     } catch (error) {
       console.error('Quick deploy error:', error);
       toast({
@@ -101,18 +92,20 @@ export const QuickDeploymentWidget: React.FC<{ onDeploy?: (template: {id: string
       });
     } finally {
       setIsLoading(null);
-      await fetchRecentRequests();
+      await fetchRecentRequests(); // Refresh recent requests list
     }
   };
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'pending': return <Clock className="w-4 h-4 text-amber-500" />;
-      case 'approved': return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'rejected': return <AlertTriangle className="w-4 h-4 text-red-500" />;
-      default: return <Clock className="w-4 h-4 text-gray-500" />;
-    }
+    const icons: Record<string, React.ReactElement> = {
+      pending: <Clock className="w-4 h-4 text-amber-500" />,
+      completed: <CheckCircle className="w-4 h-4 text-green-500" />,
+      failed: <AlertTriangle className="w-4 h-4 text-red-500" />,
+    };
+    return icons[status] || <Clock className="w-4 h-4 text-gray-500" />;
   };
+  
+  const recommendedTemplates = templates.filter(t => ['Viral Vortex', 'Deal Striker', 'Word Smith', 'Support Sentinel'].includes(t.name));
 
   return (
     <Card className="bg-slate-800/50 border-slate-700/50">
@@ -124,19 +117,19 @@ export const QuickDeploymentWidget: React.FC<{ onDeploy?: (template: {id: string
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-2">
-          {['Viral Vortex', 'Deal Striker', 'Word Smith', 'Support Sentinel'].map((type) => (
+          {recommendedTemplates.length > 0 ? recommendedTemplates.map((template) => (
             <Button
-              key={type}
-              onClick={() => handleQuickDeploy(type)}
+              key={template.id}
+              onClick={() => handleQuickDeploy(template)}
               disabled={!!isLoading}
               variant="outline"
               size="sm"
               className="text-xs justify-center"
             >
-              {isLoading === type ? <Loader2 className="w-4 h-4 animate-spin" /> : <Rocket className="w-3 h-3 mr-1" />}
-              {type}
+              {isLoading === template.name ? <Loader2 className="w-4 h-4 animate-spin" /> : <Rocket className="w-3 h-3 mr-1" />}
+              {template.name}
             </Button>
-          ))}
+          )) : <p className='text-xs text-center col-span-2'>Loading templates...</p>}
         </div>
 
         {recentRequests.length > 0 && (
@@ -147,7 +140,7 @@ export const QuickDeploymentWidget: React.FC<{ onDeploy?: (template: {id: string
                 <span className="truncate pr-2">{request.employeeName}</span>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                   {getStatusIcon(request.status)}
-                  <Badge variant="outline" className="text-xs capitalize">
+                  <Badge variant="outline" className="text-xs capitalize border-slate-600">
                     {request.status}
                   </Badge>
                 </div>

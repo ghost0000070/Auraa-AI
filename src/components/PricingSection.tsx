@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { CheckCircle, Loader2 } from "lucide-react";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/firebase";
-import { toast } from "@/components/ui/toast-hooks";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 interface Tier {
   name: string;
@@ -17,29 +18,40 @@ interface Tier {
 export function PricingSection() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState<string | null>(null);
 
   const handleSubscribe = async (tier: Tier) => {
     if (!user) {
       navigate('/auth');
       return;
     }
+    setIsLoading(tier.priceId);
     try {
       const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
       const response = await createCheckoutSession({
         priceId: tier.priceId,
-        successUrl: window.location.origin + '/dashboard',
+        successUrl: `${window.location.origin}/dashboard`,
         cancelUrl: window.location.origin,
       });
-      const { sessionId } = response.data as { sessionId: string };
-      // Redirect to Stripe checkout
-      window.location.href = `https://checkout.stripe.com/pay/${sessionId}`;
+      
+      const data = response.data as { url?: string };
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("Could not retrieve checkout URL.");
+      }
+
     } catch (error) {
       console.error("Error creating checkout session:", error);
       toast({
         title: "Error",
-        description: "Could not create a checkout session.",
+        description: (error as Error).message || "Could not create a checkout session.",
         variant: "destructive",
       });
+    } finally {
+        setIsLoading(null);
     }
   };
 
@@ -53,7 +65,7 @@ export function PricingSection() {
         "Priority Support",
         "Custom Integrations",
       ],
-      priceId: "price_1PQUWzRqqYQ2g2a1n7V5Q5e0",
+      priceId: "price_1PQVucB6Xw2qV6Q8i9o3v3kI",
     },
     {
       name: "Enterprise",
@@ -64,7 +76,7 @@ export function PricingSection() {
         "On-premise Deployment",
         "24/7 Support",
       ],
-      priceId: "price_1PQUXnRqqYQ2g2a1o1a1a1a1",
+      priceId: "price_1PQVvSB6Xw2qV6Q8y5e2p2gH",
     },
   ];
 
@@ -74,24 +86,28 @@ export function PricingSection() {
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-8">
           Pricing
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {tiers.map((tier) => (
-            <Card key={tier.name}>
+            <Card key={tier.name} className="flex flex-col">
               <CardHeader>
                 <CardTitle>{tier.name}</CardTitle>
-                <p className="text-4xl font-bold">{tier.price}<span className="text-lg font-normal">/month</span></p>
+                <p className="text-4xl font-bold">{tier.price}<span className="text-lg font-normal text-muted-foreground">/month</span></p>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-4">
+              <CardContent className="flex flex-col flex-grow">
+                <ul className="space-y-4 flex-grow">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-center">
-                      <Badge className="mr-2" />
+                      <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
                       {feature}
                     </li>
                   ))}
                 </ul>
-                <Button className="w-full mt-8" onClick={() => handleSubscribe(tier)}>
-                  Subscribe
+                <Button 
+                    className="w-full mt-8" 
+                    onClick={() => handleSubscribe(tier)}
+                    disabled={!!isLoading}
+                >
+                    {isLoading === tier.priceId ? <Loader2 className="h-4 w-4 animate-spin"/> : 'Subscribe'}
                 </Button>
               </CardContent>
             </Card>

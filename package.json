@@ -8,12 +8,13 @@
     "build": "tsc && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "postinstall": "cd src/dataconnect-admin-generated && npm install && cd ../../ && cd src/dataconnect-generated && npm install && cd ../../"
+    "postinstall": "cd src/dataconnect-admin-generated && npm install && cd ../../ && cd src/dataconnect-generated && npm install && cd ../../",
+    "test": "vitest"
   },
   "dependencies": {
     "@dataconnect/admin-generated": "file:src/dataconnect-admin-generated",
     "@dataconnect/generated": "file:src/dataconnect-generated",
-    "@firebase/vertexai-preview": "0.0.4",
+    "@firebase/vertexai-preview": "^0.0.4",
     "@google/generative-ai": "^0.2.1",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -41,11 +42,12 @@
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
     "date-fns": "^3.3.1",
-    "firebase": "^12.0.0",
+    "firebase": "^12.6.0",
     "firebase-admin": "^13.4.0",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.341.0",
     "next-themes": "^0.2.1",
+    "puter": "^1.0.0",
     "react": "^18.2.0",
     "react-day-picker": "^8.10.0",
     "react-dom": "^18.2.0",
@@ -56,6 +58,9 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^14.2.1",
+    "@testing-library/user-event": "^14.5.2",
     "@types/node": "^20.11.20",
     "@types/react": "^18.2.58",
     "@types/react-dom": "^18.2.19",
@@ -66,9 +71,12 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "jsdom": "^24.1.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.20.6",
     "typescript": "^5.3.3",
-    "vite": "^6.4.1"
+    "vite": "^6.4.1",
+    "vitest": "^4.0.13"
   }
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import puter from '@puter/js';
+import puter from 'puter';
 
 export const usePuter = () => {
   const [username, setUsername] = useState<string | null>(null);

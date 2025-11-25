@@ -2,22 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { db } from '@/firebase';
-import { collection, query, where, getDocs, doc, getDoc, Timestamp } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, Timestamp } from 'firebase/firestore';
 import { useToast } from '@/components/ui/use-toast';
 import { 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
-  Zap, 
-  User, 
-  Calendar,
-  Activity,
-  TrendingUp,
-  AlertTriangle,
-  ArrowRight
+  Clock, CheckCircle, XCircle, Zap, Activity, AlertTriangle, Loader2
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import {
@@ -31,165 +21,104 @@ import {
 
 interface DeploymentRequest {
   id: string;
-  createdAt: Date; 
+  createdAt: Date;
   status: string;
-  deploymentConfig?: Record<string, unknown>;
-  rejectionReason?: string;
   employeeName: string;
-  employeeDescription: string;
-  employeeCategory: string;
-  businessName: string;
+  employeeCategory?: string;
+  businessName?: string;
 }
 
 interface DeployedEmployee {
   id: string;
-  deployedAt: Date; 
+  createdAt: Date;
   status: string;
-  performanceMetrics?: Record<string, unknown>;
-  employeeName: string;
-  employeeType: string;
+  name: string;
+  templateId: string;
 }
 
 export const DeploymentDashboard: React.FC = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [deploymentRequests, setDeploymentRequests] = useState<DeploymentRequest[]>([]);
-  const [deployedEmployees, setDeployedEmployees] = useState<DeployedEmployee[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    pending: 0,
-    approved: 0,
-    active: 0,
-    total: 0
-  });
+  const [requests, setRequests] = useState<DeploymentRequest[]>([]);
+  const [employees, setEmployees] = useState<DeployedEmployee[]>([]);
+  const [loading, setLoading] = useState({ requests: true, employees: true });
 
-  const fetchData = useCallback(async () => {
-    if (!user) return;
-    try {
-      setLoading(true);
-      
-      const requestsQuery = query(collection(db, 'deploymentRequests'), where('userId', '==', user.uid));
-      const requestsSnapshot = await getDocs(requestsQuery);
-      const requestsData = await Promise.all(requestsSnapshot.docs.map(async (d) => {
-        const request = d.data();
-        return {
-          id: d.id,
-          ...request,
-          createdAt: request.createdAt instanceof Timestamp ? request.createdAt.toDate() : new Date(request.createdAt),
-        } as DeploymentRequest;
-      }));
-      setDeploymentRequests(requestsData);
+  const handleLoading = (type: 'requests' | 'employees', status: boolean) => {
+    setLoading(prev => ({ ...prev, [type]: status }));
+  };
 
-      const employeesQuery = query(collection(db, 'deployedEmployees'), where('userId', '==', user.uid));
-      const employeesSnapshot = await getDocs(employeesQuery);
-      const employeesData = employeesSnapshot.docs.map(d => {
-          const employee = d.data();
-          return {
-            id: d.id,
-            ...employee,
-            deployedAt: employee.deployedAt instanceof Timestamp ? employee.deployedAt.toDate() : new Date(employee.deployedAt),
-          } as DeployedEmployee;
-      });
-      setDeployedEmployees(employeesData);
-
-      const pending = requestsData.filter(r => r.status === 'pending').length;
-      const approved = requestsData.filter(r => r.status === 'approved').length;
-      const active = employeesData.filter(e => e.status === 'active').length;
-      const total = requestsData.length + employeesData.length;
-
-      setStats({ pending, approved, active, total });
-
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load deployment data',
-        variant: 'destructive'
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [user, toast]);
+  const allDataLoaded = !loading.requests && !loading.employees;
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (!user) return;
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return <Clock className="w-4 h-4 text-amber-500" />;
-      case 'approved':
-      case 'active':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'rejected':
-      case 'inactive':
-        return <XCircle className="w-4 h-4 text-red-500" />;
-      default:
-        return <AlertTriangle className="w-4 h-4 text-gray-500" />;
-    }
+    const requestsQuery = query(collection(db, 'deploymentRequests'), where('userId', '==', user.uid));
+    const employeesQuery = query(collection(db, 'deployedEmployees'), where('userId', '==', user.uid));
+
+    const unsubscribeRequests = onSnapshot(requestsQuery, (snapshot) => {
+      const requestsData = snapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data(),
+        createdAt: (d.data().createdAt as Timestamp).toDate(),
+      } as DeploymentRequest));
+      setRequests(requestsData);
+      handleLoading('requests', false);
+    }, (error) => {
+      console.error('Error fetching requests:', error);
+      toast({ title: 'Error', description: 'Failed to load deployment requests', variant: 'destructive' });
+      handleLoading('requests', false);
+    });
+
+    const unsubscribeEmployees = onSnapshot(employeesQuery, (snapshot) => {
+      const employeesData = snapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data(),
+        createdAt: (d.data().createdAt as Timestamp).toDate(),
+      } as DeployedEmployee));
+      setEmployees(employeesData);
+      handleLoading('employees', false);
+    }, (error) => {
+      console.error('Error fetching employees:', error);
+      toast({ title: 'Error', description: 'Failed to load deployed employees', variant: 'destructive' });
+      handleLoading('employees', false);
+    });
+
+    return () => {
+      unsubscribeRequests();
+      unsubscribeEmployees();
+    };
+  }, [user, toast]);
+
+  const stats = {
+    pending: requests.filter(r => r.status === 'pending').length,
+    completed: requests.filter(r => r.status === 'completed').length,
+    active: employees.filter(e => e.status === 'active').length,
+    total: requests.length + employees.length
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-amber-500/20 text-amber-300 border-amber-500/30';
-      case 'approved':
-      case 'active':
-        return 'bg-green-500/20 text-green-300 border-green-500/30';
-      case 'rejected':
-      case 'inactive':
-        return 'bg-red-500/20 text-red-300 border-red-500/30';
-      default:
-        return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
-    }
+  const getStatusUi = (status: string) => {
+    const ui: Record<string, { icon: React.ReactElement, color: string }> = {
+      pending: { icon: <Clock className="w-4 h-4 text-amber-500" />, color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+      completed: { icon: <CheckCircle className="w-4 h-4 text-green-500" />, color: 'bg-green-500/20 text-green-300 border-green-500/30' },
+      active: { icon: <Zap className="w-4 h-4 text-green-500" />, color: 'bg-green-500/20 text-green-300 border-green-500/30' },
+      failed: { icon: <XCircle className="w-4 h-4 text-red-500" />, color: 'bg-red-500/20 text-red-300 border-red-500/30' },
+      inactive: { icon: <XCircle className="w-4 h-4 text-red-500" />, color: 'bg-red-500/20 text-red-300 border-red-500/30' }
+    };
+    return ui[status] || { icon: <AlertTriangle className="w-4 h-4 text-gray-500" />, color: 'bg-gray-500/20 text-gray-300 border-gray-500/30' };
   };
+
+  if (!allDataLoaded) {
+    return <div className="flex items-center justify-center p-8"><Loader2 className="h-6 w-6 animate-spin"/> <span className="ml-2">Loading data...</span></div>;
+  }
 
   return (
     <div className="p-4 md:p-8">
       <h1 className="text-3xl font-bold mb-4">Deployment Dashboard</h1>
-      {/* Cards for stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pending Requests</CardTitle>
-                <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">{stats.pending}</div>
-                <p className="text-xs text-muted-foreground">Awaiting approval</p>
-            </CardContent>
-        </Card>
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Approved Requests</CardTitle>
-                <CheckCircle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">{stats.approved}</div>
-                <p className="text-xs text-muted-foreground">Ready to deploy</p>
-            </CardContent>
-        </Card>
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Employees</CardTitle>
-                <Zap className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">{stats.active}</div>
-                <p className="text-xs text-muted-foreground">Currently working</p>
-            </CardContent>
-        </Card>
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Activity</CardTitle>
-                <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">{stats.total}</div>
-                <p className="text-xs text-muted-foreground">Total records</p>
-            </CardContent>
-        </Card>
+        <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Pending Requests</CardTitle><Clock className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats.pending}</div></CardContent></Card>
+        <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Completed Requests</CardTitle><CheckCircle className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats.completed}</div></CardContent></Card>
+        <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Active Employees</CardTitle><Zap className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats.active}</div></CardContent></Card>
+        <Card><CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"><CardTitle className="text-sm font-medium">Total Activity</CardTitle><Activity className="h-4 w-4 text-muted-foreground" /></CardHeader><CardContent><div className="text-2xl font-bold">{stats.total}</div></CardContent></Card>
       </div>
 
       <Tabs defaultValue="requests">
@@ -201,39 +130,23 @@ export const DeploymentDashboard: React.FC = () => {
           <Card>
             <CardHeader>
               <CardTitle>Deployment Requests</CardTitle>
-              <CardDescription>Review and manage pending, approved, and rejected deployment requests.</CardDescription>
+              <CardDescription>Review and manage deployment requests.</CardDescription>
             </CardHeader>
             <CardContent>
-              {loading ? (
-                  <div className="p-4 text-center text-sm text-gray-500">Loading...</div>
-              ) : deploymentRequests.length === 0 ? (
-                  <div className="p-4 text-center text-sm text-gray-500">No deployment requests found.</div>
-              ) : (
+              {requests.length === 0 ? <div className="p-4 text-center text-sm text-gray-500">No deployment requests found.</div> : (
                   <Table>
-                      <TableHeader>
-                          <TableRow>
-                              <TableHead>Employee Name</TableHead>
-                              <TableHead>Category</TableHead>
-                              <TableHead>Business Name</TableHead>
-                              <TableHead>Status</TableHead>
-                              <TableHead>Requested At</TableHead>
-                          </TableRow>
-                      </TableHeader>
+                      <TableHeader><TableRow><TableHead>Employee Name</TableHead><TableHead>Status</TableHead><TableHead>Requested At</TableHead></TableRow></TableHeader>
                       <TableBody>
-                          {deploymentRequests.map((request) => (
-                              <TableRow key={request.id}>
-                                  <TableCell className="font-medium">{request.employeeName}</TableCell>
-                                  <TableCell>{request.employeeCategory}</TableCell>
-                                  <TableCell>{request.businessName}</TableCell>
-                                  <TableCell>
-                                      <Badge variant="outline" className={`flex items-center gap-1 w-fit ${getStatusColor(request.status)}`}>
-                                          {getStatusIcon(request.status)}
-                                          <span className="capitalize">{request.status}</span>
-                                      </Badge>
-                                  </TableCell>
-                                  <TableCell>{request.createdAt ? formatDistanceToNow(request.createdAt, { addSuffix: true }) : 'N/A'}</TableCell>
-                              </TableRow>
-                          ))}
+                          {requests.map((request) => {
+                              const { icon, color } = getStatusUi(request.status);
+                              return (
+                                  <TableRow key={request.id}>
+                                      <TableCell className="font-medium">{request.employeeName}</TableCell>
+                                      <TableCell><Badge variant="outline" className={`flex items-center gap-1 w-fit ${color}`}>{icon}<span className="capitalize">{request.status}</span></Badge></TableCell>
+                                      <TableCell>{formatDistanceToNow(request.createdAt, { addSuffix: true })}</TableCell>
+                                  </TableRow>
+                              );
+                          })}
                       </TableBody>
                   </Table>
               )}
@@ -244,49 +157,23 @@ export const DeploymentDashboard: React.FC = () => {
           <Card>
             <CardHeader>
               <CardTitle>Deployed AI Employees</CardTitle>
-              <CardDescription>Monitor the status and performance of your deployed AI employees.</CardDescription>
+              <CardDescription>Monitor your deployed AI employees.</CardDescription>
             </CardHeader>
             <CardContent>
-             {loading ? (
-                  <div className="p-4 text-center text-sm text-gray-500">Loading...</div>
-              ) : deployedEmployees.length === 0 ? (
-                  <div className="p-4 text-center text-sm text-gray-500">No deployed employees found.</div>
-              ) : (
+             {employees.length === 0 ? <div className="p-4 text-center text-sm text-gray-500">No deployed employees found.</div> : (
                   <Table>
-                      <TableHeader>
-                          <TableRow>
-                              <TableHead>Employee Name</TableHead>
-                              <TableHead>Type</TableHead>
-                              <TableHead>Status</TableHead>
-                              <TableHead>Deployed At</TableHead>
-                              <TableHead>Performance</TableHead>
-                          </TableRow>
-                      </TableHeader>
+                      <TableHeader><TableRow><TableHead>Employee Name</TableHead><TableHead>Status</TableHead><TableHead>Deployed At</TableHead></TableRow></TableHeader>
                       <TableBody>
-                          {deployedEmployees.map((employee) => (
-                              <TableRow key={employee.id}>
-                                  <TableCell className="font-medium">{employee.employeeName}</TableCell>
-                                  <TableCell>{employee.employeeType}</TableCell>
-                                  <TableCell>
-                                      <Badge variant="outline" className={`flex items-center gap-1 w-fit ${getStatusColor(employee.status)}`}>
-                                          {getStatusIcon(employee.status)}
-                                          <span className="capitalize">{employee.status}</span>
-                                      </Badge>
-                                  </TableCell>
-                                  <TableCell>{employee.deployedAt ? formatDistanceToNow(employee.deployedAt, { addSuffix: true }) : 'N/A'}</TableCell>
-                                  <TableCell>
-                                    {employee.performanceMetrics ? (
-                                        <div className="flex flex-col text-xs">
-                                            {Object.entries(employee.performanceMetrics).slice(0, 2).map(([key, value]) => (
-                                                <span key={key}>{key}: {String(value)}</span>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <span className="text-gray-400 text-xs">No metrics yet</span>
-                                    )}
-                                  </TableCell>
-                              </TableRow>
-                          ))}
+                          {employees.map((employee) => {
+                              const { icon, color } = getStatusUi(employee.status);
+                              return (
+                                  <TableRow key={employee.id}>
+                                      <TableCell className="font-medium">{employee.name}</TableCell>
+                                      <TableCell><Badge variant="outline" className={`flex items-center gap-1 w-fit ${color}`}>{icon}<span className="capitalize">{employee.status}</span></Badge></TableCell>
+                                      <TableCell>{formatDistanceToNow(employee.createdAt, { addSuffix: true })}</TableCell>
+                                  </TableRow>
+                              );
+                          })}
                       </TableBody>
                   </Table>
               )}

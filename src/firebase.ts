@@ -2,7 +2,7 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
-import { getFirestore, connectFirestoreEmulator, initializeFirestore } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator, initializeFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { getPerformance } from 'firebase/performance';
@@ -17,54 +17,38 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase App (prevent re-initialization)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
-let db;
 const storage = getStorage(app);
 const functions = getFunctions(app);
 const perf = getPerformance(app);
 const vertex = getVertexAI(app);
-const generativeModel = getGenerativeModel(vertex, { model: "gemini-pro" });
+const generativeModel = getGenerativeModel(vertex, { model: "gemini-1.5-flash-preview-0514" });
 
-// Prevent re-initialization of Firestore in DEV mode with HMR
+// Simplified DB initialization
+let db: Firestore;
+
 if (import.meta.env.DEV) {
-  const host = window.location.hostname;
-  if (host.includes('cloudworkstations.dev')) {
-    const baseUrl = host.replace('9000-', '');
-    try {
-      connectAuthEmulator(auth, `https://9099-${baseUrl}`);
-      // Use a global symbol to store the initialized db instance
-      if (!(globalThis as any).__firebase_db) {
-        (globalThis as any).__firebase_db = initializeFirestore(app, {
-          host: `8080-${baseUrl}`,
-          ssl: true,
-        });
-      }
-      db = (globalThis as any).__firebase_db;
-    } catch (e) {
-      console.error("Error connecting to Firebase emulators in Cloud Workstation:", e);
-    }
-  } else {
-    try {
-      connectAuthEmulator(auth, "http://127.0.0.1:9099");
-      connectFirestoreEmulator(getFirestore(app), "127.0.0.1", 8080);
-      connectFunctionsEmulator(functions, "127.0.0.1", 5001);
-      connectStorageEmulator(storage, "127.0.0.1", 9199);
-      db = getFirestore(app);
-    } catch (e) {
-        console.error("Error connecting to local Firebase emulators:", e);
-    }
-  }
+    console.log("Development mode: connecting to emulators.");
+
+    // Use a simplified and robust way to get the Firestore instance
+    db = initializeFirestore(app, {
+        experimentalForceLongPolling: true,
+    });
+
+    const host = import.meta.env.VITE_EMULATOR_HOST || "127.0.0.1";
+    console.log(`Using emulator host: ${host}`);
+
+    connectAuthEmulator(auth, `http://${host}:9099`);
+    connectFirestoreEmulator(db, host, 8080);
+    connectFunctionsEmulator(functions, host, 5001);
+    connectStorageEmulator(storage, host, 9199);
+
 } else {
-  db = getFirestore(app);
+    console.log("Production mode: connecting to live services.");
+    db = getFirestore(app);
 }
 
-// Fallback for db if not initialized in DEV mode for some reason
-if (!db) {
-  db = getFirestore(app);
-}
-
-export { app, analytics, auth, db, storage, functions, generativeModel };
+export { app, analytics, auth, db, storage, functions, generativeModel, vertex };

@@ -20,8 +20,6 @@ const AITeamCoordination = lazy(() => import('./pages/AITeamCoordination'));
 const AITeamWorkflows = lazy(() => import('./pages/AITeamWorkflows'));
 const IntegrationsPage = lazy(() => import("./pages/IntegrationsPage"));
 const PuterFirebaseIntegration = lazy(() => import("./components/PuterFirebaseIntegration"));
-const AITeamDebugger = lazy(() => import("./components/AITeamDebugger"));
-const AITeamDashboard = lazy(() => import("./components/AITeamDashboard"));
 const Marketplace = lazy(() => import('./pages/Marketplace'));
 
 const App: React.FC = () => {
@@ -48,8 +46,6 @@ const App: React.FC = () => {
                   <Route path="/ai-team-coordination" element={<ProtectedRoute><AITeamCoordination /></ProtectedRoute>} />
                   <Route path="/ai-team-workflows" element={<ProtectedRoute><AITeamWorkflows /></ProtectedRoute>} />
                   <Route path="/integrations" element={<ProtectedRoute><IntegrationsPage /></ProtectedRoute>} />
-                  <Route path="/ai-team-debugger" element={<ProtectedRoute><AITeamDebugger /></ProtectedRoute>} />
-                  <Route path="/ai-team-dashboard" element={<ProtectedRoute><AITeamDashboard /></ProtectedRoute>} />
                   <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
                   <Route path="/puter-firebase-integration" element={<ProtectedRoute><PuterFirebaseIntegration /></ProtectedRoute>} />
 

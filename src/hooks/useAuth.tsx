@@ -1,3 +1,4 @@
+
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
 import { User, onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
@@ -44,18 +45,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (!auth.currentUser) {
       setSubscriptionStatus(null);
       return;
-    }
-
-    // ⚡ OWNER OVERRIDE: Automatically grant Admin & Enterprise status to the site owner
-    // This ensures you have full access regardless of database state.
-    if (auth.currentUser.email === 'ghostspooks@icloud.com') {
-        setSubscriptionStatus({
-            subscribed: true,
-            subscription_tier: 'Enterprise (Owner)',
-            subscription_end: null,
-        });
-        setIsAdmin(true);
-        return;
     }
 
     try {

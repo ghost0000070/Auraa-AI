@@ -19,6 +19,15 @@
 		"geminicodeassist.agentDebugMode": true,
 		"geminicodeassist.rules": "never use place holders or mock data\nalways code properly\n\n\n\n\n",
 		"IDX.aI.showChatInEditorTab": true,
-		"IDX.agenticWorkspace": true
+		"IDX.agenticWorkspace": true,
+		"workbench.editor.enablePreviewFromQuickOpen": true,
+		"workbench.editor.tabSizingFixedMaxWidth": 120,
+		"workbench.editor.highlightModifiedTabs": true,
+		"workbench.editor.pinnedTabSizing": "shrink",
+		"workbench.editor.pinnedTabsOnSeparateRow": true,
+		"workbench.editor.scrollToSwitchTabs": true,
+		"workbench.editor.wrapTabs": true,
+		"workbench.editor.enablePreviewFromCodeNavigation": true,
+		"window.density.editorTabHeight": "compact"
 	}
 }

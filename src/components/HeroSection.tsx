@@ -10,10 +10,8 @@ export const HeroSection = () => {
 
   const handleCtaClick = () => {
     if (user) {
-      // User is logged in, redirect to dashboard
-      window.location.href = '/dashboard';
+      navigate('/dashboard');
     } else {
-      // User not logged in, redirect to auth
       navigate('/auth');
     }
   };
