@@ -139,7 +139,7 @@ const Auth = () => {
               onClick={() => setIsSignUp(!isSignUp)}
               className='text-muted-foreground'
             >
-              {isSignUp ? 'Already have an account? Sign In' : "Don\'t have an account? Sign Up"}
+              {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
             </Button>
             {!isSignUp && (
               <Button

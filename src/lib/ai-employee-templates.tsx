@@ -211,9 +211,9 @@ export const templates = [
     Icon: Stethoscope,
     category: "Healthcare",
     exampleTasks: [
-      "Update the patient\'s medical history with their latest test results.",
+      "Update the patient's medical history with their latest test results.",
       "Schedule a follow-up appointment for the patient.",
-      "Create a summary of the patient\'s recent visit.",
+      "Create a summary of the patient's recent visit.",
     ],
     backendTask: "managePatientRecords",
   },

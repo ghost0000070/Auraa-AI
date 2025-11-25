@@ -7,17 +7,9 @@ import { toast } from "sonner";
 import { db } from "@/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 // Import guardian images
-import commerceCoreImage from "@/assets/commerce-core-guardian.jpg";
-import cyberSageImage from "@/assets/cyber-sentinel-guardian.jpg";
 import dataNexusImage from "@/assets/data-daemon-guardian.jpg";
 import dealStrikerImage from "@/assets/deal-striker-guardian.jpg";
-import growthHackerImage from "@/assets/growth-hacker-guardian.jpg";
-import lifeOptimizerImage from "@/assets/life-hacker-guardian.jpg";
-import messageMatrixImage from "@/assets/message-maestro-guardian.jpg";
-import quantumHelperImage from "@/assets/quantum-helper-guardian.jpg";
 import supportShieldImage from "@/assets/support-sentinel-guardian.jpg";
-import talentTrackerImage from "@/assets/talent-scout-guardian.jpg";
-import viralVortexImage from "@/assets/viral-vortex-guardian.jpg";
 import wordForgeImage from "@/assets/word-smith-guardian.jpg";
 
 const aiEmployees = [
@@ -71,15 +63,19 @@ export const AIEmployeesSection = () => {
 
     // Track custom AI creation interest
     if (user) {
-      await addDoc(collection(db, 'user_analytics'), {
-        userId: user.uid,
-        eventType: 'action_click',
-        eventData: { 
-          action: 'custom_ai_creation',
-          subscriptionTier: subscriptionStatus?.subscription_tier || 'free'
-        },
-        createdAt: serverTimestamp()
-      });
+      try {
+        await addDoc(collection(db, 'user_analytics'), {
+          userId: user.uid,
+          eventType: 'action_click',
+          eventData: { 
+            action: 'custom_ai_creation',
+            subscriptionTier: subscriptionStatus?.subscription_tier || 'free'
+          },
+          createdAt: serverTimestamp()
+        });
+      } catch (error) {
+        console.warn("Analytics tracking failed:", error);
+      }
     }
 
     toast.info("Request Submitted", {

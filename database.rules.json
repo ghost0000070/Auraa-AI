@@ -1,6 +1,13 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    // Deny access to other paths by default
+    ".read": false,
+    ".write": false
   }
 }

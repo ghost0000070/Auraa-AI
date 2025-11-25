@@ -129,15 +129,20 @@ const BusinessProfile = () => {
     try {
       setSaving(true);
 
-      await addDoc(collection(db, 'user_analytics'), {
-        userId: user.uid,
-        eventType: 'action_click',
-        eventData: { 
-          action: 'save_business_profile',
-          has_existing_profile: !!profile.id
-        },
-        createdAt: serverTimestamp()
-      });
+      // Non-blocking analytics call
+      try {
+        await addDoc(collection(db, 'user_analytics'), {
+          userId: user.uid,
+          eventType: 'action_click',
+          eventData: { 
+            action: 'save_business_profile',
+            has_existing_profile: !!profile.id
+          },
+          createdAt: serverTimestamp()
+        });
+      } catch (analyticsError) {
+        console.warn('Analytics tracking failed, proceeding with save:', analyticsError);
+      }
 
       const profileData = {
         userId: user.uid,

@@ -1,49 +1,61 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isAdmin() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+
+    // Default deny all access
+    match /{document=**} {
+      allow read, write: if false;
     }
 
-    // Business Profiles: Users can only read/write their own profile
-    match /businessProfiles/{userId} {
-      allow read, write: if request.auth.uid == userId;
-    }
-
-    // Deployment Requests: Users can manage their own requests
-    match /deploymentRequests/{requestId} {
-      allow read, write: if request.auth.uid == resource.data.userId;
-    }
-
-    // Deployed Employees: Users can manage their own employees
-    match /deployedEmployees/{employeeId} {
-      allow read, write: if request.auth.uid == resource.data.userId;
-    }
-
-    // User Analytics: Only admins can read/write analytics
-    match /user_analytics/{analyticsId} {
-      allow read, write: if isAdmin();
-    }
-
-    // Users Collection: Users can read their own data, admins can read any
+    // Users can read and update their own profile, but not delete it.
+    // New users can create their own profile.
     match /users/{userId} {
-      allow read: if request.auth.uid == userId || isAdmin();
+      allow read, update: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null;
     }
 
-    // Power-Ups: Users can manage their own power-ups
+    // Users can create, read, and update their own business profile.
+    match /businessProfiles/{userId} {
+       allow read, update, create: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Users can create and read their own deployed employees.
+    // Updates and deletes are disallowed to prevent tampering.
+    match /deployedEmployees/{employeeId} {
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Users can create analytics events, but not read or modify them.
+    match /user_analytics/{analyticsId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if false;
+    }
+    
+    // Users can create deployment requests, but not read, update, or delete them.
+    match /deploymentRequests/{requestId} {
+        allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+        allow read, update, delete: if false;
+    }
+
+    // Users can manage their own power-ups.
     match /users/{userId}/powerUps/{powerUpId} {
-      allow read, write: if request.auth.uid == userId;
+        allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Website Integrations: Users can manage their own integrations
-    match /websiteIntegrations/{integrationId} {
-      allow create: if request.auth.uid == request.resource.data.userId;
-      allow read, update: if request.auth.uid == resource.data.userId;
-    }
-
-    // Platform Stats: Only admins can read
+    // Platform stats are not client-accessible.
     match /platform_stats/{statId} {
-      allow read: if isAdmin();
+        allow read, write: if false;
+    }
+    
+    // Stripe customer data is not client-accessible.
+    match /customers/{userId} {
+        allow read, write: if false;
+    }
+    
+    match /customers/{userId}/subscriptions/{subscriptionId}{
+      allow read, write: if false;
     }
   }
 }

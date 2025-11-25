@@ -4,9 +4,10 @@ build
 node_modules
 src/dataconnect-admin-generated
 src/dataconnect-generated
-auraacode/src/dataconnect-admin-generated
-auraafunction/src/dataconnect-admin-generated
-functions/src/dataconnect-admin-generated
+auraacode
+auraafunction
+functions
+scripts
 firebase-vendor-*.js
 .idx
 vite.config.ts
@@ -16,3 +17,6 @@ tailwind.config.ts
 .eslintrc.cjs
 eslint.config.ts
 **/*.d.ts
+**/auraacode/**
+**/auraafunction/**
+**/functions/**

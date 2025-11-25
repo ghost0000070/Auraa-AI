@@ -4,20 +4,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { CheckCircle, XCircle, Clock } from 'lucide-react';
 import { db } from "@/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
 import { useAuth } from "@/hooks/useAuth";
 import SubscriptionGuard from "@/components/SubscriptionGuard";
 import { Header } from "@/components/Header";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-];
 
 const chartConfig = {
   desktop: {
@@ -37,29 +28,69 @@ const Analytics = () => {
     tasksCompleted: 0,
     uptime: 0,
   });
+  const [chartData, setChartData] = useState([]);
+  const [salesData, setSalesData] = useState([]);
 
   useEffect(() => {
     if (!user) return;
 
     const fetchAgentMetrics = async () => {
       try {
-        const docRef = doc(db, "agent_metrics", user.uid);
-        const docSnap = await getDoc(docRef);
+        const sevenDaysAgo = Timestamp.now().toMillis() - 7 * 24 * 60 * 60 * 1000;
+        const analyticsQuery = query(
+          collection(db, "user_analytics"),
+          where("userId", "==", user.uid),
+          where("timestamp", ">=", new Date(sevenDaysAgo))
+        );
+        const querySnapshot = await getDocs(analyticsQuery);
+        const analyticsData = querySnapshot.docs.map(doc => doc.data());
 
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setAgentMetrics({
-            activeAgents: data.activeAgents || 0,
-            tasksCompleted: data.tasksCompleted || 0,
-            uptime: data.uptime || 0,
-          });
-        }
+        const tasksCompleted = analyticsData.filter(d => d.action === 'task_completed').length;
+        
+        setAgentMetrics(prev => ({ ...prev, tasksCompleted }));
+
+        // Aggregate data for chart
+        const dailyData = analyticsData.reduce((acc, curr) => {
+          const date = curr.timestamp.toDate().toLocaleDateString();
+          if (!acc[date]) {
+            acc[date] = { desktop: 0, mobile: 0 };
+          }
+          if (curr.device === 'desktop') {
+            acc[date].desktop++;
+          } else {
+            acc[date].mobile++;
+          }
+          return acc;
+        }, {});
+
+        const formattedChartData = Object.keys(dailyData).map(date => ({
+          month: new Date(date).toLocaleString('default', { month: 'short', day: 'numeric' }),
+          ...dailyData[date],
+        }));
+        setChartData(formattedChartData);
+
       } catch (error) {
         console.error("Error fetching agent metrics:", error);
       }
     };
 
+    const fetchSalesData = async () => {
+      try {
+        const salesQuery = query(
+          collection(db, "sales"),
+          where("userId", "==", user.uid)
+        );
+        const querySnapshot = await getDocs(salesQuery);
+        const sales = querySnapshot.docs.map(doc => doc.data());
+        setSalesData(sales);
+      } catch (error) {
+        console.error("Error fetching sales data:", error);
+      }
+    };
+
+
     fetchAgentMetrics();
+    fetchSalesData();
   }, [user]);
 
   return (
@@ -137,7 +168,6 @@ const Analytics = () => {
                       tickLine={false}
                       tickMargin={10}
                       axisLine={false}
-                      tickFormatter={(value) => value.slice(0, 3)}
                     />
                     <YAxis />
                     <ChartTooltip content={<ChartTooltipContent />} />
@@ -150,7 +180,7 @@ const Analytics = () => {
             <Card className="col-span-3">
               <CardHeader>
                 <CardTitle>Recent Sales</CardTitle>
-                <CardDescription>You made 265 sales this month.</CardDescription>
+                <CardDescription>You made {salesData.length} sales this month.</CardDescription>
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="week">
@@ -160,8 +190,16 @@ const Analytics = () => {
                     <TabsTrigger value="year">Year</TabsTrigger>
                   </TabsList>
                   <TabsContent value="week">
-                    <div className="space-y-8">
-                      {/* Recent sales data would be fetched and mapped here */}
+                    <div className="space-y-4">
+                      {salesData.map((sale, index) => (
+                        <div key={index} className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium">{sale.customerName}</p>
+                            <p className="text-sm text-muted-foreground">{sale.product}</p>
+                          </div>
+                          <p className="font-medium">+${sale.amount.toFixed(2)}</p>
+                        </div>
+                      ))}
                     </div>
                   </TabsContent>
                 </Tabs>

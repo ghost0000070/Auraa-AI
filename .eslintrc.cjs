@@ -26,7 +26,8 @@ module.exports = {
     'react/no-unescaped-entities': 'off',
     '@typescript-eslint/no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
     '@typescript-eslint/no-explicit-any': 'warn',
-    'react/prop-types': 'off'
+    'react/prop-types': 'off',
+    'react/no-unknown-property': ['error', { ignore: ['cmdk-input-wrapper'] }]
   },
   settings: {
     react: {

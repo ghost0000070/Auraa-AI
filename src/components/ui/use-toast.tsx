@@ -199,9 +199,7 @@ const ToastDescription = React.forwardRef<
 ToastDescription.displayName = ToastPrimitives.Description.displayName
 
 export {
-  // eslint-disable-next-line react-refresh/only-export-components
   useToast,
-  // eslint-disable-next-line react-refresh/only-export-components
   toast,
   ToastProvider,
   ToastViewport,

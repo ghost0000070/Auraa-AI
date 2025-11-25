@@ -1,4 +1,3 @@
-
 import {genkit, z} from "genkit";
 import {googleAI} from "@genkit-ai/google-genai";
 import {https} from "firebase-functions/v2";
@@ -8,6 +7,7 @@ import {defineSecret} from "firebase-functions/params";
 import {enableFirebaseTelemetry} from "@genkit-ai/firebase";
 import * as admin from "firebase-admin";
 import Anthropic from "@anthropic-ai/sdk";
+import Stripe from "stripe";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -16,6 +16,8 @@ const db = admin.firestore();
 const apiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 const stripeSecretKey = defineSecret("STRIPE_SECRET_KEY");
 const anthropicApiKey = defineSecret("ANTHROPIC_API_KEY");
+const stripeWebhookSecret = defineSecret("STRIPE_WEBHOOK_SECRET");
+
 
 // Enable telemetry
 enableFirebaseTelemetry();
@@ -85,8 +87,6 @@ async function callClaudeSonnet(prompt: string, system: string, apiKey: string) 
 }
 
 const taskContexts: Record<string, string> = {
-    workflowExecution: "Analyze the provided workflow and suggest improvements.",
-    businessSync: "Synchronize data with external business systems.",
     analyzeMarketingData: "Analyze marketing data to identify trends and insights.",
     automateSalesOutreach: "Automate sales outreach emails and follow-ups.",
     handleSupportTicket: "Handle a customer support ticket by providing a helpful response.",
@@ -144,8 +144,7 @@ export const executeAiTask = https.onCall(
             try {
                 parsedResult = JSON.parse(result);
             } catch (e) {
-                console.warn("AI output was not valid JSON, returning as text.", {taskName, result});
-                parsedResult = {textOutput: result};
+                throw new https.HttpsError("internal", "The AI's response was not in the expected format.");
             }
 
             return {
@@ -237,12 +236,116 @@ export const createCustomerPortalSession = https.onCall(
         if (error instanceof https.HttpsError) {
           throw error;
         }
-        throw new https.HttpsError(
+        throw a new https.HttpsError(
             "internal",
             "Failed to create customer portal session.",
         );
       }
     });
+
+    export const createCheckoutSession = https.onCall(
+      {secrets: [stripeSecretKey]},
+      async (request) => {
+        if (!request.auth) {
+          throw new https.HttpsError("unauthenticated", "Auth required.");
+        }
+        if (!request.data.priceId) {
+          throw new https.HttpsError(
+              "invalid-argument",
+              "priceId is a required parameter.",
+          );
+        }
+        if (!request.data.successUrl || !request.data.cancelUrl) {
+          throw new https.HttpsError(
+              "invalid-argument",
+              "successUrl and cancelUrl are required parameters.",
+          );
+        }
+    
+        const userId = request.auth.uid;
+        try {
+          const userDoc = await db.collection("users").doc(userId).get();
+          let stripeId = userDoc.data()?.stripeId;
+    
+          if (!stripeId) {
+            const customer = await stripe.customers.create({
+              email: request.auth.token.email,
+              metadata: {userId},
+            });
+            stripeId = customer.id;
+            await userDoc.ref.update({stripeId});
+          }
+    
+          const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            mode: "subscription",
+            customer: stripeId,
+            line_items: [
+              {
+                price: request.data.priceId,
+                quantity: 1,
+              },
+            ],
+            success_url: request.data.successUrl,
+            cancel_url: request.data.cancelUrl,
+          });
+    
+          return {sessionId: session.id};
+        } catch (error) {
+          console.error("Stripe Checkout Session Error:", error);
+          if (error instanceof https.HttpsError) {
+            throw error;
+          }
+          throw new https.HttpsError(
+              "internal",
+              "Failed to create checkout session.",
+          );
+        }
+      });
+
+      export const stripeWebhook = https.onRequest(
+        {secrets: [stripeSecretKey, stripeWebhookSecret]},
+        async (request, response) => {
+          const sig = request.headers["stripe-signature"];
+          let event;
+      
+          try {
+            event = stripe.webhooks.constructEvent(request.rawBody, sig, stripeWebhookSecret.value());
+          } catch (err) {
+            console.error("Webhook signature verification failed.", err);
+            response.status(400).send(`Webhook Error: ${err.message}`);
+            return;
+          }
+      
+          // Handle the event
+          switch (event.type) {
+            case "checkout.session.completed":
+              const session = event.data.object as Stripe.Checkout.Session;
+              const customerId = session.customer as string;
+      
+              try {
+                // Retrieve the user from your database using the customer ID
+                const usersQuery = await db.collection("users").where("stripeId", "==", customerId).get();
+                if (usersQuery.empty) {
+                  console.error("No user found with Stripe customer ID:", customerId);
+                  break;
+                }
+      
+                const userDoc = usersQuery.docs[0];
+                await userDoc.ref.update({ is_active: true });
+                console.log(`Successfully activated subscription for user ${userDoc.id}`);
+              } catch (error) {
+                console.error("Error updating user subscription status:", error);
+              }
+              break;
+            // Add other event types to handle here
+            default:
+              console.log(`Unhandled event type ${event.type}`);
+          }
+      
+          response.json({received: true});
+        },
+      );
 
 export const updatePlatformStats = onSchedule("every 24 hours", async () => {
   try {
@@ -306,8 +409,9 @@ export const deployAiEmployee = https.onCall(async (request) => {
 
       // Also record the original, validated request for logging
       await db.collection("deploymentRequests").add({
-          ...parseResult.data,
           userId: userId, // Ensure logged request also has correct user ID
+          templateId: aiHelperTemplateId,
+          name: name,
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
           status: "completed",
       });

@@ -21,6 +21,7 @@ const AITeamWorkflows = lazy(() => import('./pages/AITeamWorkflows'));
 const IntegrationsPage = lazy(() => import("./pages/IntegrationsPage"));
 const PuterFirebaseIntegration = lazy(() => import("./components/PuterFirebaseIntegration"));
 const Marketplace = lazy(() => import('./pages/Marketplace'));
+const PricingPage = lazy(() => import('./pages/PricingPage'));
 
 const App: React.FC = () => {
   return (
@@ -34,6 +35,7 @@ const App: React.FC = () => {
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
+                  <Route path="/pricing" element={<PricingPage />} />
 
                   {/* Protected Routes */}
                   <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
