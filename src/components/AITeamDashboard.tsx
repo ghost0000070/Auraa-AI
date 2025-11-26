@@ -101,7 +101,7 @@ const AITeamDashboard: React.FC = () => {
             }
             return item;
           }));
-          stateSetter(data as any);
+          stateSetter(data as never);
           handleLoading(name, false);
         }, (error) => {
           console.error(`Error fetching ${name}: `, error);
@@ -114,7 +114,7 @@ const AITeamDashboard: React.FC = () => {
     }
   }, [user]);
 
-  async function handleNewCommunication(comm: Communication, ref: any) {
+  async function handleNewCommunication(comm: Communication, ref: unknown) {
       let senderName = comm.sender_employee;
       if(senderName && senderName !== 'System' && senderName !== 'User') {
           try {

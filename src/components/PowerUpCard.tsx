@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Zap, Crown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/toast-hooks";
 
 interface PowerUpCardProps {
   id: string;

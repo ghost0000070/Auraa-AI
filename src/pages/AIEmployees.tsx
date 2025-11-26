@@ -14,7 +14,7 @@ interface AIEmployee {
   description: string;
   category: string;
   system_prompt: string;
-  tools: any[]; // Define a more specific type if you have one
+  tools: unknown[];
   avatar: {
     url: string;
     bgColor: string;

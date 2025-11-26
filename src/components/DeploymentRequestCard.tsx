@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { db, functions } from '@/firebase';
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/toast-hooks";
 import { Loader2, Zap, CheckCircle, AlertCircle } from 'lucide-react';
 import { AIEmployeeTemplate } from '@/lib/ai-employee-templates';
 

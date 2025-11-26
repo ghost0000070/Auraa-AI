@@ -245,3 +245,9 @@ export const templates: AITemplate[] = [
     backendTask: "orchestrateAiTeam",
   },
 ];
+
+// Export with the expected name for backwards compatibility
+export const aiEmployeeTemplates = templates;
+
+// Export the type for the template
+export type AIEmployeeTemplate = typeof templates[0];

@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { httpsCallable } from 'firebase/functions';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/toast-hooks";
 import { Loader2 } from 'lucide-react';
 import { Timestamp } from 'firebase/firestore';
 

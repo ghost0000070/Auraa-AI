@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { db } from '@/firebase';
 import { collection, query, where, onSnapshot, Timestamp } from 'firebase/firestore';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/toast-hooks';
 import { 
   Clock, CheckCircle, XCircle, Zap, Activity, AlertTriangle, Loader2
 } from 'lucide-react';

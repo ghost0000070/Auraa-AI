@@ -188,6 +188,25 @@ export const AIEngine = {
         
     orchestrateAiTeam: async (data: unknown) => 
         executeTask('orchestrateAiTeam', data, "Act as the coordinator. Break down the complex problem and assign sub-tasks.", MODELS.COMPLEX),
+
+    // 4. Additional AI Employees (Previously Missing)
+    managePersonalTasks: async (data: unknown) => 
+        executeTask('managePersonalTasks', data, "Organize and prioritize personal tasks, manage schedules, and set reminders.", MODELS.STANDARD),
+        
+    resolveItIssue: async (data: unknown) => 
+        executeTask('resolveItIssue', data, "Troubleshoot and resolve IT issues with step-by-step guidance.", MODELS.STANDARD),
+        
+    optimizeSupplyChain: async (data: unknown) => 
+        executeTask('optimizeSupplyChain', data, "Analyze supply chain operations and recommend efficiency improvements.", MODELS.COMPLEX),
+        
+    analyzeSecurityThreat: async (data: unknown) => 
+        executeTask('analyzeSecurityThreat', data, "Assess security threats and recommend protective measures.", MODELS.COMPLEX),
+        
+    analyzeProductFeedback: async (data: unknown) => 
+        executeTask('analyzeProductFeedback', data, "Analyze customer feedback and identify product improvement opportunities.", MODELS.STANDARD),
+        
+    managePatientRecords: async (data: unknown) => 
+        executeTask('managePatientRecords', data, "Manage patient records securely and ensure compliance with healthcare regulations.", MODELS.STANDARD),
         
     // Add generic fallback for others
     runGenericTask: async (taskName: string, data: unknown) =>
