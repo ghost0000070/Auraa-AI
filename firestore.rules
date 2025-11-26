@@ -1,3 +1,4 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -39,10 +40,11 @@ service cloud.firestore {
       allow read, update, delete: if false;
     }
     
-    // Users can create deployment requests, but not read, update, or delete them.
+    // Users can create and read their own deployment requests.
     match /deploymentRequests/{requestId} {
         allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-        allow read, update, delete: if false;
+        allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+        allow update, delete: if false;
     }
 
     // Users can manage their own power-ups.
@@ -62,6 +64,37 @@ service cloud.firestore {
     
     match /customers/{userId}/subscriptions/{subscriptionId}{
       allow read, write: if false;
+    }
+
+    // Allow read access to aiEmployees for authenticated users
+    match /aiEmployees/{employeeId} {
+      allow read: if request.auth != null;
+    }
+
+    // Allow read access to ai_employee_templates for authenticated users
+    match /ai_employee_templates/{templateId} {
+      allow read: if request.auth != null;
+    }
+
+    // Allow read and write access to ai_team_communications for authenticated users
+    match /ai_team_communications/{communicationId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Allow read access to agent_metrics for authenticated users
+    match /agent_metrics/{metricId} {
+      allow read: if request.auth != null;
+    }
+
+    // Users can create requests, but not read, update, or delete them. (keeping for backward compatibility if needed)
+    match /requests/{requestId} {
+        allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+        allow read, update, delete: if false;
+    }
+
+    // Allow read and write access to agent_tasks for authenticated users
+    match /agent_tasks/{taskId} {
+      allow read, write: if request.auth != null;
     }
   }
 }
