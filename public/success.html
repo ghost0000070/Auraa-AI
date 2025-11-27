@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Subscription Successful - Auraa AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .success-card {
+      background: white;
+      border-radius: 16px;
+      padding: 48px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      background: #48bb78;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: scaleIn 0.5s ease-out;
+    }
+
+    .success-icon::after {
+      content: "✓";
+      color: white;
+      font-size: 48px;
+      font-weight: bold;
+    }
+
+    @keyframes scaleIn {
+      0% {
+        transform: scale(0);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 16px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #718096;
+      margin-bottom: 32px;
+    }
+
+    .session-info {
+      background: #f7fafc;
+      border-radius: 8px;
+      padding: 24px;
+      margin: 24px 0;
+      text-align: left;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #4a5568;
+    }
+
+    .info-value {
+      color: #718096;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .button {
+      flex: 1;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .button-primary {
+      color: white;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .button-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .button-secondary {
+      color: #667eea;
+      background: white;
+      border: 2px solid #667eea;
+    }
+
+    .button-secondary:hover {
+      background: #f7fafc;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #718096;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e2e8f0;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="success-card">
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading your subscription details...</p>
+      </div>
+
+      <div id="success-content" class="hidden">
+        <div class="success-icon"></div>
+        <h1>Welcome to Auraa AI Pro! 🎉</h1>
+        <p class="subtitle">Your subscription is now active</p>
+
+        <div class="session-info">
+          <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-value" id="customer-email">Loading...</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Plan</span>
+            <span class="info-value">Auraa AI Pro</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Status</span>
+            <span class="info-value" id="subscription-status">Active</span>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <a href="/dashboard" class="button button-primary">Go to Dashboard</a>
+          <form action="/createPortalSession" method="POST" style="flex: 1;">
+            <input type="hidden" name="session_id" id="session-id-input" />
+            <button type="submit" class="button button-secondary" style="width: 100%;">
+              Manage Subscription
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const FUNCTIONS_URL = 'https://YOUR_REGION-YOUR_PROJECT.cloudfunctions.net';
+    
+    // Get API base URL
+    let apiBaseUrl;
+    if (window.location.hostname === 'localhost') {
+      apiBaseUrl = 'http://localhost:5001/YOUR_PROJECT/us-central1';
+    } else {
+      apiBaseUrl = FUNCTIONS_URL;
+    }
+
+    async function initialize() {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const sessionId = urlParams.get('session_id');
+
+      if (!sessionId) {
+        showError('No session ID found');
+        return;
+      }
+
+      // Set session ID in form
+      document.getElementById('session-id-input').value = sessionId;
+
+      try {
+        const response = await fetch(`${apiBaseUrl}/checkoutSessionDetails?session_id=${sessionId}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to retrieve session details');
+        }
+
+        const session = await response.json();
+
+        // Update UI
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('success-content').classList.remove('hidden');
+
+        if (session.customer_email) {
+          document.getElementById('customer-email').textContent = session.customer_email;
+        }
+
+        if (session.subscription) {
+          const subscription = session.subscription;
+          if (subscription.status) {
+            document.getElementById('subscription-status').textContent = 
+              subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1);
+          }
+        }
+
+        // Update portal form action
+        const portalForm = document.querySelector('form[action="/createPortalSession"]');
+        if (window.location.hostname === 'localhost') {
+          portalForm.action = 'http://localhost:5001/YOUR_PROJECT/us-central1/createPortalSession';
+        } else {
+          portalForm.action = `${FUNCTIONS_URL}/createPortalSession`;
+        }
+
+      } catch (error) {
+        console.error('Error:', error);
+        showError('Failed to load subscription details');
+      }
+    }
+
+    function showError(message) {
+      document.getElementById('loading').innerHTML = `
+        <div style="color: #e53e3e; font-weight: 600;">⚠️ ${message}</div>
+        <p><a href="/" style="color: #667eea;">Return home</a></p>
+      `;
+    }
+
+    // Initialize when page loads
+    initialize();
+  </script>
+</body>
+</html>

@@ -58,14 +58,14 @@ export function PricingSection() {
   const tiers: Tier[] = [
     {
       name: "Pro",
-      price: "$29",
+      price: "$50",
       features: [
         "10 AI Employees",
         "Advanced Analytics",
         "Priority Support",
         "Custom Integrations",
       ],
-      priceId: "price_1PQVucB6Xw2qV6Q8i9o3v3kI",
+      priceId: "price_1SY0gtJJkefvaMj1YLfG9FYX",
     },
     {
       name: "Enterprise",
@@ -76,7 +76,7 @@ export function PricingSection() {
         "On-premise Deployment",
         "24/7 Support",
       ],
-      priceId: "price_1PQVvSB6Xw2qV6Q8y5e2p2gH",
+      priceId: "price_1SY0hwJJkefvaMj1cwQePfc",
     },
   ];
 

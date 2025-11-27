@@ -102,6 +102,10 @@ pglite-debug.log
 # Service account key
 service-account-key.json
 
+# Stripe environment files (keep template, ignore actual config)
+.env.stripe
+.env.stripe.local
+
 # IDE files
 .idea/
 .vscode/

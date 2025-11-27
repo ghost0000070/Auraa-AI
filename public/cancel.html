@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Subscription Cancelled - Auraa AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .cancel-card {
+      background: white;
+      border-radius: 16px;
+      padding: 48px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .cancel-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      background: #f7fafc;
+      border: 3px solid #e2e8f0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 16px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #718096;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .info-box {
+      background: #f7fafc;
+      border-left: 4px solid #667eea;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 24px 0;
+      text-align: left;
+    }
+
+    .info-box p {
+      margin: 0;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .button {
+      flex: 1;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .button-primary {
+      color: white;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .button-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .button-secondary {
+      color: #667eea;
+      background: white;
+      border: 2px solid #667eea;
+    }
+
+    .button-secondary:hover {
+      background: #f7fafc;
+    }
+
+    .features-reminder {
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .features-reminder h3 {
+      font-size: 16px;
+      color: #4a5568;
+      margin-bottom: 16px;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      text-align: left;
+      font-size: 14px;
+      color: #718096;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+    }
+
+    .feature-item::before {
+      content: "✓";
+      color: #48bb78;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="cancel-card">
+      <div class="cancel-icon">💭</div>
+      <h1>Subscription Not Completed</h1>
+      <p class="subtitle">
+        Your payment was cancelled and no charges were made. 
+        You can try again anytime you're ready.
+      </p>
+
+      <div class="info-box">
+        <p>
+          <strong>What happened?</strong><br>
+          The checkout process was cancelled before completing payment. 
+          Your account remains unchanged and you can subscribe whenever you're ready.
+        </p>
+      </div>
+
+      <div class="features-reminder">
+        <h3>With Auraa AI Pro, you get:</h3>
+        <div class="feature-list">
+          <div class="feature-item">Unlimited AI employees</div>
+          <div class="feature-item">Advanced AI models</div>
+          <div class="feature-item">Priority processing</div>
+          <div class="feature-item">Custom integrations</div>
+          <div class="feature-item">24/7 support</div>
+          <div class="feature-item">Team collaboration</div>
+          <div class="feature-item">API access</div>
+          <div class="feature-item">Advanced analytics</div>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <a href="/subscribe.html" class="button button-primary">Try Again</a>
+        <a href="/" class="button button-secondary">Return Home</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

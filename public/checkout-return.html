@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Subscription Confirmation - Auraa AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 8px;
+      padding: 40px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    
+    .success {
+      color: #0a6;
+    }
+    
+    .success-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+    
+    .error {
+      color: #c33;
+    }
+    
+    .error-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+    
+    .loading {
+      color: #666;
+    }
+    
+    h1 {
+      margin-bottom: 10px;
+    }
+    
+    .detail {
+      color: #666;
+      margin: 10px 0;
+    }
+    
+    .button {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 24px;
+      background: #635BFF;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    
+    .button:hover {
+      background: #4F46E5;
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="loading" class="loading">
+      <div class="loading-icon">⏳</div>
+      <h1>Processing your subscription...</h1>
+      <p>Please wait while we confirm your payment.</p>
+    </div>
+
+    <div id="success" class="success hidden">
+      <div class="success-icon">✓</div>
+      <h1>Subscription Successful!</h1>
+      <p>Thank you for subscribing to Auraa AI.</p>
+      <p class="detail">A confirmation email has been sent to: <strong id="customer-email"></strong></p>
+      <a href="/dashboard" class="button">Go to Dashboard</a>
+    </div>
+
+    <div id="error" class="error hidden">
+      <div class="error-icon">✗</div>
+      <h1>Payment Failed</h1>
+      <p>We couldn't process your payment. Please try again.</p>
+      <a href="/checkout-embedded.html" class="button">Try Again</a>
+    </div>
+  </div>
+
+  <script>
+    // Configuration - update with your actual Cloud Functions URL
+    const API_BASE_URL = 'https://YOUR_REGION-YOUR_PROJECT.cloudfunctions.net';
+
+    initialize();
+
+    async function initialize() {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const sessionId = urlParams.get('session_id');
+
+      if (!sessionId) {
+        showError('No session ID found in URL');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/sessionStatusEndpoint?session_id=${sessionId}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to retrieve session status');
+        }
+
+        const session = await response.json();
+
+        // Hide loading
+        document.getElementById('loading').classList.add('hidden');
+
+        // Handle the session according to its status
+        if (session.status === 'open') {
+          // Payment still in progress or failed, redirect back to checkout
+          window.location.replace('/checkout-embedded.html');
+        } else if (session.status === 'complete') {
+          // Show success page
+          document.getElementById('success').classList.remove('hidden');
+          if (session.customer_email) {
+            document.getElementById('customer-email').textContent = session.customer_email;
+          } else {
+            document.getElementById('customer-email').textContent = 'your registered email';
+          }
+        } else {
+          showError('Unexpected session status: ' + session.status);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showError(error.message);
+      }
+    }
+
+    function showError(message) {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('success').classList.add('hidden');
+      
+      const errorDiv = document.getElementById('error');
+      errorDiv.classList.remove('hidden');
+      
+      // Optionally show the error message
+      const errorText = errorDiv.querySelector('p');
+      if (message) {
+        errorText.textContent = message;
+      }
+    }
+  </script>
+</body>
+</html>

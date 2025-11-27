@@ -6,10 +6,15 @@
     "outDir": "lib",
     "sourceMap": true,
     "strict": true,
-    "target": "es2017"
+    "target": "es2017",
+    "skipLibCheck": true,
+    "types": []
   },
   "compileOnSave": true,
   "include": [
     "src"
+  ],
+  "exclude": [
+    "src/dataconnect-admin-generated"
   ]
 }
