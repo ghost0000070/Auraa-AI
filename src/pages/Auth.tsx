@@ -7,7 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Toaster } from '@/components/ui/toaster';
 import { toast } from 'sonner';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, AuthError, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '@/firebase'; // Import the configured auth instance
+import { auth, db } from '@/firebase'; // Import the configured auth instance
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -35,13 +36,41 @@ const Auth = () => {
     try {
       if (isSignUp) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        
+        // Create user document in Firestore
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+          email: userCredential.user.email,
+          displayName: userCredential.user.displayName || null,
+          photoUrl: userCredential.user.photoURL || null,
+          is_active: false,
+          plan: null,
+          role: 'user',
+          createdAt: serverTimestamp(),
+        });
+        
         await sendEmailVerification(userCredential.user);
         toast("Check your email", {
           description: "We've sent you a verification link. Please verify your email before logging in.",
         });
         setIsSignUp(false); // Switch to sign-in view after successful sign-up
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        
+        // Check if user document exists, create if not
+        const userDocRef = doc(db, 'users', userCredential.user.uid);
+        const userDoc = await getDoc(userDocRef);
+        
+        if (!userDoc.exists()) {
+          await setDoc(userDocRef, {
+            email: userCredential.user.email,
+            displayName: userCredential.user.displayName || null,
+            photoUrl: userCredential.user.photoURL || null,
+            is_active: false,
+            plan: null,
+            role: 'user',
+            createdAt: serverTimestamp(),
+          });
+        }
       }
     } catch (err) {
       const authError = err as AuthError;

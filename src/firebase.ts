@@ -30,7 +30,8 @@ const generativeModel = getGenerativeModel(vertex, { model: "gemini-1.5-flash-pr
 // Simplified DB initialization
 let db: Firestore;
 
-if (import.meta.env.DEV) {
+// Only use emulators if explicitly enabled via environment variable
+if (import.meta.env.VITE_USE_EMULATORS === 'true') {
     console.log("Development mode: connecting to emulators.");
 
     // Use a simplified and robust way to get the Firestore instance

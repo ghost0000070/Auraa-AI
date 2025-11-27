@@ -77,20 +77,36 @@ const AITeamDashboard: React.FC = () => {
         { name: 'agent_tasks', stateSetter: setTasks, orderByField: 'createdAt' },
         { name: 'ai_team_communications', stateSetter: setCommunications, orderByField: 'created_at' },
         { name: 'agent_metrics', stateSetter: setMetrics, orderByField: 'timestamp' },
-        { name: 'aiEmployees', stateSetter: setEmployees, isUserScoped: true },
+        { name: 'ai_employees', stateSetter: setEmployees, isUserScoped: true },
       ];
 
       const unsubscribes = collections.map(({ name, stateSetter, orderByField, isUserScoped }) => {
         handleLoading(name, true);
-        const userField = isUserScoped ? 'userId' : 'owner_user';
+        const userField = isUserScoped ? 'user_id' : 'owner_user';
         
-        let q = query(
-          collection(db, name),
-          where(userField, '==', user.uid)
-        );
-
-        if(orderByField) {
-            q = query(q, orderBy(orderByField, 'desc'));
+        // Build query - for collections that might not have user-specific data, just read all
+        let q;
+        try {
+          if (name === 'agent_metrics' || name === 'ai_team_communications') {
+            // These collections allow read for all authenticated users without user filtering
+            q = orderByField 
+              ? query(collection(db, name), orderBy(orderByField, 'desc'))
+              : query(collection(db, name));
+          } else {
+            // User-specific collections
+            q = query(
+              collection(db, name),
+              where(userField, '==', user.uid)
+            );
+            if(orderByField) {
+              q = query(q, orderBy(orderByField, 'desc'));
+            }
+          }
+        } catch (error) {
+          console.error(`Error building query for ${name}:`, error);
+          handleLoading(name, false);
+          stateSetter([] as never);
+          return () => {};
         }
 
         return onSnapshot(q, async (snapshot) => {
@@ -105,7 +121,11 @@ const AITeamDashboard: React.FC = () => {
           handleLoading(name, false);
         }, (error) => {
           console.error(`Error fetching ${name}: `, error);
-          toast.error(`Failed to fetch ${name.replace(/_/g, ' ')}.`);
+          // Don't show toast for empty collections, just log and continue
+          if (error.code !== 'permission-denied') {
+            console.warn(`Unable to fetch ${name}, collection may be empty or not yet created`);
+          }
+          stateSetter([] as never);
           handleLoading(name, false);
         });
       });
