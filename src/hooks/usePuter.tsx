@@ -11,6 +11,18 @@ export const usePuter = () => {
     const initPuter = async () => {
       setIsLoading(true);
       try {
+        // Check if user is authenticated first
+        const isAuthenticated = await puter.auth.isSignedIn();
+        
+        if (!isAuthenticated) {
+          // User not signed in, don't try to get token
+          setAuthToken(null);
+          setUsername(null);
+          setError(null);
+          setIsLoading(false);
+          return;
+        }
+
         const token = await puter.auth.getAuthToken();
         setAuthToken(token);
 

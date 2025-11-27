@@ -11,7 +11,8 @@ import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { templates as aiEmployeeTemplates } from '@/lib/ai-employee-templates';
+import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
+import { TemplateIcon } from '@/components/TemplateIcon';
 
 // Define a more specific type for the deployed employee
 interface DeployedEmployee {
@@ -115,7 +116,7 @@ const AIEmployeePage: React.FC = () => {
           Back to {deployedEmployee.name}
         </Button>
         <ChatInterface
-          employeeType={staticData.category}
+          employeeType={staticData.id}
           employeeName={deployedEmployee.name}
           businessContext={JSON.stringify(deployedEmployee.deployment_config)}
           onClose={() => setShowChat(false)}
@@ -141,7 +142,9 @@ const AIEmployeePage: React.FC = () => {
              <div className="relative w-96 h-96 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg overflow-hidden shadow-2xl">
                 <img src={staticData.image} alt={deployedEmployee.name} className="w-full h-full object-cover"/>
                 {staticData.isPremium && <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg"><Star className="w-3 h-3 fill-current" />Elite</div>}
-                <div className={`absolute bottom-4 left-4 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg`} style={{ backgroundColor: staticData.color }}><staticData.icon/></div>
+                <div className="absolute bottom-4 left-4 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg" style={{ backgroundColor: staticData.color }}>
+                  <TemplateIcon icon={staticData.icon} className="w-6 h-6" />
+                </div>
             </div>
           </div>
           <div className="space-y-6">

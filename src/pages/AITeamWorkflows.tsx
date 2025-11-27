@@ -1,9 +1,10 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Zap, Users, BarChart, PenTool } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { templates as aiEmployeeTemplates } from '@/lib/ai-employee-templates';
+import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
+import { TemplateIcon } from '@/components/TemplateIcon';
 
 const AITeamWorkflows: React.FC = () => {
     const navigate = useNavigate();
@@ -36,8 +37,11 @@ const AITeamWorkflows: React.FC = () => {
                         <Card key={employee.id} className="bg-slate-800/50 border-slate-700/50 hover:border-primary/30 transition-all">
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
                                 <CardTitle className="text-lg font-bold text-primary">{employee.name}</CardTitle>
-                                <div className={`w-10 h-10 ${employee.color} rounded-full flex items-center justify-center text-white`}>
-                                    {employee.icon}
+                                <div
+                                    className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${employee.colorClass}`}
+                                    style={{ backgroundColor: employee.color }}
+                                >
+                                    <TemplateIcon icon={employee.icon} className="w-5 h-5" />
                                 </div>
                             </CardHeader>
                             <CardContent>

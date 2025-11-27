@@ -32,19 +32,19 @@ const buildContextPayload = async (employeeId: string, userId: string, userInput
   const specificContext: Record<string, unknown> = {};
 
   switch (employeeId) {
-    case 'marketing-guru':
+    case 'marketing-pro':
       specificContext.marketingGoals = ["increase_engagement", "brand_awareness"];
       break;
     
-    case 'sales-strategist':
+    case 'sales-sidekick':
       specificContext.leadStats = { recentLeads: 5, conversionRate: "2.4%" }; 
       break;
 
-    case 'support-shield':
+    case 'support-sentinel':
       specificContext.openTickets = 3; 
       break;
 
-    case 'it-support-specialist':
+    case 'dev-companion':
         specificContext.userSystem = navigator.userAgent;
         break;
         

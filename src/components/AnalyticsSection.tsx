@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState, useMemo } from "react";
 import { db } from "@/firebase";
-import { collection, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
+import { collection, getDocs, query, where, orderBy, limit, getDoc, doc } from 'firebase/firestore';
 import { useAuth } from "@/hooks/useAuth";
 
 interface MetricData {
@@ -39,6 +39,23 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ isDashboard 
         if (isDashboard && user) {
           queryRef = query(collection(db, 'user_stats'), where('userId', '==', user.uid), limit(1));
         } else {
+          // platform_stats are restricted to admins in security rules.
+          // Check current user's role first to avoid permission errors.
+          if (!user) {
+            setMetrics(defaultMetrics);
+            setLoading(false);
+            return;
+          }
+
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          const role = userDoc.exists() ? (userDoc.data() as any).role : null;
+          if (role !== 'admin') {
+            // Not an admin — don't attempt to read platform-wide stats.
+            setMetrics(defaultMetrics);
+            setLoading(false);
+            return;
+          }
+
           queryRef = query(collection(db, 'platform_stats'), orderBy('updatedAt', 'desc'), limit(1));
         }
 
