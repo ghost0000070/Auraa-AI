@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { templates as aiEmployeeTemplates } from '@/lib/ai-employee-templates';
+import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 

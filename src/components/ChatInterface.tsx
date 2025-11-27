@@ -4,7 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2, Send, User, Bot } from 'lucide-react';
-import { templates as aiEmployeeTemplates } from '@/lib/ai-employee-templates';
+import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { TemplateIcon } from './TemplateIcon';
