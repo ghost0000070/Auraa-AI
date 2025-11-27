@@ -243,65 +243,7 @@ export const createCustomerPortalSession = https.onCall(
       }
     });
 
-export const createCheckoutSession = https.onCall(
-    {secrets: [stripeSecretKey]},
-    async (request) => {
-      if (!request.auth) {
-        throw new https.HttpsError("unauthenticated", "Auth required.");
-      }
-      if (!request.data.priceId) {
-        throw new https.HttpsError(
-            "invalid-argument",
-            "priceId is a required parameter.",
-        );
-      }
-      if (!request.data.successUrl || !request.data.cancelUrl) {
-        throw new https.HttpsError(
-            "invalid-argument",
-            "successUrl and cancelUrl are required parameters.",
-        );
-      }
-
-      const userId = request.auth.uid;
-      try {
-        const userDoc = await db.collection("users").doc(userId).get();
-        let stripeId = userDoc.data()?.stripeId;
-
-        if (!stripeId) {
-          const customer = await stripe.customers.create({
-            email: request.auth.token.email,
-            metadata: {userId},
-          });
-          stripeId = customer.id;
-          await userDoc.ref.update({stripeId});
-        }
-
-        const session = await stripe.checkout.sessions.create({
-          payment_method_types: ["card"],
-          mode: "subscription",
-          customer: stripeId,
-          line_items: [
-            {
-              price: request.data.priceId,
-              quantity: 1,
-            },
-          ],
-          success_url: request.data.successUrl,
-          cancel_url: request.data.cancelUrl,
-        });
-
-        return {sessionId: session.id};
-      } catch (error) {
-        console.error("Stripe Checkout Session Error:", error);
-        if (error instanceof https.HttpsError) {
-          throw error;
-        }
-        throw new https.HttpsError(
-            "internal",
-            "Failed to create checkout session.",
-        );
-      }
-    });
+// Removed duplicate - using the version below that returns {url: session.url}
 
 export const stripeWebhook = https.onRequest(
     {secrets: [stripeSecretKey, stripeWebhookSecret]},
@@ -559,13 +501,42 @@ export const scrapeWebsite = https.onCall(
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
         });
 
-        // TODO: Implement actual scraping logic (using puppeteer, cheerio, etc.)
-        // For now, this just logs the request and stores it
+        // Basic scraping - fetch HTML content and store metadata
         console.log(`Website scraping initiated for URL: ${url} by user: ${userId}`);
+        
+        // Fetch the website HTML (basic implementation)
+        const response = await fetch(url, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; Auraa-AI-Bot/1.0)'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const html = await response.text();
+        const title = html.match(/<title>(.*?)<\/title>/i)?.[1] || 'Untitled';
+        
+        // Update the integration with scraped data
+        const integrationRef = await db.collection("websiteIntegrations").add({
+          userId,
+          url,
+          title,
+          contentLength: html.length,
+          status: "completed",
+          scrapedAt: admin.firestore.FieldValue.serverTimestamp(),
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
 
         return {
           success: true,
-          message: "Website scraping has been queued. You'll be notified when complete.",
+          message: "Website scraped successfully",
+          data: {
+            title,
+            contentLength: html.length,
+            integrationId: integrationRef.id
+          }
         };
       } catch (error) {
         console.error("Website Scraping Error:", error);

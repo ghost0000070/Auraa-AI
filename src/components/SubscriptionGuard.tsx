@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase";
+import { OWNER_EMAIL, TIER_LEVELS } from '@/config/constants';
 
 interface SubscriptionGuardProps {
   children: React.ReactNode;
@@ -15,8 +16,8 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children, require
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check if user is owner - this mimics the logic in Dashboard.tsx and useAuth.tsx
-  const isOwner = user?.email === 'ghostspooks@icloud.com';
+  // Check if user is owner - synchronized with useAuth
+  const isOwner = user?.email === OWNER_EMAIL;
 
   useEffect(() => {
     const checkAuthorization = async () => {
@@ -67,11 +68,9 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children, require
             const userRole = userData.role || 'user';
             const userPlan = userData.plan || 'free';
             
-            const tierLevels: Record<string, number> = { free: 0, user: 0, premium: 1, pro: 1, enterprise: 2, admin: 3 };
-            
-            const requiredLevel = tierLevels[requiredTier.toLowerCase()] || 0;
-            const currentRoleLevel = tierLevels[userRole.toLowerCase()] || 0;
-            const currentPlanLevel = tierLevels[userPlan.toLowerCase()] || 0;
+            const requiredLevel = TIER_LEVELS[requiredTier.toLowerCase()] || 0;
+            const currentRoleLevel = TIER_LEVELS[userRole.toLowerCase()] || 0;
+            const currentPlanLevel = TIER_LEVELS[userPlan.toLowerCase()] || 0;
 
             // Use the higher of role or plan level
             const effectiveLevel = Math.max(currentRoleLevel, currentPlanLevel);

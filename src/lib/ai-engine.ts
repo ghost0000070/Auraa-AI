@@ -1,13 +1,10 @@
 import type { PuterChatResponse } from "../types/puter";
 import { toast } from "sonner";
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { AI_MODELS } from '@/config/constants';
 
-// Map of task types to Claude models
-const MODELS = {
-    COMPLEX: 'claude-opus-4-1',
-    STANDARD: 'claude-sonnet-4-5',
-    FAST: 'claude-haiku-4-5'
-};
+// Use centralized model constants
+const MODELS = AI_MODELS;
 
 /**
  * callPuterAI - Primary Strategy (Free Client-Side AI)
