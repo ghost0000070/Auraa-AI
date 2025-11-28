@@ -30,6 +30,9 @@ export const QuickDeploymentWidget: React.FC = () => {
 
   const fetchTemplates = useCallback(async () => {
     try {
+      // Ensure fresh auth token before Firestore reads
+      if (user) await user.getIdToken(true);
+      
       // ai_employee_templates allows read for all authenticated users (no userId filter needed)
       const templatesQuery = query(collection(db, 'ai_employee_templates'));
       const snapshot = await getDocs(templatesQuery);
@@ -39,11 +42,14 @@ export const QuickDeploymentWidget: React.FC = () => {
       console.error('Error fetching templates:', error);
       toast({ title: "Error", description: "Could not fetch employee templates.", variant: "destructive" });
     }
-  }, [toast]);
+  }, [toast, user]);
 
   const fetchRecentRequests = useCallback(async () => {
     if (!user) return;
     try {
+      // Ensure fresh auth token before Firestore reads
+      await user.getIdToken(true);
+      
       const requestsQuery = query(
         collection(db, 'deploymentRequests'),
         where('userId', '==', user.uid),

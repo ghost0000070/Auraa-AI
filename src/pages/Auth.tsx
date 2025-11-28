@@ -56,6 +56,9 @@ const Auth = () => {
       } else {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         
+        // Ensure fresh auth token before Firestore reads
+        await userCredential.user.getIdToken(true);
+        
         // Check if user document exists, create if not
         const userDocRef = doc(db, 'users', userCredential.user.uid);
         const userDoc = await getDoc(userDocRef);

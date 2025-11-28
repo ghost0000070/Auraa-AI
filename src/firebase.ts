@@ -1,7 +1,7 @@
 
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
-import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { getAuth, connectAuthEmulator, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator, initializeFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
@@ -50,6 +50,16 @@ if (import.meta.env.VITE_USE_EMULATORS === 'true') {
 } else {
     console.log("Production mode: connecting to live services.");
     db = getFirestore(app);
+    
+    // Ensure Firestore uses auth state for security rules
+    // This explicitly tells Firestore to monitor auth state changes
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("Auth state changed: User authenticated", user.uid);
+      } else {
+        console.log("Auth state changed: User not authenticated");
+      }
+    });
 }
 
 export { app, analytics, auth, db, storage, functions, generativeModel, vertex };

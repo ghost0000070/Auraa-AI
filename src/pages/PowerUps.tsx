@@ -31,6 +31,9 @@ const PowerUps = () => {
 
     const fetchPowerUpStatus = async () => {
         try {
+            // Ensure fresh auth token before Firestore reads
+            await user.getIdToken(true);
+            
             const powerUpsCollectionRef = collection(db, `users/${user.uid}/powerUps`);
             const querySnapshot = await getDocs(powerUpsCollectionRef);
             

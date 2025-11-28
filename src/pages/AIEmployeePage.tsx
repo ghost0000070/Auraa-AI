@@ -49,6 +49,9 @@ const AIEmployeePage: React.FC = () => {
     const fetchEmployee = async () => {
       setIsLoading(true);
       try {
+        // Ensure fresh auth token before Firestore reads
+        if (user) await user.getIdToken(true);
+        
         const employeeDocRef = doc(db, 'ai_employees', employeeId);
         const employeeDoc = await getDoc(employeeDocRef);
 

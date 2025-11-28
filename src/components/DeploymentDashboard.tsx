@@ -52,40 +52,73 @@ export const DeploymentDashboard: React.FC = () => {
   useEffect(() => {
     if (!user) return;
 
-    const requestsQuery = query(collection(db, 'deploymentRequests'), where('userId', '==', user.uid));
-    const employeesQuery = query(collection(db, 'deployedEmployees'), where('userId', '==', user.uid));
+    const setupSubscriptions = async () => {
+      try {
+        // Ensure fresh auth token and properly wait before subscribing
+        await user.getIdToken(true);
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const unsubscribeRequests = onSnapshot(requestsQuery, (snapshot) => {
-      const requestsData = snapshot.docs.map(d => ({
-        id: d.id,
-        ...d.data(),
-        createdAt: (d.data().createdAt as Timestamp).toDate(),
-      } as DeploymentRequest));
-      setRequests(requestsData);
-      handleLoading('requests', false);
-    }, (error) => {
-      console.error('Error fetching requests:', error);
-      toast({ title: 'Error', description: 'Failed to load deployment requests', variant: 'destructive' });
-      handleLoading('requests', false);
-    });
+        const requestsQuery = query(collection(db, 'deploymentRequests'), where('userId', '==', user.uid));
+        const employeesQuery = query(collection(db, 'deployedEmployees'), where('userId', '==', user.uid));
 
-    const unsubscribeEmployees = onSnapshot(employeesQuery, (snapshot) => {
-      const employeesData = snapshot.docs.map(d => ({
-        id: d.id,
-        ...d.data(),
-        createdAt: (d.data().createdAt as Timestamp).toDate(),
-      } as DeployedEmployee));
-      setEmployees(employeesData);
-      handleLoading('employees', false);
-    }, (error) => {
-      console.error('Error fetching employees:', error);
-      toast({ title: 'Error', description: 'Failed to load deployed employees', variant: 'destructive' });
-      handleLoading('employees', false);
-    });
+        const unsubscribeRequests = onSnapshot(requestsQuery, (snapshot) => {
+          const requestsData = snapshot.docs.map(d => ({
+            id: d.id,
+            ...d.data(),
+            createdAt: (d.data().createdAt as Timestamp).toDate(),
+          } as DeploymentRequest));
+          setRequests(requestsData);
+          handleLoading('requests', false);
+        }, (error) => {
+          console.error('[DeploymentDashboard] Error fetching requests:', {
+            code: error.code,
+            message: error.message,
+            fullError: error
+          });
+          if (error.code === 'permission-denied') {
+            console.error('[CRITICAL] Permission denied for deploymentRequests');
+          }
+          toast({ title: 'Error', description: 'Failed to load deployment requests', variant: 'destructive' });
+          handleLoading('requests', false);
+        });
 
+        const unsubscribeEmployees = onSnapshot(employeesQuery, (snapshot) => {
+          const employeesData = snapshot.docs.map(d => ({
+            id: d.id,
+            ...d.data(),
+            createdAt: (d.data().createdAt as Timestamp).toDate(),
+          } as DeployedEmployee));
+          setEmployees(employeesData);
+          handleLoading('employees', false);
+        }, (error) => {
+          console.error('[DeploymentDashboard] Error fetching employees:', {
+            code: error.code,
+            message: error.message,
+            fullError: error
+          });
+          if (error.code === 'permission-denied') {
+            console.error('[CRITICAL] Permission denied for deployedEmployees');
+          }
+          toast({ title: 'Error', description: 'Failed to load deployed employees', variant: 'destructive' });
+          handleLoading('employees', false);
+        });
+
+        return () => {
+          unsubscribeRequests();
+          unsubscribeEmployees();
+        };
+      } catch (error) {
+        console.error('Error setting up subscriptions:', error);
+        handleLoading('requests', false);
+        handleLoading('employees', false);
+        return () => {};
+      }
+    };
+
+    const cleanupPromise = setupSubscriptions();
+    
     return () => {
-      unsubscribeRequests();
-      unsubscribeEmployees();
+      cleanupPromise.then(cleanup => cleanup());
     };
   }, [user, toast]);
 

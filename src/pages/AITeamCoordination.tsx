@@ -101,51 +101,83 @@ const AITeamCoordination = () => {
 
     setLoading(true);
 
-    const communicationsQuery = query(
-      collection(db, 'ai_team_communications'),
-      where('user_id', '==', user.uid),
-      orderBy('created_at', 'desc'),
-      limit(50)
-    );
-    const unsubscribeCommunications = onSnapshot(communicationsQuery, (snapshot) => {
-      const fetchedCommunications = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as TeamCommunication[];
-      setCommunications(fetchedCommunications);
-      setLoading(false);
-    }, (error) => {
-      console.error('Communications real-time error:', error);
-      toast('Error', {
-        description: 'Failed to load real-time communications'
-      });
-      setLoading(false);
-    });
+    // Ensure fresh auth token and properly wait before subscribing
+    const setupSubscriptions = async () => {
+      try {
+        await user.getIdToken(true);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Increased delay to ensure token is attached
+        
+        const communicationsQuery = query(
+          collection(db, 'ai_team_communications'),
+          where('user_id', '==', user.uid),
+          orderBy('created_at', 'desc'),
+          limit(50)
+        );
+        const unsubscribeCommunications = onSnapshot(communicationsQuery, (snapshot) => {
+          const fetchedCommunications = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as TeamCommunication[];
+          setCommunications(fetchedCommunications);
+          setLoading(false);
+        }, (error) => {
+          console.error('[AITeamCoordination] Communications real-time error:', {
+            code: error.code,
+            message: error.message,
+            fullError: error
+          });
+          if (error.code === 'permission-denied') {
+            console.error('[CRITICAL] Permission denied for ai_team_communications');
+          }
+          toast('Error', {
+            description: 'Failed to load real-time communications'
+          });
+          setLoading(false);
+        });
 
-    const executionsQuery = query(
-      collection(db, 'ai_team_executions'),
-      where('user_id', '==', user.uid),
-      orderBy('created_at', 'desc'),
-      limit(20)
-    );
-    const unsubscribeExecutions = onSnapshot(executionsQuery, (snapshot) => {
-      const fetchedExecutions = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as TeamExecution[];
-      setExecutions(fetchedExecutions);
-      setLoading(false);
-    }, (error) => {
-      console.error('Executions real-time error:', error);
-      toast('Error', {
-        description: 'Failed to load real-time workflow executions'
-      });
-      setLoading(false);
-    });
+        const executionsQuery = query(
+          collection(db, 'ai_team_executions'),
+          where('user_id', '==', user.uid),
+          orderBy('created_at', 'desc'),
+          limit(20)
+        );
+        const unsubscribeExecutions = onSnapshot(executionsQuery, (snapshot) => {
+          const fetchedExecutions = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as TeamExecution[];
+          setExecutions(fetchedExecutions);
+          setLoading(false);
+        }, (error) => {
+          console.error('[AITeamCoordination] Executions real-time error:', {
+            code: error.code,
+            message: error.message,
+            fullError: error
+          });
+          if (error.code === 'permission-denied') {
+            console.error('[CRITICAL] Permission denied for ai_team_executions');
+          }
+          toast('Error', {
+            description: 'Failed to load real-time workflow executions'
+          });
+          setLoading(false);
+        });
 
+        return () => {
+          unsubscribeCommunications();
+          unsubscribeExecutions();
+        };
+      } catch (error) {
+        console.error('Error setting up subscriptions:', error);
+        setLoading(false);
+        return () => {}; // Return empty cleanup if error
+      }
+    };
+
+    const cleanupPromise = setupSubscriptions();
+    
     return () => {
-      unsubscribeCommunications();
-      unsubscribeExecutions();
+      cleanupPromise.then(cleanup => cleanup());
     };
   }, [user, navigate]);
 

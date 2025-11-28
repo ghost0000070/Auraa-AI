@@ -17,6 +17,10 @@ const Analytics = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
+        // Ensure fresh auth token before Firestore reads
+        const auth = (await import('firebase/auth')).getAuth();
+        if (auth.currentUser) await auth.currentUser.getIdToken(true);
+        
         // 1. Fetch Total Users
         const usersSnapshot = await getDocs(collection(db, "users"));
         setTotalUsers(usersSnapshot.size);

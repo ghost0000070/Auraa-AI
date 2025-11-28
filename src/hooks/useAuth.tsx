@@ -50,6 +50,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     try {
+      // Refresh ID token to ensure it's sent with all Firestore requests
+      await auth.currentUser.getIdToken(true);
+
       // Owner account has unrestricted access
       if (auth.currentUser.email === OWNER_EMAIL) {
         setSubscriptionStatus({
@@ -97,6 +100,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(currentUser);
       setLoading(false);
       if (currentUser) {
+        // Wait a moment to ensure auth state is fully persisted before attempting Firestore reads
+        await new Promise(resolve => setTimeout(resolve, 500));
         await checkSubscription();
       } else {
         setSubscriptionStatus(null);

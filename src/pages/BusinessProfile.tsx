@@ -66,6 +66,9 @@ const BusinessProfile = () => {
   const fetchBusinessProfile = useCallback(async () => {
     if (!user) return;
     try {
+      // Ensure fresh auth token before Firestore reads
+      await user.getIdToken(true);
+      
       const docRef = doc(db, "businessProfiles", user.uid);
       const docSnap = await getDoc(docRef);
 

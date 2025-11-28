@@ -39,6 +39,9 @@ const AIEmployees: React.FC = () => {
       if (!user) return; // Don't fetch if user is not logged in
 
       try {
+        // Ensure fresh auth token before Firestore reads
+        await user.getIdToken(true);
+        
         setLoading(true);
         const employeesCollection = collection(db, 'ai_employees');
         const employeeSnapshot = await getDocs(employeesCollection);
