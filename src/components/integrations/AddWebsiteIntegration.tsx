@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/firebase';
+import { db, auth } from '@/firebase';
 
 const AddWebsiteIntegration = ({ userId, onIntegrationAdded }: { userId: string, onIntegrationAdded: () => void }) => {
   const [websiteUrl, setWebsiteUrl] = useState('');
@@ -9,6 +9,9 @@ const AddWebsiteIntegration = ({ userId, onIntegrationAdded }: { userId: string,
     if (!websiteUrl) return;
 
     try {
+      // Ensure fresh auth token before Firestore writes
+      if (auth.currentUser) await auth.currentUser.getIdToken(true);
+      
       await addDoc(collection(db, 'websiteIntegrations'), {
         userId,
         url: websiteUrl,
