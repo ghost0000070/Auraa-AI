@@ -73,53 +73,59 @@ const AITeamDashboard: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      const collections = [
-        { name: 'agent_tasks', stateSetter: setTasks, orderByField: 'createdAt' },
-        { name: 'ai_team_communications', stateSetter: setCommunications, orderByField: 'created_at' },
-        { name: 'agent_metrics', stateSetter: setMetrics, orderByField: 'timestamp' },
-        { name: 'ai_employees', stateSetter: setEmployees, orderByField: null },
-      ];
+      // Wait a brief moment for auth token to be fully initialized
+      const timer = setTimeout(() => {
+        const collections = [
+          { name: 'agent_tasks', stateSetter: setTasks, orderByField: 'createdAt' },
+          { name: 'ai_team_communications', stateSetter: setCommunications, orderByField: 'created_at' },
+          { name: 'agent_metrics', stateSetter: setMetrics, orderByField: 'timestamp' },
+          { name: 'ai_employees', stateSetter: setEmployees, orderByField: null },
+        ];
 
-      const unsubscribes = collections.map(({ name, stateSetter, orderByField }) => {
-        handleLoading(name, true);
-        
-        // Build query - all these collections allow authenticated reads per Firestore rules
-        let q;
-        try {
-          if (orderByField) {
-            q = query(collection(db, name), orderBy(orderByField, 'desc'));
-          } else {
-            q = query(collection(db, name));
-          }
-        } catch (error) {
-          console.error(`Error building query for ${name}:`, error);
-          handleLoading(name, false);
-          stateSetter([] as never);
-          return () => {};
-        }
-
-        return onSnapshot(q, async (snapshot) => {
-          const data = await Promise.all(snapshot.docs.map(async (docSnapshot) => {
-            const item = { id: docSnapshot.id, ...docSnapshot.data() };
-            if (name === 'ai_team_communications' && !item.is_read) {
-              await handleNewCommunication(item as Communication, docSnapshot.ref);
+        const unsubscribes = collections.map(({ name, stateSetter, orderByField }) => {
+          handleLoading(name, true);
+          console.log(`Loading ${name} collection for authenticated user`);
+          
+          // Build query - all these collections allow authenticated reads per Firestore rules
+          let q;
+          try {
+            if (orderByField) {
+              q = query(collection(db, name), orderBy(orderByField, 'desc'));
+            } else {
+              q = query(collection(db, name));
             }
-            return item;
-          }));
-          stateSetter(data as never);
-          handleLoading(name, false);
-        }, (error) => {
-          console.error(`Error fetching ${name}: `, error);
-          // Don't show toast for empty collections, just log and continue
-          if (error.code !== 'permission-denied') {
-            console.warn(`Unable to fetch ${name}, collection may be empty or not yet created`);
+          } catch (error) {
+            console.error(`Error building query for ${name}:`, error);
+            handleLoading(name, false);
+            stateSetter([] as never);
+            return () => {};
           }
-          stateSetter([] as never);
-          handleLoading(name, false);
-        });
-      });
 
-      return () => unsubscribes.forEach(unsub => unsub());
+          return onSnapshot(q, async (snapshot) => {
+            const data = await Promise.all(snapshot.docs.map(async (docSnapshot) => {
+              const item = { id: docSnapshot.id, ...docSnapshot.data() };
+              if (name === 'ai_team_communications' && !item.is_read) {
+                await handleNewCommunication(item as Communication, docSnapshot.ref);
+              }
+              return item;
+            }));
+            stateSetter(data as never);
+            handleLoading(name, false);
+          }, (error) => {
+            console.error(`Error fetching ${name}: `, error);
+            // Don't show toast for empty collections, just log and continue
+            if (error.code !== 'permission-denied') {
+              console.warn(`Unable to fetch ${name}, collection may be empty or not yet created`);
+            }
+            stateSetter([] as never);
+            handleLoading(name, false);
+          });
+        });
+
+        return () => unsubscribes.forEach(unsub => unsub());
+      }, 500); // Wait 500ms for auth token to be ready
+
+      return () => clearTimeout(timer);
     }
   }, [user]);
 
