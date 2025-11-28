@@ -30,6 +30,7 @@ export const QuickDeploymentWidget: React.FC = () => {
 
   const fetchTemplates = useCallback(async () => {
     try {
+      // ai_employee_templates allows read for all authenticated users (no userId filter needed)
       const templatesQuery = query(collection(db, 'ai_employee_templates'));
       const snapshot = await getDocs(templatesQuery);
       const templatesData = snapshot.docs.map(doc => ({ id: doc.id, name: doc.data().name as string }));

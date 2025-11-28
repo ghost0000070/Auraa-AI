@@ -82,38 +82,42 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
-    // AI Employees: authenticated users can read all templates
+    // AI Employees: all authenticated users can read all
     match /ai_employees/{employeeId} {
       allow read: if request.auth != null;
-      // Only the owner can write/update
-      allow write: if request.auth != null && resource.data.user_id == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
 
-    // AI employee templates are read-only for clients (managed server-side)
+    // AI employee templates: all authenticated users can read
     match /ai_employee_templates/{templateId} {
       allow read: if request.auth != null;
       allow write: if isAdmin();
     }
 
-    // Allow read and write access to ai_team_communications for authenticated users
+    // Team communications: all authenticated users can read/write
     match /ai_team_communications/{communicationId} {
       allow read, write: if request.auth != null;
     }
 
-    // Allow read access to agent_metrics for authenticated users
+    // Agent metrics: all authenticated users can read/write
     match /agent_metrics/{metricId} {
-      allow read: if request.auth != null;
+      allow read, write: if request.auth != null;
     }
 
-    // Users can create requests, but not read, update, or delete them. (keeping for backward compatibility if needed)
+    // Requests: all authenticated users can read/write
     match /requests/{requestId} {
-        allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-        allow read, update, delete: if false;
+      allow read, write: if request.auth != null;
     }
 
-    // Allow read and write access to agent_tasks for authenticated users
+    // Agent tasks: all authenticated users can read/write
     match /agent_tasks/{taskId} {
       allow read, write: if request.auth != null;
+    }
+
+    // Checkout sessions: server writes only
+    match /checkout_sessions/{sessionId} {
+      allow read, write: if false;
     }
   }
 }

@@ -77,30 +77,19 @@ const AITeamDashboard: React.FC = () => {
         { name: 'agent_tasks', stateSetter: setTasks, orderByField: 'createdAt' },
         { name: 'ai_team_communications', stateSetter: setCommunications, orderByField: 'created_at' },
         { name: 'agent_metrics', stateSetter: setMetrics, orderByField: 'timestamp' },
-        { name: 'ai_employees', stateSetter: setEmployees, isUserScoped: true },
+        { name: 'ai_employees', stateSetter: setEmployees, orderByField: null },
       ];
 
-      const unsubscribes = collections.map(({ name, stateSetter, orderByField, isUserScoped }) => {
+      const unsubscribes = collections.map(({ name, stateSetter, orderByField }) => {
         handleLoading(name, true);
-        const userField = isUserScoped ? 'user_id' : 'owner_user';
         
-        // Build query - for collections that might not have user-specific data, just read all
+        // Build query - all these collections allow authenticated reads per Firestore rules
         let q;
         try {
-          if (name === 'agent_metrics' || name === 'ai_team_communications') {
-            // These collections allow read for all authenticated users without user filtering
-            q = orderByField 
-              ? query(collection(db, name), orderBy(orderByField, 'desc'))
-              : query(collection(db, name));
+          if (orderByField) {
+            q = query(collection(db, name), orderBy(orderByField, 'desc'));
           } else {
-            // User-specific collections
-            q = query(
-              collection(db, name),
-              where(userField, '==', user.uid)
-            );
-            if(orderByField) {
-              q = query(q, orderBy(orderByField, 'desc'));
-            }
+            q = query(collection(db, name));
           }
         } catch (error) {
           console.error(`Error building query for ${name}:`, error);

@@ -68,9 +68,13 @@ export const createCheckoutSession = https.onRequest(
         const host = req.get("host") || "localhost:4242";
         const YOUR_DOMAIN = `${protocol}://${host}`;
 
+        // Get user email if available (from query params or body)
+        const customerEmail = req.body.email || req.query.email;
+
         // Create Checkout Session
         const session = await stripe.checkout.sessions.create({
           billing_address_collection: "auto",
+          customer_email: customerEmail,
           line_items: [
             {
               price: priceId,

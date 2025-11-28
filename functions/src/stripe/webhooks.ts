@@ -249,21 +249,53 @@ async function handleCheckoutSessionCompleted(
 ) {
   console.log(`Checkout session completed: ${session.id}`);
 
-  const connectedAccountId = (session as any).customer_account;
+  const customerId = session.customer as string;
+  const subscriptionId = session.subscription as string;
 
-  if (!connectedAccountId) {
-    console.log("No connected account ID found in checkout session");
+  if (!customerId) {
+    console.log("No customer ID found in checkout session");
     return;
   }
 
-  await db.collection("checkout_sessions").doc(session.id).set({
-    sessionId: session.id,
-    connectedAccountId,
-    status: session.status,
-    paymentStatus: session.payment_status,
-    subscriptionId: session.subscription,
-    completedAt: admin.firestore.FieldValue.serverTimestamp(),
-  });
+  try {
+    // Find the user by Stripe customer ID
+    const usersQuery = await db
+        .collection("users")
+        .where("stripeId", "==", customerId)
+        .limit(1)
+        .get();
+
+    if (usersQuery.empty) {
+      console.error(`No user found with Stripe customer ID: ${customerId}`);
+      return;
+    }
+
+    const userDoc = usersQuery.docs[0];
+
+    // Update user with subscription info
+    await userDoc.ref.update({
+      subscriptionId: subscriptionId,
+      subscriptionStatus: "active",
+      isActive: true,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    console.log(`Updated subscription for user ${userDoc.id}`);
+
+    // Store checkout session for reference
+    await db.collection("checkout_sessions").doc(session.id).set({
+      sessionId: session.id,
+      userId: userDoc.id,
+      customerId: customerId,
+      status: session.status,
+      paymentStatus: session.payment_status,
+      subscriptionId: subscriptionId,
+      completedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+  } catch (error: any) {
+    console.error("Error handling checkout session completed:", error);
+    throw error;
+  }
 }
 
 /**
