@@ -1,16 +1,16 @@
 {
   "name": "auraa-backend",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js"
+    "gcp-build": "npm run build",
+    "start": "node index.js"
   },
   "dependencies": {
     "firebase-admin": "^13.6.0",
-    "firebase-functions": "^7.0.0"
-  },
-  "devDependencies": {
+    "firebase-functions": "^7.0.0",
     "typescript": "^5.3.3"
-  }
+  },
+  "devDependencies": {}
 }
