@@ -34,5 +34,8 @@
         "connectionId": "ghost0000070",
         "projectKey": "ghost0000070_Auraa-AI"
     },
-    "geminicodeassist.rules": "never use place holders or mock data\nalways code properly\n\n\n\n\n"
+    "geminicodeassist.rules": "never use place holders or mock data\nalways code properly\n\n\n\n\n",
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": []
+    }
 }
