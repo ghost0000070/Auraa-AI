@@ -157,7 +157,7 @@ export async function getCheckoutSessionStatus(
     if (session.customer) {
       const customer = await stripe.customers.retrieve(session.customer as string);
       if (!customer.deleted) {
-        customerEmail = customer.email || "";
+        customerEmail = (customer as Stripe.Customer).email || "";
       }
     }
 

@@ -187,12 +187,12 @@ export const checkoutSessionDetails = https.onRequest(
           expand: ["subscription", "customer"],
         });
 
+        const customer = session.customer as Stripe.Customer | Stripe.DeletedCustomer;
+        const customerEmail = customer && !customer.deleted ? (customer as Stripe.Customer).email : null;
+
         res.status(200).json({
           status: session.status,
-          customer_email:
-          typeof session.customer === "object" && session.customer && !session.customer.deleted ?
-            session.customer.email :
-            null,
+          customer_email: customerEmail,
           subscription: session.subscription,
         });
       } catch (error: any) {
