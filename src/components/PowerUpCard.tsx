@@ -21,7 +21,6 @@ export const PowerUpCard = ({
   description, 
   category, 
   tier_requirement,
-  icon_name 
 }: PowerUpCardProps) => {
   const { user, subscriptionStatus } = useAuth();
   const navigate = useNavigate();

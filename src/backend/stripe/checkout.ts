@@ -7,6 +7,7 @@ const stripeSecretKey = defineSecret("STRIPE_SECRET_KEY");
 // Initialize Stripe
 const initStripe = () => {
   return new Stripe(stripeSecretKey.value(), {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     apiVersion: "2025-11-17.clover" as any,
     typescript: true,
   });
@@ -88,9 +89,10 @@ export const createCheckoutSession = https.onRequest(
 
         // Redirect to Checkout
         res.redirect(303, session.url as string);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error creating checkout session:", error);
-        res.status(500).json({error: error.message});
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        res.status(500).json({error: errorMessage});
       }
     }
 );
@@ -146,9 +148,10 @@ export const createPortalSession = https.onRequest(
         });
 
         res.redirect(303, portalSession.url);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error creating portal session:", error);
-        res.status(500).json({error: error.message});
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        res.status(500).json({error: errorMessage});
       }
     }
 );
@@ -195,9 +198,10 @@ export const checkoutSessionDetails = https.onRequest(
             null,
           subscription: session.subscription,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error retrieving session details:", error);
-        res.status(500).json({error: error.message});
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        res.status(500).json({error: errorMessage});
       }
     }
 );

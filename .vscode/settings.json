@@ -37,5 +37,6 @@
     "geminicodeassist.rules": "never use place holders or mock data\nalways code properly\n\n\n\n\n",
     "yaml.schemas": {
         "https://json.schemastore.org/github-workflow.json": []
-    }
+    },
+    "IDX.agenticWorkspace": true
 }

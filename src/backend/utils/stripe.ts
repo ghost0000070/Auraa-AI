@@ -11,7 +11,7 @@ export const getStripe = (): Stripe => {
     stripeInstance = new Stripe(
         stripeSecretKey.value(),
         {
-          apiVersion: "2025-11-17.clover" as any,
+          apiVersion: "2025-11-17.clover" as never,
           typescript: true,
         },
     );

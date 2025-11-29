@@ -4,8 +4,8 @@ import Stripe from "stripe";
 import * as admin from "firebase-admin";
 import {
   handlePaymentFailure,
-  retryInvoicePayment,
   restorePayoutSchedule,
+  retryInvoicePayment,
 } from "./subscriptions.js";
 
 const stripeSecretKey = defineSecret("STRIPE_SECRET_KEY");
@@ -16,6 +16,7 @@ const db = admin.firestore();
 // Initialize Stripe with the latest API version
 const initStripe = () => {
   return new Stripe(stripeSecretKey.value(), {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     apiVersion: "2025-11-17.clover" as any,
     typescript: true,
   });
@@ -31,13 +32,14 @@ export const stripeWebhook = https.onRequest(
       secrets: [stripeSecretKey, stripeWebhookSecret],
       cors: false,
     },
-    async (req, res) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async (req: any, res: any) => {
       if (req.method !== "POST") {
         res.status(405).json({error: "Method not allowed"});
         return;
       }
 
-      const sig = req.headers["stripe-signature"] as string;
+      const sig = req.headers["stripe-signature"];
       const webhookSecret = stripeWebhookSecret.value();
 
       let event: Stripe.Event;
@@ -49,9 +51,10 @@ export const stripeWebhook = https.onRequest(
             sig,
             webhookSecret
         );
-      } catch (err: any) {
-        console.error("Webhook signature verification failed:", err.message);
-        res.status(400).send(`Webhook Error: ${err.message}`);
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : "Unknown error";
+        console.error("Webhook signature verification failed:", errorMessage);
+        res.status(400).send(`Webhook Error: ${errorMessage}`);
         return;
       }
 
@@ -59,34 +62,34 @@ export const stripeWebhook = https.onRequest(
       try {
         switch (event.type) {
           case "invoice.payment_failed":
-            await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
+            await handleInvoicePaymentFailed(event.data.object);
             break;
 
           case "invoice.payment_succeeded":
-            await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice);
+            await handleInvoicePaymentSucceeded(event.data.object);
             break;
 
           case "customer.subscription.created":
-            await handleSubscriptionCreated(event.data.object as Stripe.Subscription);
+            await handleSubscriptionCreated(event.data.object);
             break;
 
           case "customer.subscription.updated":
-            await handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
+            await handleSubscriptionUpdated(event.data.object);
             break;
 
           case "customer.subscription.deleted":
-            await handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
+            await handleSubscriptionDeleted(event.data.object);
             break;
 
           case "checkout.session.completed":
             await handleCheckoutSessionCompleted(
-            event.data.object as Stripe.Checkout.Session
+            event.data.object
             );
             break;
 
           case "checkout.session.expired":
             await handleCheckoutSessionExpired(
-            event.data.object as Stripe.Checkout.Session
+            event.data.object
             );
             break;
 
@@ -95,9 +98,10 @@ export const stripeWebhook = https.onRequest(
         }
 
         res.status(200).json({received: true});
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
         console.error("Error processing webhook:", error);
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: errorMessage});
       }
     }
 );
@@ -109,6 +113,7 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   console.log(`Payment failed for invoice: ${invoice.id}`);
 
   const stripe = initStripe();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const connectedAccountId = (invoice as any).customer_account;
 
   if (!connectedAccountId) {
@@ -127,6 +132,7 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
         currency: invoice.currency,
         attemptCount: invoice.attempt_count,
         failedAt: admin.firestore.FieldValue.serverTimestamp(),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         subscriptionId: (invoice as any).subscription,
         status: "failed",
       });
@@ -145,6 +151,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   console.log(`Payment succeeded for invoice: ${invoice.id}`);
 
   const stripe = initStripe();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const connectedAccountId = (invoice as any).customer_account;
 
   if (!connectedAccountId) {
@@ -173,6 +180,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
     connectedAccountId,
     amount: invoice.amount_paid,
     currency: invoice.currency,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     subscriptionId: (invoice as any).subscription,
     paidAt: admin.firestore.FieldValue.serverTimestamp(),
   });
@@ -184,6 +192,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
 async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
   console.log(`Subscription created: ${subscription.id}`);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const connectedAccountId = (subscription as any).customer_account;
 
   if (!connectedAccountId) {
@@ -198,7 +207,9 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
         subscriptionId: subscription.id,
         connectedAccountId,
         status: subscription.status,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         currentPeriodStart: (subscription as any).current_period_start,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         currentPeriodEnd: (subscription as any).current_period_end,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         items: subscription.items.data.map((item) => ({
@@ -220,7 +231,9 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
       .doc(subscription.id)
       .update({
         status: subscription.status,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         currentPeriodStart: (subscription as any).current_period_start,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         currentPeriodEnd: (subscription as any).current_period_end,
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
@@ -235,10 +248,11 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   await db
       .collection("connected_account_subscriptions")
       .doc(subscription.id)
-      .update({
+      .set({
+        subscriptionId: subscription.id,
         status: "canceled",
         canceledAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
+      }, {merge: true});
 }
 
 /**
@@ -292,8 +306,9 @@ async function handleCheckoutSessionCompleted(
       subscriptionId: subscriptionId,
       completedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
-  } catch (error: any) {
-    console.error("Error handling checkout session completed:", error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error("Error handling checkout session completed:", errorMessage);
     throw error;
   }
 }
@@ -309,10 +324,11 @@ async function handleCheckoutSessionExpired(
   await db
       .collection("checkout_sessions")
       .doc(session.id)
-      .update({
+      .set({
+        sessionId: session.id,
         status: "expired",
         expiredAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
+      }, {merge: true});
 }
 
 /**
@@ -321,7 +337,8 @@ async function handleCheckoutSessionExpired(
  */
 export const retryFailedPaymentsScheduled = https.onRequest(
     {secrets: [stripeSecretKey]},
-    async (req, res) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async (req: any, res: any) => {
       try {
         const stripe = initStripe();
 
@@ -335,7 +352,7 @@ export const retryFailedPaymentsScheduled = https.onRequest(
             .where("failedAt", ">=", admin.firestore.Timestamp.fromDate(thirtyDaysAgo))
             .get();
 
-        const retryResults = [];
+        const retryResults: { invoiceId: string; result?: { success: boolean; invoice: Stripe.Response<Stripe.Invoice>; } | { success: boolean; reason: string; needed: number; available: number; }; error?: string; }[] = [];
 
         for (const doc of failedPaymentsSnapshot.docs) {
           const failureData = doc.data();
@@ -356,9 +373,10 @@ export const retryFailedPaymentsScheduled = https.onRequest(
                 retriedAt: admin.firestore.FieldValue.serverTimestamp(),
               });
             }
-          } catch (error: any) {
+          } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : "Unknown error";
             console.error(`Error retrying invoice ${invoiceId}:`, error);
-            retryResults.push({invoiceId, error: error.message});
+            retryResults.push({invoiceId, error: errorMessage});
           }
         }
 
@@ -367,9 +385,10 @@ export const retryFailedPaymentsScheduled = https.onRequest(
           retriedCount: retryResults.length,
           results: retryResults,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
         console.error("Error in retry scheduled function:", error);
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: errorMessage});
       }
     }
 );

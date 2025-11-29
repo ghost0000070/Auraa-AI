@@ -16,6 +16,7 @@ const stripeSecretKey = defineSecret("STRIPE_SECRET_KEY");
 // Initialize Stripe with the latest API version
 const initStripe = () => {
   return new Stripe(stripeSecretKey.value(), {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     apiVersion: "2025-11-17.clover" as any,
     typescript: true,
   });
@@ -69,9 +70,10 @@ export const createSubscriptionProductEndpoint = https.onRequest(
             priceId: typeof product.default_price === "string" ? product.default_price : product.default_price?.id,
           },
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error creating subscription product:", error);
-        res.status(500).json({error: error.message});
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        res.status(500).json({error: errorMessage});
       }
     }
 );
@@ -121,9 +123,10 @@ export const createCheckoutSessionEndpoint = https.onRequest(
           clientSecret: session.client_secret,
           sessionId: session.id,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error creating checkout session:", error);
-        res.status(500).json({error: error.message});
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        res.status(500).json({error: errorMessage});
       }
     }
 );
@@ -161,9 +164,10 @@ export const sessionStatusEndpoint = https.onRequest(
         const sessionStatus = await getCheckoutSessionStatus(stripe, sessionId);
 
         res.status(200).json(sessionStatus);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error retrieving session status:", error);
-        res.status(500).json({error: error.message});
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        res.status(500).json({error: errorMessage});
       }
     }
 );
@@ -227,12 +231,14 @@ export const createSubscriptionEndpoint = https.onRequest(
           subscription: {
             id: subscription.id,
             status: subscription.status,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             current_period_end: (subscription as any).current_period_end,
           },
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error creating subscription:", error);
-        res.status(500).json({error: error.message});
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        res.status(500).json({error: errorMessage});
       }
     }
 );
@@ -273,9 +279,10 @@ export const retryInvoicePaymentEndpoint = https.onRequest(
         const result = await retryInvoicePayment(stripe, invoiceId, connectedAccountId);
 
         res.status(200).json(result);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error retrying invoice payment:", error);
-        res.status(500).json({error: error.message});
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        res.status(500).json({error: errorMessage});
       }
     }
 );
@@ -288,7 +295,7 @@ export const retryInvoicePaymentEndpoint = https.onRequest(
 export const setMinimumBalanceEndpoint = https.onRequest(
     {secrets: [stripeSecretKey]},
     async (req, res) => {
-      res.set("Access-Control-Allow-Origin", "*");
+      res.set("Access-control-Allow-Origin", "*");
       res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
       res.set("Access-Control-Allow-Headers", "Content-Type");
 
@@ -319,9 +326,10 @@ export const setMinimumBalanceEndpoint = https.onRequest(
           success: true,
           message: `Minimum balance set to ${minimumAmount} ${currency}`,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error setting minimum balance:", error);
-        res.status(500).json({error: error.message});
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        res.status(500).json({error: errorMessage});
       }
     }
 );

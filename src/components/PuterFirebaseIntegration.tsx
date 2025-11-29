@@ -16,7 +16,7 @@ const PuterFirebaseIntegration: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Use the new usePuter hook
-  const { username: puterUsername, authToken, error: puterError, isLoading: puterIsLoading } = usePuter();
+  const { username: puterUsername, error: puterError, isLoading: puterIsLoading } = usePuter();
 
   const handleGenerateScript = async () => {
     setIsLoading(true);

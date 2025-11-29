@@ -64,8 +64,6 @@ const buildContextPayload = async (employeeId: string, userId: string, userInput
 
 interface ChatInterfaceProps {
   employeeType: string;
-  employeeName: string;
-  businessContext: string;
   onClose: () => void;
 }
 
@@ -74,7 +72,7 @@ interface Message {
   text: string;
 }
 
-export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, employeeName, businessContext }) => {
+export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -172,7 +170,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
         <form onSubmit={handleSendMessage} className="relative">
           <Textarea
             value={input}
-            onChange={(e) => setInputText(e)}
+            onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             className="w-full pr-20 resize-none bg-slate-800 border-slate-600 text-slate-200"
             onKeyDown={(e) => {
@@ -189,8 +187,4 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
       </div>
     </Card>
   );
-  
-  function setInputText(e: React.ChangeEvent<HTMLTextAreaElement>) {
-      setInput(e.target.value);
-  }
 };

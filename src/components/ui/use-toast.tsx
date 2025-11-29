@@ -6,13 +6,7 @@ import { X } from "lucide-react"
 import { toast, useToast } from './toast-hooks';
 
 import { cn } from "@/lib/utils"
-// import { toastVariants } from "./toast-hooks"
-
-// New toast implementation
 import { cva } from 'class-variance-authority';
-
-const TOAST_LIMIT = 10;
-const TOAST_REMOVE_DELAY = 1000000;
 
 type ToasterToast = ToastProps & {
   id: string
@@ -27,13 +21,6 @@ const actionTypes = {
   DISMISS_TOAST: "DISMISS_TOAST",
   REMOVE_TOAST: "REMOVE_TOAST",
 } as const
-
-let count = 0
-
-function genId() {
-  count = (count + 1) % Number.MAX_VALUE
-  return count.toString()
-}
 
 type ActionType = typeof actionTypes
 
@@ -59,23 +46,6 @@ export interface State {
   toasts: ToasterToast[]
 }
 
-const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>
-
-const addToRemoveQueue = (toastId: string) => {
-  if (toastTimeouts.has(toastId)) {
-    return
-  }
-
-  const timeout = setTimeout(() => {
-    toastTimeouts.delete(toastId)
-    dispatch({ type: "REMOVE_TOAST", toastId })
-  }, TOAST_REMOVE_DELAY)
-
-  toastTimeouts.set(toastId, timeout)
-}
-
-
-
 const listeners: Array<(state: State) => void> = []
 
 let memoryState: State = { toasts: [] }
@@ -88,8 +58,6 @@ function dispatch(action: Action) {
 }
 
 export type Toast = Omit<ToasterToast, 'id'>
-
-
 
 const toastVariants = cva(
   "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
@@ -208,4 +176,5 @@ export {
   ToastDescription,
   ToastAction,
   ToastClose,
+  dispatch, // Export dispatch to be used in toast-hooks.ts
 };

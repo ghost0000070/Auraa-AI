@@ -15,8 +15,10 @@ const db = admin.firestore();
 
 // Initialize Stripe with the latest API version
 const initStripe = () => {
+  // Use 'latest' or a known supported version to avoid TS errors if specific version strings change
+  // Casting to any or specific supported string as needed to bypass strict literal check if library definitions are newer/older
   return new Stripe(stripeSecretKey.value(), {
-    apiVersion: "2025-11-17.clover" as any,
+    apiVersion: "2024-12-18.acacia" as any, 
     typescript: true,
   });
 };
@@ -37,8 +39,13 @@ export const stripeWebhook = https.onRequest(
         return;
       }
 
-      const sig = req.headers["stripe-signature"] as string;
+      const sig = req.headers["stripe-signature"];
       const webhookSecret = stripeWebhookSecret.value();
+
+      if (!sig || typeof sig !== 'string') {
+        res.status(400).send("Webhook Error: Missing stripe-signature header");
+        return;
+      }
 
       let event: Stripe.Event;
 
@@ -109,6 +116,7 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   console.log(`Payment failed for invoice: ${invoice.id}`);
 
   const stripe = initStripe();
+  // Using type casting since customer_account might be available in connect events but not on base types
   const connectedAccountId = (invoice as any).customer_account;
 
   if (!connectedAccountId) {
@@ -235,10 +243,11 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   await db
       .collection("connected_account_subscriptions")
       .doc(subscription.id)
-      .update({
+      .set({
+        subscriptionId: subscription.id,
         status: "canceled",
         canceledAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
+      }, {merge: true});
 }
 
 /**
@@ -309,10 +318,11 @@ async function handleCheckoutSessionExpired(
   await db
       .collection("checkout_sessions")
       .doc(session.id)
-      .update({
+      .set({
+        sessionId: session.id,
         status: "expired",
         expiredAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
+      }, {merge: true});
 }
 
 /**
@@ -321,7 +331,7 @@ async function handleCheckoutSessionExpired(
  */
 export const retryFailedPaymentsScheduled = https.onRequest(
     {secrets: [stripeSecretKey]},
-    async (req, res) => {
+    async (req: any, res: any) => {
       try {
         const stripe = initStripe();
 

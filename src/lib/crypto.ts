@@ -3,7 +3,6 @@
 // Public key is fetched via edge function `integration-public-key` returning PEM.
 
 const TEXT_ENCODER = new TextEncoder();
-const TEXT_DECODER = new TextDecoder();
 
 export interface EncryptedEnvelope {
   version: 1;

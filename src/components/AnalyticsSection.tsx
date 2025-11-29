@@ -15,6 +15,10 @@ interface AnalyticsSectionProps {
     isDashboard?: boolean;
 }
 
+interface User {
+    role: string;
+}
+
 export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ isDashboard = false }) => {
   const { user } = useAuth();
   const [metrics, setMetrics] = useState<MetricData[]>([]);
@@ -57,7 +61,7 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ isDashboard 
           await new Promise(resolve => setTimeout(resolve, 500));
 
           const userDoc = await getDoc(doc(db, 'users', user.uid));
-          const role = userDoc.exists() ? (userDoc.data() as any).role : null;
+          const role = userDoc.exists() ? (userDoc.data() as User).role : null;
           if (role !== 'admin') {
             // Not an admin — don't attempt to read platform-wide stats.
             setMetrics(defaultMetrics);

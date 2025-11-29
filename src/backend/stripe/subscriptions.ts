@@ -55,6 +55,7 @@ export async function createBalanceSetupIntent(
       payment_method_data: {
         type: "stripe_balance",
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any); // Type assertion needed for preview API
 
     console.log(`Created SetupIntent: ${setupIntent.id} for account: ${connectedAccountId}`);
@@ -94,6 +95,7 @@ export async function createConnectedAccountSubscription(
       payment_settings: {
         payment_method_types: ["stripe_balance"],
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any); // Type assertion needed for preview API
 
     console.log(`Created subscription: ${subscription.id} for account: ${connectedAccountId}`);
@@ -130,6 +132,7 @@ export async function createEmbeddedCheckoutSession(
       ui_mode: "embedded",
       return_url: `${returnUrl}?session_id={CHECKOUT_SESSION_ID}`,
       customer_account: connectedAccountId,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any); // Type assertion needed for preview API
 
     console.log(`Created Checkout Session: ${session.id} for account: ${connectedAccountId}`);

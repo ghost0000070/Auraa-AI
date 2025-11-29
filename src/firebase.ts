@@ -5,7 +5,6 @@ import { getAuth, connectAuthEmulator, onAuthStateChanged } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator, initializeFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
-import { getPerformance } from 'firebase/performance';
 import { getVertexAI, getGenerativeModel } from "@firebase/vertexai-preview";
 
 const firebaseConfig = {
@@ -23,7 +22,6 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 const functions = getFunctions(app);
-const perf = getPerformance(app);
 const vertex = getVertexAI(app);
 const generativeModel = getGenerativeModel(vertex, { model: "gemini-1.5-flash-preview-0514" });
 
