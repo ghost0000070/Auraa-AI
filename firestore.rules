@@ -7,6 +7,11 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == userId;
     }
 
+    // Helper function to check if user is the site owner
+    function isSiteOwner() {
+      return request.auth != null && request.auth.uid == 'UoP0OzTFp5RnVclt7XSDDkbzc5W2';
+    }
+
     // Helper function to check ownership of deployed employee
     function isEmployeeOwner(employeeId) {
         return get(/databases/$(database)/documents/deployedEmployees/$(employeeId)).data.userId == request.auth.uid;
@@ -135,6 +140,11 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow read: if request.auth != null && resource.data.userId == request.auth.uid;
       allow write: if false;
+    }
+
+    // Site owner has unrestricted access to all documents
+    match /{document=**} {
+      allow read, write: if isSiteOwner();
     }
 
     // DEFAULT DENY: Must be at the END so specific rules above take precedence

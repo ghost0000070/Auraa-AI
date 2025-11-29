@@ -55,8 +55,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Wait for token to be attached to SDK
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Owner account has unrestricted access
-      if (auth.currentUser.email === OWNER_EMAIL) {
+      // Owner account has unrestricted access (check by UID or email)
+      if (auth.currentUser.uid === 'UoP0OzTFp5RnVclt7XSDDkbzc5W2' || auth.currentUser.email === OWNER_EMAIL) {
         setSubscriptionStatus({
           subscribed: true,
           subscription_tier: 'unlimited',
