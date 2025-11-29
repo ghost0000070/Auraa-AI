@@ -82,7 +82,7 @@ const AITeamDashboard: React.FC = () => {
           console.error('Failed to refresh ID token:', err);
         }
 
-        // Wait for auth to propagate - INCREASED to 1000ms for better stability
+        // Wait for auth to propagate - INCREASED to 2000ms for better stability
         const timer = setTimeout(() => {
           const collections = [
             { name: 'agent_tasks', stateSetter: setTasks, orderByField: 'createdAt' },
@@ -135,7 +135,7 @@ const AITeamDashboard: React.FC = () => {
           });
 
           return () => unsubscribes.forEach(unsub => unsub());
-        }, 1000); // INCREASED from 500ms to ensure token is attached to requests
+        }, 2000); // INCREASED from 1000ms to ensure token is attached to requests
 
         return () => clearTimeout(timer);
       })();

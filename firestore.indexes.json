@@ -46,6 +46,47 @@
   //     ]
   //   },
   // ]
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "agent_tasks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "owner_user", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "business_goals",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "user_id", "order": "ASCENDING" },
+        { "fieldPath": "created_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "ai_shared_knowledge",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "user_id", "order": "ASCENDING" },
+        { "fieldPath": "created_at", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "websiteIntegrations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "deployedEmployees",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }

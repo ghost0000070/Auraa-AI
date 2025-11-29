@@ -37,6 +37,10 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ isDashboard 
 
       try {
         if (isDashboard && user) {
+          // Ensure fresh auth token before Firestore reads
+          await user.getIdToken(true);
+          // Wait for token to be attached to SDK
+          await new Promise(resolve => setTimeout(resolve, 500));
           queryRef = query(collection(db, 'user_stats'), where('userId', '==', user.uid), limit(1));
         } else {
           // platform_stats are restricted to admins in security rules.
@@ -46,6 +50,11 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ isDashboard 
             setLoading(false);
             return;
           }
+
+          // Ensure fresh auth token before Firestore reads
+          await user.getIdToken(true);
+          // Wait for token to be attached to SDK
+          await new Promise(resolve => setTimeout(resolve, 500));
 
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           const role = userDoc.exists() ? (userDoc.data() as any).role : null;

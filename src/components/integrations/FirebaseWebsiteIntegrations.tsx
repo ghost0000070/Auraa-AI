@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { db, functions } from '@/firebase';
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
 import { useAuth } from '@/hooks/useAuth';
@@ -27,6 +27,11 @@ export const FirebaseWebsiteIntegrations = () => {
     if (!user) return;
     setLoading(true);
     try {
+      // Ensure fresh auth token before Firestore reads
+      await user.getIdToken(true);
+      // Wait for token to be attached to SDK
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       const q = query(
         collection(db, 'websiteIntegrations'),
         where('userId', '==', user.uid),

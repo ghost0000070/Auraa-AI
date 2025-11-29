@@ -52,6 +52,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       // Refresh ID token to ensure it's sent with all Firestore requests
       await auth.currentUser.getIdToken(true);
+      // Wait for token to be attached to SDK
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       // Owner account has unrestricted access
       if (auth.currentUser.email === OWNER_EMAIL) {
@@ -97,11 +99,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        // CRITICAL: Wait before setting user state to ensure Firestore SDK initializes auth
+        // This prevents components from attempting Firestore queries before token is attached
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      }
+      
       setUser(currentUser);
       setLoading(false);
+      
       if (currentUser) {
-        // Wait a moment to ensure auth state is fully persisted before attempting Firestore reads
-        await new Promise(resolve => setTimeout(resolve, 500));
         await checkSubscription();
       } else {
         setSubscriptionStatus(null);

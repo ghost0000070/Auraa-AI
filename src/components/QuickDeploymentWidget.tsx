@@ -31,7 +31,11 @@ export const QuickDeploymentWidget: React.FC = () => {
   const fetchTemplates = useCallback(async () => {
     try {
       // Ensure fresh auth token before Firestore reads
-      if (user) await user.getIdToken(true);
+      if (user) {
+        await user.getIdToken(true);
+        // Wait for token to be attached to SDK
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
       
       // ai_employee_templates allows read for all authenticated users (no userId filter needed)
       const templatesQuery = query(collection(db, 'ai_employee_templates'));
@@ -49,6 +53,8 @@ export const QuickDeploymentWidget: React.FC = () => {
     try {
       // Ensure fresh auth token before Firestore reads
       await user.getIdToken(true);
+      // Wait for token to be attached to SDK
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       const requestsQuery = query(
         collection(db, 'deploymentRequests'),

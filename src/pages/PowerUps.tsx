@@ -33,6 +33,8 @@ const PowerUps = () => {
         try {
             // Ensure fresh auth token before Firestore reads
             await user.getIdToken(true);
+            // Wait for token to be attached to SDK
+            await new Promise(resolve => setTimeout(resolve, 500));
             
             const powerUpsCollectionRef = collection(db, `users/${user.uid}/powerUps`);
             const querySnapshot = await getDocs(powerUpsCollectionRef);

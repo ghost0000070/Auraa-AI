@@ -98,6 +98,11 @@ const BusinessIntelligence = () => {
       console.log('🔄 Fetching business intelligence data...');
       if (!user) return;
 
+      // Ensure fresh auth token before Firestore reads
+      await user.getIdToken(true);
+      // Wait for token to be attached to SDK
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       const goalsQuery = query(
         collection(db, 'business_goals'),
         where('user_id', '==', user.uid),
