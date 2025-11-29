@@ -113,5 +113,14 @@
   "extensions": {},
   "database": {
     "rules": "database.rules.json"
+  },
+  "apphosting": {
+    "backends": [
+      {
+        "id": "auraabacknd",
+        "region": "us-central1",
+        "source": "src/backend"
+      }
+    ]
   }
 }

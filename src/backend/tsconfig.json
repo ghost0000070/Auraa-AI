@@ -1,17 +1,20 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2020",
-    "lib": ["es2020"],
-    "outDir": "../../dist/backend",
-    "rootDir": ".",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "outDir": "dist",
     "sourceMap": true,
-    "strict": true
+    "strict": true,
+    "target": "es2017",
+    "esModuleInterop": true
   },
+  "compileOnSave": true,
   "include": [
     "**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }
