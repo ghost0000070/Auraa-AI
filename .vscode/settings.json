@@ -38,5 +38,6 @@
     "yaml.schemas": {
         "https://json.schemastore.org/github-workflow.json": []
     },
-    "IDX.agenticWorkspace": true
+    "IDX.agenticWorkspace": true,
+    "IDX.corgiMode": true
 }

@@ -12,5 +12,7 @@
     "firebase-functions": "^7.0.0",
     "typescript": "^5.3.3"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/handlebars": "^4.0.40"
+  }
 }
