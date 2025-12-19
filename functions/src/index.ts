@@ -1,12 +1,13 @@
 import {genkit, z} from "genkit";
 import {googleAI} from "@genkit-ai/google-genai";
-import {https} from "firebase-functions/v2";
+import {https, auth} from "firebase-functions/v2";
 import {onSchedule} from "firebase-functions/v2/scheduler";
 import {stripe} from "./utils/stripe.js";
 import {defineSecret} from "firebase-functions/params";
 import {enableFirebaseTelemetry} from "@genkit-ai/firebase";
 import * as admin from "firebase-admin";
 import Anthropic from "@anthropic-ai/sdk";
+import * as nodemailer from "nodemailer";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -15,6 +16,10 @@ const db = admin.firestore();
 const apiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 const stripeSecretKey = defineSecret("STRIPE_SECRET_KEY");
 const anthropicApiKey = defineSecret("ANTHROPIC_API_KEY");
+const emailHost = defineSecret("EMAIL_HOST");
+const emailPort = defineSecret("EMAIL_PORT");
+const emailUser = defineSecret("EMAIL_USER");
+const emailPass = defineSecret("EMAIL_PASS");
 
 
 // Enable telemetry
@@ -164,6 +169,69 @@ export const executeAiTask = https.onCall(
       }
     },
 );
+
+export const sendWelcomeEmail = auth.user().onCreate(async (user) => {
+    const email = user.email;
+    if (!email) {
+        console.error("User does not have an email address.");
+        return;
+    }
+
+    try {
+        const transporter = nodemailer.createTransport({
+            host: emailHost.value(),
+            port: parseInt(emailPort.value()),
+            secure: true,
+            auth: {
+                user: emailUser.value(),
+                pass: emailPass.value(),
+            },
+        });
+
+        await transporter.sendMail({
+            from: '"Auraa" <no-reply@auraa.ai>',
+            to: email,
+            subject: "Welcome to Auraa!",
+            html: `<p>Welcome to Auraa! We\'re excited to have you on board.</p>`,
+        });
+
+        console.log(`Welcome email sent to ${email}`);
+    } catch (error) {
+        console.error("Error sending welcome email:", error);
+    }
+});
+
+
+export const sendPasswordResetEmail = https.onCall({secrets: [emailHost, emailPort, emailUser, emailPass]}, async (data, context) => {
+  const email = data.email;
+  if (!email) {
+    throw new https.HttpsError("invalid-argument", "Email is a required parameter.");
+  }
+  try {
+    const link = await admin.auth().generatePasswordResetLink(email);
+    const transporter = nodemailer.createTransport({
+        host: emailHost.value(),
+        port: parseInt(emailPort.value()),
+        secure: true, // true for 465, false for other ports
+        auth: {
+            user: emailUser.value(),
+            pass: emailPass.value(),
+        },
+    });
+
+    await transporter.sendMail({
+        from: '"Auraa" <no-reply@auraa.ai>',
+        to: email,
+        subject: "Password Reset Request",
+        html: `<p>You requested a password reset. Click the link below to reset your password:</p><a href="${link}">Reset Password</a>`,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error sending password reset email:", error);
+    throw new https.HttpsError("internal", "Failed to send password reset email.");
+  }
+});
 
 export const menuSuggestion = https.onCall(
     {secrets: [apiKey]},

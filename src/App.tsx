@@ -6,6 +6,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
+import NotFound from './components/NotFound.tsx';
 
 const Index = lazy(() => import('./pages/Index'));
 const Auth = lazy(() => import('./pages/Auth'));
@@ -26,7 +27,7 @@ const PricingPage = lazy(() => import('./pages/PricingPage'));
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <Router>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <div className="flex flex-col min-h-screen">
           <Header />
           <main className="flex-grow">
@@ -51,6 +52,8 @@ const App: React.FC = () => {
                   <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
                   <Route path="/puter-firebase-integration" element={<ProtectedRoute><PuterFirebaseIntegration /></ProtectedRoute>} />
 
+                  {/* Not Found Route */}
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </ErrorBoundary>
             </Suspense>

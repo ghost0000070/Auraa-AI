@@ -18,6 +18,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -27,6 +28,24 @@ const Auth = () => {
     });
     return () => unsubscribe();
   }, [user, navigate]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error("Authentication Error", {
+        description: error,
+      });
+      setError(null); // Reset error after showing toast
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (successMessage) {
+      toast.success("Success", {
+        description: successMessage,
+      });
+      setSuccessMessage(null); // Reset success message after showing toast
+    }
+  }, [successMessage]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,9 +68,7 @@ const Auth = () => {
         });
         
         await sendEmailVerification(userCredential.user);
-        toast("Check your email", {
-          description: "We've sent you a verification link. Please verify your email before logging in.",
-        });
+        setSuccessMessage("We've sent you a verification link. Please verify your email before logging in.");
         setIsSignUp(false); // Switch to sign-in view after successful sign-up
       } else {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -78,9 +95,6 @@ const Auth = () => {
     } catch (err) {
       const authError = err as AuthError;
       setError(authError.message);
-      toast.error("Authentication Error", {
-        description: authError.message,
-      });
     } finally {
       setIsLoading(false);
     }
@@ -88,22 +102,17 @@ const Auth = () => {
 
   const handlePasswordReset = async () => {
     if (!email) {
-      toast.error("Email is required for password reset.");
+      setError("Email is required for password reset.");
       return;
     }
     setIsLoading(true);
     setError(null);
     try {
       await sendPasswordResetEmail(auth, email);
-      toast.success("Password Reset Email Sent", {
-        description: `If an account exists for ${email}, you will receive a password reset link. Please check your inbox.`,
-      });
+      setSuccessMessage(`If an account exists for ${email}, you will receive a password reset link. Please check your inbox.`);
     } catch (err) {
-      const authError = err as AuthError;
-      setError(authError.message);
-      toast.error("Password Reset Error", {
-        description: authError.message,
-      });
+        const error = err as any;
+        setError(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -159,7 +168,6 @@ const Auth = () => {
                  />
                </div>
             )}
-            {error && <p className="text-red-500 text-sm">{error}</p>}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? 'Processing...' : (isSignUp ? 'Sign Up' : 'Sign In')}
             </Button>
