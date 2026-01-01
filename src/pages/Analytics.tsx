@@ -32,7 +32,11 @@ const Analytics = () => {
   useEffect(() => {
     const checkAdmin = async () => {
       if (auth.currentUser) {
-        await auth.currentUser.getIdToken(true);
+        try {
+          await auth.currentUser.getIdToken(true);
+        } catch (error) {
+          console.error("Error getting ID token:", error);
+        }
         if (auth.currentUser.email !== OWNER_EMAIL) {
           toast.error("Access denied. Admin only.");
           navigate('/dashboard');
