@@ -8,6 +8,7 @@ import {enableFirebaseTelemetry} from "@genkit-ai/firebase";
 import * as admin from "firebase-admin";
 import Anthropic from "@anthropic-ai/sdk";
 import * as nodemailer from "nodemailer";
+import {setOwnerClaimOnCreate} from "./auth/setOwnerClaim.js";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -170,11 +171,18 @@ export const executeAiTask = https.onCall(
     },
 );
 
-export const sendWelcomeEmail = auth.user().onCreate(async (user) => {
+export const sendWelcomeEmail = auth.user().onCreate({secrets: [emailHost, emailPort, emailUser, emailPass]}, async (user) => {
     const email = user.email;
     if (!email) {
         console.error("User does not have an email address.");
         return;
+    }
+
+    // Set owner claims if this is the owner account
+    try {
+        await setOwnerClaimOnCreate(user);
+    } catch (error) {
+        console.error("Error setting owner claims:", error);
     }
 
     try {
@@ -189,10 +197,24 @@ export const sendWelcomeEmail = auth.user().onCreate(async (user) => {
         });
 
         await transporter.sendMail({
-            from: '"Auraa" <no-reply@auraa.ai>',
+            from: '"Auraa AI" <no-reply@auraa-ai.com>',
             to: email,
-            subject: "Welcome to Auraa!",
-            html: `<p>Welcome to Auraa! We\'re excited to have you on board.</p>`,
+            subject: "Welcome to Auraa AI!",
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h1 style="color: #4F46E5;">Welcome to Auraa AI!</h1>
+                    <p>Hello,</p>
+                    <p>We're thrilled to have you join our community. Auraa AI empowers you with advanced AI capabilities to transform your business operations.</p>
+                    <p>Get started by:</p>
+                    <ul>
+                        <li>Exploring your dashboard</li>
+                        <li>Deploying your first AI employee</li>
+                        <li>Checking out our documentation</li>
+                    </ul>
+                    <p>If you have any questions, feel free to reach out to our support team.</p>
+                    <p>Best regards,<br>The Auraa AI Team</p>
+                </div>
+            `,
         });
 
         console.log(`Welcome email sent to ${email}`);
@@ -530,3 +552,8 @@ export {
   createPortalSession,
   checkoutSessionDetails,
 } from "./stripe/checkout.js";
+
+// --- Auth Functions ---
+export {
+  setOwnerClaimOnCreate,
+} from "./auth/setOwnerClaim.js";

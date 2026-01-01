@@ -9,7 +9,7 @@ service cloud.firestore {
 
     // Helper function to check if user is the site owner
     function isSiteOwner() {
-      return request.auth != null && request.auth.uid == 'UoP0OzTFp5RnVclt7XSDDkbzc5W2';
+      return request.auth != null && request.auth.token.email == 'owner@auraa-ai.com';
     }
 
     // Helper function to check ownership of deployed employee
@@ -78,7 +78,7 @@ service cloud.firestore {
         allow read, write: if false;
     }
     
-    match /customers/{userId}/subscriptions/{subscriptionId}{
+    match /customers/{userId}/subscriptions/{subscriptionId} {
       allow read, write: if false;
     }
 

@@ -3,7 +3,7 @@
  */
 
 // Owner account email - used for unrestricted access
-export const OWNER_EMAIL = 'ghostspooks@icloud.com';
+export const OWNER_EMAIL = 'owner@auraa-ai.com';
 
 // Subscription tier levels
 export const TIER_LEVELS: Record<string, number> = {
