@@ -1,6 +1,7 @@
 import * as admin from "firebase-admin";
 import * as logger from "firebase-functions/logger";
 
+// Owner email constant - must match OWNER_EMAIL in src/config/constants.ts
 const OWNER_EMAIL = 'owner@auraa-ai.com';
 
 /**
