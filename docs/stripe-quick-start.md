@@ -91,7 +91,7 @@ const API_BASE_URL = 'https://us-central1-your-project.cloudfunctions.net';
 firebase deploy --only hosting
 
 # Open in browser
-open https://your-project.web.app/checkout-embedded.html
+open https://www.auraa-ai.com/checkout-embedded.html
 ```
 
 Use Stripe test card: `4242 4242 4242 4242` with any future expiry date and any CVC.

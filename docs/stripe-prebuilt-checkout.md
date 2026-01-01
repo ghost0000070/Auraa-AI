@@ -83,7 +83,7 @@ firebase deploy --only hosting
 
 ### 5. Test
 
-1. Navigate to `https://your-project.web.app/subscribe.html`
+1. Navigate to `https://www.auraa-ai.com/subscribe.html`
 2. Click "Subscribe Now"
 3. Use test card: `4242 4242 4242 4242`
 4. Complete checkout
