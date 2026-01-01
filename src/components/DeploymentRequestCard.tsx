@@ -43,7 +43,6 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
       const deployAiEmployee = httpsCallable(functions, 'deployAiEmployee');
       const result = await deployAiEmployee({
         deploymentRequest: {
-          user_id: user.uid,
           ai_helper_template_id: template.id,
           status: 'pending',
           deployment_config: {},

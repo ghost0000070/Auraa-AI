@@ -73,6 +73,13 @@ const Auth = () => {
       } else {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         
+        // CHECK EMAIL VERIFICATION
+        if (!userCredential.user.emailVerified) {
+          await auth.signOut();
+          setError("Please verify your email before signing in. Check your inbox for the verification link.");
+          return;
+        }
+        
         // Ensure fresh auth token before Firestore reads
         await userCredential.user.getIdToken(true);
         

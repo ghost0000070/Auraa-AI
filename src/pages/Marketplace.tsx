@@ -3,8 +3,38 @@ import React from 'react';
 import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '@/firebase';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const Marketplace: React.FC = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleDeploy = async (template: typeof aiEmployeeTemplates[0]) => {
+    if (!user) {
+      toast.error("Please sign in to deploy AI employees");
+      navigate('/auth');
+      return;
+    }
+
+    try {
+      const deployFn = httpsCallable(functions, 'deployAiEmployee');
+      await deployFn({
+        deploymentRequest: {
+          ai_helper_template_id: template.id,
+          name: template.name,
+        }
+      });
+      toast.success(`${template.name} deployed successfully!`);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error(error);
+      toast.error("Deployment failed. Please try again.");
+    }
+  };
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-8">AI Employee Marketplace</h1>
@@ -33,7 +63,7 @@ const Marketplace: React.FC = () => {
               </div>
               <div className="flex justify-between items-center">
                 <p className="text-lg font-bold">${template.monthlyCost}/mo</p>
-                <Button>Deploy</Button>
+                <Button onClick={() => handleDeploy(template)}>Deploy</Button>
               </div>
             </CardContent>
           </Card>

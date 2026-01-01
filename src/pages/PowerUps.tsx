@@ -4,10 +4,10 @@ import { CheckCircle, XCircle, Clock, Zap } from 'lucide-react';
 import { db } from "@/firebase";
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '@/hooks/useAuth';
-import SubscriptionGuard from "@/components/SubscriptionGuard";
 import { Header } from "@/components/Header";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from 'react-router-dom';
 
 interface PowerUp {
   id: string;
@@ -18,7 +18,9 @@ interface PowerUp {
 }
 
 const PowerUps = () => {
-  const { user } = useAuth();
+  const { user, subscriptionStatus } = useAuth();
+  const navigate = useNavigate();
+  const isPremium = subscriptionStatus?.subscribed;
   const [powerUps, setPowerUps] = useState<PowerUp[]>([
       { id: "1", name: "AI-Driven Anomaly Detection", description: "Automatically detect anomalies in your data patterns.", status: "inactive", details: {} },
       { id: "2", name: "Automated Report Generation", description: "Generate comprehensive reports automatically.", status: "inactive", details: {} },
@@ -93,21 +95,41 @@ const PowerUps = () => {
   };
 
   return (
-    <SubscriptionGuard requiredTier="Premium">
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto p-6 pt-24">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="p-3 bg-primary/10 rounded-xl">
-                <Zap className="w-8 h-8 text-primary" />
-            </div>
-            <div>
-                <h1 className="text-3xl font-bold">Power-Ups</h1>
-                <p className="text-muted-foreground">Supercharge your AI workforce with advanced modules</p>
-            </div>
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="container mx-auto p-6 pt-24">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="p-3 bg-primary/10 rounded-xl">
+            <Zap className="w-8 h-8 text-primary" />
           </div>
-          
-          {loading ? (
+          <div>
+            <h1 className="text-3xl font-bold">Power-Ups</h1>
+            <p className="text-muted-foreground">Supercharge your AI workforce with advanced modules</p>
+          </div>
+        </div>
+
+        {!isPremium && (
+          <Card className="mb-6 border-amber-500/50 bg-amber-50 dark:bg-amber-950/20">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-amber-500/10 rounded-full">
+                  <Zap className="w-6 h-6 text-amber-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold mb-1">Premium Feature</h3>
+                  <p className="text-muted-foreground">
+                    Power-Ups are available for Premium subscribers. Upgrade to unlock advanced AI capabilities.
+                  </p>
+                </div>
+                <Button onClick={() => navigate('/pricing')} className="ml-auto">
+                  Upgrade to Premium
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        
+        {loading ? (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {[1, 2, 3].map(i => (
                       <Card key={i} className="animate-pulse h-48 bg-muted/50" />
@@ -116,23 +138,30 @@ const PowerUps = () => {
           ) : (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {powerUps.map((powerUp) => (
-                  <Card key={powerUp.id} className="border-muted/50 hover:border-primary/50 transition-colors">
+                  <Card key={powerUp.id} className={`border-muted/50 hover:border-primary/50 transition-colors ${!isPremium ? 'opacity-60' : ''}`}>
                     <CardHeader className="pb-2">
                       <div className="flex items-start justify-between">
-                          <CardTitle className="text-lg font-semibold leading-tight">{powerUp.name}</CardTitle>
-                          {powerUp.status === 'active' && <CheckCircle className="h-5 w-5 text-green-500 shrink-0" />}
-                          {powerUp.status === 'inactive' && <XCircle className="h-5 w-5 text-muted-foreground shrink-0" />}
-                          {powerUp.status === 'pending' && <Clock className="h-5 w-5 text-yellow-500 shrink-0" />}
+                        <CardTitle className="text-lg">{powerUp.name}</CardTitle>
+                        <div className="flex items-center gap-2">
+                          {powerUp.status === 'active' ? (
+                            <CheckCircle className="w-5 h-5 text-green-500" />
+                          ) : powerUp.status === 'pending' ? (
+                            <Clock className="w-5 h-5 text-yellow-500" />
+                          ) : (
+                            <XCircle className="w-5 h-5 text-muted-foreground" />
+                          )}
+                        </div>
                       </div>
+                      <CardDescription>{powerUp.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <CardDescription className="mb-6 min-h-[40px]">{powerUp.description}</CardDescription>
-                      <Button
+                      <Button 
+                        variant={powerUp.status === 'active' ? 'destructive' : 'default'}
                         onClick={() => togglePowerUpStatus(powerUp.id)}
-                        variant={powerUp.status === 'active' ? "destructive" : "default"}
                         className="w-full"
+                        disabled={!isPremium}
                       >
-                        {powerUp.status === 'active' ? 'Deactivate Module' : 'Activate Module'}
+                        {!isPremium ? 'Upgrade Required' : powerUp.status === 'active' ? 'Deactivate' : 'Activate'}
                       </Button>
                     </CardContent>
                   </Card>
@@ -141,8 +170,7 @@ const PowerUps = () => {
           )}
         </main>
       </div>
-    </SubscriptionGuard>
-  );
-};
+    );
+  };
 
 export default PowerUps;

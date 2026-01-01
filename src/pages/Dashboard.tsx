@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/components/ui/toast-hooks";
-import { functions } from "@/firebase";
+import { db, functions } from "@/firebase";
 import { httpsCallable } from 'firebase/functions';
+import { doc, getDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
 import AITeamDashboard from '@/components/AITeamDashboard';
 import { QuickDeploymentWidget } from '@/components/QuickDeploymentWidget';
@@ -11,6 +13,7 @@ import { AnalyticsSection } from '@/components/AnalyticsSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { user, loading, isAdmin, subscriptionStatus, signOut } = useAuth();
 
   const isSubscriber = isAdmin || subscriptionStatus?.subscribed;
@@ -25,6 +28,21 @@ export default function Dashboard() {
     }
 
     try {
+      // Check if user has Stripe ID
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const userData = userDoc.data();
+
+      if (!userData?.stripeId) {
+        // User never subscribed - redirect to pricing
+        toast({
+          title: "No active subscription",
+          description: "Subscribe to unlock premium features.",
+        });
+        navigate('/pricing');
+        return;
+      }
+
+      // User has subscribed before - open portal
       const createPortalSession = httpsCallable(functions, 'createCustomerPortalSession');
       const result = await createPortalSession({ 
           returnUrl: window.location.href 
@@ -36,7 +54,7 @@ export default function Dashboard() {
       console.error("Error creating customer portal session:", error);
       toast({
         title: "Error",
-        description: "Could not create a customer portal session. Please try again later.",
+        description: "Could not open subscription portal. Please try again.",
         variant: "destructive",
       });
     }

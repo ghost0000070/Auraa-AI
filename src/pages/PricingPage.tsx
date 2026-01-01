@@ -4,6 +4,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '@/firebase';
 
 const PricingPage = () => {
   const { user, subscriptionStatus } = useAuth();
@@ -21,31 +23,24 @@ const PricingPage = () => {
   const handleCheckout = async () => {
     if (!user) {
       toast.error("You must be logged in to subscribe.");
+      navigate('/auth');
       return;
     }
 
     setIsLoading(true);
     try {
-      // Call the createCheckoutSession function
-      const response = await fetch('/api/createCheckoutSession', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          priceId: premiumPriceId,
-          successUrl: `${window.location.origin}/dashboard`,
-          cancelUrl: `${window.location.origin}/pricing`,
-        }),
+      const createCheckout = httpsCallable(functions, 'createCheckoutSession');
+      const result = await createCheckout({
+        priceId: premiumPriceId,
+        successUrl: `${window.location.origin}/dashboard`,
+        cancelUrl: `${window.location.origin}/pricing`,
       });
 
-      const data = await response.json();
-
-      if (data.sessionId) {
-        // Redirect to Stripe Checkout
-        window.location.href = `https://checkout.stripe.com/session/${data.sessionId}`;
+      const data = result.data as { url?: string };
+      if (data.url) {
+        window.location.href = data.url;
       } else {
-        toast.error("Failed to initiate checkout.");
+        toast.error("Failed to create checkout session.");
       }
     } catch (error) {
       console.error("Checkout Error:", error);

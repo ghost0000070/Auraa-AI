@@ -3,6 +3,9 @@ import { db } from "@/firebase";
 import { collection, getDocs, Timestamp } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { OWNER_EMAIL } from '@/config/constants';
 
 // Lazy load the chart components
 const SimpleBarChart = lazy(() => import('@/components/SimpleBarChart'));
@@ -16,15 +19,34 @@ interface ChartData {
 }
 
 const Analytics = () => {
+  const navigate = useNavigate();
+  const auth = getAuth();
   const [userCounts, setUserCounts] = useState<ChartData[]>([]);
   const [deploymentCounts, setDeploymentCounts] = useState<ChartData[]>([]);
   const [templateCounts, setTemplateCounts] = useState<ChartData[]>([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalDeployments, setTotalDeployments] = useState(0);
   const [loading, setLoading] = useState(true);
+  const isAdmin = auth.currentUser?.email === OWNER_EMAIL;
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (auth.currentUser) {
+        await auth.currentUser.getIdToken(true);
+        if (auth.currentUser.email !== OWNER_EMAIL) {
+          toast.error("Access denied. Admin only.");
+          navigate('/dashboard');
+        }
+      }
+      setLoading(false);
+    };
+    checkAdmin();
+  }, [navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!isAdmin) return; // Don't fetch if not admin
+      
       setLoading(true);
       try {
         // Ensure fresh auth token before Firestore reads
@@ -114,7 +136,13 @@ const Analytics = () => {
     };
 
     fetchData();
-  }, []);
+  }, [isAdmin]);
+
+  if (loading || !isAdmin) {
+    return <div className="min-h-screen flex items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>;
+  }
 
   return (
     <div className="container mx-auto py-8">

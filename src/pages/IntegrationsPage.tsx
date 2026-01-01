@@ -6,6 +6,7 @@ import { useAgentRealtime } from '@/hooks/useAgentRealtime';
 import { AgentMetricsDashboard } from '@/components/integrations/AgentMetricsDashboard';
 import PuterFirebaseIntegration from "@/components/PuterFirebaseIntegration";
 import { useAuth } from '@/hooks/useAuth';
+import { Header } from '@/components/Header';
 
 export default function IntegrationsPage() {
   const { user } = useAuth();
@@ -14,8 +15,11 @@ export default function IntegrationsPage() {
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
 
   return (
-    <div className="container mx-auto py-6 space-y-8">
-      <AgentMetricsDashboard />
+    <>
+      <Header />
+      <div className="container mx-auto py-6 space-y-8 pt-24">
+        <h1 className="text-3xl font-bold mb-6">Integrations</h1>
+        <AgentMetricsDashboard />
       <PuterFirebaseIntegration />
       {user && (
         <div className="grid md:grid-cols-3 gap-6">
@@ -64,6 +68,7 @@ export default function IntegrationsPage() {
           {!tasks.length && <div className="text-xs text-muted-foreground">No tasks.</div>}
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
