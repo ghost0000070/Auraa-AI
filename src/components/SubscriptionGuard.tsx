@@ -89,7 +89,7 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children, require
     };
 
     checkAuthorization();
-  }, [user, subscriptionStatus, requiredTier, navigate, isLoading]);
+  }, [user, subscriptionStatus, requiredTier, navigate]);
 
   if (isLoading) {
     return <div className="flex h-screen items-center justify-center bg-background text-foreground">Loading authorization...</div>;

@@ -1,5 +1,5 @@
 import { User } from 'firebase/auth';
-import { OWNER_EMAIL } from '@/config/constants';
+import { OWNER_EMAIL, TIER_LEVELS } from '@/config/constants';
 
 /**
  * Check if the current user is the site owner
@@ -22,6 +22,6 @@ export function hasFeatureAccess(user: User | null, requiredTier: number, userTi
  * Get effective tier for user (owner gets max tier)
  */
 export function getEffectiveTier(user: User | null, actualTier: number): number {
-  if (isOwnerAccount(user)) return 999; // Owner tier
+  if (isOwnerAccount(user)) return TIER_LEVELS.owner; // Owner tier
   return actualTier;
 }
