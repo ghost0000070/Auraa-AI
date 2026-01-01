@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
+import { aiEmployeeTemplates } from '@/lib/ai-employee-templates.tsx';
 import { TemplateIcon } from '@/components/TemplateIcon';
 
 const AITeamWorkflows: React.FC = () => {

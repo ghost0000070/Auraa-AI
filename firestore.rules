@@ -149,6 +149,11 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Rate Limits: server-managed only
+    match /_rate_limits/{limitId} {
+      allow read, write: if false;
+    }
+
     // Site owner has unrestricted access to all documents
     match /{document=**} {
       allow read, write: if isSiteOwner();

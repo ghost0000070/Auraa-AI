@@ -1,9 +1,12 @@
 
-import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
+import * as React from 'react';
+import { useState, useEffect, createContext, useContext, useCallback, type ReactNode } from 'react';
 import { User, onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
-import { OWNER_EMAIL } from '@/config/constants';
+import { OWNER_EMAIL, OWNER_UID } from '@/config/constants';
+import { errorTracker } from '@/lib/errorTracking';
+import { retryFirebaseOperation } from '@/lib/retry';
 
 interface AuthContextType {
   user: User | null;
@@ -56,7 +59,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       await new Promise(resolve => setTimeout(resolve, 500));
 
       // Owner account has unrestricted access (check by UID or email)
-      if (auth.currentUser.uid === 'UoP0OzTFp5RnVclt7XSDDkbzc5W2' || auth.currentUser.email === OWNER_EMAIL) {
+      if (auth.currentUser.uid === OWNER_UID || auth.currentUser.email === OWNER_EMAIL) {
         setSubscriptionStatus({
           subscribed: true,
           subscription_tier: 'unlimited',
@@ -82,6 +85,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     } catch (error) {
       console.error("Error fetching subscription status:", error);
+      errorTracker.captureError(error as Error, {
+        tags: { component: 'useAuth', function: 'checkSubscription' },
+        user: { id: auth.currentUser?.uid },
+      });
       setSubscriptionStatus(null);
     }
   }, []);

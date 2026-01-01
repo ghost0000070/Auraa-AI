@@ -7,7 +7,7 @@ import { functions } from '@/firebase';
 import { httpsCallable } from 'firebase/functions';
 import { toast } from "@/components/ui/toast-hooks";
 import { Loader2, Zap, CheckCircle } from 'lucide-react';
-import { AIEmployeeTemplate } from '@/lib/ai-employee-templates';
+import { AIEmployeeTemplate } from '@/lib/ai-employee-templates.tsx';
 
 interface DeploymentRequestCardProps {
   template: AIEmployeeTemplate;
@@ -43,9 +43,8 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
       const deployAiEmployee = httpsCallable(functions, 'deployAiEmployee');
       const result = await deployAiEmployee({
         deploymentRequest: {
-          user_id: user.uid,
           ai_helper_template_id: template.id,
-          status: 'pending',
+          name: template.name,
           deployment_config: {},
         }
       });

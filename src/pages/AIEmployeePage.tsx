@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
+import { aiEmployeeTemplates } from '@/lib/ai-employee-templates.tsx';
 import { TemplateIcon } from '@/components/TemplateIcon';
 
 // Define a more specific type for the deployed employee

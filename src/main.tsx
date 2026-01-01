@@ -3,6 +3,8 @@ import React from 'react';
 import App from './App.tsx';
 import './index.css';
 import { validateEnvironment } from './config/constants';
+import { errorTracker } from './lib/errorTracking';
+import { registerServiceWorker } from './lib/serviceWorker';
 
 // Validate environment variables before starting app
 try {
@@ -12,6 +14,12 @@ try {
 	alert(`Configuration error: ${error instanceof Error ? error.message : 'Unknown error'}`);
 	throw error;
 }
+
+// Initialize error tracking
+errorTracker.init();
+
+// Register service worker for PWA
+registerServiceWorker();
 
 const rootEl = document.getElementById('root');
 if (!rootEl) {

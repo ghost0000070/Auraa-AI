@@ -55,7 +55,8 @@
     "sonner": "^1.4.2",
     "stripe": "^20.0.0",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "@sentry/react": "^10.32.1"
   },
   "devDependencies": {
     "@eslint/css": "^0.14.1",

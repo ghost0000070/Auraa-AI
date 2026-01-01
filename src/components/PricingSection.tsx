@@ -28,7 +28,7 @@ export function PricingSection() {
     }
     setIsLoading(tier.priceId);
     try {
-      const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
+      const createCheckoutSession = httpsCallable(functions, 'createCheckoutSessionCallable');
       const response = await createCheckoutSession({
         priceId: tier.priceId,
         successUrl: `${window.location.origin}/dashboard`,

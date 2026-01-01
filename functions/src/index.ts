@@ -1,6 +1,7 @@
 import {genkit, z} from "genkit";
 import {googleAI} from "@genkit-ai/google-genai";
-import {https, auth} from "firebase-functions/v2";
+import {https} from "firebase-functions/v2";
+import * as functionsAuth from "firebase-functions/v1/auth";
 import {onSchedule} from "firebase-functions/v2/scheduler";
 import {stripe} from "./utils/stripe.js";
 import {defineSecret} from "firebase-functions/params";
@@ -8,6 +9,8 @@ import {enableFirebaseTelemetry} from "@genkit-ai/firebase";
 import * as admin from "firebase-admin";
 import Anthropic from "@anthropic-ai/sdk";
 import * as nodemailer from "nodemailer";
+import {checkRateLimit, cleanupRateLimits} from "./utils/rateLimit.js";
+import {sanitizeString, validateEmail, validateUrl} from "./utils/validation.js";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -128,6 +131,20 @@ export const executeAiTask = https.onCall(
       }
 
       const userId = request.auth.uid;
+      
+      // Rate limiting: 50 requests per minute
+      const rateLimitCheck = await checkRateLimit(userId, "executeAiTask", {
+        maxRequests: 50,
+        windowSeconds: 60,
+      });
+      
+      if (!rateLimitCheck.allowed) {
+        throw new https.HttpsError(
+          "resource-exhausted",
+          `Rate limit exceeded. Try again in ${rateLimitCheck.retryAfter} seconds.`
+        );
+      }
+      
       await checkSubscription(userId);
 
       const {taskName, data} = request.data;
@@ -170,7 +187,7 @@ export const executeAiTask = https.onCall(
     },
 );
 
-export const sendWelcomeEmail = auth.user().onCreate(async (user) => {
+export const sendWelcomeEmail = functionsAuth.user().onCreate(async (user) => {
     const email = user.email;
     if (!email) {
         console.error("User does not have an email address.");
@@ -202,8 +219,8 @@ export const sendWelcomeEmail = auth.user().onCreate(async (user) => {
 });
 
 
-export const sendPasswordResetEmail = https.onCall({secrets: [emailHost, emailPort, emailUser, emailPass]}, async (data, context) => {
-  const email = data.email;
+export const sendPasswordResetEmail = https.onCall({secrets: [emailHost, emailPort, emailUser, emailPass]}, async (request) => {
+  const email = request.data?.email;
   if (!email) {
     throw new https.HttpsError("invalid-argument", "Email is a required parameter.");
   }
@@ -263,6 +280,67 @@ export const generatePuterScript = https.onCall(
         );
       }
       return await puterScriptFlow(request.data);
+    });
+
+export const createCheckoutSessionCallable = https.onCall(
+    {secrets: [stripeSecretKey]},
+    async (request) => {
+      if (!request.auth) {
+        throw new https.HttpsError("unauthenticated", "Auth required.");
+      }
+
+      const {priceId, successUrl, cancelUrl} = request.data;
+
+      if (!priceId) {
+        throw new https.HttpsError(
+            "invalid-argument",
+            "priceId is required.",
+        );
+      }
+
+      try {
+        const userId = request.auth.uid;
+        const userDoc = await db.collection("users").doc(userId).get();
+        const userData = userDoc.data();
+        
+        // Get or create Stripe customer
+        let customerId = userData?.stripeId;
+        if (!customerId) {
+          const customer = await stripe.customers.create({
+            email: request.auth.token.email,
+            metadata: {
+              firebaseUID: userId,
+            },
+          });
+          customerId = customer.id;
+          // Update user doc with Stripe ID
+          await db.collection("users").doc(userId).update({
+            stripeId: customerId,
+          });
+        }
+
+        // Create checkout session
+        const session = await stripe.checkout.sessions.create({
+          customer: customerId,
+          line_items: [
+            {
+              price: priceId,
+              quantity: 1,
+            },
+          ],
+          mode: "subscription",
+          success_url: successUrl || `${request.rawRequest.headers.origin}/dashboard`,
+          cancel_url: cancelUrl || `${request.rawRequest.headers.origin}/pricing`,
+        });
+
+        return {url: session.url};
+      } catch (error) {
+        console.error("Checkout Session Error:", error);
+        throw new https.HttpsError(
+            "internal",
+            "Failed to create checkout session.",
+        );
+      }
     });
 
 export const createCustomerPortalSession = https.onCall(
@@ -328,6 +406,16 @@ export const updatePlatformStats = onSchedule("every 24 hours", async () => {
     console.log("Platform stats updated successfully:", stats);
   } catch (error) {
     console.error("Error updating platform stats:", error);
+  }
+});
+
+// Cleanup expired rate limits daily
+export const cleanupExpiredRateLimits = onSchedule("every 24 hours", async () => {
+  try {
+    await cleanupRateLimits();
+    console.log("Rate limits cleanup completed");
+  } catch (error) {
+    console.error("Error cleaning up rate limits:", error);
   }
 });
 
@@ -439,26 +527,39 @@ export const scrapeWebsite = https.onCall(
             "URL is a required parameter.",
         );
       }
+      
+      // Rate limiting: 10 scrapes per hour
+      const rateLimitCheck = await checkRateLimit(request.auth.uid, "scrapeWebsite", {
+        maxRequests: 10,
+        windowSeconds: 3600,
+      });
+      
+      if (!rateLimitCheck.allowed) {
+        throw new https.HttpsError(
+          "resource-exhausted",
+          `Rate limit exceeded. Try again in ${Math.ceil((rateLimitCheck.retryAfter || 0) / 60)} minutes.`
+        );
+      }
 
       try {
         const userId = request.auth.uid;
 
-        // Validate URL format
-        new URL(url); // This will throw if URL is invalid
+        // Validate and sanitize URL
+        const validatedUrl = validateUrl(url);
 
         // Store scrape request in Firestore
         await db.collection("websiteIntegrations").add({
           userId,
-          url,
+          url: validatedUrl,
           status: "pending",
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
         });
 
         // Basic scraping - fetch HTML content and store metadata
-        console.log(`Website scraping initiated for URL: ${url} by user: ${userId}`);
+        console.log(`Website scraping initiated for URL: ${validatedUrl} by user: ${userId}`);
 
         // Fetch the website HTML (basic implementation)
-        const response = await fetch(url, {
+        const response = await fetch(validatedUrl, {
           headers: {
             "User-Agent": "Mozilla/5.0 (compatible; Auraa-AI-Bot/1.0)",
           },
@@ -474,7 +575,7 @@ export const scrapeWebsite = https.onCall(
         // Update the integration with scraped data
         const integrationRef = await db.collection("websiteIntegrations").add({
           userId,
-          url,
+          url: validatedUrl,
           title,
           contentLength: html.length,
           status: "completed",
