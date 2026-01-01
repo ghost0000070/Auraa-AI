@@ -12,7 +12,7 @@
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ],
-      "source": "auraacode/auraafunction",
+      "source": "functions",
       "runtime": "nodejs22"
     }
   ],

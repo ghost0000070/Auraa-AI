@@ -78,6 +78,6 @@ export async function encryptCredential(plaintext: string): Promise<EncryptedEnv
 }
 
 // Decryption is intentionally omitted client-side (private key not available). Provided only for legacy fallback.
-export async function decryptLegacyBase64(cipher: string): Promise<string> {
+export async function decryptLegacyBase64(_cipher: string): Promise<string> {
   throw new Error('Client-side decryption not supported. Private key unavailable.');
 }

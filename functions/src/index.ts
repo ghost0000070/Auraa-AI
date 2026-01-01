@@ -1,6 +1,7 @@
 import {genkit, z} from "genkit";
 import {googleAI} from "@genkit-ai/google-genai";
-import {https, auth} from "firebase-functions/v2";
+import {https} from "firebase-functions/v2";
+import * as authV1 from "firebase-functions/v1/auth";
 import {onSchedule} from "firebase-functions/v2/scheduler";
 import {stripe} from "./utils/stripe.js";
 import {defineSecret} from "firebase-functions/params";
@@ -171,7 +172,7 @@ export const executeAiTask = https.onCall(
     },
 );
 
-export const sendWelcomeEmail = auth.user().onCreate({secrets: [emailHost, emailPort, emailUser, emailPass]}, async (user) => {
+export const sendWelcomeEmail = authV1.user().onCreate(async (user) => {
     const email = user.email;
     if (!email) {
         console.error("User does not have an email address.");
@@ -224,8 +225,8 @@ export const sendWelcomeEmail = auth.user().onCreate({secrets: [emailHost, email
 });
 
 
-export const sendPasswordResetEmail = https.onCall({secrets: [emailHost, emailPort, emailUser, emailPass]}, async (data, context) => {
-  const email = data.email;
+export const sendPasswordResetEmail = https.onCall({secrets: [emailHost, emailPort, emailUser, emailPass]}, async (request) => {
+  const email = request.data.email;
   if (!email) {
     throw new https.HttpsError("invalid-argument", "Email is a required parameter.");
   }
