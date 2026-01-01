@@ -1,6 +1,6 @@
 import {genkit, z} from "genkit";
 import {googleAI} from "@genkit-ai/google-genai";
-import {https, auth} from "firebase-functions/v2";
+import {https} from "firebase-functions/v2";
 import {onSchedule} from "firebase-functions/v2/scheduler";
 import {stripe} from "./utils/stripe.js";
 import {defineSecret} from "firebase-functions/params";
@@ -8,6 +8,7 @@ import {enableFirebaseTelemetry} from "@genkit-ai/firebase";
 import * as admin from "firebase-admin";
 import Anthropic from "@anthropic-ai/sdk";
 import * as nodemailer from "nodemailer";
+import {auth} from "firebase-functions/v1";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -21,6 +22,8 @@ const emailPort = defineSecret("EMAIL_PORT");
 const emailUser = defineSecret("EMAIL_USER");
 const emailPass = defineSecret("EMAIL_PASS");
 
+// Export owner account auto-setup functions
+export { setOwnerClaimOnCreate, verifyOwnerClaimOnSignIn } from './auth/setOwnerClaim.js';
 
 // Enable telemetry
 enableFirebaseTelemetry();
@@ -170,68 +173,110 @@ export const executeAiTask = https.onCall(
     },
 );
 
-export const sendWelcomeEmail = auth.user().onCreate(async (user) => {
-    const email = user.email;
-    if (!email) {
-        console.error("User does not have an email address.");
-        return;
-    }
+export const sendWelcomeEmail = auth.user().onCreate(
+    async (user) => {
+        const email = user.email;
+        if (!email) {
+            console.error("User does not have an email address.");
+            return;
+        }
 
-    try {
-        const transporter = nodemailer.createTransport({
-            host: emailHost.value(),
-            port: parseInt(emailPort.value()),
-            secure: true,
-            auth: {
-                user: emailUser.value(),
-                pass: emailPass.value(),
-            },
-        });
+        try {
+            const transporter = nodemailer.createTransport({
+                host: emailHost.value(),
+                port: parseInt(emailPort.value()),
+                secure: true,
+                auth: {
+                    user: emailUser.value(),
+                    pass: emailPass.value(),
+                },
+            });
 
-        await transporter.sendMail({
-            from: '"Auraa" <no-reply@auraa.ai>',
-            to: email,
-            subject: "Welcome to Auraa!",
-            html: `<p>Welcome to Auraa! We\'re excited to have you on board.</p>`,
-        });
+            await transporter.sendMail({
+                from: '"Auraa AI Platform" <no-reply@auraa-ai.com>',
+                to: email,
+                subject: "Welcome to Auraa AI! 🎉",
+                html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+            <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td align="center" style="padding: 40px 0;">
+                        <table role="presentation" style="width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <!-- Header -->
+                            <tr>
+                                <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+                                    <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: bold;">Auraa AI</h1>
+                                    <p style="margin: 10px 0 0; color: #ffffff; font-size: 16px; opacity: 0.9;">Your AI Employee Platform</p>
+                                </td>
+                            </tr>
+                            
+                            <!-- Content -->
+                            <tr>
+                                <td style="padding: 40px;">
+                                    <h2 style="margin: 0 0 20px; color: #333333; font-size: 24px;">Welcome to Auraa! 🚀</h2>
+                                    <p style="margin: 0 0 16px; color: #666666; font-size: 16px; line-height: 1.6;">
+                                        We're thrilled to have you on board! You're now ready to deploy autonomous AI employees that will transform how your business operates.
+                                    </p>
+                                    
+                                    <div style="background-color: #f8f9fa; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                                        <h3 style="margin: 0 0 12px; color: #333333; font-size: 18px;">Getting Started:</h3>
+                                        <ul style="margin: 0; padding-left: 20px; color: #666666; font-size: 15px; line-height: 1.8;">
+                                            <li>Complete your business profile</li>
+                                            <li>Browse AI employee templates</li>
+                                            <li>Deploy your first AI employee</li>
+                                            <li>Start automating tasks today!</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <table role="presentation" style="margin: 30px 0;">
+                                        <tr>
+                                            <td style="border-radius: 6px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                                <a href="https://auraa-ai.com/dashboard" style="display: inline-block; padding: 14px 32px; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 16px;">
+                                                    Go to Dashboard →
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <p style="margin: 20px 0 0; color: #999999; font-size: 14px; line-height: 1.6;">
+                                        Need help? Check out our <a href="https://auraa-ai.com/docs" style="color: #667eea;">documentation</a> or reach out to <a href="mailto:support@auraa-ai.com" style="color: #667eea;">support@auraa-ai.com</a>
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                            <!-- Footer -->
+                            <tr>
+                                <td style="padding: 30px 40px; background-color: #f8f9fa; border-radius: 0 0 8px 8px; text-align: center;">
+                                    <p style="margin: 0; color: #999999; font-size: 13px;">
+                                        © ${new Date().getFullYear()} Auraa AI. All rights reserved.
+                                    </p>
+                                    <p style="margin: 10px 0 0; color: #999999; font-size: 13px;">
+                                        <a href="https://auraa-ai.com/privacy" style="color: #999999; text-decoration: none;">Privacy Policy</a> · 
+                                        <a href="https://auraa-ai.com/terms" style="color: #999999; text-decoration: none;">Terms of Service</a>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
+    `,
+            });
 
-        console.log(`Welcome email sent to ${email}`);
-    } catch (error) {
-        console.error("Error sending welcome email:", error);
-    }
-});
-
-
-export const sendPasswordResetEmail = https.onCall({secrets: [emailHost, emailPort, emailUser, emailPass]}, async (data, context) => {
-  const email = data.email;
-  if (!email) {
-    throw new https.HttpsError("invalid-argument", "Email is a required parameter.");
-  }
-  try {
-    const link = await admin.auth().generatePasswordResetLink(email);
-    const transporter = nodemailer.createTransport({
-        host: emailHost.value(),
-        port: parseInt(emailPort.value()),
-        secure: true, // true for 465, false for other ports
-        auth: {
-            user: emailUser.value(),
-            pass: emailPass.value(),
-        },
+            console.log(`Welcome email sent to ${email}`);
+        } catch (error) {
+            console.error("Error sending welcome email:", error);
+        }
     });
 
-    await transporter.sendMail({
-        from: '"Auraa" <no-reply@auraa.ai>',
-        to: email,
-        subject: "Password Reset Request",
-        html: `<p>You requested a password reset. Click the link below to reset your password:</p><a href="${link}">Reset Password</a>`,
-    });
-
-    return { success: true };
-  } catch (error) {
-    console.error("Error sending password reset email:", error);
-    throw new https.HttpsError("internal", "Failed to send password reset email.");
-  }
-});
 
 export const menuSuggestion = https.onCall(
     {secrets: [apiKey]},

@@ -37,6 +37,26 @@ This project is a React-based web application built with Vite and uses Firebase 
    npm run dev
    ```
 
+### Email Configuration
+
+Auraa AI sends automated welcome emails and password reset emails. To enable this:
+
+1. Set up email credentials as Firebase Secrets:
+   ```bash
+   firebase functions:secrets:set EMAIL_HOST
+   firebase functions:secrets:set EMAIL_PORT  
+   firebase functions:secrets:set EMAIL_USER
+   firebase functions:secrets:set EMAIL_PASS
+   ```
+
+2. See [docs/email-setup.md](docs/email-setup.md) for detailed setup instructions.
+
+**Quick Setup with Gmail**:
+- Use `smtp.gmail.com` as host
+- Use port `465`
+- Generate an [App Password](https://myaccount.google.com/apppasswords)
+- Deploy: `firebase deploy --only functions`
+
 ## Project Structure
 
 - `src/`: Contains the main React application source code.
