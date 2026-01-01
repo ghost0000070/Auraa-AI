@@ -5,15 +5,39 @@
   "functions": [
     {
       "codebase": "default",
+      "source": "functions",
+      "runtime": "nodejs22",
       "ignore": [
         "**/node_modules/**",
         "**/.*"
       ],
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    },
+    {
+      "codebase": "auraacode",
+      "source": "auraacode",
+      "runtime": "nodejs22",
+      "ignore": [
+        "**/node_modules/**",
+        "**/.*"
       ],
-      "source": "functions",
-      "runtime": "nodejs20"
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    },
+    {
+      "codebase": "auraafunction",
+      "source": "auraafunction",
+      "runtime": "nodejs22",
+      "ignore": [
+        "**/node_modules/**",
+        "**/.*"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
     }
   ],
   "firestore": {
@@ -141,14 +165,5 @@
   "extensions": {},
   "database": {
     "rules": "database.rules.json"
-  },
-  "apphosting": {
-    "backends": [
-      {
-        "id": "auraabacknd",
-        "region": "us-central1",
-        "source": "src/backend"
-      }
-    ]
   }
 }

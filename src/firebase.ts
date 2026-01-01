@@ -23,7 +23,7 @@ const auth = getAuth(app);
 const storage = getStorage(app);
 const functions = getFunctions(app);
 const vertex = getVertexAI(app);
-const generativeModel = getGenerativeModel(vertex, { model: "gemini-1.5-flash-preview-0514" });
+const generativeModel = getGenerativeModel(vertex, { model: "gemini-1.5-flash" });
 
 // Simplified DB initialization
 let db: Firestore;

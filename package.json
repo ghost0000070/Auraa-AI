@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "echo 'Ensure Firebase Data Connect SDK is generated before deployment'",
     "build": "tsc && vite build",
     "lint": "eslint .",
     "preview": "vite preview",

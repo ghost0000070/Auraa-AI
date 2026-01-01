@@ -26,7 +26,7 @@ This project is a React-based web application built with Vite and uses Firebase 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/myuser/myrepo.git
+   git clone https://github.com/ghost0000070/Auraa-AI.git
    ```
 2. Install dependencies:
    ```bash
@@ -36,6 +36,20 @@ This project is a React-based web application built with Vite and uses Firebase 
    ```bash
    npm run dev
    ```
+
+### ⚠️ Security Notice
+
+**IMPORTANT**: After cloning this repository:
+
+1. **Never commit your `.env` file** - it contains sensitive Firebase credentials
+2. If you've just merged a PR that removed a committed `.env` file, **immediately rotate all Firebase API keys**:
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Project Settings > General
+   - Delete the current web app
+   - Create a new web app with new credentials
+   - Update your local `.env` file with new credentials
+
+3. **Owner Account**: The account `owner@auraa-ai.com` has unrestricted access to all platform features regardless of subscription tier.
 
 ## Project Structure
 

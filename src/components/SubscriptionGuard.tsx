@@ -3,7 +3,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import { OWNER_EMAIL, TIER_LEVELS } from '@/config/constants';
+import { isOwnerAccount } from '@/lib/auth-helpers';
+import { TIER_LEVELS } from '@/config/constants';
 
 interface SubscriptionGuardProps {
   children: React.ReactNode;
@@ -15,9 +16,6 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children, require
   const navigate = useNavigate();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Check if user is owner - synchronized with useAuth
-  const isOwner = user?.email === OWNER_EMAIL;
 
   useEffect(() => {
     const checkAuthorization = async () => {
@@ -40,7 +38,7 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children, require
       }
 
       // ⚡ OWNER BYPASS: Always authorized
-      if (isOwner) {
+      if (isOwnerAccount(user)) {
           setIsAuthorized(true);
           setIsLoading(false);
           return;
@@ -91,7 +89,7 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children, require
     };
 
     checkAuthorization();
-  }, [user, subscriptionStatus, requiredTier, navigate, isOwner, isLoading]);
+  }, [user, subscriptionStatus, requiredTier, navigate, isLoading]);
 
   if (isLoading) {
     return <div className="flex h-screen items-center justify-center bg-background text-foreground">Loading authorization...</div>;
