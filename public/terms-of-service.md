@@ -21,7 +21,7 @@ For the purposes of this Terms and Conditions:
 *   **Service** refers to the Website.
 *   **Terms and Conditions** (also referred as "Terms") mean these Terms and Conditions that form the entire agreement between You and the Company regarding the use of the Service.
 *   **Third-party Social Media Service** means any services or content (including data, information, products or services) provided by a third-party that may be displayed, included or made available by the Service.
-*   **Website** refers to Auraa-AI, accessible from auraa-ai-69.web.app
+*   **Website** refers to Auraa-AI, accessible from www.auraa-ai.com
 *   **You** means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.
 
 ## Acknowledgment
@@ -109,4 +109,4 @@ By continuing to access or use Our Service after those revisions become effectiv
 If you have any questions about these Terms and Conditions, You can contact us:
 
 *   By email: support@auraa-ai.com
-*   By visiting this page on our website: auraa-ai-69.web.app/contact
+*   By visiting this page on our website: www.auraa-ai.com/contact
