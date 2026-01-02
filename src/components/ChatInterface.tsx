@@ -5,8 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2, Send, User, Bot } from 'lucide-react';
 import { aiEmployeeTemplates } from '@/lib/ai-employee-templates.tsx';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/firebase';
+import { supabase } from '@/supabase';
 import { TemplateIcon } from './TemplateIcon';
 import { AIEngine } from '@/lib/ai-engine'; // Import client-side AI Engine
 
@@ -15,13 +14,17 @@ const buildContextPayload = async (employeeId: string, userId: string, userInput
   // 1. Basic User & Company Info (from business profile)
   let companyContext = {};
   try {
-      const profileDoc = await getDoc(doc(db, 'businessProfiles', userId));
-      if (profileDoc.exists()) {
-          const data = profileDoc.data();
+      const { data: profileData, error } = await supabase
+        .from('business_profiles')
+        .select('business_name, industry, target_audience')
+        .eq('user_id', userId)
+        .single();
+      
+      if (profileData && !error) {
           companyContext = {
-              companyName: data.name,
-              industry: data.industry,
-              audience: data.targetAudience
+              companyName: profileData.business_name,
+              industry: profileData.industry,
+              audience: profileData.target_audience
           };
       }
   } catch (e) {
@@ -110,7 +113,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType }) =>
       }
       
       // Build context for the AI
-      const payload = await buildContextPayload(employeeType, user.uid, currentInput);
+      const payload = await buildContextPayload(employeeType, user.id, currentInput);
       
       // Construct a rich system context string for Puter AI
       const contextString = JSON.stringify({

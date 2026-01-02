@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase';
+import { supabase } from '@/supabase';
 import { useAuth } from './useAuth';
 
 interface AgentTask {
@@ -32,51 +31,101 @@ export function useAgentRealtime() {
       return;
     }
 
-    // Listen to real-time task updates
-    const tasksQuery = query(
-      collection(db, 'agent_tasks'),
-      where('userId', '==', user.uid),
-      orderBy('createdAt', 'desc'),
-      limit(20)
-    );
-
-    const unsubscribeTasks = onSnapshot(tasksQuery, (snapshot) => {
-      const taskList = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate() || new Date(),
-      })) as AgentTask[];
-      setTasks(taskList);
-      setLoading(false);
-    });
-
-    // Listen to real-time events (if collection exists)
-    const eventsQuery = query(
-      collection(db, 'agent_events'),
-      where('userId', '==', user.uid),
-      orderBy('timestamp', 'desc'),
-      limit(10)
-    );
-
-    const unsubscribeEvents = onSnapshot(
-      eventsQuery,
-      (snapshot) => {
-        const eventList = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          timestamp: doc.data().timestamp?.toDate() || new Date(),
-        })) as AgentEvent[];
-        setEvents(eventList);
-      },
-      (err) => {
-        // Events collection may not exist yet, that's okay
-        console.log('Agent events not available:', err);
+    // Fetch initial tasks
+    const fetchTasks = async () => {
+      const { data } = await supabase
+        .from('agent_tasks')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
+      
+      if (data) {
+        setTasks(data.map(task => ({
+          id: task.id,
+          action: task.action,
+          status: task.status,
+          createdAt: new Date(task.created_at),
+          userId: task.user_id
+        })));
       }
-    );
+      setLoading(false);
+    };
+    fetchTasks();
+
+    // Subscribe to real-time task updates
+    const tasksChannel = supabase
+      .channel('agent_tasks_changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'agent_tasks', filter: `user_id=eq.${user.id}` },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newTask = payload.new;
+            setTasks(prev => [{
+              id: newTask.id,
+              action: newTask.action,
+              status: newTask.status,
+              createdAt: new Date(newTask.created_at),
+              userId: newTask.user_id
+            }, ...prev].slice(0, 20));
+          } else if (payload.eventType === 'UPDATE') {
+            const updatedTask = payload.new;
+            setTasks(prev => prev.map(t => t.id === updatedTask.id ? {
+              id: updatedTask.id,
+              action: updatedTask.action,
+              status: updatedTask.status,
+              createdAt: new Date(updatedTask.created_at),
+              userId: updatedTask.user_id
+            } : t));
+          } else if (payload.eventType === 'DELETE') {
+            setTasks(prev => prev.filter(t => t.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
+    // Fetch initial events
+    const fetchEvents = async () => {
+      const { data } = await supabase
+        .from('agent_events')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('timestamp', { ascending: false })
+        .limit(10);
+      
+      if (data) {
+        setEvents(data.map(event => ({
+          id: event.id,
+          type: event.type,
+          message: event.message,
+          timestamp: new Date(event.timestamp)
+        })));
+      }
+    };
+    fetchEvents();
+
+    // Subscribe to real-time events
+    const eventsChannel = supabase
+      .channel('agent_events_changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'agent_events', filter: `user_id=eq.${user.id}` },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newEvent = payload.new;
+            setEvents(prev => [{
+              id: newEvent.id,
+              type: newEvent.type,
+              message: newEvent.message,
+              timestamp: new Date(newEvent.timestamp)
+            }, ...prev].slice(0, 10));
+          }
+        }
+      )
+      .subscribe();
 
     return () => {
-      unsubscribeTasks();
-      unsubscribeEvents();
+      tasksChannel.unsubscribe();
+      eventsChannel.unsubscribe();
     };
   }, [user]);
 

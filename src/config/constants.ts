@@ -40,19 +40,15 @@ export const SENTRY_CONFIG = {
 
 // Cache Configuration
 export const CACHE_CONFIG = {
-  FIRESTORE_CACHE_TTL: 5 * 60 * 1000, // 5 minutes
+  DATABASE_CACHE_TTL: 5 * 60 * 1000, // 5 minutes
   ENABLE_PERSISTENCE: true,
 };
 
 // Environment validation
 export function validateEnvironment(): void {
   const requiredEnvVars = [
-    'VITE_FIREBASE_API_KEY',
-    'VITE_FIREBASE_AUTH_DOMAIN',
-    'VITE_FIREBASE_PROJECT_ID',
-    'VITE_FIREBASE_STORAGE_BUCKET',
-    'VITE_FIREBASE_MESSAGING_SENDER_ID',
-    'VITE_FIREBASE_APP_ID',
+    'VITE_SUPABASE_URL',
+    'VITE_SUPABASE_ANON_KEY',
   ];
 
   const missing = requiredEnvVars.filter(

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import AddWebsiteIntegration from '@/components/integrations/AddWebsiteIntegration';
-import { FirebaseWebsiteIntegrations } from '@/components/integrations/FirebaseWebsiteIntegrations';
+import { WebsiteIntegrations } from '@/components/integrations/WebsiteIntegrations';
 import { useAgentTasks } from '@/hooks/useAgentTasks';
 import { useAgentRealtime } from '@/hooks/useAgentRealtime';
 import { AgentMetricsDashboard } from '@/components/integrations/AgentMetricsDashboard';
-import PuterFirebaseIntegration from "@/components/PuterFirebaseIntegration";
+import PuterIntegration from "@/components/PuterIntegration";
 import { useAuth } from '@/hooks/useAuth';
 
 export default function IntegrationsPage() {
@@ -16,14 +16,14 @@ export default function IntegrationsPage() {
   return (
     <div className="container mx-auto py-6 space-y-8">
       <AgentMetricsDashboard />
-      <PuterFirebaseIntegration />
+      <PuterIntegration />
       {user && (
         <div className="grid md:grid-cols-3 gap-6">
           <div className="md:col-span-1">
-            <AddWebsiteIntegration userId={user.uid} onIntegrationAdded={() => { /* could trigger reload via context if needed */ }} />
+            <AddWebsiteIntegration userId={user.id} onIntegrationAdded={() => { /* could trigger reload via context if needed */ }} />
           </div>
           <div className="md:col-span-2">
-            <FirebaseWebsiteIntegrations />
+            <WebsiteIntegrations />
           </div>
         </div>
       )}

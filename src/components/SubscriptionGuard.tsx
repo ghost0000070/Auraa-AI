@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/firebase";
+import { supabase } from "@/supabase";
 import { OWNER_EMAIL, TIER_LEVELS } from '@/config/constants';
 
 interface SubscriptionGuardProps {
@@ -54,19 +53,21 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children, require
       if (requiredTier) {
         // For regular users, check tier
         try {
-            const userDocRef = doc(db, "users", user.uid);
-            const userDoc = await getDoc(userDocRef);
+            const { data: userData, error } = await supabase
+              .from('users')
+              .select('role, subscription_tier')
+              .eq('id', user.id)
+              .single();
 
-            if (!userDoc.exists()) {
+            if (error || !userData) {
               console.error("Could not verify user role.");
               navigate('/dashboard');
               return;
             }
 
-            const userData = userDoc.data();
             // Allow access if user role matches or if subscription plan matches
             const userRole = userData.role || 'user';
-            const userPlan = userData.plan || 'free';
+            const userPlan = userData.subscription_tier || 'free';
             
             const requiredLevel = TIER_LEVELS[requiredTier.toLowerCase()] || 0;
             const currentRoleLevel = TIER_LEVELS[userRole.toLowerCase()] || 0;

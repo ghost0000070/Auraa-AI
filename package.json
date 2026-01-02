@@ -11,10 +11,8 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@dataconnect/admin-generated": "file:src/dataconnect-admin-generated",
-    "@dataconnect/generated": "file:src/dataconnect-generated",
-    "@firebase/vertexai-preview": "^0.0.4",
     "@google/generative-ai": "^0.2.1",
+    "@polar-sh/sdk": "^0.42.1",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-checkbox": "^1.0.4",
@@ -33,7 +31,8 @@
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.7",
-    "@tanstack-query-firebase/react": "^2.0.0",
+    "@sentry/react": "^10.32.1",
+    "@supabase/supabase-js": "^2.39.3",
     "@tanstack/react-query": "^5.22.2",
     "@tanstack/react-table": "^8.12.0",
     "@vitejs/plugin-react-swc": "^3.6.0",
@@ -41,9 +40,6 @@
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
     "date-fns": "^3.3.1",
-    "firebase": "^12.6.0",
-    "firebase-functions": "^7.0.0",
-    "input-otp": "^1.2.4",
     "lucide-react": "^0.341.0",
     "nodemailer": "^7.0.11",
     "puter": "^1.0.0",
@@ -55,8 +51,7 @@
     "sonner": "^1.4.2",
     "stripe": "^20.0.0",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7",
-    "@sentry/react": "^10.32.1"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/css": "^0.14.1",
@@ -79,7 +74,6 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "firebase-admin": "^13.6.0",
     "globals": "^16.5.0",
     "jiti": "^2.6.1",
     "jsdom": "^24.1.3",

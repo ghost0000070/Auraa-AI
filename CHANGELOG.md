@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-01-01
+
+### Changed
+
+- **Database Migration:** Migrated from Firebase/Firestore to Supabase for database and authentication.
+- **Component Naming:** Renamed `FirebaseWebsiteIntegrations` to `WebsiteIntegrations` and `PuterFirebaseIntegration` to `PuterIntegration`.
+- **Environment Variables:** Updated all environment variables from `VITE_FIREBASE_*` to `VITE_SUPABASE_*`.
+- **Deployment:** Switched from Firebase Hosting to Vercel for deployments.
+- **Documentation:** Updated all documentation to reflect Supabase usage.
+
+### Removed
+
+- **Firebase Dependencies:** Removed all Firebase-related packages and configuration files.
+- **Firebase Data Connect:** Removed generated Firebase Data Connect files.
+- **Legacy Documentation:** Removed outdated Firebase-specific documentation.
+
 ## [0.2.0] - 2024-07-30
 
 ### Added
@@ -16,14 +32,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Firebase Hosting Configuration:** Updated `firebase.json` to include rewrite rules for the new `/terms` and `/privacy` pages.
+- **Hosting Configuration:** Updated deployment configuration for the new `/terms` and `/privacy` pages.
 
 ## [0.1.0] - 2024-07-29
 
 ### Added
 
-- **Core Platform:** Initial setup of the Auraa AI platform with a Vite + React frontend and Firebase backend.
-- **Authentication:** Implemented user authentication using Firebase Authentication.
+- **Core Platform:** Initial setup of the Auraa AI platform with a Vite + React frontend and Supabase backend.
+- **Authentication:** Implemented user authentication using Supabase Authentication.
 - **AI Employee Deployment:** Core functionality to deploy and manage AI employees.
 - **Dashboard & Analytics:** Foundational components for the user dashboard and analytics pages.
 - **Business Intelligence & Profile:** Pages for managing business-specific data and profiles.
@@ -42,6 +58,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Critical Security Flaw:** Patched a major security vulnerability in the `deployAiEmployee` function by enforcing user authentication and adding data validation.
 - **Subscription Enforcement:** Added a mandatory subscription check before executing paid AI tasks.
-- **Storage Rules:** Strengthened Firebase Storage security rules to prevent unauthorized file access.
+- **Storage Rules:** Strengthened database security rules to prevent unauthorized file access.
 - **Broken Component References:** Removed references to deleted or modified components in `App.tsx` to prevent application crashes.
 - **Removed Debugging Tools:** Deleted the `AITeamDebugger` utility to prevent exposure of sensitive information in production builds.

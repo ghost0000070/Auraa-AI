@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase';
+import { supabase } from '@/supabase';
 import { useAuth } from './useAuth';
 
 interface AgentTask {
@@ -24,32 +23,70 @@ export function useAgentTasks() {
       return;
     }
 
-    const q = query(
-      collection(db, 'agent_tasks'),
-      where('userId', '==', user.uid),
-      orderBy('createdAt', 'desc'),
-      limit(50)
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const taskList = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: doc.data().createdAt?.toDate() || new Date(),
-        })) as AgentTask[];
-        setTasks(taskList);
+    // Fetch initial tasks
+    const fetchTasks = async () => {
+      try {
+        const { data, error: fetchError } = await supabase
+          .from('agent_tasks')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(50);
+        
+        if (fetchError) throw fetchError;
+        
+        if (data) {
+          setTasks(data.map(task => ({
+            id: task.id,
+            action: task.action,
+            status: task.status,
+            createdAt: new Date(task.created_at),
+            userId: task.user_id
+          })));
+        }
         setLoading(false);
-      },
-      (err) => {
+      } catch (err) {
         console.error('Error fetching agent tasks:', err);
         setError(err as Error);
         setLoading(false);
       }
-    );
+    };
+    fetchTasks();
 
-    return () => unsubscribe();
+    // Subscribe to real-time updates
+    const channel = supabase
+      .channel('agent_tasks_realtime')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'agent_tasks', filter: `user_id=eq.${user.id}` },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newTask = payload.new;
+            setTasks(prev => [{
+              id: newTask.id,
+              action: newTask.action,
+              status: newTask.status,
+              createdAt: new Date(newTask.created_at),
+              userId: newTask.user_id
+            }, ...prev].slice(0, 50));
+          } else if (payload.eventType === 'UPDATE') {
+            const updatedTask = payload.new;
+            setTasks(prev => prev.map(t => t.id === updatedTask.id ? {
+              id: updatedTask.id,
+              action: updatedTask.action,
+              status: updatedTask.status,
+              createdAt: new Date(updatedTask.created_at),
+              userId: updatedTask.user_id
+            } : t));
+          } else if (payload.eventType === 'DELETE') {
+            setTasks(prev => prev.filter(t => t.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
   }, [user]);
 
   return { tasks, loading, error };

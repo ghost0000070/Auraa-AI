@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, XCircle, Clock, Zap } from 'lucide-react';
-import { db } from "@/firebase";
-import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
+import { supabase } from "@/supabase";
 import { useAuth } from '@/hooks/useAuth';
 import SubscriptionGuard from "@/components/SubscriptionGuard";
 import { Header } from "@/components/Header";
@@ -31,20 +30,15 @@ const PowerUps = () => {
 
     const fetchPowerUpStatus = async () => {
         try {
-            // Ensure fresh auth token before Firestore reads
-            await user.getIdToken(true);
-            // Wait for token to be attached to SDK
-            await new Promise(resolve => setTimeout(resolve, 500));
+            const { data: userPowerUps, error } = await supabase
+              .from('user_powerups')
+              .select('*')
+              .eq('user_id', user.id);
             
-            const powerUpsCollectionRef = collection(db, `users/${user.uid}/powerUps`);
-            const querySnapshot = await getDocs(powerUpsCollectionRef);
-            
-            if (!querySnapshot.empty) {
-                const userPowerUps = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as PowerUp));
-                
+            if (userPowerUps && !error) {
                 setPowerUps(currentPowerUps =>
                     currentPowerUps.map(p => {
-                        const found = userPowerUps.find(up => up.id === p.id);
+                        const found = userPowerUps.find((up: any) => up.powerup_id === p.id);
                         return found ? { ...p, status: found.status } : p;
                     })
                 );
@@ -70,14 +64,14 @@ const PowerUps = () => {
     setPowerUps(powerUps.map(pu => (pu.id === id ? { ...pu, status: newStatus } : pu)));
 
     try {
-        const powerUpRef = doc(db, `users/${user.uid}/powerUps`, id);
-        await setDoc(powerUpRef, { 
-            id, 
-            name: powerUp.name, 
-            description: powerUp.description, 
-            status: newStatus, 
-            updatedAt: new Date().toISOString() 
-        }, { merge: true });
+        const { error } = await supabase
+          .from('user_powerups')
+          .upsert({ 
+            user_id: user.id,
+            powerup_id: id, 
+            powerup_name: powerUp.name, 
+            status: newStatus,
+          });
         
         toast.success(`Power-up ${newStatus === 'active' ? 'Activated' : 'Deactivated'}`, {
             description: `${powerUp.name} is now ${newStatus}.`,

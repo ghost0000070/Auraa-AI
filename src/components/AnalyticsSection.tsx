@@ -1,8 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState, useMemo } from "react";
-import { db } from "@/firebase";
-import { collection, getDocs, query, where, orderBy, limit, getDoc, doc } from 'firebase/firestore';
+import { supabase } from "@/supabase";
 import { useAuth } from "@/hooks/useAuth";
 
 interface MetricData {
@@ -41,52 +40,63 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ isDashboard 
 
       try {
         if (isDashboard && user) {
-          // Ensure fresh auth token before Firestore reads
-          await user.getIdToken(true);
-          // Wait for token to be attached to SDK
-          await new Promise(resolve => setTimeout(resolve, 500));
-          queryRef = query(collection(db, 'user_stats'), where('userId', '==', user.uid), limit(1));
+          const { data, error } = await supabase
+            .from('user_analytics')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+
+          if (data && !error) {
+            setMetrics(isDashboard ? [
+                { value: data.tasks_completed?.toString() || "0", label: "tasks completed", color: "text-primary" },
+                { value: data.active_employees?.toString() || "0", label: "active employees", color: "text-accent" },
+                { value: `$${data.cost_saved || 0}`, label: "est. cost saved", color: "text-success" }
+              ] : [
+                { value: `$${data.gmv || '32B+'}`, label: "in GMV analyzed", color: "text-accent" },
+                { value: data.orders || '44M+', label: "orders processed", color: "text-primary" },
+                { value: data.customers || '19M+', label: "customers served", color: "text-success" }
+              ]);
+          } else {
+            setMetrics(defaultMetrics);
+          }
         } else {
-          // platform_stats are restricted to admins in security rules.
-          // Check current user's role first to avoid permission errors.
+          // Platform-wide stats for admins
           if (!user) {
             setMetrics(defaultMetrics);
             setLoading(false);
             return;
           }
 
-          // Ensure fresh auth token before Firestore reads
-          await user.getIdToken(true);
-          // Wait for token to be attached to SDK
-          await new Promise(resolve => setTimeout(resolve, 500));
+          const { data: userData } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', user.id)
+            .single();
 
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          const role = userDoc.exists() ? (userDoc.data() as User).role : null;
-          if (role !== 'admin') {
-            // Not an admin — don't attempt to read platform-wide stats.
+          if (userData?.role !== 'admin') {
             setMetrics(defaultMetrics);
             setLoading(false);
             return;
           }
 
-          queryRef = query(collection(db, 'platform_stats'), orderBy('updatedAt', 'desc'), limit(1));
-        }
+          const { data: platformData } = await supabase
+            .from('platform_stats')
+            .select('*')
+            .order('updated_at', { ascending: false })
+            .limit(1)
+            .single();
 
-        const querySnapshot = await getDocs(queryRef);
-
-        if (!querySnapshot.empty) {
-          const data = querySnapshot.docs[0].data();
-          setMetrics(isDashboard ? [
-              { value: data.tasks_completed?.toString() || "0", label: "tasks completed", color: "text-primary" },
-              { value: data.active_employees?.toString() || "0", label: "active employees", color: "text-accent" },
-              { value: `$${data.est_cost_saved?.toLocaleString() || '0'}` , label: "est. cost saved", color: "text-success" },
-            ] : [
-              { value: data.gmv_analyzed || defaultMetrics[0].value, label: "in GMV analyzed", color: "text-accent" },
-              { value: data.orders_processed || defaultMetrics[1].value, label: "orders processed", color: "text-primary" },
-              { value: data.customers_served || defaultMetrics[2].value, label: "unique customers served", color: "text-success" }
+          if (platformData) {
+            setMetrics([
+              { value: platformData.gmv_analyzed || defaultMetrics[0].value, label: "in GMV analyzed", color: "text-accent" },
+              { value: platformData.orders_processed || defaultMetrics[1].value, label: "orders processed", color: "text-primary" },
+              { value: platformData.customers_served || defaultMetrics[2].value, label: "unique customers served", color: "text-success" }
             ]);
-        } else {
-          setMetrics(defaultMetrics);
+          } else {
+            setMetrics(defaultMetrics);
+          }
         }
       } catch (error) {
         console.error(`Failed to fetch ${isDashboard ? 'user' : 'platform'} metrics`, error);

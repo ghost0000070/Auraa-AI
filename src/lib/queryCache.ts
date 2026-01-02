@@ -1,6 +1,6 @@
 /**
- * Firestore query caching utility
- * Reduces redundant Firestore reads and improves performance
+ * Database query caching utility
+ * Reduces redundant database reads and improves performance
  */
 
 import { CACHE_CONFIG } from '@/config/constants';
@@ -61,7 +61,7 @@ class QueryCache {
     collection: string,
     data: T,
     queryId?: string,
-    ttl: number = CACHE_CONFIG.FIRESTORE_CACHE_TTL
+    ttl: number = CACHE_CONFIG.DATABASE_CACHE_TTL
   ): void {
     if (!this.enabled) return;
 
@@ -132,7 +132,7 @@ class QueryCache {
 export const queryCache = new QueryCache();
 
 /**
- * Higher-order function to wrap Firestore queries with caching
+ * Higher-order function to wrap database queries with caching
  */
 export async function withCache<T>(
   cacheKey: string,
@@ -142,7 +142,7 @@ export async function withCache<T>(
     bypassCache?: boolean;
   }
 ): Promise<T> {
-  const { ttl = CACHE_CONFIG.FIRESTORE_CACHE_TTL, bypassCache = false } = options || {};
+  const { ttl = CACHE_CONFIG.DATABASE_CACHE_TTL, bypassCache = false } = options || {};
 
   // Check cache first
   if (!bypassCache) {

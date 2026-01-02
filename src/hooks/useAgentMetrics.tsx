@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../firebase';
+import { supabase } from '@/supabase';
 import { useAuth } from './useAuth';
 
 interface AgentMetrics {

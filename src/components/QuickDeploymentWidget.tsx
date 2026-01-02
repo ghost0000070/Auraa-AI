@@ -4,9 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/toast-hooks';
-import { db, functions } from '@/firebase';
-import { collection, query, where, getDocs, orderBy, limit, Timestamp } from 'firebase/firestore';
-import { httpsCallable } from 'firebase/functions';
+import { supabase } from '@/supabase';
 import { Rocket, Loader2, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 
 interface EmployeeTemplate {
@@ -30,41 +28,40 @@ export const QuickDeploymentWidget: React.FC = () => {
 
   const fetchTemplates = useCallback(async () => {
     try {
-      // Ensure fresh auth token before Firestore reads
-      if (user) {
-        await user.getIdToken(true);
-        // Wait for token to be attached to SDK
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
+      const { data, error } = await supabase
+        .from('ai_employees')
+        .select('id, name, category')
+        .limit(10);
       
-      // ai_employee_templates allows read for all authenticated users (no userId filter needed)
-      const templatesQuery = query(collection(db, 'ai_employee_templates'));
-      const snapshot = await getDocs(templatesQuery);
-      const templatesData = snapshot.docs.map(doc => ({ id: doc.id, name: doc.data().name as string }));
-      setTemplates(templatesData);
+      if (error) throw error;
+      if (data) {
+        setTemplates(data.map(t => ({ id: t.id, name: t.name, category: t.category })));
+      }
     } catch (error) {
       console.error('Error fetching templates:', error);
       toast({ title: "Error", description: "Could not fetch employee templates.", variant: "destructive" });
     }
-  }, [toast, user]);
+  }, [toast]);
 
   const fetchRecentRequests = useCallback(async () => {
     if (!user) return;
     try {
-      // Ensure fresh auth token before Firestore reads
-      await user.getIdToken(true);
-      // Wait for token to be attached to SDK
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data, error } = await supabase
+        .from('deployment_requests')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(3);
       
-      const requestsQuery = query(
-        collection(db, 'deploymentRequests'),
-        where('userId', '==', user.uid),
-        orderBy('createdAt', 'desc'),
-        limit(3)
-      );
-      const snapshot = await getDocs(requestsQuery);
-      const requests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as DeploymentRequest));
-      setRecentRequests(requests);
+      if (error) throw error;
+      if (data) {
+        setRecentRequests(data.map((r: any) => ({
+          id: r.id,
+          status: r.status,
+          createdAt: r.created_at,
+          employeeName: r.employee_name
+        })));
+      }
     } catch (error) {
       console.error('Error fetching requests:', error);
     }
@@ -83,17 +80,36 @@ export const QuickDeploymentWidget: React.FC = () => {
 
     setIsLoading(template.name);
     try {
-        const deployFunction = httpsCallable(functions, 'deployAiEmployee');
-        const result = await deployFunction({
-            deploymentRequest: {
-                ai_helper_template_id: template.id,
-                name: template.name,
-            }
+        // Create deployment request directly in Supabase
+        const { data, error } = await supabase
+          .from('deployment_requests')
+          .insert({
+            user_id: user.id,
+            employee_name: template.name,
+            employee_category: template.category,
+            status: 'pending',
+            template_id: template.id,
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        // Automatically trigger deployment via Edge Function
+        supabase.functions.invoke('deploy-ai-employee', {
+          body: {
+            requestId: data.id,
+            userId: user.id,
+          }
+        }).then(({ data: deployData, error: deployError }) => {
+          if (deployError) {
+            console.error('Auto-deployment error:', deployError);
+          }
         });
 
         toast({ 
-          title: "Deployment Requested", 
-          description: (result.data as { message: string }).message 
+          title: "Deployment Started", 
+          description: `${template.name} is being deployed automatically.` 
         });
         
     } catch (error) {

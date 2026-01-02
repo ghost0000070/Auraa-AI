@@ -91,16 +91,13 @@ storybook-static
 # Vercel
 .vercel
 
-# Firebase
+# Old Firebase files (legacy)
 .firebase/
-database-debug.log
-firestore-debug.log
-storage-debug.log
 firebase-debug.log
-pglite-debug.log
 
-# Service account key
+# Service account key (if any legacy remains)
 service-account-key.json
+serviceAccountKey.json
 
 # Stripe environment files (keep template, ignore actual config)
 .env.stripe

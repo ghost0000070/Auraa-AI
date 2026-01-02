@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
-import { db } from '@/firebase';
-import { collection, query, onSnapshot, orderBy, limit, Timestamp, where } from 'firebase/firestore';
+import { supabase } from '@/supabase';
 
 export interface AgentTaskEvent {
-  ts: Timestamp;
+  ts: string;
   level: string;
   id: string;
   task_id: string;
-  timestamp: Timestamp;
+  timestamp: string;
   type: string;
   message: string;
   metadata: Record<string, unknown>;
@@ -17,18 +16,18 @@ export interface AgentTask {
   id: string;
   status: string;
   action: string;
-  created_at: Timestamp;
+  created_at: string;
   result: Record<string, unknown> | null;
   error: string | null;
   target_id: string;
   owner_user: string;
   parameters: Record<string, unknown>;
   scheduled_for: string;
-  started_at: Timestamp | null;
-  finished_at: Timestamp | null;
+  started_at: string | null;
+  finished_at: string | null;
   attempt_count: number;
   max_attempts: number;
-  next_run_at: Timestamp | null;
+  next_run_at: string | null;
 }
 
 export function useAgentRealtime() {
@@ -39,21 +38,41 @@ export function useAgentRealtime() {
   useEffect(() => {
     setLoading(true);
 
-    const tasksQuery = query(collection(db, 'agent_tasks'), orderBy('created_at', 'desc'), limit(100));
-    const unsubscribeTasks = onSnapshot(tasksQuery, (snapshot) => {
-      const fetchedTasks: AgentTask[] = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      } as AgentTask));
-      setTasks(fetchedTasks);
-      setLoading(false);
-    }, (error) => {
-      console.error("Error fetching agent tasks:", error);
-      setLoading(false);
-    });
+    // Fetch initial tasks
+    supabase
+      .from('agent_tasks')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(100)
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Error fetching agent tasks:', error);
+        } else if (data) {
+          setTasks(data as AgentTask[]);
+        }
+        setLoading(false);
+      });
+
+    // Subscribe to realtime changes
+    const channel = supabase
+      .channel('agent_tasks_changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'agent_tasks' },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setTasks(prev => [payload.new as AgentTask, ...prev].slice(0, 100));
+          } else if (payload.eventType === 'UPDATE') {
+            setTasks(prev => prev.map(t => t.id === payload.new.id ? payload.new as AgentTask : t));
+          } else if (payload.eventType === 'DELETE') {
+            setTasks(prev => prev.filter(t => t.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
 
     return () => {
-      unsubscribeTasks();
+      channel.unsubscribe();
     };
   }, []);
 
@@ -64,38 +83,44 @@ export function useAgentRealtime() {
     }
 
     const taskIds = tasks.map(t => t.id);
-    const chunks: string[][] = [];
-    for (let i = 0; i < taskIds.length; i += 30) {
-        chunks.push(taskIds.slice(i, i + 30));
-    }
 
-    const unsubscribes = chunks.map(chunk => {
-        const eventsQuery = query(
-            collection(db, 'agent_task_events'),
-            where('task_id', 'in', chunk),
-            orderBy('timestamp', 'desc')
-        );
+    // Fetch events for all tasks
+    supabase
+      .from('agent_task_events')
+      .select('*')
+      .in('task_id', taskIds)
+      .order('timestamp', { ascending: true })
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Error fetching agent task events:', error);
+        } else if (data) {
+          const grouped: Record<string, AgentTaskEvent[]> = {};
+          data.forEach(event => {
+            (grouped[event.task_id] ||= []).push(event as AgentTaskEvent);
+          });
+          setEvents(grouped);
+        }
+      });
 
-        return onSnapshot(eventsQuery, (snapshot) => {
-            const grouped: Record<string, AgentTaskEvent[]> = {};
-            snapshot.docs.forEach(doc => {
-                const event = { id: doc.id, ...doc.data() } as AgentTaskEvent;
-                (grouped[event.task_id] ||= []).push(event);
-            });
-
-            Object.keys(grouped).forEach(taskId => {
-                grouped[taskId].sort((a, b) => a.timestamp.toMillis() - b.timestamp.toMillis());
-            });
-
-            setEvents(prevEvents => ({...prevEvents, ...grouped}));
-        }, (error) => {
-            console.error("Error fetching agent task events:", error);
-        });
-    });
-
+    // Subscribe to realtime event changes
+    const channel = supabase
+      .channel('agent_task_events_changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'agent_task_events', filter: `task_id=in.(${taskIds.join(',')})` },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setEvents(prev => ({
+              ...prev,
+              [payload.new.task_id]: [...(prev[payload.new.task_id] || []), payload.new as AgentTaskEvent]
+            }));
+          }
+        }
+      )
+      .subscribe();
 
     return () => {
-      unsubscribes.forEach(unsub => unsub());
+      channel.unsubscribe();
     };
   }, [tasks]);
 

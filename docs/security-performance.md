@@ -65,7 +65,7 @@ VITE_OWNER_UID=your-owner-uid
 
 ### Query Caching (`src/lib/queryCache.ts`)
 
-Reduces redundant Firestore reads:
+Reduces redundant database reads:
 
 ```typescript
 import { withCache, queryCache } from '@/lib/queryCache';
@@ -86,7 +86,7 @@ queryCache.clear();
 Automatic retry with exponential backoff for transient failures:
 
 ```typescript
-import { retryWithBackoff, retryFirebaseOperation } from '@/lib/retry';
+import { retryWithBackoff, retryDatabaseOperation } from '@/lib/retry';
 
 // Generic retry
 const result = await retryWithBackoff(
@@ -94,9 +94,9 @@ const result = await retryWithBackoff(
   { maxAttempts: 3 }
 );
 
-// Firebase-specific retry
-const data = await retryFirebaseOperation(
-  () => getDoc(docRef)
+// Database-specific retry
+const data = await retryDatabaseOperation(
+  () => supabase.from('users').select('*')
 );
 ```
 
@@ -148,13 +148,9 @@ VITE_SENTRY_ENVIRONMENT=production
 Complete list in `.env.example`:
 
 ```bash
-# Firebase
-VITE_FIREBASE_API_KEY=...
-VITE_FIREBASE_AUTH_DOMAIN=...
-VITE_FIREBASE_PROJECT_ID=...
-VITE_FIREBASE_STORAGE_BUCKET=...
-VITE_FIREBASE_MESSAGING_SENDER_ID=...
-VITE_FIREBASE_APP_ID=...
+# Supabase
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
 
 # Owner Account
 VITE_OWNER_EMAIL=...
@@ -167,6 +163,9 @@ VITE_SENTRY_ENVIRONMENT=production
 # Performance
 VITE_ENABLE_ANALYTICS=true
 VITE_API_RATE_LIMIT=100
+
+# Polar.sh
+VITE_POLAR_ACCESS_TOKEN=...
 ```
 
 ### Constants (`src/config/constants.ts`)
@@ -218,12 +217,12 @@ await registerServiceWorker();
 await unregisterServiceWorker();
 ```
 
-## 🔐 Firestore Security Rules
+## 🔐 Database Security Policies
 
 Updated to include:
-- Rate limit collection (server-only)
+- Rate limit tracking (server-only)
 - Proper owner account checks
-- Enhanced security for sensitive collections
+- Enhanced security for sensitive tables via RLS
 
 ## 📦 Dependencies
 
@@ -242,7 +241,7 @@ New packages added:
 ## 🎯 Best Practices
 
 1. Always use `sanitizeInput()` for user-generated content
-2. Use `retryFirebaseOperation()` for Firestore calls
+2. Use `retryDatabaseOperation()` for database calls
 3. Wrap expensive queries with `withCache()`
 4. Monitor Sentry dashboard for production issues
 5. Test rate limits in development before deploying

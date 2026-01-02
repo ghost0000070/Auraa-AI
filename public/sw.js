@@ -56,11 +56,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Skip Firebase and external API requests
+  // Skip Supabase and external API requests
   if (
-    url.hostname.includes('firebaseapp.com') ||
-    url.hostname.includes('googleapis.com') ||
-    url.hostname.includes('stripe.com')
+    url.hostname.includes('supabase.co') ||
+    url.hostname.includes('stripe.com') ||
+    url.hostname.includes('polar.sh')
   ) {
     return;
   }

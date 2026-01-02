@@ -3,8 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { db } from '@/firebase';
-import { collection, query, where, onSnapshot, Timestamp } from 'firebase/firestore';
+import { supabase } from '@/supabase';
 import { useToast } from '@/components/ui/toast-hooks';
 import { 
   Clock, CheckCircle, XCircle, Zap, Activity, AlertTriangle, Loader2
@@ -54,63 +53,114 @@ export const DeploymentDashboard: React.FC = () => {
 
     const setupSubscriptions = async () => {
       try {
-        // Ensure fresh auth token and properly wait before subscribing
-        await user.getIdToken(true);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Fetch initial requests
+        handleLoading('requests', true);
+        const { data: requestsData } = await supabase
+          .from('deployment_requests')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        
+        if (requestsData) {
+          setRequests(requestsData.map((r: any) => ({
+            id: r.id,
+            createdAt: new Date(r.created_at),
+            status: r.status,
+            employeeName: r.employee_name,
+            employeeCategory: r.employee_category,
+            businessName: r.business_name
+          })));
+        }
+        handleLoading('requests', false);
 
-        const requestsQuery = query(collection(db, 'deploymentRequests'), where('userId', '==', user.uid));
-        const employeesQuery = query(collection(db, 'deployedEmployees'), where('userId', '==', user.uid));
+        // Fetch initial employees
+        handleLoading('employees', true);
+        const { data: employeesData } = await supabase
+          .from('deployed_employees')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        
+        if (employeesData) {
+          setEmployees(employeesData.map((e: any) => ({
+            id: e.id,
+            createdAt: new Date(e.created_at),
+            status: e.status,
+            name: e.name,
+            templateId: e.template_id
+          })));
+        }
+        handleLoading('employees', false);
 
-        const unsubscribeRequests = onSnapshot(requestsQuery, (snapshot) => {
-          const requestsData = snapshot.docs.map(d => ({
-            id: d.id,
-            ...d.data(),
-            createdAt: (d.data().createdAt as Timestamp).toDate(),
-          } as DeploymentRequest));
-          setRequests(requestsData);
-          handleLoading('requests', false);
-        }, (error) => {
-          console.error('[DeploymentDashboard] Error fetching requests:', {
-            code: error.code,
-            message: error.message,
-            fullError: error
-          });
-          if (error.code === 'permission-denied') {
-            console.error('[CRITICAL] Permission denied for deploymentRequests');
-          }
-          toast({ title: 'Error', description: 'Failed to load deployment requests', variant: 'destructive' });
-          handleLoading('requests', false);
-        });
+        // Subscribe to requests real-time
+        const requestsChannel = supabase
+          .channel('requests_rt')
+          .on('postgres_changes',
+            { event: '*', schema: 'public', table: 'deployment_requests', filter: `user_id=eq.${user.id}` },
+            (payload) => {
+              if (payload.eventType === 'INSERT') {
+                const newReq = payload.new as any;
+                setRequests(prev => [{
+                  id: newReq.id,
+                  createdAt: new Date(newReq.created_at),
+                  status: newReq.status,
+                  employeeName: newReq.employee_name,
+                  employeeCategory: newReq.employee_category,
+                  businessName: newReq.business_name
+                }, ...prev]);
+              } else if (payload.eventType === 'UPDATE') {
+                const updatedReq = payload.new as any;
+                setRequests(prev => prev.map(r => r.id === updatedReq.id ? {
+                  id: updatedReq.id,
+                  createdAt: new Date(updatedReq.created_at),
+                  status: updatedReq.status,
+                  employeeName: updatedReq.employee_name,
+                  employeeCategory: updatedReq.employee_category,
+                  businessName: updatedReq.business_name
+                } : r));
+              }
+            }
+          )
+          .subscribe();
 
-        const unsubscribeEmployees = onSnapshot(employeesQuery, (snapshot) => {
-          const employeesData = snapshot.docs.map(d => ({
-            id: d.id,
-            ...d.data(),
-            createdAt: (d.data().createdAt as Timestamp).toDate(),
-          } as DeployedEmployee));
-          setEmployees(employeesData);
-          handleLoading('employees', false);
-        }, (error) => {
-          console.error('[DeploymentDashboard] Error fetching employees:', {
-            code: error.code,
-            message: error.message,
-            fullError: error
-          });
-          if (error.code === 'permission-denied') {
-            console.error('[CRITICAL] Permission denied for deployedEmployees');
-          }
-          toast({ title: 'Error', description: 'Failed to load deployed employees', variant: 'destructive' });
-          handleLoading('employees', false);
-        });
+        // Subscribe to employees real-time
+        const employeesChannel = supabase
+          .channel('deployed_rt')
+          .on('postgres_changes',
+            { event: '*', schema: 'public', table: 'deployed_employees', filter: `user_id=eq.${user.id}` },
+            (payload) => {
+              if (payload.eventType === 'INSERT') {
+                const newEmp = payload.new as any;
+                setEmployees(prev => [{
+                  id: newEmp.id,
+                  createdAt: new Date(newEmp.created_at),
+                  status: newEmp.status,
+                  name: newEmp.name,
+                  templateId: newEmp.template_id
+                }, ...prev]);
+              } else if (payload.eventType === 'UPDATE') {
+                const updatedEmp = payload.new as any;
+                setEmployees(prev => prev.map(e => e.id === updatedEmp.id ? {
+                  id: updatedEmp.id,
+                  createdAt: new Date(updatedEmp.created_at),
+                  status: updatedEmp.status,
+                  name: updatedEmp.name,
+                  templateId: updatedEmp.template_id
+                } : e));
+              }
+            }
+          )
+          .subscribe();
 
         return () => {
-          unsubscribeRequests();
-          unsubscribeEmployees();
+          requestsChannel.unsubscribe();
+          employeesChannel.unsubscribe();
         };
       } catch (error) {
         console.error('Error setting up subscriptions:', error);
         handleLoading('requests', false);
         handleLoading('employees', false);
+        toast({ title: 'Error', description: 'Failed to load deployment data', variant: 'destructive' });
         return () => {};
       }
     };

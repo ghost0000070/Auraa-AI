@@ -1,12 +1,9 @@
 
 import * as React from 'react';
 import { useState, useEffect, createContext, useContext, useCallback, type ReactNode } from 'react';
-import { User, onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '@/firebase';
-import { OWNER_EMAIL, OWNER_UID } from '@/config/constants';
+import { User } from '@supabase/supabase-js';
+import { supabase, onAuthStateChanged } from '@/supabase';
 import { errorTracker } from '@/lib/errorTracking';
-import { retryFirebaseOperation } from '@/lib/retry';
 
 interface AuthContextType {
   user: User | null;
@@ -47,38 +44,46 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   } | null>(null);
 
   const checkSubscription = useCallback(async () => {
-    if (!auth.currentUser) {
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    
+    if (!currentUser) {
       setSubscriptionStatus(null);
       return;
     }
 
     try {
-      // Refresh ID token to ensure it's sent with all Firestore requests
-      await auth.currentUser.getIdToken(true);
-      // Wait for token to be attached to SDK
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Check if user is admin from user_metadata or database
+      const { data: userData, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', currentUser.id)
+        .single();
 
-      // Owner account has unrestricted access (check by UID or email)
-      if (auth.currentUser.uid === OWNER_UID || auth.currentUser.email === OWNER_EMAIL) {
-        setSubscriptionStatus({
-          subscribed: true,
-          subscription_tier: 'unlimited',
-          subscription_end: '2099-12-31T23:59:59Z',
-        });
-        setIsAdmin(true);
+      if (error) {
+        console.error('Error fetching user data:', error);
+        setSubscriptionStatus(null);
+        setIsAdmin(false);
         return;
       }
 
-      const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        setSubscriptionStatus({
-          subscribed: userData.is_active || false,
-          subscription_tier: userData.plan || null,
-          subscription_end: userData.current_period_end || null,
-        });
-        // Check if user has admin role in Firestore
-        setIsAdmin(userData.role === 'admin' || userData.role === 'owner'); 
+      if (userData) {
+        const isUserAdmin = userData.role === 'admin' || userData.role === 'owner';
+        setIsAdmin(isUserAdmin);
+        
+        // Admin/Owner has unlimited access
+        if (isUserAdmin) {
+          setSubscriptionStatus({
+            subscribed: true,
+            subscription_tier: 'unlimited',
+            subscription_end: '2099-12-31T23:59:59Z',
+          });
+        } else {
+          setSubscriptionStatus({
+            subscribed: userData.is_active || false,
+            subscription_tier: userData.subscription_tier || null,
+            subscription_end: userData.subscription_ends_at || null,
+          });
+        }
       } else {
         setSubscriptionStatus(null);
         setIsAdmin(false);
@@ -87,7 +92,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.error("Error fetching subscription status:", error);
       errorTracker.captureError(error as Error, {
         tags: { component: 'useAuth', function: 'checkSubscription' },
-        user: { id: auth.currentUser?.uid },
+        user: { id: currentUser?.id },
       });
       setSubscriptionStatus(null);
     }
@@ -95,7 +100,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signOut = async () => {
     try {
-      await firebaseSignOut(auth);
+      await supabase.auth.signOut();
       setUser(null);
       setSubscriptionStatus(null);
       setIsAdmin(false);
@@ -105,13 +110,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        // CRITICAL: Wait before setting user state to ensure Firestore SDK initializes auth
-        // This prevents components from attempting Firestore queries before token is attached
-        await new Promise(resolve => setTimeout(resolve, 1500));
-      }
-      
+    const unsubscribe = onAuthStateChanged(async (currentUser) => {
       setUser(currentUser);
       setLoading(false);
       

@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db, auth } from '@/firebase';
+import { supabase } from '@/supabase';
 
 const AddWebsiteIntegration = ({ userId, onIntegrationAdded }: { userId: string, onIntegrationAdded: () => void }) => {
   const [websiteUrl, setWebsiteUrl] = useState('');
@@ -9,14 +8,15 @@ const AddWebsiteIntegration = ({ userId, onIntegrationAdded }: { userId: string,
     if (!websiteUrl) return;
 
     try {
-      // Ensure fresh auth token before Firestore writes
-      if (auth.currentUser) await auth.currentUser.getIdToken(true);
+      const { error } = await supabase
+        .from('website_integrations')
+        .insert({
+          user_id: userId,
+          url: websiteUrl,
+        });
       
-      await addDoc(collection(db, 'websiteIntegrations'), {
-        userId,
-        url: websiteUrl,
-        createdAt: serverTimestamp(),
-      });
+      if (error) throw error;
+      
       setWebsiteUrl('');
       onIntegrationAdded();
     } catch (error) {

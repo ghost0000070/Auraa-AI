@@ -42,7 +42,7 @@ export const HeroSection = () => {
         </div>
         
         <p className="text-sm text-muted-foreground mb-12">
-          Start your free trial. Cancel in 1 click.
+          Start your 3-day free trial. Cancel in 1 click.
         </p>
         
         <div className="relative max-w-5xl mx-auto">

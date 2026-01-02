@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { db } from '@/firebase';
-import { collection, query, orderBy, limit as firestoreLimit, getDocs, where } from 'firebase/firestore';
+import { supabase } from '@/supabase';
 import { useAuth } from '@/hooks/useAuth';
 
 interface AgentTask {
@@ -22,15 +21,15 @@ export function useAgentTasks(limit = 50) {
     
     setLoading(true);
     try {
-      const tasksQuery = query(
-        collection(db, 'agent_tasks'),
-        where('owner_user', '==', user.uid), // Ensure we only get tasks for the current user
-        orderBy('createdAt', 'desc'), // Note: Ensure your Firestore indexes support this composite query
-        firestoreLimit(limit)
-      );
-      const querySnapshot = await getDocs(tasksQuery);
-      const tasksData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as AgentTask));
-      setTasks(tasksData);
+      const { data, error } = await supabase
+        .from('agent_tasks')
+        .select('*')
+        .eq('owner_user', user.id)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (error) throw error;
+      setTasks(data as AgentTask[]);
     } catch (error) {
       console.error("Error loading agent tasks:", error);
     } finally {

@@ -1,5 +1,0 @@
-mutation CreateAgentTask($prompt: String!) @auth(level: USER) {
-  agentTask_insert(data: {
-    prompt: $prompt
-  })
-}

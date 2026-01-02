@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,21 +22,7 @@ import {
   Filter
 } from 'lucide-react';
 import { Header } from '@/components/Header';
-import { db } from '@/firebase';
-import { 
-  collection, 
-  query, 
-  where, 
-  orderBy, 
-  limit, 
-  onSnapshot, 
-  addDoc, 
-  updateDoc, 
-  doc, 
-  serverTimestamp, 
-  Timestamp 
-} from 'firebase/firestore';
-
+import { supabase } from '@/supabase';
 interface TeamCommunication {
   id: string;
   sender_employee: string;
@@ -101,76 +88,81 @@ const AITeamCoordination = () => {
 
     setLoading(true);
 
-    // Ensure fresh auth token and properly wait before subscribing
     const setupSubscriptions = async () => {
       try {
-        await user.getIdToken(true);
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Increased delay to ensure token is attached
-        
-        const communicationsQuery = query(
-          collection(db, 'ai_team_communications'),
-          where('user_id', '==', user.uid),
-          orderBy('created_at', 'desc'),
-          limit(50)
-        );
-        const unsubscribeCommunications = onSnapshot(communicationsQuery, (snapshot) => {
-          const fetchedCommunications = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as TeamCommunication[];
-          setCommunications(fetchedCommunications);
-          setLoading(false);
-        }, (error) => {
-          console.error('[AITeamCoordination] Communications real-time error:', {
-            code: error.code,
-            message: error.message,
-            fullError: error
-          });
-          if (error.code === 'permission-denied') {
-            console.error('[CRITICAL] Permission denied for ai_team_communications');
-          }
-          toast('Error', {
-            description: 'Failed to load real-time communications'
-          });
-          setLoading(false);
-        });
+        // Fetch initial communications
+        const { data: commsData, error: commsError } = await supabase
+          .from('ai_team_communications')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(50);
 
-        const executionsQuery = query(
-          collection(db, 'ai_team_executions'),
-          where('user_id', '==', user.uid),
-          orderBy('created_at', 'desc'),
-          limit(20)
-        );
-        const unsubscribeExecutions = onSnapshot(executionsQuery, (snapshot) => {
-          const fetchedExecutions = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as TeamExecution[];
-          setExecutions(fetchedExecutions);
-          setLoading(false);
-        }, (error) => {
-          console.error('[AITeamCoordination] Executions real-time error:', {
-            code: error.code,
-            message: error.message,
-            fullError: error
-          });
-          if (error.code === 'permission-denied') {
-            console.error('[CRITICAL] Permission denied for ai_team_executions');
-          }
-          toast('Error', {
-            description: 'Failed to load real-time workflow executions'
-          });
-          setLoading(false);
-        });
+        if (commsError) throw commsError;
+        if (commsData) {
+          setCommunications(commsData as any[]);
+        }
+
+        // Fetch initial executions
+        const { data: execData, error: execError } = await supabase
+          .from('ai_team_executions')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(20);
+
+        if (execError) throw execError;
+        if (execData) {
+          setExecutions(execData as any[]);
+        }
+
+        setLoading(false);
+
+        // Subscribe to communications real-time
+        const commsChannel = supabase
+          .channel('team_communications')
+          .on('postgres_changes',
+            { event: '*', schema: 'public', table: 'ai_team_communications', filter: `user_id=eq.${user.id}` },
+            (payload) => {
+              if (payload.eventType === 'INSERT') {
+                setCommunications(prev => [payload.new as any, ...prev].slice(0, 50));
+              } else if (payload.eventType === 'UPDATE') {
+                setCommunications(prev => prev.map(c => c.id === payload.new.id ? payload.new as any : c));
+              } else if (payload.eventType === 'DELETE') {
+                setCommunications(prev => prev.filter(c => c.id !== payload.old.id));
+              }
+            }
+          )
+          .subscribe();
+
+        // Subscribe to executions real-time
+        const execChannel = supabase
+          .channel('team_executions')
+          .on('postgres_changes',
+            { event: '*', schema: 'public', table: 'ai_team_executions', filter: `user_id=eq.${user.id}` },
+            (payload) => {
+              if (payload.eventType === 'INSERT') {
+                setExecutions(prev => [payload.new as any, ...prev].slice(0, 20));
+              } else if (payload.eventType === 'UPDATE') {
+                setExecutions(prev => prev.map(e => e.id === payload.new.id ? payload.new as any : e));
+              } else if (payload.eventType === 'DELETE') {
+                setExecutions(prev => prev.filter(e => e.id !== payload.old.id));
+              }
+            }
+          )
+          .subscribe();
 
         return () => {
-          unsubscribeCommunications();
-          unsubscribeExecutions();
+          commsChannel.unsubscribe();
+          execChannel.unsubscribe();
         };
       } catch (error) {
         console.error('Error setting up subscriptions:', error);
+        toast('Error', {
+          description: 'Failed to load team coordination data'
+        });
         setLoading(false);
-        return () => {}; // Return empty cleanup if error
+        return () => {};
       }
     };
 
@@ -188,14 +180,17 @@ const AITeamCoordination = () => {
     }
 
     try {
-        await addDoc(collection(db, 'ai_team_communications'), {
+        const { error } = await supabase
+          .from('ai_team_communications')
+          .insert({
             ...newMessage,
             sender_employee: 'User',
-            user_id: user.uid,
+            user_id: user.id,
             metadata: {},
             is_read: false,
-            created_at: serverTimestamp(),
-        });
+          });
+
+        if (error) throw error;
 
         toast('Success', { description: 'Message sent successfully' });
         setNewMessage({ recipient_employee: '', message_type: 'update', subject: '', content: '' });
@@ -208,11 +203,12 @@ const AITeamCoordination = () => {
 
   const markAsRead = async (messageId: string) => {
     try {
-      const messageRef = doc(db, 'ai_team_communications', messageId);
-      await updateDoc(messageRef, {
-        is_read: true,
-        updated_at: serverTimestamp(),
-      });
+      const { error } = await supabase
+        .from('ai_team_communications')
+        .update({ is_read: true })
+        .eq('id', messageId);
+
+      if (error) throw error;
     } catch (error) {
       console.error('Error marking message as read:', error);
     }

@@ -65,16 +65,16 @@ export async function retryWithBackoff<T>(
 }
 
 /**
- * Retry specifically for Firebase operations
+ * Retry specifically for database operations
  */
-export async function retryFirebaseOperation<T>(
+export async function retryDatabaseOperation<T>(
   fn: () => Promise<T>
 ): Promise<T> {
   return retryWithBackoff(fn, {
     maxAttempts: 3,
     initialDelay: 1000,
     shouldRetry: (error: any) => {
-      // Retry on common Firebase transient errors
+      // Retry on common database transient errors
       const retryableCodes = [
         'unavailable',
         'deadline-exceeded',
