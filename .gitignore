@@ -108,3 +108,4 @@ serviceAccountKey.json
 .vscode/
 *.swp
 *~
+.env*.local
