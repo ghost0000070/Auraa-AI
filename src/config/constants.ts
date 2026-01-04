@@ -65,7 +65,7 @@ export function validateEnvironment(): void {
       // Validate format of specific variables
       if (key === 'VITE_SUPABASE_URL' && !value.startsWith('http')) {
         invalid.push(`${key}: Must be a valid URL starting with http:// or https://`);
-      } else if (key === 'VITE_OWNER_EMAIL' && !value.includes('@')) {
+      } else if (key === 'VITE_OWNER_EMAIL' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
         invalid.push(`${key}: Must be a valid email address`);
       }
     }
