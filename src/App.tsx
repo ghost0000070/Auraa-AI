@@ -23,6 +23,13 @@ const IntegrationsPage = lazy(() => import("./pages/IntegrationsPage"));
 const PuterIntegration = lazy(() => import("./components/PuterIntegration"));
 const Marketplace = lazy(() => import('./pages/Marketplace'));
 const PricingPage = lazy(() => import('./pages/PricingPage'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Help = lazy(() => import('./pages/Help'));
+const Docs = lazy(() => import('./pages/Docs'));
+const Careers = lazy(() => import('./pages/Careers'));
+const Status = lazy(() => import('./pages/Status'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 
 const App: React.FC = () => {
   return (
@@ -44,6 +51,13 @@ const App: React.FC = () => {
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/pricing" element={<PricingPage />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/help" element={<Help />} />
+                  <Route path="/docs" element={<Docs />} />
+                  <Route path="/careers" element={<Careers />} />
+                  <Route path="/status" element={<Status />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<TermsOfService />} />
 
                   {/* Protected Routes */}
                   <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

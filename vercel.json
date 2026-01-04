@@ -22,6 +22,7 @@
     "VITE_POLAR_ACCESS_TOKEN": "@polar-access-token",
     "VITE_OWNER_EMAIL": "@owner-email",
     "VITE_OWNER_UID": "@owner-uid",
-    "VITE_ENABLE_ANALYTICS": "true"
+    "VITE_ENABLE_ANALYTICS": "true",
+    "VITE_API_RATE_LIMIT": "100"
   }
 }
