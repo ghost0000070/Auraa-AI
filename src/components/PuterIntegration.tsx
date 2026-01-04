@@ -70,11 +70,11 @@ const PuterIntegration: React.FC = () => {
     <div className="p-4 border rounded-lg shadow-sm">
       <h2 className="text-xl font-semibold mb-4">Puter Script Generator</h2>
 
-      {puterIsLoading && <p className="mb-2 text-sm text-gray-500">Connecting to Puter...</p>}
-      {puterError && <p className="mb-2 text-sm text-red-600">{puterError}</p>}
-      {puterUsername && <p className="mb-2 text-sm text-green-600">Connected to Puter as: <strong>{puterUsername}</strong></p>}
+      {puterIsLoading && <p className="mb-2 text-sm text-muted-foreground">Connecting to Puter...</p>}
+      {puterError && <p className="mb-2 text-sm text-destructive">{puterError}</p>}
+      {puterUsername && <p className="mb-2 text-sm text-green-500">Connected to Puter as: <strong>{puterUsername}</strong></p>}
 
-      <p className="my-4 text-sm text-gray-600">
+      <p className="my-4 text-sm text-muted-foreground">
         Describe the task you want to automate, and we'll generate a Puter script for you using AI.
       </p>
       
@@ -101,7 +101,7 @@ const PuterIntegration: React.FC = () => {
       </div>
 
       {error && (
-        <div className="mt-4 p-3 bg-red-100 text-red-700 border border-red-200 rounded-md">
+        <div className="mt-4 p-3 bg-destructive/10 text-destructive border border-destructive/30 rounded-md">
           <p><strong>Error:</strong> {error}</p>
         </div>
       )}
@@ -109,11 +109,11 @@ const PuterIntegration: React.FC = () => {
       {generatedScript && (
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-2">Generated Script:</h3>
-          <div className="relative p-4 bg-gray-900 text-white rounded-md font-mono text-sm overflow-x-auto">
+          <div className="relative p-4 bg-secondary text-foreground rounded-md font-mono text-sm overflow-x-auto">
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-2 right-2 h-7 w-7 text-gray-300 hover:text-white hover:bg-gray-800"
+              className="absolute top-2 right-2 h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-secondary/80"
               onClick={copyToClipboard}
             >
               <Clipboard className="h-4 w-4" />

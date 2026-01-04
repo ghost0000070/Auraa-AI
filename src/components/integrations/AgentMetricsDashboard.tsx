@@ -11,10 +11,10 @@ export function AgentMetricsDashboard() {
             {[1, 2, 3, 4].map(i => (
                 <Card key={i} className="animate-pulse">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <div className="h-4 w-1/2 bg-gray-200 rounded"></div>
+                        <div className="h-4 w-1/2 bg-secondary rounded"></div>
                     </CardHeader>
                     <CardContent>
-                        <div className="h-8 w-1/3 bg-gray-200 rounded"></div>
+                        <div className="h-8 w-1/3 bg-secondary rounded"></div>
                     </CardContent>
                 </Card>
             ))}
@@ -24,7 +24,7 @@ export function AgentMetricsDashboard() {
 
   if (error) {
       return (
-        <div className="p-4 bg-red-50 text-red-700 border border-red-200 rounded-md flex items-center">
+        <div className="p-4 bg-destructive/10 text-destructive border border-destructive/30 rounded-md flex items-center">
             <AlertCircle className="w-5 h-5 mr-2"/>
             <span>Error loading metrics: {(error as Error).message}</span>
         </div>
@@ -33,7 +33,7 @@ export function AgentMetricsDashboard() {
   
   if (!metrics || metrics.length === 0) {
       return (
-        <div className="text-center py-8 text-gray-500 border rounded-lg border-dashed">
+        <div className="text-center py-8 text-muted-foreground border rounded-lg border-dashed border-border">
             <Activity className="w-8 h-8 mx-auto mb-2 opacity-20"/>
             <p>No agent metrics available yet.</p>
         </div>

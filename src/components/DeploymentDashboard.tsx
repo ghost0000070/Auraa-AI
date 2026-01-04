@@ -187,7 +187,7 @@ export const DeploymentDashboard: React.FC = () => {
       failed: { icon: <XCircle className="w-4 h-4 text-red-500" />, color: 'bg-red-500/20 text-red-300 border-red-500/30' },
       inactive: { icon: <XCircle className="w-4 h-4 text-red-500" />, color: 'bg-red-500/20 text-red-300 border-red-500/30' }
     };
-    return ui[status] || { icon: <AlertTriangle className="w-4 h-4 text-gray-500" />, color: 'bg-gray-500/20 text-gray-300 border-gray-500/30' };
+    return ui[status] || { icon: <AlertTriangle className="w-4 h-4 text-muted-foreground" />, color: 'bg-muted/20 text-muted-foreground border-muted' };
   };
 
   if (!allDataLoaded) {
@@ -216,7 +216,7 @@ export const DeploymentDashboard: React.FC = () => {
               <CardDescription>Review and manage deployment requests.</CardDescription>
             </CardHeader>
             <CardContent>
-              {requests.length === 0 ? <div className="p-4 text-center text-sm text-gray-500">No deployment requests found.</div> : (
+              {requests.length === 0 ? <div className="p-4 text-center text-sm text-muted-foreground">No deployment requests found.</div> : (
                   <Table>
                       <TableHeader><TableRow><TableHead>Employee Name</TableHead><TableHead>Status</TableHead><TableHead>Requested At</TableHead></TableRow></TableHeader>
                       <TableBody>
@@ -243,7 +243,7 @@ export const DeploymentDashboard: React.FC = () => {
               <CardDescription>Monitor your deployed AI employees.</CardDescription>
             </CardHeader>
             <CardContent>
-             {employees.length === 0 ? <div className="p-4 text-center text-sm text-gray-500">No deployed employees found.</div> : (
+             {employees.length === 0 ? <div className="p-4 text-center text-sm text-muted-foreground">No deployed employees found.</div> : (
                   <Table>
                       <TableHeader><TableRow><TableHead>Employee Name</TableHead><TableHead>Status</TableHead><TableHead>Deployed At</TableHead></TableRow></TableHeader>
                       <TableBody>

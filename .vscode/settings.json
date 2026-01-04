@@ -45,5 +45,10 @@
         "./supabase/functions"
     ],
     "deno.lint": true,
-    "deno.unstable": false
+    "deno.unstable": false,
+    "claudeCode.selectedModel": "claude haiku 4.5",
+    "claudeCode.preferredLocation": "sidebar",
+    "claudeCode.initialPermissionMode": "bypassPermissions",
+    "claudeCode.allowDangerouslySkipPermissions": true,
+    "claudeCodeChat.permissions.yoloMode": true
 }

@@ -28,9 +28,9 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen bg-background">
           <Header />
-          <main className="flex-grow">
+          <main className="flex-grow bg-background">
             <Suspense fallback={
               <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 to-slate-950">
                 <div className="text-center space-y-4">

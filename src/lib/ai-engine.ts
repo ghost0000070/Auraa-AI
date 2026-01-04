@@ -1,6 +1,7 @@
 import type { PuterChatResponse } from "../types/puter";
 import { toast } from "sonner";
 import { AI_MODELS } from '@/config/constants';
+import { supabase } from '../supabase';
 
 // Use centralized model constants
 const MODELS = AI_MODELS;
@@ -40,20 +41,44 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
 
 /**
  * callCloudFallback - Fallback Strategy (Supabase Edge Functions)
- * TODO: Implement Supabase Edge Functions for AI tasks
+ * Uses the agent-run edge function with Puter's free Claude API
  */
-async function callCloudFallback(taskName: string, data: unknown): Promise<string> {
-    console.log(`⚠️ Puter AI failed. Cloud fallback not yet implemented for ${taskName}`);
+async function callCloudFallback(taskName: string, data: unknown, context?: string): Promise<string> {
+    console.log(`⚠️ Puter AI failed. Trying cloud fallback for ${taskName}`);
     
-    // TODO: Implement with Supabase Edge Functions
-    // Example:
-    // const { data: result, error } = await supabase.functions.invoke(taskName, {
-    //   body: data
-    // });
-    // if (error) throw error;
-    // return result.text;
-    
-    throw new Error(`Cloud fallback for ${taskName} not yet implemented. Please ensure Puter AI is available.`);
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+        throw new Error('User not authenticated for cloud fallback');
+    }
+
+    // Call the agent-run edge function
+    const { data: result, error } = await supabase.functions.invoke('agent-run', {
+        body: {
+            action: 'generate_content',
+            params: {
+                task: taskName,
+                data,
+                prompt: JSON.stringify(data)
+            },
+            context: context || `Executing task: ${taskName}`,
+            userId: user.id
+        }
+    });
+
+    if (error) {
+        console.error('Cloud fallback error:', error);
+        throw new Error(`Cloud fallback failed: ${error.message}`);
+    }
+
+    if (!result?.success) {
+        throw new Error(result?.error || 'Cloud fallback returned unsuccessful result');
+    }
+
+    // Return the result as a string
+    return typeof result.result === 'string' 
+        ? result.result 
+        : JSON.stringify(result.result);
 }
 
 /**
@@ -98,7 +123,7 @@ Do not include markdown formatting around the JSON. Just the JSON.`;
     } catch (puterError: unknown) {
         // 2. Fallback to Cloud
         try {
-            const fallbackResult = await callCloudFallback(taskName, data);
+            const fallbackResult = await callCloudFallback(taskName, data, context);
             
             // Parse Fallback Result
             let parsedResult: unknown;

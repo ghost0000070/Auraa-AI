@@ -215,7 +215,7 @@ const AITeamDashboard: React.FC = () => {
       running: 'bg-blue-500', idle: 'bg-blue-500',
       queued: 'bg-yellow-500',
       error: 'bg-red-500', offline: 'bg-red-500',
-      default: 'bg-gray-500'
+      default: 'bg-muted-foreground'
     }
     return colors[status] || colors.default;
   };
@@ -258,7 +258,7 @@ const AITeamDashboard: React.FC = () => {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {loading.employees ? <p>Loading employees...</p> : employees.length === 0 ? (
-                 <div className="col-span-2 text-center text-gray-500 py-8">
+                 <div className="col-span-2 text-center text-muted-foreground py-8">
                     No employees found. Deploy an agent to see them here.
                  </div>
             ) : (
@@ -271,7 +271,7 @@ const AITeamDashboard: React.FC = () => {
                             </Avatar>
                             <div>
                                 <p className="font-semibold">{employee.name}</p>
-                                <p className="text-xs text-gray-500">{employee.role}</p>
+                                <p className="text-xs text-muted-foreground">{employee.role}</p>
                             </div>
                         </div>
                         <div className="flex flex-col items-end">
@@ -279,7 +279,7 @@ const AITeamDashboard: React.FC = () => {
                                 {employee.status}
                             </Badge>
                             {employee.currentTask && (
-                                <span className="text-xs text-gray-500 truncate max-w-[150px]">
+                                <span className="text-xs text-muted-foreground truncate max-w-[150px]">
                                     {employee.currentTask}
                                 </span>
                             )}
@@ -296,7 +296,7 @@ const AITeamDashboard: React.FC = () => {
             <CardTitle>Task Distribution</CardTitle>
         </CardHeader>
         <CardContent>
-            {loading.tasks ? <p>Loading tasks...</p> : totalTasks === 0 ? <p className='text-center text-gray-500'>No tasks yet.</p> : (
+            {loading.tasks ? <p>Loading tasks...</p> : totalTasks === 0 ? <p className='text-center text-muted-foreground'>No tasks yet.</p> : (
                 <div className="space-y-4">
                     <div className="flex justify-between items-center text-sm">
                         <span className="flex items-center"><CheckCircle className="w-4 h-4 mr-2 text-green-500"/> Success</span>
@@ -332,19 +332,19 @@ const AITeamDashboard: React.FC = () => {
         <CardContent>
           <div className="space-y-4 max-h-[600px] overflow-y-auto">
             {loading.tasks ? <p>Loading tasks...</p> : tasks.length === 0 ? (
-                 <div className="text-center text-gray-500 py-8">No tasks recorded yet.</div>
+                 <div className="text-center text-muted-foreground py-8">No tasks recorded yet.</div>
             ) : (
                 tasks.map((task) => (
                 <Collapsible key={task.id} open={expandedTask === task.id} onOpenChange={() => toggleExpand(task.id)}>
                     <Card className="w-full">
                         <CollapsibleTrigger asChild>
-                            <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-50 transition-colors">
+                            <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-secondary/50 transition-colors">
                                 <div className="flex items-center">
                                     {getIconForAction(task.action)}
                                     <span className="font-semibold">{task.action?.replace(/_/g, ' ')}</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <span className="text-xs text-gray-400 hidden sm:inline-block">
+                                    <span className="text-xs text-muted-foreground hidden sm:inline-block">
                                         {task.createdAt ? new Date(task.createdAt.seconds * 1000).toLocaleString() : ''}
                                     </span>
                                     <Badge className={`${getStatusColor(task.status)} text-white`}>{task.status}</Badge>
@@ -355,7 +355,7 @@ const AITeamDashboard: React.FC = () => {
                             </div>
                         </CollapsibleTrigger>
                         <CollapsibleContent>
-                            <div className="p-4 border-t bg-gray-50/50">
+                            <div className="p-4 border-t border-border bg-secondary/30">
                                 <p className="mb-2"><strong>ID:</strong> <span className="text-xs font-mono">{task.id}</span></p>
                                 {task.parameters?.url && <p className="mb-2"><strong>Target:</strong> <a href={task.parameters.url} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">{task.parameters.url}</a></p>}
                                 
@@ -369,12 +369,12 @@ const AITeamDashboard: React.FC = () => {
                                 )}
                                 
                                 {task.error && (
-                                    <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+                                    <div className="mt-2 p-2 bg-destructive/10 border border-destructive/30 rounded text-destructive text-sm">
                                         <strong>Error:</strong> {task.error}
                                     </div>
                                 )}
                                 
-                                <p className="text-xs text-gray-500 mt-2 text-right">
+                                <p className="text-xs text-muted-foreground mt-2 text-right">
                                     Finished: {task.finished_at ? new Date(task.finished_at.seconds * 1000).toLocaleString() : 'N/A'}
                                 </p>
                             </div>
@@ -395,28 +395,28 @@ const AITeamDashboard: React.FC = () => {
         <CardContent>
           <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
             {loading.comms ? <p>Loading communications...</p> : communications.length === 0 ? (
-                <div className="text-center text-gray-500 py-8 flex flex-col items-center">
+                <div className="text-center text-muted-foreground py-8 flex flex-col items-center">
                     <MessageSquare className="w-8 h-8 mb-2 opacity-20"/>
                     <p>No communications yet.</p>
                 </div>
             ) : (
                 communications.map((comm) => (
-                <div key={comm.id} className="p-3 bg-white border rounded-lg shadow-sm">
+                <div key={comm.id} className="p-3 bg-card border border-border rounded-lg shadow-sm">
                     <div className="flex justify-between items-start mb-1">
                     <div className="flex items-center space-x-1">
                         <span className="font-bold text-xs text-primary">
                             {comm.sender_employee === 'User' ? 'You' : comm.sender_employee} 
                         </span>
-                        <ArrowRight className="w-3 h-3 text-gray-400"/>
+                        <ArrowRight className="w-3 h-3 text-muted-foreground"/>
                         <span className="font-bold text-xs text-primary">
                             {comm.recipient_employee === 'User' ? 'You' : comm.recipient_employee}
                         </span>
                     </div>
-                    <span className="text-[10px] text-gray-400 whitespace-nowrap ml-2">
+                    <span className="text-[10px] text-muted-foreground whitespace-nowrap ml-2">
                         {comm.created_at ? formatDistanceToNow(new Date(comm.created_at.seconds * 1000), { addSuffix: true }) : ''}
                     </span>
                     </div>
-                    <p className="text-sm text-gray-700 leading-snug">{comm.content}</p>
+                    <p className="text-sm text-foreground leading-snug">{comm.content}</p>
                 </div>
                 ))
             )}
@@ -431,7 +431,7 @@ const AITeamDashboard: React.FC = () => {
         <CardContent>
            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
               {loading.metrics ? <p>Loading metrics...</p> : metrics.length === 0 ? (
-                  <div className="col-span-4 text-center text-gray-500 py-4">No metrics available.</div>
+                  <div className="col-span-4 text-center text-muted-foreground py-4">No metrics available.</div>
               ) : (
                   metrics.slice(0, 4).map(metric => (
                     <Card key={metric.id}>

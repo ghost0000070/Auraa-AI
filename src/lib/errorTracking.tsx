@@ -130,27 +130,27 @@ export const errorTracker = new ErrorTracker();
  */
 export function ErrorFallback({ error }: { error: Error }): JSX.Element {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6">
-        <h1 className="text-2xl font-bold text-red-600 mb-4">
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="max-w-md w-full bg-card shadow-lg rounded-lg p-6 border border-border">
+        <h1 className="text-2xl font-bold text-red-500 mb-4">
           Oops! Something went wrong
         </h1>
-        <p className="text-gray-700 mb-4">
+        <p className="text-muted-foreground mb-4">
           We&apos;re sorry, but something unexpected happened. Our team has been notified and we&apos;re working on a fix.
         </p>
         {SENTRY_CONFIG.ENVIRONMENT === 'development' && (
           <details className="mb-4">
-            <summary className="cursor-pointer text-sm text-gray-600 hover:text-gray-800">
+            <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
               Technical details
             </summary>
-            <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto">
+            <pre className="mt-2 text-xs bg-secondary p-2 rounded overflow-auto text-foreground">
               {error.message}
             </pre>
           </details>
         )}
         <button
           onClick={() => window.location.reload()}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+          className="w-full bg-primary text-primary-foreground py-2 px-4 rounded hover:bg-primary/90 transition-colors"
         >
           Reload Page
         </button>

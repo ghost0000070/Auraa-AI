@@ -83,10 +83,10 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center space-y-4">
           <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent" />
-          <p className="text-lg text-gray-700">Loading dashboard...</p>
+          <p className="text-lg text-foreground">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -97,8 +97,8 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <header className="flex items-center justify-between p-4 bg-white border-b">
+    <div className="flex flex-col min-h-screen bg-background">
+      <header className="flex items-center justify-between p-4 bg-card border-b border-border">
         <h1 className="text-2xl font-bold">Auraa Dashboard</h1>
         <div className="flex items-center space-x-4">
           <Button onClick={handleStripePortal}>Manage Subscription</Button>

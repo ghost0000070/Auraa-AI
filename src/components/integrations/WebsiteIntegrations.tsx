@@ -101,11 +101,11 @@ export const WebsiteIntegrations = () => {
         <div key={integration.id} className="p-4 border rounded-md flex justify-between items-center">
           <div>
             <p className="font-semibold">{integration.url}</p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               Added on: {new Date(integration.createdAt).toLocaleDateString()}
             </p>
             {integration.lastScrapedAt && (
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 Last Scraped: {new Date(integration.lastScrapedAt).toLocaleDateString()}
               </p>
             )}

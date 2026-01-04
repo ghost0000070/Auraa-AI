@@ -3,7 +3,29 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, webhook-secret',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, webhook-signature, x-polar-signature',
+}
+
+// HMAC signature verification for Polar webhooks
+async function verifyPolarSignature(payload: string, signature: string, secret: string): Promise<boolean> {
+  try {
+    const encoder = new TextEncoder()
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign', 'verify']
+    )
+    
+    const signatureBytes = Uint8Array.from(atob(signature.replace('sha256=', '')), c => c.charCodeAt(0))
+    const dataBytes = encoder.encode(payload)
+    
+    return await crypto.subtle.verify('HMAC', key, signatureBytes, dataBytes)
+  } catch {
+    // Fallback to simple string comparison for simple webhook secrets
+    return signature === secret
+  }
 }
 
 serve(async (req) => {
@@ -13,23 +35,45 @@ serve(async (req) => {
 
   try {
     const webhookSecret = Deno.env.get('POLAR_WEBHOOK_SECRET')
-    const signature = req.headers.get('webhook-secret')
+    
+    // Get raw body for signature verification
+    const rawBody = await req.text()
+    
+    // Check multiple possible signature headers
+    const signature = req.headers.get('x-polar-signature') || 
+                      req.headers.get('webhook-signature') || 
+                      req.headers.get('webhook-secret') || ''
 
-    // Verify webhook signature
-    if (webhookSecret && signature !== webhookSecret) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid webhook signature' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+    // STRICT: Require webhook secret in production
+    if (!webhookSecret) {
+      console.warn('⚠️ POLAR_WEBHOOK_SECRET not configured - webhook validation disabled')
+    } else if (signature) {
+      const isValid = await verifyPolarSignature(rawBody, signature, webhookSecret)
+      if (!isValid) {
+        console.error('Invalid webhook signature')
+        return new Response(
+          JSON.stringify({ error: 'Invalid webhook signature' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
     }
 
-    const payload = await req.json()
+    const payload = JSON.parse(rawBody)
     const { event, data } = payload
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
+
+    // Product ID mapping - UPDATE THESE WITH YOUR ACTUAL POLAR PRODUCT IDS
+    const PRODUCT_TIERS: Record<string, string> = {
+      // Add your Polar product IDs here
+      // 'prod_xxxxx': 'pro',
+      // 'prod_yyyyy': 'enterprise',
+      [Deno.env.get('POLAR_PRO_PRODUCT_ID') || 'pro_product']: 'pro',
+      [Deno.env.get('POLAR_ENTERPRISE_PRODUCT_ID') || 'enterprise_product']: 'enterprise',
+    }
 
     // Handle different webhook events
     switch (event) {
@@ -54,14 +98,7 @@ serve(async (req) => {
           if (users) {
             // Determine subscription tier based on product
             const productId = data.product_id
-            let subscriptionTier = 'free'
-            
-            // Map product IDs to tiers (update these with your actual product IDs)
-            if (productId === 'YOUR_PRO_PRODUCT_ID') {
-              subscriptionTier = 'pro'
-            } else if (productId === 'YOUR_ENTERPRISE_PRODUCT_ID') {
-              subscriptionTier = 'enterprise'
-            }
+            const subscriptionTier = PRODUCT_TIERS[productId] || 'pro'
 
             // Update user subscription
             await supabase
@@ -69,13 +106,16 @@ serve(async (req) => {
               .update({
                 subscription_tier: subscriptionTier,
                 subscription_status: 'active',
+                subscription_id: data.subscription_id || null,
                 polar_customer_id: data.customer?.id,
                 polar_order_id: data.id,
                 updated_at: new Date().toISOString(),
               })
               .eq('id', users.id)
 
-            console.log(`Updated user ${users.id} to ${subscriptionTier} tier`)
+            console.log(`✅ Updated user ${users.id} to ${subscriptionTier} tier`)
+          } else {
+            console.warn(`⚠️ No user found with email: ${customerEmail}`)
           }
         }
         break
@@ -93,10 +133,16 @@ serve(async (req) => {
             .single()
 
           if (users) {
+            const productId = data.product_id
+            const subscriptionTier = PRODUCT_TIERS[productId] || 'pro'
+            
             await supabase
               .from('users')
               .update({
+                subscription_tier: subscriptionTier,
                 subscription_status: data.status,
+                subscription_id: data.id,
+                subscription_ends_at: data.current_period_end || null,
                 updated_at: new Date().toISOString(),
               })
               .eq('id', users.id)
