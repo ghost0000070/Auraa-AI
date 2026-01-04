@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { AuthProvider } from './hooks/useAuth.tsx';
 import { Toaster } from '@/components/ui/sonner';
 import { Header } from './components/Header';
@@ -67,6 +68,7 @@ const App: React.FC = () => {
           </main>
           <Footer />
           <Toaster />
+          <VercelAnalytics />
         </div>
       </Router>
     </AuthProvider>
