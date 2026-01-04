@@ -5,20 +5,16 @@ import { useToast } from "@/components/ui/toast-hooks";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Polar } from "@polar-sh/sdk";
+import { supabase } from "@/supabase";
 
 interface Tier {
   name: string;
   price: string;
   features: string[];
-  productId: string;
+  tier: 'pro' | 'enterprise';
   trial?: string;
   buttonText?: string;
 }
-
-const polar = new Polar({
-  accessToken: import.meta.env.VITE_POLAR_ACCESS_TOKEN || "",
-});
 
 export function PricingSection() {
   const { user } = useAuth();
@@ -31,18 +27,24 @@ export function PricingSection() {
       navigate('/auth');
       return;
     }
-    setIsLoading(tier.productId);
+    setIsLoading(tier.tier);
     try {
-      // Create Polar.sh checkout session
-      const checkout = await polar.checkouts.create({
-        products: [tier.productId],
-        successUrl: `${window.location.origin}/dashboard?checkout_id={CHECKOUT_ID}`,
-        customerEmail: user.email || undefined,
+      // Create checkout via edge function (keeps Polar token server-side)
+      const { data, error } = await supabase.functions.invoke('polar-subscription-handler', {
+        body: {
+          action: 'create-checkout',
+          tier: tier.tier,
+          successUrl: `${window.location.origin}/dashboard?subscription=success`,
+          cancelUrl: `${window.location.origin}/pricing`,
+        }
       });
 
-      if (checkout.url) {
-        // Redirect to Polar.sh checkout
-        window.location.href = checkout.url;
+      if (error) throw error;
+
+      if (data?.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else if (data?.error) {
+        throw new Error(data.error);
       } else {
         throw new Error("Failed to create checkout session");
       }
@@ -54,6 +56,7 @@ export function PricingSection() {
         description: (error as Error).message || "Could not create a checkout session.",
         variant: "destructive",
       });
+    } finally {
       setIsLoading(null);
     }
   };
@@ -73,7 +76,7 @@ export function PricingSection() {
         "Website scraping & analysis",
         "Business intelligence tools",
       ],
-      productId: "YOUR_PRO_PRODUCT_ID",
+      tier: "pro",
     },
     {
       name: "Enterprise",
@@ -89,7 +92,7 @@ export function PricingSection() {
         "White-label options",
         "SLA guarantees",
       ],
-      productId: "YOUR_ENTERPRISE_PRODUCT_ID",
+      tier: "enterprise",
     },
   ];
 
@@ -127,7 +130,7 @@ export function PricingSection() {
                     onClick={() => handleSubscribe(tier)}
                     disabled={!!isLoading}
                 >
-                    {isLoading === tier.productId ? <Loader2 className="h-4 w-4 animate-spin"/> : (tier.buttonText || 'Subscribe')}
+                    {isLoading === tier.tier ? <Loader2 className="h-4 w-4 animate-spin"/> : (tier.buttonText || 'Subscribe')}
                 </Button>
               </CardContent>
             </Card>

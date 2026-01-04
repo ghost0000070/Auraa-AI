@@ -10,6 +10,7 @@ interface SubscriptionAction {
   action: 'create-checkout' | 'get-subscription' | 'cancel-subscription' | 'update-subscription' | 'get-portal-url' | 'list-products'
   userId?: string
   productId?: string
+  tier?: 'pro' | 'enterprise'
   successUrl?: string
   cancelUrl?: string
   metadata?: Record<string, string>
@@ -17,6 +18,12 @@ interface SubscriptionAction {
 
 // Polar API base URL
 const POLAR_API_BASE = 'https://api.polar.sh/v1'
+
+// Product ID mapping (configure these in environment variables)
+const TIER_TO_PRODUCT: Record<string, string> = {
+  'pro': Deno.env.get('POLAR_PRO_PRODUCT_ID') || '',
+  'enterprise': Deno.env.get('POLAR_ENTERPRISE_PRODUCT_ID') || ''
+}
 
 // Helper function to make Polar API requests
 async function polarRequest(endpoint: string, options: RequestInit = {}) {
@@ -101,11 +108,17 @@ serve(async (req) => {
       }
 
       case 'create-checkout': {
-        const { productId, successUrl, cancelUrl, metadata = {} } = body
+        const { productId, tier, successUrl, cancelUrl, metadata = {} } = body
 
-        if (!productId) {
+        // Resolve product ID from tier if not provided directly
+        let resolvedProductId = productId
+        if (!resolvedProductId && tier) {
+          resolvedProductId = TIER_TO_PRODUCT[tier]
+        }
+
+        if (!resolvedProductId) {
           return new Response(
-            JSON.stringify({ error: 'productId is required' }),
+            JSON.stringify({ error: 'productId or tier is required. Make sure POLAR_PRO_PRODUCT_ID and POLAR_ENTERPRISE_PRODUCT_ID are configured.' }),
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           )
         }
@@ -114,13 +127,14 @@ serve(async (req) => {
         const checkout = await polarRequest('/checkouts/custom/', {
           method: 'POST',
           body: JSON.stringify({
-            product_id: productId,
+            product_id: resolvedProductId,
             success_url: successUrl || `${req.headers.get('origin')}/checkout-return?success=true`,
             cancel_url: cancelUrl || `${req.headers.get('origin')}/checkout-return?canceled=true`,
             customer_email: user.email,
             customer_name: userData?.full_name || userData?.display_name || undefined,
             metadata: {
               user_id: user.id,
+              tier: tier || 'unknown',
               ...metadata
             }
           })
