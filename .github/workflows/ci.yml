@@ -12,8 +12,11 @@ jobs:
     permissions:
       contents: read
     env:
+      CI: true
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      VITE_OWNER_EMAIL: ${{ secrets.VITE_OWNER_EMAIL }}
+      VITE_OWNER_UID: ${{ secrets.VITE_OWNER_UID }}
 
     steps:
       - name: Checkout code
