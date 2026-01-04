@@ -1,0 +1,58 @@
+{
+  "name": "auraa-ai-agent",
+  "version": "1.0.0",
+  "description": "MCP configuration for AI agents working on Auraa-AI",
+  "instructions": {
+    "onStart": [
+      "Read .ai/AGENT_INSTRUCTIONS.md",
+      "Read .ai/CODEBASE_CONTEXT.md",
+      "Scan the src/ directory structure",
+      "Understand the technology stack"
+    ],
+    "beforeChange": [
+      "Verify understanding of affected files",
+      "Check for existing patterns to follow",
+      "Review .ai/SECURITY_CHECKLIST.md"
+    ],
+    "afterChange": [
+      "Run npm run lint",
+      "Run npm run build",
+      "Run npm test",
+      "Update .ai/CODEBASE_CONTEXT.md if new patterns discovered"
+    ],
+    "onError": [
+      "Document the error in CODEBASE_CONTEXT.md",
+      "Seek clarification before proceeding"
+    ]
+  },
+  "securityPatterns": {
+    "forbidden": [
+      "password\\s*=\\s*['\"][^'\"]+['\"]",
+      "secret\\s*=\\s*['\"][^'\"]+['\"]",
+      "api[_-]?key\\s*=\\s*['\"][^'\"]+['\"]",
+      "token\\s*=\\s*['\"][^'\"]+['\"]",
+      "-----BEGIN\\s+(RSA|DSA|EC|OPENSSH)\\s+PRIVATE\\s+KEY-----",
+      "sk_live_[a-zA-Z0-9]+",
+      "pk_live_[a-zA-Z0-9]+",
+      "eyJ[a-zA-Z0-9_-]*\\.[a-zA-Z0-9_-]*\\.[a-zA-Z0-9_-]*"
+    ],
+    "allowedFiles": [
+      ".env.example",
+      "*.md",
+      "*.test.ts",
+      "*.test.tsx"
+    ]
+  },
+  "conventions": {
+    "pathAlias": "@/ -> src/",
+    "envPrefix": "VITE_",
+    "componentLibrary": "shadcn/ui with Radix primitives",
+    "stateManagement": "TanStack Query",
+    "styling": "Tailwind CSS"
+  },
+  "memory": {
+    "contextFile": ".ai/CODEBASE_CONTEXT.md",
+    "updateOnLearning": true,
+    "persistAcrossSessions": true
+  }
+}
