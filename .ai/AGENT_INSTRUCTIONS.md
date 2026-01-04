@@ -17,7 +17,7 @@ Before making ANY changes:
 - **NEVER assume** - Always verify your fix works as intended
 - **Proper formatting is mandatory** - Follow code style, indentation, and conventions exactly
 - **Test every fix** - Verify the issue is resolved before moving on
-- **Document why** - Explain the root cause and solution approach
+
 
 #### What "Fix Correctly" Means:
 1. **Understand the root cause** - Don't just fix symptoms
