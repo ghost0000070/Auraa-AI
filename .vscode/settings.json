@@ -25,7 +25,6 @@
     "git.ignoreLimitWarning": true,
     "IDX.aI.showChatInEditorTab": true,
     "cSpell.words": [
-        "firestore",
         "genkit",
         "googleai",
         "vertexai"

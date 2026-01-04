@@ -66,6 +66,8 @@ web_modules/
 
 # dotenv environment variables file
 .env
+.env.*
+!.env.example
 .env.development.local
 .env.test.local
 .env.production.local
@@ -91,10 +93,6 @@ storybook-static
 # Vercel
 .vercel
 
-# Old Firebase files (legacy)
-.firebase/
-firebase-debug.log
-
 # Service account key (if any legacy remains)
 service-account-key.json
 serviceAccountKey.json
@@ -109,3 +107,11 @@ serviceAccountKey.json
 *.swp
 *~
 .env*.local
+
+# Large binary files
+*.tar.gz
+*.zip
+*.rar
+
+# Artifact files
+latest

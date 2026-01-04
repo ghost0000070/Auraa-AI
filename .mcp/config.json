@@ -1,0 +1,450 @@
+{
+  "mcpServers": {
+    "auraa-ai": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/Auraa-AI"],
+      "env": {}
+    }
+  },
+  "projectContext": {
+    "name": "Auraa-AI Business Automation Platform",
+    "version": "0.0.0",
+    "description": "Enterprise-grade AI-powered business automation platform with AI employees, team coordination, and intelligent workflow management",
+    "type": "Full-stack TypeScript/React Application",
+    "primaryLanguage": "TypeScript",
+    "framework": "React + Vite",
+    "architecture": "Single Page Application (SPA) with Supabase Backend",
+    "repositoryUrl": "https://github.com/ghost0000070/Auraa-AI",
+    "homepage": "https://www.auraa-ai.com",
+    "license": "MIT"
+  },
+  "technicalStack": {
+    "frontend": {
+      "framework": "React 18.2.0",
+      "buildTool": "Vite 6.4.1",
+      "language": "TypeScript 5.3.3",
+      "styling": "Tailwind CSS 3.4.1 + tailwindcss-animate",
+      "uiComponents": "Radix UI (shadcn/ui pattern)",
+      "stateManagement": "React Query (@tanstack/react-query 5.22.2)",
+      "routing": "React Router DOM 6.22.2",
+      "charts": "Recharts 2.12.1",
+      "icons": "Lucide React 0.341.0"
+    },
+    "backend": {
+      "baas": "Supabase (@supabase/supabase-js 2.39.3)",
+      "authentication": "Supabase Auth",
+      "database": "PostgreSQL (via Supabase)",
+      "storage": "Supabase Storage",
+      "realtime": "Supabase Realtime Subscriptions"
+    },
+    "ai": {
+      "provider": "Google Generative AI (@google/generative-ai 0.2.1)",
+      "engine": "Custom AI Engine (src/lib/ai-engine.ts)",
+      "features": ["AI Employees", "Business Intelligence", "Workflow Automation", "Natural Language Processing"]
+    },
+    "integrations": {
+      "payments": "Stripe 20.0.0",
+      "errorTracking": "Sentry (@sentry/react 10.32.1)",
+      "cloudStorage": "Puter 1.0.0",
+      "billing": "Polar SDK (@polar-sh/sdk 0.42.1)",
+      "email": "Nodemailer 7.0.11"
+    },
+    "testing": {
+      "runner": "Vitest 4.0.13",
+      "testingLibrary": "@testing-library/react 14.3.1",
+      "dom": "jsdom 24.1.3"
+    },
+    "devTools": {
+      "linting": "ESLint 8.57.1 + TypeScript ESLint",
+      "cssProcessing": "PostCSS 8.4.35 + Autoprefixer",
+      "deployment": "Vercel (vercel.json present)"
+    }
+  },
+  "projectStructure": {
+    "src/pages": {
+      "description": "Main application pages and routes",
+      "keyFiles": [
+        "Dashboard.tsx - Main user dashboard",
+        "AIEmployees.tsx - AI employee management",
+        "AIEmployeePage.tsx - Individual AI employee detail view",
+        "AITeamCoordination.tsx - Team coordination and collaboration",
+        "AITeamWorkflows.tsx - Workflow automation management",
+        "BusinessIntelligence.tsx - BI and analytics",
+        "BusinessProfile.tsx - Company profile management",
+        "Analytics.tsx - Performance analytics",
+        "PowerUps.tsx - Feature extensions and add-ons",
+        "Marketplace.tsx - AI employee marketplace",
+        "IntegrationsPage.tsx - Third-party integrations",
+        "PricingPage.tsx - Subscription pricing",
+        "Auth.tsx - Authentication flow"
+      ]
+    },
+    "src/components": {
+      "description": "Reusable React components",
+      "categories": {
+        "ai": [
+          "AIEmployeeCard.tsx - Display AI employee information",
+          "AIEmployeesSection.tsx - AI employee listing",
+          "AITeamDashboard.tsx - Team management dashboard",
+          "ChatInterface.tsx - AI chat interface"
+        ],
+        "deployment": [
+          "DeploymentDashboard.tsx - Deployment management",
+          "DeploymentRequestCard.tsx - Deployment request UI",
+          "QuickDeploymentWidget.tsx - Quick deployment actions"
+        ],
+        "dataVisualization": [
+          "SimpleBarChart.tsx - Bar chart component",
+          "SimpleLineChart.tsx - Line chart component",
+          "SimplePieChart.tsx - Pie chart component",
+          "AnalyticsSection.tsx - Analytics dashboard section"
+        ],
+        "landing": [
+          "HeroSection.tsx - Landing page hero",
+          "FeaturesSection.tsx - Features showcase",
+          "PricingSection.tsx - Pricing display",
+          "TestimonialsSection.tsx - Customer testimonials",
+          "FAQSection.tsx - FAQ accordion",
+          "HowItWorksSection.tsx - Process explanation"
+        ],
+        "layout": [
+          "Header.tsx - Main navigation header",
+          "Footer.tsx - Site footer"
+        ],
+        "utilities": [
+          "ProtectedRoute.tsx - Route authentication guard",
+          "SubscriptionGuard.tsx - Subscription-based access control",
+          "ErrorBoundary.tsx - Error handling wrapper",
+          "PowerUpCard.tsx - Power-up feature card"
+        ],
+        "integrations": [
+          "PuterIntegration.tsx - Puter cloud storage integration"
+        ]
+      }
+    },
+    "src/lib": {
+      "description": "Core business logic and utilities",
+      "keyModules": {
+        "ai-engine.ts": "Core AI processing engine with Google Generative AI integration",
+        "ai-employee-templates.tsx": "Predefined AI employee role templates",
+        "crypto.ts": "Cryptographic utilities for secure data handling",
+        "sanitize.ts": "Input sanitization and validation",
+        "queryCache.ts": "React Query caching configuration",
+        "retry.ts": "Retry logic for failed operations",
+        "errorTracking.tsx": "Sentry error tracking setup",
+        "serviceWorker.ts": "Progressive Web App service worker",
+        "utils.ts": "General utility functions"
+      }
+    },
+    "src/config": {
+      "description": "Application configuration files"
+    },
+    "src/hooks": {
+      "description": "Custom React hooks"
+    },
+    "src/types": {
+      "description": "TypeScript type definitions"
+    },
+    "supabase": {
+      "description": "Supabase migrations and configuration"
+    }
+  },
+  "coreFeatures": {
+    "aiEmployees": {
+      "description": "Create and manage AI-powered virtual employees with specialized roles",
+      "capabilities": [
+        "Pre-built employee templates (Customer Support, Sales, Marketing, HR, Finance, Operations, Legal, IT Support)",
+        "Custom AI employee creation",
+        "Role-based permissions and access control",
+        "Performance tracking and analytics",
+        "Natural language interaction"
+      ],
+      "implementation": "src/lib/ai-employee-templates.tsx, src/pages/AIEmployees.tsx"
+    },
+    "teamCoordination": {
+      "description": "Coordinate multiple AI employees working together on complex tasks",
+      "capabilities": [
+        "Multi-agent collaboration",
+        "Task delegation and routing",
+        "Cross-functional team workflows",
+        "Real-time status monitoring",
+        "Dependency management"
+      ],
+      "implementation": "src/pages/AITeamCoordination.tsx, src/components/AITeamDashboard.tsx"
+    },
+    "workflowAutomation": {
+      "description": "Design and automate business workflows with AI assistance",
+      "capabilities": [
+        "Visual workflow builder",
+        "Trigger-based automation",
+        "Conditional logic and branching",
+        "Integration with external services",
+        "Workflow templates"
+      ],
+      "implementation": "src/pages/AITeamWorkflows.tsx"
+    },
+    "businessIntelligence": {
+      "description": "AI-powered analytics and insights for business decision-making",
+      "capabilities": [
+        "Real-time analytics dashboards",
+        "Predictive analytics",
+        "Custom report generation",
+        "Data visualization (charts, graphs)",
+        "KPI tracking and alerts"
+      ],
+      "implementation": "src/pages/BusinessIntelligence.tsx, src/components/AnalyticsSection.tsx"
+    },
+    "deployment": {
+      "description": "Deploy AI employees and workflows to production",
+      "capabilities": [
+        "One-click deployment",
+        "Environment management (dev, staging, prod)",
+        "Version control and rollback",
+        "Health monitoring",
+        "Deployment history and audit logs"
+      ],
+      "implementation": "src/components/DeploymentDashboard.tsx, src/components/QuickDeploymentWidget.tsx"
+    },
+    "marketplace": {
+      "description": "Browse and install pre-built AI employees and workflow templates",
+      "implementation": "src/pages/Marketplace.tsx"
+    },
+    "powerUps": {
+      "description": "Extend platform capabilities with add-on features",
+      "implementation": "src/pages/PowerUps.tsx, src/components/PowerUpCard.tsx"
+    },
+    "integrations": {
+      "description": "Connect with third-party services and APIs",
+      "supported": [
+        "Stripe (payments)",
+        "Puter (cloud storage)",
+        "Email (Nodemailer)",
+        "Custom API integrations"
+      ],
+      "implementation": "src/pages/IntegrationsPage.tsx, src/components/integrations/"
+    }
+  },
+  "authentication": {
+    "provider": "Supabase Auth",
+    "features": [
+      "Email/password authentication",
+      "Social authentication (Google, GitHub)",
+      "Magic link authentication",
+      "Session management",
+      "Role-based access control (RBAC)"
+    ],
+    "implementation": "src/pages/Auth.tsx, src/components/ProtectedRoute.tsx"
+  },
+  "subscriptionModel": {
+    "billing": "Stripe + Polar SDK",
+    "tiers": "Multiple subscription tiers with feature gates",
+    "implementation": "src/pages/PricingPage.tsx, src/components/SubscriptionGuard.tsx"
+  },
+  "dataModel": {
+    "database": "PostgreSQL via Supabase",
+    "keyTables": [
+      "users - User accounts and profiles",
+      "ai_employees - AI employee configurations",
+      "workflows - Workflow definitions",
+      "deployments - Deployment history",
+      "analytics - Usage and performance metrics",
+      "subscriptions - User subscription data",
+      "integrations - Third-party integration configs"
+    ],
+    "realtime": "Supabase Realtime for live updates"
+  },
+  "security": {
+    "features": [
+      "End-to-end encryption (src/lib/crypto.ts)",
+      "Input sanitization (src/lib/sanitize.ts)",
+      "Row-level security (Supabase RLS)",
+      "HTTPS-only communication",
+      "Secure token management",
+      "Error tracking without exposing sensitive data (Sentry)"
+    ]
+  },
+  "performance": {
+    "optimizations": [
+      "React Query caching (src/lib/queryCache.ts)",
+      "Retry logic for failed requests (src/lib/retry.ts)",
+      "Code splitting with React Router",
+      "Lazy loading of components",
+      "Service worker for offline support (src/lib/serviceWorker.ts)",
+      "Progressive Web App (PWA) capabilities"
+    ]
+  },
+  "errorHandling": {
+    "monitoring": "Sentry (@sentry/react)",
+    "implementation": "src/lib/errorTracking.tsx, src/components/ErrorBoundary.tsx",
+    "features": [
+      "Automatic error capture",
+      "User feedback collection",
+      "Performance monitoring",
+      "Source map support"
+    ]
+  },
+  "deployment": {
+    "platform": "Vercel",
+    "configuration": "vercel.json",
+    "cicd": "Automatic deployments from GitHub",
+    "environments": "Production, preview, and development"
+  },
+  "developmentGuidelines": {
+    "codeStyle": {
+      "linter": "ESLint with TypeScript rules",
+      "formatting": "Consistent with ESLint config",
+      "conventions": [
+        "Use TypeScript strict mode",
+        "Functional components with hooks",
+        "Named exports for components",
+        "Co-locate related files",
+        "Use Radix UI primitives for accessible components"
+      ]
+    },
+    "componentPatterns": {
+      "uiComponents": "Located in src/components/ui/ following shadcn/ui pattern",
+      "pages": "One component per route in src/pages/",
+      "hooks": "Custom hooks in src/hooks/",
+      "utilities": "Pure functions in src/lib/"
+    },
+    "stateManagement": {
+      "serverState": "React Query for async data",
+      "clientState": "React useState and useContext",
+      "forms": "Controlled components",
+      "globalState": "Minimal - prefer prop drilling or composition"
+    },
+    "testing": {
+      "framework": "Vitest with React Testing Library",
+      "setup": "src/setupTests.ts",
+      "command": "npm test",
+      "strategy": "Unit tests for utilities, integration tests for components"
+    }
+  },
+  "keyWorkflows": {
+    "createAIEmployee": {
+      "description": "User creates a new AI employee from template or custom configuration",
+      "flow": [
+        "Navigate to AI Employees page",
+        "Select template or create custom",
+        "Configure role, permissions, and capabilities",
+        "Train with business-specific context",
+        "Deploy to production or staging"
+      ],
+      "files": ["src/pages/AIEmployees.tsx", "src/lib/ai-employee-templates.tsx", "src/lib/ai-engine.ts"]
+    },
+    "coordinateTeam": {
+      "description": "Set up multiple AI employees to collaborate on complex tasks",
+      "flow": [
+        "Create or select AI employees",
+        "Define team structure and hierarchy",
+        "Set up communication channels",
+        "Configure task routing rules",
+        "Monitor team performance"
+      ],
+      "files": ["src/pages/AITeamCoordination.tsx", "src/components/AITeamDashboard.tsx"]
+    },
+    "buildWorkflow": {
+      "description": "Design an automated workflow with AI assistance",
+      "flow": [
+        "Define workflow trigger",
+        "Add workflow steps (AI actions, integrations, conditions)",
+        "Configure error handling and retries",
+        "Test workflow",
+        "Deploy and monitor"
+      ],
+      "files": ["src/pages/AITeamWorkflows.tsx"]
+    },
+    "analyzePerformance": {
+      "description": "Review business metrics and AI employee performance",
+      "flow": [
+        "Navigate to Analytics or Business Intelligence",
+        "Select metrics and time range",
+        "View visualizations and insights",
+        "Export reports",
+        "Set up alerts for key metrics"
+      ],
+      "files": ["src/pages/Analytics.tsx", "src/pages/BusinessIntelligence.tsx", "src/components/AnalyticsSection.tsx"]
+    }
+  },
+  "environmentVariables": {
+    "required": [
+      "VITE_SUPABASE_URL - Supabase project URL",
+      "VITE_SUPABASE_ANON_KEY - Supabase anonymous key",
+      "VITE_GOOGLE_AI_API_KEY - Google Generative AI API key",
+      "VITE_STRIPE_PUBLISHABLE_KEY - Stripe public key",
+      "STRIPE_SECRET_KEY - Stripe secret key (backend)",
+      "VITE_SENTRY_DSN - Sentry project DSN",
+      "VITE_PUTER_API_KEY - Puter cloud storage API key"
+    ],
+    "template": ".env.example"
+  },
+  "scripts": {
+    "dev": "Start development server with hot reload (Vite)",
+    "build": "TypeScript compilation + production build",
+    "preview": "Preview production build locally",
+    "lint": "Run ESLint on entire codebase",
+    "test": "Run Vitest test suite"
+  },
+  "futureEnhancements": {
+    "potential": [
+      "Multi-language support (i18n)",
+      "Advanced workflow visual editor",
+      "AI model fine-tuning interface",
+      "Webhooks and event subscriptions",
+      "Mobile app (React Native)",
+      "API documentation portal",
+      "White-label customization",
+      "Enterprise SSO integration",
+      "Advanced RBAC with custom roles",
+      "AI training data management",
+      "Compliance and audit logging"
+    ]
+  },
+  "documentation": {
+    "readme": "README.md",
+    "changelog": "CHANGELOG.md",
+    "legal": [
+      "privacy-policy.md",
+      "terms-of-service.md",
+      "LICENSE (MIT)"
+    ],
+    "technicalDocs": "docs/"
+  },
+  "aiAssistanceGuidelines": {
+    "whenWorkingWithThisCodebase": [
+      "Always use TypeScript with proper type annotations",
+      "Follow Radix UI patterns for accessible components",
+      "Utilize React Query for all async data operations",
+      "Implement proper error handling with ErrorBoundary",
+      "Add Sentry tracking for production issues",
+      "Sanitize all user inputs using src/lib/sanitize.ts",
+      "Use retry logic for critical operations (src/lib/retry.ts)",
+      "Follow the existing component structure and naming conventions",
+      "Ensure all new features have subscription tier gates if needed",
+      "Add proper loading and error states to all async operations",
+      "Use Supabase RLS policies for data access control",
+      "Test authentication flows thoroughly",
+      "Optimize bundle size - lazy load heavy components",
+      "Add analytics tracking for new features",
+      "Document complex business logic with comments"
+    ],
+    "commonTasks": {
+      "addNewAIEmployeeTemplate": "Extend src/lib/ai-employee-templates.tsx with new role definition",
+      "createNewPage": "Add to src/pages/, update src/App.tsx routing, add to navigation in src/components/Header.tsx",
+      "addIntegration": "Create integration component in src/components/integrations/, add to src/pages/IntegrationsPage.tsx",
+      "modifyAIEngine": "Update src/lib/ai-engine.ts - ensure backward compatibility",
+      "addChartType": "Create new chart component in src/components/ following Simple[Type]Chart.tsx pattern",
+      "updateSubscriptionTier": "Modify src/components/SubscriptionGuard.tsx and src/pages/PricingPage.tsx"
+    },
+    "codeQualityChecks": [
+      "Run 'npm run lint' before committing",
+      "Ensure no TypeScript errors with 'npm run build'",
+      "Test authentication flows in incognito mode",
+      "Verify responsive design on mobile and desktop",
+      "Check console for errors and warnings",
+      "Test with React DevTools and React Query DevTools",
+      "Verify Supabase queries are optimized (use indexes)",
+      "Check that sensitive data is not logged or exposed"
+    ]
+  }
+}

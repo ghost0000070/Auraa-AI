@@ -12,6 +12,7 @@ tailwind.config.ts
 .eslintrc.js
 .eslintrc.cjs
 eslint.config.ts
+eslint.config.js
 **/*.d.ts
 **/auraacode/**
 **/auraafunction/**
