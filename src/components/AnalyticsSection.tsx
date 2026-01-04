@@ -14,10 +14,6 @@ interface AnalyticsSectionProps {
     isDashboard?: boolean;
 }
 
-interface User {
-    role: string;
-}
-
 export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ isDashboard = false }) => {
   const { user } = useAuth();
   const [metrics, setMetrics] = useState<MetricData[]>([]);
@@ -36,7 +32,6 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ isDashboard 
   useEffect(() => {
     const fetchMetrics = async () => {
       setLoading(true);
-      let queryRef;
 
       try {
         if (isDashboard && user) {

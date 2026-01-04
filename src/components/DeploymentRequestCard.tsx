@@ -40,7 +40,7 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
 
     try {
       // Create deployment request directly in Supabase
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('deployment_requests')
         .insert({
           user_id: user.id,

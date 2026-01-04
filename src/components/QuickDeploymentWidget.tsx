@@ -101,7 +101,7 @@ export const QuickDeploymentWidget: React.FC = () => {
             requestId: data.id,
             userId: user.id,
           }
-        }).then(({ data: deployData, error: deployError }) => {
+        }).then(({ error: deployError }) => {
           if (deployError) {
             console.error('Auto-deployment error:', deployError);
           }
