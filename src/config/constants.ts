@@ -47,7 +47,7 @@ export const CACHE_CONFIG = {
 // Environment validation with helpful error messages
 export function validateEnvironment(): void {
   // Skip validation in CI if placeholder values are provided
-  const isCI = import.meta.env.MODE === 'test' || process.env.CI === 'true';
+  const isCI = import.meta.env.MODE === 'test' || (typeof process !== 'undefined' && process.env.CI === 'true');
   
   const requiredEnvVars: Record<string, string> = {
     'VITE_SUPABASE_URL': 'Supabase project URL (e.g., https://xxxxx.supabase.co)',
@@ -74,7 +74,7 @@ export function validateEnvironment(): void {
     }
   }
 
-  // Only throw errors in development, not in CI
+  // Only throw errors in non-CI environments
   if (!isCI && (missing.length > 0 || invalid.length > 0)) {
     let errorMessage = '❌ Environment Configuration Error\n\n';
     
