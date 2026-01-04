@@ -66,6 +66,8 @@ web_modules/
 
 # dotenv environment variables file
 .env
+.env.*
+!.env.example
 .env.development.local
 .env.test.local
 .env.production.local
@@ -108,3 +110,11 @@ serviceAccountKey.json
 .vscode/
 *.swp
 *~
+
+# Large binary files
+*.tar.gz
+*.zip
+*.rar
+
+# Artifact files
+latest

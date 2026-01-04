@@ -1,0 +1,115 @@
+{
+  "name": "auraa-ai-agent",
+  "version": "1.0.0",
+  "description": "MCP configuration for AI agents working on Auraa-AI",
+  "coreRules": {
+    "neverSkipIssues": {
+      "description": "NEVER skip or ignore any issues. Every error, warning, or problem MUST be addressed.",
+      "enforcement": "mandatory",
+      "examples": [
+        "Fix all linting errors, not just some",
+        "Address all type errors, not just suppress them",
+        "Resolve all build warnings properly"
+      ]
+    },
+    "alwaysFixCorrectly": {
+      "description": "ALWAYS fix issues correctly with proper formatting. NEVER take shortcuts or assume.",
+      "enforcement": "mandatory",
+      "requirements": [
+        "Understand root cause before fixing",
+        "Follow existing code patterns and style",
+        "Maintain consistent formatting and indentation",
+        "Test every fix thoroughly",
+        "Document the solution approach"
+      ]
+    },
+    "noShortcutsOrAssumptions": {
+      "description": "NEVER take shortcuts or make assumptions. Be comprehensive and thorough.",
+      "enforcement": "mandatory",
+      "forbidden": [
+        "Using @ts-ignore or eslint-disable to hide issues",
+        "Commenting out broken code instead of fixing it",
+        "Partially fixing problems",
+        "Quick hacks that don't follow patterns",
+        "Assuming fixes work without testing"
+      ]
+    }
+  },
+  "instructions": {
+    "onStart": [
+      "Read .ai/AGENT_INSTRUCTIONS.md - PAY SPECIAL ATTENTION to Core Principle #2: Never Skip Issues",
+      "Read .ai/CODEBASE_CONTEXT.md",
+      "Scan the src/ directory structure",
+      "Understand the technology stack",
+      "REMEMBER: Never skip issues, always fix correctly, never take shortcuts"
+    ],
+    "beforeChange": [
+      "Verify understanding of affected files",
+      "Check for existing patterns to follow",
+      "Review .ai/SECURITY_CHECKLIST.md",
+      "Identify ALL issues that need fixing (not just some)",
+      "Plan the proper fix approach (no shortcuts)"
+    ],
+    "afterChange": [
+      "Run npm run lint - fix ALL errors and warnings",
+      "Run npm run build - ensure clean build with no errors",
+      "Run npm test - all tests must pass",
+      "Verify proper formatting and code style",
+      "Update .ai/CODEBASE_CONTEXT.md if new patterns discovered",
+      "Confirm NO issues were skipped or shortcuts taken"
+    ],
+    "onError": [
+      "NEVER skip the error - it MUST be fixed",
+      "Understand the root cause",
+      "Document the error in CODEBASE_CONTEXT.md",
+      "Seek clarification if needed, but do not proceed until resolved"
+    ]
+  },
+  "qualityStandards": {
+    "formatting": {
+      "requirement": "All code must follow project formatting standards exactly",
+      "tools": ["eslint", "prettier (if configured)"],
+      "verification": "Run linter before every commit"
+    },
+    "typeChecking": {
+      "requirement": "All TypeScript code must type-check without errors",
+      "noSuppressions": "Do not use @ts-ignore or any type suppressions",
+      "verification": "Run tsc --noEmit before commit"
+    },
+    "testing": {
+      "requirement": "All changes must be tested",
+      "coverage": "Ensure existing tests still pass",
+      "verification": "Run test suite before commit"
+    }
+  },
+  "securityPatterns": {
+    "forbidden": [
+      "password\\s*=\\s*['\"][^'\"]+['\"]",
+      "secret\\s*=\\s*['\"][^'\"]+['\"]",
+      "api[_-]?key\\s*=\\s*['\"][^'\"]+['\"]",
+      "token\\s*=\\s*['\"][^'\"]+['\"]",
+      "-----BEGIN\\s+(RSA|DSA|EC|OPENSSH)\\s+PRIVATE\\s+KEY-----",
+      "sk_live_[a-zA-Z0-9]+",
+      "pk_live_[a-zA-Z0-9]+",
+      "eyJ[a-zA-Z0-9_-]*\\.[a-zA-Z0-9_-]*\\.[a-zA-Z0-9_-]*"
+    ],
+    "allowedFiles": [
+      ".env.example",
+      "*.md",
+      "*.test.ts",
+      "*.test.tsx"
+    ]
+  },
+  "conventions": {
+    "pathAlias": "@/ -> src/",
+    "envPrefix": "VITE_",
+    "componentLibrary": "shadcn/ui with Radix primitives",
+    "stateManagement": "TanStack Query",
+    "styling": "Tailwind CSS"
+  },
+  "memory": {
+    "contextFile": ".ai/CODEBASE_CONTEXT.md",
+    "updateOnLearning": true,
+    "persistAcrossSessions": true
+  }
+}
