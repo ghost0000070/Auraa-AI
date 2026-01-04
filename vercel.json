@@ -17,9 +17,11 @@
     }
   ],
   "env": {
-    "VITE_SUPABASE_URL": "",
-    "VITE_SUPABASE_ANON_KEY": "",
-    "VITE_ENABLE_ANALYTICS": "true",
-    "VITE_POLAR_ACCESS_TOKEN": ""
+    "VITE_SUPABASE_URL": "@supabase-url",
+    "VITE_SUPABASE_ANON_KEY": "@supabase-anon-key",
+    "VITE_POLAR_ACCESS_TOKEN": "@polar-access-token",
+    "VITE_OWNER_EMAIL": "@owner-email",
+    "VITE_OWNER_UID": "@owner-uid",
+    "VITE_ENABLE_ANALYTICS": "true"
   }
 }

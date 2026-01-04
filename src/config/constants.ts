@@ -44,20 +44,59 @@ export const CACHE_CONFIG = {
   ENABLE_PERSISTENCE: true,
 };
 
-// Environment validation
+// Environment validation with helpful error messages
 export function validateEnvironment(): void {
-  const requiredEnvVars = [
-    'VITE_SUPABASE_URL',
-    'VITE_SUPABASE_ANON_KEY',
-  ];
+  const requiredEnvVars: Record<string, string> = {
+    'VITE_SUPABASE_URL': 'Supabase project URL (e.g., https://xxxxx.supabase.co)',
+    'VITE_SUPABASE_ANON_KEY': 'Supabase anonymous/public API key',
+    'VITE_OWNER_EMAIL': 'Owner email address for admin access',
+    'VITE_OWNER_UID': 'Owner user ID for admin access',
+  };
 
-  const missing = requiredEnvVars.filter(
-    (key) => !import.meta.env[key]
-  );
+  const missing: string[] = [];
+  const invalid: string[] = [];
 
-  if (missing.length > 0) {
-    throw new Error(
-      `Missing required environment variables: ${missing.join(', ')}`
-    );
+  for (const [key, description] of Object.entries(requiredEnvVars)) {
+    const value = import.meta.env[key];
+    
+    if (!value) {
+      missing.push(`${key}: ${description}`);
+    } else if (typeof value === 'string') {
+      // Validate format of specific variables
+      if (key === 'VITE_SUPABASE_URL' && !value.startsWith('http')) {
+        invalid.push(`${key}: Must be a valid URL starting with http:// or https://`);
+      } else if (key === 'VITE_OWNER_EMAIL' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        invalid.push(`${key}: Must be a valid email address`);
+      }
+    }
+  }
+
+  if (missing.length > 0 || invalid.length > 0) {
+    let errorMessage = '❌ Environment Configuration Error\n\n';
+    
+    if (missing.length > 0) {
+      errorMessage += '📋 Missing required environment variables:\n';
+      missing.forEach(item => {
+        errorMessage += `  • ${item}\n`;
+      });
+      errorMessage += '\n';
+    }
+    
+    if (invalid.length > 0) {
+      errorMessage += '⚠️  Invalid environment variables:\n';
+      invalid.forEach(item => {
+        errorMessage += `  • ${item}\n`;
+      });
+      errorMessage += '\n';
+    }
+    
+    errorMessage += '💡 Setup Instructions:\n';
+    errorMessage += '  1. Copy .env.example to .env\n';
+    errorMessage += '  2. Fill in your actual values\n';
+    errorMessage += '  3. Restart the development server\n';
+    errorMessage += '\n';
+    errorMessage += '📚 See README.md for detailed setup instructions';
+    
+    throw new Error(errorMessage);
   }
 }
