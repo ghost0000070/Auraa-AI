@@ -237,8 +237,8 @@ export const sendWelcomeEmail = auth.user().onCreate(
                                     <table role="presentation" style="margin: 30px 0;">
                                         <tr>
                                             <td style="border-radius: 6px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                                <a href="https://auraa-ai.com/dashboard" style="display: inline-block; padding: 14px 32px; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 16px;">
-                                                    Go to Dashboard →
+                                                <a href="https://auraa-ai.com/dashboard" role="button" aria-label="Go to your Auraa AI dashboard" style="display: inline-block; padding: 14px 32px; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 16px;">
+                                                    <span>Go to Dashboard</span><span aria-hidden="true"> →</span>
                                                 </a>
                                             </td>
                                         </tr>
