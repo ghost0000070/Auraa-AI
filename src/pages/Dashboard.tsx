@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/components/ui/toast-hooks";
@@ -8,13 +9,15 @@ import { QuickDeploymentWidget } from '@/components/QuickDeploymentWidget';
 import { DeploymentDashboard } from '@/components/DeploymentDashboard';
 import { AnalyticsSection } from '@/components/AnalyticsSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React from "react";
 
 export default function Dashboard() {
   const { user, loading, isAdmin, subscriptionStatus, signOut } = useAuth();
+  const [isManagingSubscription, setIsManagingSubscription] = useState(false);
 
   const isSubscriber = isAdmin || subscriptionStatus?.subscribed;
 
-  const handleStripePortal = async () => {
+  const handleManageSubscription = async () => {
     if (!user) {
       toast({
         title: "Not signed in",
@@ -23,60 +26,53 @@ export default function Dashboard() {
       return;
     }
 
+    setIsManagingSubscription(true);
+
     try {
-      // TODO: Integrate with Polar.sh for subscription management
-      toast({
-        title: "Coming Soon",
-        description: "Subscription management with Polar.sh is being integrated. Please contact support.",
+      // Get the current session for authorization
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error('No active session');
+      }
+
+      // Call the Polar subscription handler edge function
+      const { data, error } = await supabase.functions.invoke('polar-subscription-handler', {
+        body: {
+          action: 'get-portal-url',
+          successUrl: window.location.href
+        }
       });
+
+      if (error) throw error;
+
+      if (data?.portalUrl) {
+        // Redirect to Polar customer portal
+        window.location.href = data.portalUrl;
+      } else if (data?.error) {
+        // No subscription found - offer to create one
+        if (!data.hasSubscription) {
+          toast({
+            title: "No Active Subscription",
+            description: "You don't have an active subscription. Redirecting to pricing...",
+          });
+          // Redirect to pricing page after a short delay
+          setTimeout(() => {
+            window.location.href = '/pricing';
+          }, 1500);
+        } else {
+          throw new Error(data.error);
+        }
+      }
     } catch (error) {
-      console.error("Error creating customer portal session:", error);
+      console.error("Error managing subscription:", error);
       toast({
         title: "Error",
-        description: "Could not create a customer portal session. Please try again later.",
+        description: error instanceof Error ? error.message : "Could not access subscription management. Please try again later.",
         variant: "destructive",
       });
-    }
-  };
-  
-  interface Template {
-      id: string;
-      name: string;
-  }
-
-  const handleDeploy = async (template: Template) => {
-    if (!user) {
-        toast({
-            title: "Authentication Error",
-            description: "You must be logged in to deploy AI employees.",
-            variant: "destructive",
-        });
-        return;
-    }
-
-    try {
-        const { error } = await supabase
-          .from('deployment_requests')
-          .insert({
-            user_id: user.id,
-            employee_name: template.name,
-            status: 'pending',
-            template_id: template.id,
-          });
-
-        if (error) throw error;
-
-        toast({
-            title: "Deployment Successful",
-            description: `Deployment request for ${template.name} has been submitted.`,
-        });
-    } catch (error) {
-        console.error("Error deploying AI employee:", error);
-        toast({
-            title: "Deployment Error",
-            description: "There was an error deploying your AI employee.",
-            variant: "destructive",
-        });
+    } finally {
+      setIsManagingSubscription(false);
     }
   };
 
@@ -101,7 +97,9 @@ export default function Dashboard() {
       <header className="flex items-center justify-between p-4 bg-card border-b border-border">
         <h1 className="text-2xl font-bold">Auraa Dashboard</h1>
         <div className="flex items-center space-x-4">
-          <Button onClick={handleStripePortal}>Manage Subscription</Button>
+          <Button onClick={handleManageSubscription} disabled={isManagingSubscription}>
+            {isManagingSubscription ? "Loading..." : "Manage Subscription"}
+          </Button>
           <Button variant="outline" onClick={signOut}>Logout</Button>
         </div>
       </header>
@@ -109,7 +107,7 @@ export default function Dashboard() {
       <main className="flex-1 p-6">
         {!isSubscriber && (
           <div className="p-4 mb-6 text-center text-white bg-red-500 rounded-lg">
-            <p>Your subscription is not active. Please <Button variant="link" className="text-white" onClick={handleStripePortal}>subscribe</Button> to use the AI features.</p>
+            <p>Your subscription is not active. Please <Button variant="link" className="text-white" onClick={handleManageSubscription}>subscribe</Button> to use the AI features.</p>
           </div>
         )}
 
@@ -126,7 +124,7 @@ export default function Dashboard() {
                         <AITeamDashboard />
                     </div>
                     <div className="md:col-span-1">
-                        <QuickDeploymentWidget onDeploy={handleDeploy} />
+                        <QuickDeploymentWidget />
                     </div>
                 </div>
             </TabsContent>

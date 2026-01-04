@@ -70,8 +70,14 @@ const PowerUps = () => {
             user_id: user.id,
             powerup_id: id, 
             powerup_name: powerUp.name, 
+            is_active: newStatus === 'active',
             status: newStatus,
+            activated_at: newStatus === 'active' ? new Date().toISOString() : null,
+          }, {
+            onConflict: 'user_id,powerup_id'
           });
+        
+        if (error) throw error;
         
         toast.success(`Power-up ${newStatus === 'active' ? 'Activated' : 'Deactivated'}`, {
             description: `${powerUp.name} is now ${newStatus}.`,
