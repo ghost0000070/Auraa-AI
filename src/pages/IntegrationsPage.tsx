@@ -41,14 +41,14 @@ export default function IntegrationsPage() {
         {selectedTask && (
           <div className="mt-4 border rounded bg-card p-2 max-h-72 overflow-auto">
             <h4 className="font-medium text-xs mb-2">Events</h4>
-            {(events[selectedTask] || []).map(ev => (
+            {events.map(ev => (
               <div key={ev.id} className="text-[11px] flex gap-2">
-                <span className="text-muted-foreground">{ev.timestamp?.toDate().toLocaleTimeString()}</span>
-                <span className={`uppercase ${ev.level==='error'?'text-red-500':ev.level==='warn'?'text-yellow-500':'text-muted-foreground'}`}>{ev.level}</span>
+                <span className="text-muted-foreground">{ev.timestamp?.toLocaleTimeString()}</span>
+                <span className="uppercase text-muted-foreground">{ev.type}</span>
                 <span>{ev.message}</span>
               </div>
             ))}
-            {!events[selectedTask]?.length && <div className="text-[11px] text-muted-foreground">No events yet.</div>}
+            {!events.length && <div className="text-[11px] text-muted-foreground">No events yet.</div>}
           </div>
         )}
       </div>

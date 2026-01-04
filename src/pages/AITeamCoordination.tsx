@@ -22,7 +22,7 @@ import {
   Filter
 } from 'lucide-react';
 import { Header } from '@/components/Header';
-import { supabase } from '@/supabase';
+
 interface TeamCommunication {
   id: string;
   sender_employee: string;
@@ -32,7 +32,7 @@ interface TeamCommunication {
   content: string;
   metadata: Record<string, unknown> | null;
   is_read: boolean;
-  created_at: Timestamp;
+  created_at: string;
   user_id: string;
 }
 
@@ -41,8 +41,8 @@ interface TeamExecution {
   workflow_id: string | null;
   status: string;
   current_step: number | null;
-  created_at: Timestamp;
-  updated_at: Timestamp;
+  created_at: string;
+  updated_at: string;
   user_id: string;
   type: string | null;
 }
@@ -404,7 +404,7 @@ const AITeamCoordination = () => {
                             </div>
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            {comm.created_at.toDate().toLocaleTimeString()}
+                            {new Date(comm.created_at).toLocaleTimeString()}
                           </div>
                         </div>
                         
@@ -462,11 +462,11 @@ const AITeamCoordination = () => {
                       </div>
                       
                       <div className="text-xs text-muted-foreground">
-                        Started: {execution.created_at.toDate().toLocaleString()}
+                        Started: {new Date(execution.created_at).toLocaleString()}
                       </div>
                       
                       <div className="text-xs text-muted-foreground">
-                        Updated: {execution.updated_at.toDate().toLocaleString()}
+                        Updated: {new Date(execution.updated_at).toLocaleString()}
                       </div>
                       
                       {execution.type && (

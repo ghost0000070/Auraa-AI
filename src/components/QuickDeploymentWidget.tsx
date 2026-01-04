@@ -15,7 +15,7 @@ interface EmployeeTemplate {
 interface DeploymentRequest {
   id: string;
   status: string;
-  createdAt: Timestamp;
+  createdAt: string;
   employeeName: string;
 }
 
