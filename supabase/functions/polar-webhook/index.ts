@@ -83,7 +83,7 @@ serve(async (req) => {
         console.log('Checkout event:', data)
         break
 
-      case 'order.created':
+      case 'order.created': {
         // Payment successful - update user subscription
         const customerEmail = data.customer?.email
         
@@ -119,9 +119,10 @@ serve(async (req) => {
           }
         }
         break
+      }
 
       case 'subscription.created':
-      case 'subscription.updated':
+      case 'subscription.updated': {
         // Subscription status changed
         const subCustomerEmail = data.customer?.email
         
@@ -149,8 +150,9 @@ serve(async (req) => {
           }
         }
         break
+      }
 
-      case 'subscription.canceled':
+      case 'subscription.canceled': {
         // Subscription canceled - downgrade to free
         const canceledEmail = data.customer?.email
         
@@ -173,6 +175,7 @@ serve(async (req) => {
           }
         }
         break
+      }
 
       default:
         console.log('Unhandled webhook event:', event)
