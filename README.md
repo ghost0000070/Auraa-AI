@@ -1,177 +1,275 @@
-# Supabase CLI
+# Auraa AI Platform
 
-[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
-](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
+A modern, AI-powered platform built with React, TypeScript, and Supabase.
 
-[Supabase](https://supabase.io) is an open source backend-as-a-service platform. It provides enterprise-grade features including database, authentication, storage, and real-time subscriptions using open source tools.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-This repository contains all the functionality for Supabase CLI.
+---
 
-- [x] Running Supabase locally
-- [x] Managing database migrations
-- [x] Creating and deploying Supabase Functions
-- [x] Generating types directly from your database schema
-- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
+## 🚀 Features
 
-## Getting started
+- **AI Integration**: Powered by Google's Generative AI
+- **Modern UI**: Built with React 18 and Radix UI components
+- **Real-time Data**: Supabase backend with real-time subscriptions
+- **Type-Safe**: Full TypeScript coverage with strict mode
+- **Responsive Design**: Mobile-first approach with Tailwind CSS
+- **Payment Processing**: Integrated with Polar.sh
+- **Error Tracking**: Optional Sentry integration
+- **PWA Support**: Service worker for offline capabilities
 
-### Install the CLI
+---
 
-Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
+## 📋 Prerequisites
 
-```bash
-npm i supabase --save-dev
-```
+- Node.js 18+ and npm
+- A Supabase account and project
+- A Polar.sh account (for payment features)
 
-When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
+---
 
-```
-NODE_OPTIONS=--no-experimental-fetch yarn add supabase
-```
+## 🔧 Installation
 
-> **Note**
-For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
-
-<details>
-  <summary><b>macOS</b></summary>
-
-  Available via [Homebrew](https://brew.sh). To install:
-
-  ```sh
-  brew install supabase/tap/supabase
-  ```
-
-  To install the beta release channel:
-  
-  ```sh
-  brew install supabase/tap/supabase-beta
-  brew link --overwrite supabase-beta
-  ```
-  
-  To upgrade:
-
-  ```sh
-  brew upgrade supabase
-  ```
-</details>
-
-<details>
-  <summary><b>Windows</b></summary>
-
-  Available via [Scoop](https://scoop.sh). To install:
-
-  ```powershell
-  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
-  scoop install supabase
-  ```
-
-  To upgrade:
-
-  ```powershell
-  scoop update supabase
-  ```
-</details>
-
-<details>
-  <summary><b>Linux</b></summary>
-
-  Available via [Homebrew](https://brew.sh) and Linux packages.
-
-  #### via Homebrew
-
-  To install:
-
-  ```sh
-  brew install supabase/tap/supabase
-  ```
-
-  To upgrade:
-
-  ```sh
-  brew upgrade supabase
-  ```
-
-  #### via Linux packages
-
-  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
-
-  ```sh
-  sudo apk add --allow-untrusted <...>.apk
-  ```
-
-  ```sh
-  sudo dpkg -i <...>.deb
-  ```
-
-  ```sh
-  sudo rpm -i <...>.rpm
-  ```
-
-  ```sh
-  sudo pacman -U <...>.pkg.tar.zst
-  ```
-</details>
-
-<details>
-  <summary><b>Other Platforms</b></summary>
-
-  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
-
-  ```sh
-  go install github.com/supabase/cli@latest
-  ```
-
-  Add a symlink to the binary in `$PATH` for easier access:
-
-  ```sh
-  ln -s "$(go env GOPATH)/bin/cli" /usr/bin/supabase
-  ```
-
-  This works on other non-standard Linux distros.
-</details>
-
-<details>
-  <summary><b>Community Maintained Packages</b></summary>
-
-  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
-  To install in your working directory:
-
-  ```bash
-  pkgx install supabase
-  ```
-
-  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
-</details>
-
-### Run the CLI
+### 1. Clone the Repository
 
 ```bash
-supabase bootstrap
+git clone https://github.com/ghost0000070/Auraa-AI.git
+cd Auraa-AI
 ```
 
-Or using npx:
+### 2. Install Dependencies
 
 ```bash
-npx supabase bootstrap
+npm install
 ```
 
-The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
+### 3. Set Up Environment Variables
 
-## Docs
+Create a `.env` file in the root directory by copying the example:
 
-Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
-
-## Breaking changes
-
-We follow semantic versioning for changes that directly impact CLI commands, flags, and configurations.
-
-However, due to dependencies on other service images, we cannot guarantee that schema migrations, seed.sql, and generated types will always work for the same CLI major version. If you need such guarantees, we encourage you to pin a specific version of CLI in package.json.
-
-## Developing
-
-To run from source:
-
-```sh
-# Go >= 1.22
-go run . help
+```bash
+cp .env.example .env
 ```
+
+Then fill in your actual values:
+
+```bash
+# Supabase Configuration
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Owner Configuration
+VITE_OWNER_EMAIL=your_email@example.com
+VITE_OWNER_UID=your_supabase_user_id
+
+# Polar.sh Configuration
+VITE_POLAR_ACCESS_TOKEN=your_polar_access_token
+
+# Optional: Performance Monitoring
+VITE_ENABLE_ANALYTICS=true
+
+# Optional: Rate Limiting
+VITE_API_RATE_LIMIT=100
+
+# Optional: Error Tracking (Sentry)
+# VITE_SENTRY_DSN=your_sentry_dsn
+# VITE_SENTRY_ENVIRONMENT=production
+```
+
+#### Getting Your Credentials
+
+**Supabase:**
+1. Go to [supabase.com/dashboard](https://supabase.com/dashboard)
+2. Select your project
+3. Go to **Settings** → **API**
+4. Copy your **Project URL** and **anon/public key**
+
+**Polar.sh:**
+1. Go to [polar.sh/settings](https://polar.sh/settings)
+2. Navigate to **Access Tokens**
+3. Create a new token and copy it
+
+**Owner UID:**
+1. Sign up/sign in to your app
+2. Check your Supabase dashboard → **Authentication** → **Users**
+3. Copy your user ID
+
+---
+
+## 🏃 Running the Application
+
+### Development Mode
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:5173`
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+This will create an optimized production build in the `dist` directory.
+
+### Preview Production Build
+
+```bash
+npm run preview
+```
+
+---
+
+## 🧪 Testing
+
+Run the test suite:
+
+```bash
+npm test
+```
+
+Run tests in watch mode:
+
+```bash
+npm test -- --watch
+```
+
+---
+
+## 📝 Linting
+
+Check code quality:
+
+```bash
+npm run lint
+```
+
+---
+
+## 🚢 Deployment
+
+### Deploying to Vercel
+
+1. **Install Vercel CLI:**
+   ```bash
+   npm install -g vercel
+   ```
+
+2. **Set up environment variables:**
+   ```bash
+   vercel env add VITE_SUPABASE_URL production
+   vercel env add VITE_SUPABASE_ANON_KEY production
+   vercel env add VITE_POLAR_ACCESS_TOKEN production
+   vercel env add VITE_OWNER_EMAIL production
+   vercel env add VITE_OWNER_UID production
+   ```
+
+3. **Deploy:**
+   ```bash
+   vercel --prod
+   ```
+
+The `vercel.json` configuration file is already set up with:
+- SPA routing (all routes redirect to index.html)
+- Optimized caching for static assets
+- Environment variable references
+
+---
+
+## 🏗️ Project Structure
+
+```
+Auraa-AI/
+├── .github/              # GitHub configuration and workflows
+│   └── SECURITY.md      # Security policy and best practices
+├── public/              # Static assets
+├── src/
+│   ├── assets/         # Images, fonts, etc.
+│   ├── components/     # React components
+│   ├── config/         # Configuration files
+│   ├── hooks/          # Custom React hooks
+│   ├── lib/            # Utility functions and libraries
+│   ├── pages/          # Page components
+│   ├── types/          # TypeScript type definitions
+│   ├── App.tsx         # Main App component
+│   └── main.tsx        # Application entry point
+├── .env.example        # Environment variable template
+├── .gitignore          # Git ignore rules
+├── eslint.config.js    # ESLint configuration
+├── package.json        # Dependencies and scripts
+├── tsconfig.json       # TypeScript configuration
+├── tailwind.config.ts  # Tailwind CSS configuration
+├── vite.config.ts      # Vite build configuration
+└── vercel.json         # Vercel deployment configuration
+```
+
+---
+
+## 🔒 Security
+
+Please read our [Security Policy](.github/SECURITY.md) for:
+- How to report vulnerabilities
+- Environment variable setup best practices
+- Credential rotation procedures
+- Deployment security guidelines
+
+**Important:** Never commit `.env` files or expose sensitive credentials in your code.
+
+---
+
+## 🛠️ Built With
+
+### Core Technologies
+- **[React](https://react.dev/)** - UI library
+- **[TypeScript](https://www.typescriptlang.org/)** - Type safety
+- **[Vite](https://vitejs.dev/)** - Build tool and dev server
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS
+
+### UI Components
+- **[Radix UI](https://www.radix-ui.com/)** - Unstyled, accessible components
+- **[Lucide React](https://lucide.dev/)** - Icon library
+
+### Backend & Data
+- **[Supabase](https://supabase.com/)** - Backend as a service
+- **[TanStack Query](https://tanstack.com/query)** - Data fetching and caching
+
+### AI & Integrations
+- **[Google Generative AI](https://ai.google.dev/)** - AI capabilities
+- **[Polar.sh](https://polar.sh/)** - Payment processing
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## �� Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📞 Support
+
+For questions, issues, or feature requests, please:
+- Open an issue on GitHub
+- Contact the maintainer via the email in the repository
+
+---
+
+## 🔄 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a list of changes and version history.
+
+---
+
+**Made with ❤️ by the Auraa AI team**
