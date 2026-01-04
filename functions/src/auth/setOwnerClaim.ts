@@ -24,7 +24,14 @@ export const setOwnerClaimOnCreate = auth.user().onCreate(async (user) => {
       }, { merge: true });
       
     } catch (error) {
-      console.error('Failed to set owner claim:', error);
+      const baseMessage = `Failed to set owner claim for ${OWNER_EMAIL} (${user.uid})`;
+      if (error instanceof Error) {
+        console.error(baseMessage, { name: error.name, message: error.message });
+      } else {
+        console.error(baseMessage, { error });
+      }
+      // Rethrow so this critical security operation does not fail silently
+      throw error;
     }
   }
 });
