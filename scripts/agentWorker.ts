@@ -539,6 +539,7 @@ async function runWorker(): Promise<void> {
   process.on('SIGTERM', shutdown);
 
   // Main polling loop
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
       const task = await claimTask();
