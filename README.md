@@ -39,7 +39,7 @@ This project is a React-based web application built with Vite and uses Firebase 
 
 ### Email Configuration
 
-Auraa AI sends automated welcome emails and password reset emails. To enable this:
+Auraa AI sends automated welcome emails via a Cloud Function. Password reset emails are handled directly by Firebase Authentication and do not use this SMTP configuration. To enable welcome emails:
 
 1. Set up email credentials as Firebase Secrets:
    ```bash
