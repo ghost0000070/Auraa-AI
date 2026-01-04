@@ -84,7 +84,7 @@ firebase deploy --only functions
    ```
 
 3. **Common Issues**:
-   - **Gmail blocking**: Enable "Less secure app access" (not recommended) OR use App Passwords
+   - **Gmail blocking**: For Gmail accounts, ensure 2FA is enabled and that you're using an App Password for SMTP access; if issues persist, consider using a dedicated provider like SendGrid or AWS SES instead of direct Gmail SMTP.
    - **Wrong port**: Try 587 instead of 465
    - **Firewall**: Ensure Cloud Functions can access SMTP ports
    - **Wrong credentials**: Double-check email/password
