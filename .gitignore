@@ -93,10 +93,6 @@ storybook-static
 # Vercel
 .vercel
 
-# Old Firebase files (legacy)
-.firebase/
-firebase-debug.log
-
 # Service account key (if any legacy remains)
 service-account-key.json
 serviceAccountKey.json

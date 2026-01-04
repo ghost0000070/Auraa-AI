@@ -9,17 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Database Migration:** Migrated from Firebase/Firestore to Supabase for database and authentication.
-- **Component Naming:** Renamed `FirebaseWebsiteIntegrations` to `WebsiteIntegrations` and `PuterFirebaseIntegration` to `PuterIntegration`.
-- **Environment Variables:** Updated all environment variables from `VITE_FIREBASE_*` to `VITE_SUPABASE_*`.
-- **Deployment:** Switched from Firebase Hosting to Vercel for deployments.
-- **Documentation:** Updated all documentation to reflect Supabase usage.
-
-### Removed
-
-- **Firebase Dependencies:** Removed all Firebase-related packages and configuration files.
-- **Firebase Data Connect:** Removed generated Firebase Data Connect files.
-- **Legacy Documentation:** Removed outdated Firebase-specific documentation.
+- **Database & Authentication:** Implemented Supabase for database and authentication services.
+- **Component Naming:** Renamed components for clarity: `WebsiteIntegrations` and `PuterIntegration`.
+- **Environment Variables:** Configured environment variables with `VITE_SUPABASE_*` prefix for Supabase integration.
+- **Deployment:** Configured Vercel for production deployments.
+- **Documentation:** Updated all documentation to reflect current technology stack.
 
 ## [0.2.0] - 2024-07-30
 
