@@ -1,3 +1,5 @@
+// Agent Run Edge Function - v2.0 with OpenAI/Anthropic fallback
+// Updated: 2026-01-04
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -6,8 +8,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Puter.com free Claude API endpoint
-const PUTER_API_URL = 'https://api.puter.com/ai/chat'
+// AI API endpoints
+const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
+const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages'
 
 interface TaskPayload {
   taskId?: string
@@ -24,15 +27,103 @@ interface ActionResult {
   result?: unknown
   error?: string
   executionTimeMs?: number
+  provider?: string
 }
 
-// Execute an action using Puter's free Claude API
-async function executePuterAction(action: string, params: Record<string, unknown>, context: string): Promise<ActionResult> {
+// Execute an action using OpenAI API
+async function executeOpenAIAction(action: string, params: Record<string, unknown>, context: string): Promise<ActionResult> {
   const startTime = Date.now()
+  const apiKey = Deno.env.get('OPENAI_API_KEY')
+  
+  console.log('OpenAI API key present:', !!apiKey, 'length:', apiKey?.length || 0)
+  
+  if (!apiKey) {
+    return { success: false, error: 'OpenAI API key not configured', executionTimeMs: Date.now() - startTime }
+  }
   
   try {
-    const prompt = `
-You are an AI agent executing the action: ${action}
+    const prompt = buildPrompt(action, params, context)
+
+    const response = await fetch(OPENAI_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 2000,
+      })
+    })
+
+    if (!response.ok) {
+      const errorBody = await response.text()
+      throw new Error(`OpenAI API error: ${response.status} - ${errorBody.substring(0, 200)}`)
+    }
+
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content
+
+    return parseAIResponse(content, startTime, 'openai')
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      executionTimeMs: Date.now() - startTime,
+      provider: 'openai'
+    }
+  }
+}
+
+// Execute an action using Anthropic API
+async function executeAnthropicAction(action: string, params: Record<string, unknown>, context: string): Promise<ActionResult> {
+  const startTime = Date.now()
+  const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
+  
+  if (!apiKey) {
+    return { success: false, error: 'Anthropic API key not configured', executionTimeMs: Date.now() - startTime }
+  }
+  
+  try {
+    const prompt = buildPrompt(action, params, context)
+
+    const response = await fetch(ANTHROPIC_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-3-haiku-20240307',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }],
+      })
+    })
+
+    if (!response.ok) {
+      const errorBody = await response.text()
+      throw new Error(`Anthropic API error: ${response.status} - ${errorBody.substring(0, 200)}`)
+    }
+
+    const data = await response.json()
+    const content = data.content?.[0]?.text
+
+    return parseAIResponse(content, startTime, 'anthropic')
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      executionTimeMs: Date.now() - startTime,
+      provider: 'anthropic'
+    }
+  }
+}
+
+// Build the prompt for AI actions
+function buildPrompt(action: string, params: Record<string, unknown>, context: string): string {
+  return `You are an AI agent executing the action: ${action}
 
 Context: ${context}
 
@@ -42,47 +133,66 @@ Instructions:
 1. Analyze the action and parameters
 2. Generate appropriate output based on the action type
 3. Return ONLY a valid JSON object with your results
-4. Do not include markdown formatting
+4. Do not include markdown formatting or code blocks
 
-For action "${action}", provide relevant output.
-`
+For action "${action}", provide relevant output.`
+}
 
-    const response = await fetch(PUTER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        messages: [{ role: 'user', content: prompt }]
-      })
-    })
+// Parse AI response
+function parseAIResponse(content: string, startTime: number, provider: string): ActionResult {
+  let result: unknown
+  try {
+    // Try to extract JSON from response
+    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    result = jsonMatch ? JSON.parse(jsonMatch[0]) : { text_output: content, raw_format: true }
+  } catch {
+    result = { text_output: content, raw_format: true }
+  }
 
-    if (!response.ok) {
-      throw new Error(`Puter API error: ${response.status}`)
-    }
+  return {
+    success: true,
+    result,
+    executionTimeMs: Date.now() - startTime,
+    provider
+  }
+}
 
-    const data = await response.json()
-    const content = data.message?.content?.[0]?.text || data.choices?.[0]?.message?.content
-
-    let result: unknown
-    try {
-      result = JSON.parse(content)
-    } catch {
-      result = { text_output: content, raw_format: true }
-    }
-
-    return {
-      success: true,
-      result,
-      executionTimeMs: Date.now() - startTime
-    }
-  } catch (error) {
+// Execute AI action with fallback chain: OpenAI -> Anthropic -> Error
+async function executeAIAction(action: string, params: Record<string, unknown>, context: string): Promise<ActionResult> {
+  // Try OpenAI first
+  const openaiResult = await executeOpenAIAction(action, params, context)
+  console.log('OpenAI result:', JSON.stringify(openaiResult))
+  if (openaiResult.success) {
+    return openaiResult
+  }
+  
+  // Fallback to Anthropic
+  const anthropicResult = await executeAnthropicAction(action, params, context)
+  console.log('Anthropic result:', JSON.stringify(anthropicResult))
+  if (anthropicResult.success) {
+    return anthropicResult
+  }
+  
+  // Both failed - check if it's a billing issue
+  const isBillingIssue = 
+    openaiResult.error?.includes('quota') || 
+    openaiResult.error?.includes('429') ||
+    anthropicResult.error?.includes('credit balance') ||
+    anthropicResult.error?.includes('billing')
+  
+  if (isBillingIssue) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      executionTimeMs: Date.now() - startTime
+      error: 'AI backend billing required. Please use the app frontend for free AI via Puter.js, or add billing to OpenAI/Anthropic.',
+      executionTimeMs: (openaiResult.executionTimeMs || 0) + (anthropicResult.executionTimeMs || 0)
     }
+  }
+  
+  // Return detailed error for other issues
+  return {
+    success: false,
+    error: `AI providers failed. OpenAI: ${openaiResult.error}. Anthropic: ${anthropicResult.error}`,
+    executionTimeMs: (openaiResult.executionTimeMs || 0) + (anthropicResult.executionTimeMs || 0)
   }
 }
 
@@ -105,8 +215,8 @@ async function executeInternalAction(action: string, params: Record<string, unkn
       
       case 'analyze_data':
       case 'generate_content':
-        // These use AI, delegate to Puter
-        return await executePuterAction(action, params, 'Perform the requested analysis or generation')
+        // These use AI, delegate to AI provider chain
+        return await executeAIAction(action, params, 'Perform the requested analysis or generation')
       
       default:
         return {
@@ -127,6 +237,19 @@ async function executeInternalAction(action: string, params: Record<string, unkn
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
+  }
+
+  // Debug endpoint to check env vars
+  const url = new URL(req.url)
+  if (url.searchParams.get('debug') === 'env') {
+    const openaiKey = Deno.env.get('OPENAI_API_KEY')
+    const anthropicKey = Deno.env.get('ANTHROPIC_API_KEY')
+    return new Response(JSON.stringify({
+      openai_configured: !!openaiKey,
+      openai_key_length: openaiKey?.length || 0,
+      anthropic_configured: !!anthropicKey,
+      anthropic_key_length: anthropicKey?.length || 0,
+    }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 
   try {
@@ -203,7 +326,7 @@ serve(async (req) => {
       result = await executeInternalAction(action, params)
     } else {
       // For external_api, email, webhook - use AI to help format/process
-      result = await executePuterAction(action, params, context || actionDef.description || '')
+      result = await executeAIAction(action, params, context || actionDef.description || '')
     }
 
     // Log the action execution
