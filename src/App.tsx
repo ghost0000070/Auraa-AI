@@ -30,7 +30,14 @@ const App: React.FC = () => {
         <div className="flex flex-col min-h-screen">
           <Header />
           <main className="flex-grow">
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={
+              <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 to-slate-950">
+                <div className="text-center space-y-4">
+                  <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent" />
+                  <p className="text-lg text-white">Loading...</p>
+                </div>
+              </div>
+            }>
               <ErrorBoundary>
                 <Routes>
                   <Route path="/" element={<Index />} />

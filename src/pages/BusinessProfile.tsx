@@ -6,8 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
-import { db } from "@/firebase";
-import { doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { supabase } from "@/supabase";
 import { toast } from "sonner";
 import { Header } from "@/components/Header";
 
@@ -52,12 +51,13 @@ const BusinessProfile = () => {
   const trackPageView = useCallback(async () => {
     if (!user) return;
     try {
-      await addDoc(collection(db, 'user_analytics'), {
-        userId: user.uid,
-        eventType: 'page_view',
-        pagePath: '/business-profile',
-        eventData: { timestamp: serverTimestamp() }
-      });
+      await supabase
+        .from('user_analytics')
+        .insert({
+          user_id: user.id,
+          event_type: 'page_view',
+          page_path: '/business-profile',
+        });
     } catch (error) {
       console.error('Analytics tracking failed:', error);
     }
@@ -66,24 +66,23 @@ const BusinessProfile = () => {
   const fetchBusinessProfile = useCallback(async () => {
     if (!user) return;
     try {
-      // Ensure fresh auth token before Firestore reads
-      await user.getIdToken(true);
-      
-      const docRef = doc(db, "businessProfiles", user.uid);
-      const docSnap = await getDoc(docRef);
+      const { data, error } = await supabase
+        .from('business_profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
 
-      if (docSnap.exists()) {
-        const data = docSnap.data();
+      if (data && !error) {
         setProfile({
-          id: docSnap.id,
-          name: data.name || '',
+          id: data.id,
+          name: data.business_name || '',
           description: data.description || '',
           industry: data.industry || '',
-          targetAudience: data.targetAudience || '',
-          websiteUrl: data.websiteUrl || '',
-          brandVoice: data.brandVoice || '',
-          businessData: data.businessData || {},
-          isDefault: data.isDefault !== undefined ? data.isDefault : true
+          targetAudience: data.target_audience || '',
+          websiteUrl: data.website_url || '',
+          brandVoice: data.brand_voice || '',
+          businessData: data.business_data || {},
+          isDefault: data.is_default !== undefined ? data.is_default : true
         });
       }
     } catch (error) {
@@ -134,37 +133,36 @@ const BusinessProfile = () => {
 
       // Non-blocking analytics call
       try {
-        await addDoc(collection(db, 'user_analytics'), {
-          userId: user.uid,
-          eventType: 'action_click',
-          eventData: { 
-            action: 'save_business_profile',
-            has_existing_profile: !!profile.id
-          },
-          createdAt: serverTimestamp()
-        });
+        await supabase
+          .from('user_analytics')
+          .insert({
+            user_id: user.id,
+            event_type: 'action_click',
+            event_data: { 
+              action: 'save_business_profile',
+              has_existing_profile: !!profile.id
+            },
+          });
       } catch (analyticsError) {
         console.warn('Analytics tracking failed, proceeding with save:', analyticsError);
       }
 
       const profileData = {
-        userId: user.uid,
-        name: profile.name,
+        user_id: user.id,
+        business_name: profile.name,
         description: profile.description,
         industry: profile.industry,
-        targetAudience: profile.targetAudience,
-        websiteUrl: profile.websiteUrl,
-        brandVoice: profile.brandVoice,
-        businessData: {
-          ...(profile.businessData as object),
-          updatedAt: serverTimestamp()
-        },
-        isDefault: profile.isDefault,
-        isActive: true
+        target_audience: profile.targetAudience,
+        website_url: profile.websiteUrl,
+        brand_voice: profile.brandVoice,
+        business_data: profile.businessData,
+        is_default: profile.isDefault,
+        is_active: true
       };
 
-      const docRef = doc(db, "businessProfiles", user.uid);
-      await setDoc(docRef, profileData, { merge: true });
+      const { error } = await supabase
+        .from('business_profiles')
+        .upsert(profileData);
 
       toast.success("Profile Saved", {
         description: "Your business profile has been saved successfully.",

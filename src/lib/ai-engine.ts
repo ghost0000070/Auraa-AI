@@ -1,6 +1,5 @@
 import type { PuterChatResponse } from "../types/puter";
 import { toast } from "sonner";
-import { getFunctions, httpsCallable } from 'firebase/functions';
 import { AI_MODELS } from '@/config/constants';
 
 // Use centralized model constants
@@ -40,22 +39,21 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
 }
 
 /**
- * callCloudFallback - Fallback Strategy (Paid Backend API)
+ * callCloudFallback - Fallback Strategy (Supabase Edge Functions)
+ * TODO: Implement Supabase Edge Functions for AI tasks
  */
 async function callCloudFallback(taskName: string, data: unknown): Promise<string> {
-    console.log(`⚠️ Puter AI failed. Falling back to Cloud Function for ${taskName}...`);
-    const functions = getFunctions();
-    const cloudFn = httpsCallable<{ prompt?: string; personality?: string } | unknown, { completion?: { text: string }; result?: unknown }>(functions, taskName);
+    console.log(`⚠️ Puter AI failed. Cloud fallback not yet implemented for ${taskName}`);
     
-    const result = await cloudFn(data);
+    // TODO: Implement with Supabase Edge Functions
+    // Example:
+    // const { data: result, error } = await supabase.functions.invoke(taskName, {
+    //   body: data
+    // });
+    // if (error) throw error;
+    // return result.text;
     
-    // Cloud functions return { success: true, result: ... } or { completion: { text: ... } }
-    const responseData = result.data;
-    
-    if (responseData.completion) return responseData.completion.text;
-    if (responseData.result) return JSON.stringify(responseData.result); // Normalize to string for consistency with Puter
-    
-    return JSON.stringify(responseData);
+    throw new Error(`Cloud fallback for ${taskName} not yet implemented. Please ensure Puter AI is available.`);
 }
 
 /**

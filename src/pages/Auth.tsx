@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -6,9 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Toaster } from '@/components/ui/toaster';
 import { toast } from 'sonner';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, AuthError, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
-import { auth, db } from '@/firebase'; // Import the configured auth instance
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { supabase, onAuthStateChanged } from '@/supabase';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +19,7 @@ const Auth = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged((currentUser) => {
       if (currentUser) {
         navigate('/dashboard');
       }
@@ -34,7 +32,7 @@ const Auth = () => {
       toast.error("Authentication Error", {
         description: error,
       });
-      setError(null); // Reset error after showing toast
+      setError(null);
     }
   }, [error]);
 
@@ -43,7 +41,7 @@ const Auth = () => {
       toast.success("Success", {
         description: successMessage,
       });
-      setSuccessMessage(null); // Reset success message after showing toast
+      setSuccessMessage(null);
     }
   }, [successMessage]);
 
@@ -54,22 +52,33 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        
-        // Create user document in Firestore
-        await setDoc(doc(db, 'users', userCredential.user.uid), {
-          email: userCredential.user.email,
-          displayName: userCredential.user.displayName || null,
-          photoUrl: userCredential.user.photoURL || null,
-          is_active: false,
-          plan: null,
-          role: 'user',
-          createdAt: serverTimestamp(),
+        // Sign up with Supabase
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/dashboard`,
+          }
         });
-        
-        await sendEmailVerification(userCredential.user);
-        setSuccessMessage("We've sent you a verification link. Please verify your email before logging in.");
-        setIsSignUp(false); // Switch to sign-in view after successful sign-up
+
+        if (signUpError) throw signUpError;
+
+        if (data.user) {
+          // Create user profile in public.users table
+          const { error: profileError } = await supabase
+            .from('users')
+            .insert({
+              id: data.user.id,
+              email: data.user.email,
+              is_active: false,
+              role: 'user',
+            });
+
+          if (profileError) console.error('Error creating user profile:', profileError);
+          
+          setSuccessMessage("We've sent you a verification link. Please check your email to verify your account.");
+          setIsSignUp(false);
+        }
       } else {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         
@@ -99,9 +108,8 @@ const Auth = () => {
           });
         }
       }
-    } catch (err) {
-      const authError = err as AuthError;
-      setError(authError.message);
+    } catch (err: any) {
+      setError(err.message || 'An error occurred during authentication');
     } finally {
       setIsLoading(false);
     }
@@ -115,11 +123,15 @@ const Auth = () => {
     setIsLoading(true);
     setError(null);
     try {
-      await sendPasswordResetEmail(auth, email);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
+      if (error) throw error;
+      
       setSuccessMessage(`If an account exists for ${email}, you will receive a password reset link. Please check your inbox.`);
-    } catch (err) {
-        const error = err as any;
-        setError(error.message);
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }

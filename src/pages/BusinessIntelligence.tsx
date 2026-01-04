@@ -8,8 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { db } from '@/firebase';
-import { collection, query, where, orderBy, getDocs, addDoc } from 'firebase/firestore';
+import { supabase } from '@/supabase';
 import { 
   TrendingUp, 
   Target, 
@@ -95,30 +94,23 @@ const BusinessIntelligence = () => {
     try {
       console.log('🔄 Fetching business intelligence data...');
       if (!user) return;
-
-      // Ensure fresh auth token before Firestore reads
-      await user.getIdToken(true);
-      // Wait for token to be attached to SDK
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      const goalsQuery = query(
-        collection(db, 'business_goals'),
-        where('user_id', '==', user.uid),
-        orderBy('created_at', 'desc')
-      );
-      const knowledgeQuery = query(
-        collection(db, 'ai_shared_knowledge'),
-        where('user_id', '==', user.uid),
-        orderBy('created_at', 'desc'),
-      );
-
-      const [goalsSnapshot, knowledgeSnapshot] = await Promise.all([
-        getDocs(goalsQuery),
-        getDocs(knowledgeQuery),
+      const [goalsResult, knowledgeResult] = await Promise.all([
+        supabase
+          .from('business_goals')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('ai_shared_knowledge')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false }),
       ]);
 
-      const goalsData = goalsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as BusinessGoal));
-      const knowledgeData = knowledgeSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SharedKnowledge));
+      const goalsData = (goalsResult.data || []) as BusinessGoal[];
+      const knowledgeData = (knowledgeResult.data || []) as SharedKnowledge[];
 
       setGoals(goalsData);
       setKnowledge(knowledgeData);
@@ -149,14 +141,14 @@ const BusinessIntelligence = () => {
         return;
       }
 
-      await addDoc(collection(db, 'business_goals'), {
-        ...newGoal,
-        user_id: user.uid,
-        current_value: 0,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        status: 'active', 
-      });
+      const { error } = await supabase
+        .from('business_goals')
+        .insert({
+          ...newGoal,
+          user_id: user.id,
+          current_value: 0,
+          status: 'active',
+        });
 
       toast('Success', {
         description: 'Business goal created successfully'

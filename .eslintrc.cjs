@@ -14,7 +14,7 @@ module.exports = {
     ecmaFeatures: {
       jsx: true
     },
-    ecmaVersion: 12,
+    ecmaVersion: 2020,
     sourceType: 'module'
   },
   plugins: [
@@ -33,5 +33,18 @@ module.exports = {
     react: {
       version: 'detect'
     }
-  }
+  },
+  overrides: [
+    {
+      files: ['public/sw.js'],
+      env: {
+        browser: true,
+        serviceworker: true
+      },
+      parserOptions: {
+        ecmaVersion: 2020,
+        sourceType: 'script'
+      }
+    }
+  ]
 };

@@ -39,5 +39,11 @@
         "https://json.schemastore.org/github-workflow.json": []
     },
     "IDX.agenticWorkspace": true,
-    "IDX.corgiMode": true
+    "IDX.corgiMode": true,
+    "deno.enable": true,
+    "deno.enablePaths": [
+        "./supabase/functions"
+    ],
+    "deno.lint": true,
+    "deno.unstable": false
 }

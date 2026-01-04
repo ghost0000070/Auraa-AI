@@ -47,9 +47,6 @@ export default function Dashboard() {
       const result = await createPortalSession({ 
           returnUrl: window.location.href 
       });
-      
-      const { url } = result.data as { url: string };
-      window.location.href = url;
     } catch (error) {
       console.error("Error creating customer portal session:", error);
       toast({
@@ -76,16 +73,20 @@ export default function Dashboard() {
     }
 
     try {
-        const deployFunction = httpsCallable(functions, 'deployAiEmployee');
-        const result = await deployFunction({
-            deploymentRequest: {
-                ai_helper_template_id: template.id,
-                name: template.name,
-            }
-        });
+        const { error } = await supabase
+          .from('deployment_requests')
+          .insert({
+            user_id: user.id,
+            employee_name: template.name,
+            status: 'pending',
+            template_id: template.id,
+          });
+
+        if (error) throw error;
+
         toast({
             title: "Deployment Successful",
-            description: (result.data as { message: string }).message,
+            description: `Deployment request for ${template.name} has been submitted.`,
         });
     } catch (error) {
         console.error("Error deploying AI employee:", error);
@@ -99,7 +100,14 @@ export default function Dashboard() {
 
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-center space-y-4">
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent" />
+          <p className="text-lg text-gray-700">Loading dashboard...</p>
+        </div>
+      </div>
+    );
   }
   
   if (!user) {

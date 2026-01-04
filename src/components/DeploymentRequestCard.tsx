@@ -3,11 +3,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { functions } from '@/firebase';
-import { httpsCallable } from 'firebase/functions';
+import { supabase } from '@/supabase';
 import { toast } from "@/components/ui/toast-hooks";
 import { Loader2, Zap, CheckCircle } from 'lucide-react';
-import { AIEmployeeTemplate } from '@/lib/ai-employee-templates';
+import { AIEmployeeTemplate } from '@/lib/ai-employee-templates.tsx';
 
 interface DeploymentRequestCardProps {
   template: AIEmployeeTemplate;
@@ -45,19 +44,18 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
         deploymentRequest: {
           ai_helper_template_id: template.id,
           status: 'pending',
-          deployment_config: {},
-        }
+          template_id: template.id,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast({
+        title: "Deployment Successful",
+        description: `${template.name} deployment request has been submitted.`,
       });
-      
-      if ((result.data as {success: boolean}).success) {
-        toast({
-          title: "Deployment Successful",
-          description: `${template.name} has been deployed.`,
-        });
-        setIsDeployed(true);
-      } else {
-        throw new Error("Deployment failed");
-      }
+      setIsDeployed(true);
     } catch (error) {
       console.error("Error deploying AI employee: ", error);
       toast({

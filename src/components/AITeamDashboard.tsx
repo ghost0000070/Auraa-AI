@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot, query, orderBy, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/firebase';
+import { supabase } from '@/supabase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
@@ -72,91 +71,142 @@ const AITeamDashboard: React.FC = () => {
   const allDataLoaded = Object.values(loading).every(v => !v);
 
   useEffect(() => {
-    if (user) {
-      // Refresh token and wait for Firestore to be ready
-      (async () => {
-        try {
-          // Force refresh of ID token to ensure auth is sent with Firestore requests
-          await user.getIdToken(true);
-        } catch (err) {
-          console.error('Failed to refresh ID token:', err);
-        }
+    if (!user) return;
 
-        // Wait for auth to propagate - INCREASED to 2000ms for better stability
-        const timer = setTimeout(() => {
-          const collections = [
-            { name: 'agent_tasks', stateSetter: setTasks, orderByField: 'createdAt' },
-            { name: 'ai_team_communications', stateSetter: setCommunications, orderByField: 'created_at' },
-            { name: 'agent_metrics', stateSetter: setMetrics, orderByField: 'timestamp' },
-            { name: 'ai_employees', stateSetter: setEmployees, orderByField: null },
-          ];
+    const loadData = async () => {
+      try {
+        // Load tasks
+        handleLoading('agent_tasks', true);
+        const { data: tasksData } = await supabase
+          .from('agent_tasks')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        if (tasksData) setTasks(tasksData as any[]);
+        handleLoading('agent_tasks', false);
 
-          const unsubscribes = collections.map(({ name, stateSetter, orderByField }) => {
-            handleLoading(name, true);
-            console.log(`Loading ${name} collection for authenticated user`);
-            
-            // Build query - all these collections allow authenticated reads per Firestore rules
-            let q;
-            try {
-              if (orderByField) {
-                q = query(collection(db, name), orderBy(orderByField, 'desc'));
-              } else {
-                q = query(collection(db, name));
-              }
-            } catch (error) {
-              console.error(`Error building query for ${name}:`, error);
-              handleLoading(name, false);
-              stateSetter([] as never);
-              return () => {};
-            }
-
-            return onSnapshot(q, async (snapshot) => {
-              const data = await Promise.all(snapshot.docs.map(async (docSnapshot) => {
-                const item = { id: docSnapshot.id, ...docSnapshot.data() };
-                if (name === 'ai_team_communications' && !item.is_read) {
-                  await handleNewCommunication(item as Communication, docSnapshot.ref);
-                }
-                return item;
-              }));
-              stateSetter(data as never);
-              handleLoading(name, false);
-            }, (error) => {
-              console.error(`[AITeamDashboard] Error fetching ${name}:`, {
-                code: error.code,
-                message: error.message,
-                fullError: error
-              });
-              if (error.code === 'permission-denied') {
-                console.error(`[CRITICAL] Permission denied for ${name} - user may not be authenticated or token not attached`);
-              }
-              stateSetter([] as never);
-              handleLoading(name, false);
-            });
-          });
-
-          return () => unsubscribes.forEach(unsub => unsub());
-        }, 2000); // INCREASED from 1000ms to ensure token is attached to requests
-
-        return () => clearTimeout(timer);
-      })();
-    }
-  }, [user]);
-
-  async function handleNewCommunication(comm: Communication, ref: unknown) {
-      let senderName = comm.sender_employee;
-      if(senderName && senderName !== 'System' && senderName !== 'User') {
-          try {
-              const employeeDoc = await getDoc(doc(db, 'aiEmployees', senderName));
-              if (employeeDoc.exists()) {
-                  senderName = employeeDoc.data().name || senderName;
-              }
-          } catch(e) {
-              console.error(`Error fetching employee name for ${senderName}:`, e);
+        // Load communications
+        handleLoading('ai_team_communications', true);
+        const { data: commsData } = await supabase
+          .from('ai_team_communications')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        if (commsData) {
+          setCommunications(commsData as any[]);
+          // Handle unread messages
+          const unreadComms = commsData.filter((c: any) => !c.is_read);
+          for (const comm of unreadComms) {
+            toast(`New Message from ${comm.sender_employee}`, { description: comm.content });
           }
+          // Mark as read
+          if (unreadComms.length > 0) {
+            await supabase
+              .from('ai_team_communications')
+              .update({ is_read: true })
+              .in('id', unreadComms.map((c: any) => c.id));
+          }
+        }
+        handleLoading('ai_team_communications', false);
+
+        // Load metrics
+        handleLoading('agent_metrics', true);
+        const { data: metricsData } = await supabase
+          .from('agent_metrics')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('timestamp', { ascending: false });
+        if (metricsData) setMetrics(metricsData as any[]);
+        handleLoading('agent_metrics', false);
+
+        // Load employees
+        handleLoading('ai_employees', true);
+        const { data: employeesData } = await supabase
+          .from('ai_employees')
+          .select('*')
+          .eq('created_by', user.id);
+        if (employeesData) setEmployees(employeesData as any[]);
+        handleLoading('ai_employees', false);
+
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        Object.keys(loading).forEach(key => handleLoading(key, false));
       }
-      toast(`New Message from ${senderName}`, { description: comm.content });
-      await updateDoc(ref, { is_read: true });
-  }
+    };
+
+    loadData();
+
+    // Subscribe to real-time updates
+    const tasksChannel = supabase
+      .channel('tasks_rt')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'agent_tasks', filter: `user_id=eq.${user.id}` },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setTasks(prev => [payload.new as any, ...prev]);
+          } else if (payload.eventType === 'UPDATE') {
+            setTasks(prev => prev.map(t => t.id === payload.new.id ? payload.new as any : t));
+          } else if (payload.eventType === 'DELETE') {
+            setTasks(prev => prev.filter(t => t.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
+    const commsChannel = supabase
+      .channel('comms_rt')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'ai_team_communications', filter: `user_id=eq.${user.id}` },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newComm = payload.new as any;
+            setCommunications(prev => [newComm, ...prev]);
+            if (!newComm.is_read) {
+              toast(`New Message from ${newComm.sender_employee}`, { description: newComm.content });
+              supabase.from('ai_team_communications').update({ is_read: true }).eq('id', newComm.id).then();
+            }
+          } else if (payload.eventType === 'UPDATE') {
+            setCommunications(prev => prev.map(c => c.id === payload.new.id ? payload.new as any : c));
+          }
+        }
+      )
+      .subscribe();
+
+    const metricsChannel = supabase
+      .channel('metrics_rt')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'agent_metrics', filter: `user_id=eq.${user.id}` },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setMetrics(prev => [payload.new as any, ...prev]);
+          }
+        }
+      )
+      .subscribe();
+
+    const employeesChannel = supabase
+      .channel('employees_rt')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'ai_employees', filter: `created_by=eq.${user.id}` },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setEmployees(prev => [...prev, payload.new as any]);
+          } else if (payload.eventType === 'UPDATE') {
+            setEmployees(prev => prev.map(e => e.id === payload.new.id ? payload.new as any : e));
+          } else if (payload.eventType === 'DELETE') {
+            setEmployees(prev => prev.filter(e => e.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      tasksChannel.unsubscribe();
+      commsChannel.unsubscribe();
+      metricsChannel.unsubscribe();
+      employeesChannel.unsubscribe();
+    };
+  }, [user]);
 
   // Render helpers and constants
   const getStatusColor = (status: string) => {

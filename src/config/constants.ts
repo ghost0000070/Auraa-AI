@@ -2,8 +2,10 @@
  * Application-wide constants and configuration
  */
 
-// Owner account email - used for unrestricted access
-export const OWNER_EMAIL = 'ghostspooks@icloud.com';
+// Owner account configuration - used for unrestricted access
+// Loaded from environment variables for security
+export const OWNER_EMAIL = import.meta.env.VITE_OWNER_EMAIL || 'ghostspooks@icloud.com';
+export const OWNER_UID = import.meta.env.VITE_OWNER_UID || 'UoP0OzTFp5RnVclt7XSDDkbzc5W2';
 
 // Subscription tier levels
 export const TIER_LEVELS: Record<string, number> = {
@@ -23,15 +25,30 @@ export const AI_MODELS = {
   FAST: 'claude-haiku-4-5',
 } as const;
 
+// Rate Limiting Configuration
+export const RATE_LIMIT = {
+  MAX_REQUESTS_PER_MINUTE: parseInt(import.meta.env.VITE_API_RATE_LIMIT || '100'),
+  WINDOW_MS: 60000, // 1 minute
+};
+
+// Error Tracking Configuration
+export const SENTRY_CONFIG = {
+  DSN: import.meta.env.VITE_SENTRY_DSN,
+  ENVIRONMENT: import.meta.env.VITE_SENTRY_ENVIRONMENT || 'production',
+  ENABLED: !!import.meta.env.VITE_SENTRY_DSN,
+};
+
+// Cache Configuration
+export const CACHE_CONFIG = {
+  DATABASE_CACHE_TTL: 5 * 60 * 1000, // 5 minutes
+  ENABLE_PERSISTENCE: true,
+};
+
 // Environment validation
 export function validateEnvironment(): void {
   const requiredEnvVars = [
-    'VITE_FIREBASE_API_KEY',
-    'VITE_FIREBASE_AUTH_DOMAIN',
-    'VITE_FIREBASE_PROJECT_ID',
-    'VITE_FIREBASE_STORAGE_BUCKET',
-    'VITE_FIREBASE_MESSAGING_SENDER_ID',
-    'VITE_FIREBASE_APP_ID',
+    'VITE_SUPABASE_URL',
+    'VITE_SUPABASE_ANON_KEY',
   ];
 
   const missing = requiredEnvVars.filter(

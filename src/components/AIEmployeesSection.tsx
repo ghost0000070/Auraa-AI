@@ -4,8 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { db } from "@/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { supabase } from "@/supabase";
 // Import guardian images
 import dataNexusImage from "@/assets/data-daemon-guardian.jpg";
 import dealStrikerImage from "@/assets/deal-striker-guardian.jpg";
@@ -64,15 +63,16 @@ export const AIEmployeesSection = () => {
     // Track custom AI creation interest
     if (user) {
       try {
-        await addDoc(collection(db, 'user_analytics'), {
-          userId: user.uid,
-          eventType: 'action_click',
-          eventData: { 
-            action: 'custom_ai_creation',
-            subscriptionTier: subscriptionStatus?.subscription_tier || 'free'
-          },
-          createdAt: serverTimestamp()
-        });
+        await supabase
+          .from('user_analytics')
+          .insert({
+            user_id: user.id,
+            event_type: 'action_click',
+            event_data: { 
+              action: 'custom_ai_creation',
+              subscriptionTier: subscriptionStatus?.subscription_tier || 'free'
+            }
+          });
       } catch (error) {
         console.warn("Analytics tracking failed:", error);
       }

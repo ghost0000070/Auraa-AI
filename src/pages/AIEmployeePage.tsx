@@ -5,13 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChatInterface } from '@/components/ChatInterface';
 import { ArrowLeft, Star, Settings, Loader2, MessageCircle } from 'lucide-react';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/firebase';
+import { supabase } from '@/supabase';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
+import { aiEmployeeTemplates } from '@/lib/ai-employee-templates.tsx';
 import { TemplateIcon } from '@/components/TemplateIcon';
 
 // Define a more specific type for the deployed employee
@@ -49,27 +48,25 @@ const AIEmployeePage: React.FC = () => {
     const fetchEmployee = async () => {
       setIsLoading(true);
       try {
-        // Ensure fresh auth token before Firestore reads
-        if (user) await user.getIdToken(true);
-        
-        const employeeDocRef = doc(db, 'ai_employees', employeeId);
-        const employeeDoc = await getDoc(employeeDocRef);
+        const { data: employeeData, error } = await supabase
+          .from('deployed_employees')
+          .select('*')
+          .eq('id', employeeId)
+          .single();
 
-        if (!employeeDoc.exists()) {
-          toast("Error", { description: "Could not find the specified AI employee." });
+        if (error || !employeeData) {
+          toast.error("Error", { description: "Could not find the specified AI employee." });
           navigate('/ai-employees');
           return;
         }
-
-        const employeeData = { id: employeeDoc.id, ...employeeDoc.data() } as DeployedEmployee;
         
-        if (employeeData.user_id !== user.uid) {
-            toast("Access Denied", { description: "You do not have permission to view this employee." });
+        if (employeeData.user_id !== user.id) {
+            toast.error("Access Denied", { description: "You do not have permission to view this employee." });
             navigate('/ai-employees');
             return;
         }
 
-        setDeployedEmployee(employeeData);
+        setDeployedEmployee(employeeData as DeployedEmployee);
 
         const staticInfo = aiEmployeeTemplates.find(e => e.id === employeeData.template_id);
         if (staticInfo) {
@@ -79,7 +76,7 @@ const AIEmployeePage: React.FC = () => {
         setConfigDraft(JSON.stringify(employeeData.deployment_config, null, 2));
       } catch (error) {
         console.error("Error fetching employee:", error);
-        toast("Error", { description: "Failed to fetch AI employee data." });
+        toast.error("Error", { description: "Failed to fetch AI employee data." });
         navigate('/ai-employees');
       } finally {
         setIsLoading(false);

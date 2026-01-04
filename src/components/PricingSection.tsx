@@ -1,19 +1,24 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Loader2 } from "lucide-react";
-import { httpsCallable } from "firebase/functions";
-import { functions } from "@/firebase";
 import { useToast } from "@/components/ui/toast-hooks";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { Polar } from "@polar-sh/sdk";
 
 interface Tier {
   name: string;
   price: string;
   features: string[];
-  priceId: string;
+  productId: string;
+  trial?: string;
+  buttonText?: string;
 }
+
+const polar = new Polar({
+  accessToken: import.meta.env.VITE_POLAR_ACCESS_TOKEN || "",
+});
 
 export function PricingSection() {
   const { user } = useAuth();
@@ -26,21 +31,20 @@ export function PricingSection() {
       navigate('/auth');
       return;
     }
-    setIsLoading(tier.priceId);
+    setIsLoading(tier.productId);
     try {
-      const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
-      const response = await createCheckoutSession({
-        priceId: tier.priceId,
-        successUrl: `${window.location.origin}/dashboard`,
-        cancelUrl: window.location.origin,
+      // Create Polar.sh checkout session
+      const checkout = await polar.checkouts.create({
+        products: [tier.productId],
+        successUrl: `${window.location.origin}/dashboard?checkout_id={CHECKOUT_ID}`,
+        customerEmail: user.email || undefined,
       });
-      
-      const data = response.data as { url?: string };
 
-      if (data.url) {
-        window.location.href = data.url;
+      if (checkout.url) {
+        // Redirect to Polar.sh checkout
+        window.location.href = checkout.url;
       } else {
-        throw new Error("Could not retrieve checkout URL.");
+        throw new Error("Failed to create checkout session");
       }
 
     } catch (error) {
@@ -50,8 +54,7 @@ export function PricingSection() {
         description: (error as Error).message || "Could not create a checkout session.",
         variant: "destructive",
       });
-    } finally {
-        setIsLoading(null);
+      setIsLoading(null);
     }
   };
 
@@ -59,24 +62,34 @@ export function PricingSection() {
     {
       name: "Pro",
       price: "$50",
+      trial: "3-day free trial",
+      buttonText: "Start Free Trial",
       features: [
         "10 AI Employees",
-        "Advanced Analytics",
+        "Advanced Analytics Dashboard",
         "Priority Support",
         "Custom Integrations",
+        "Unlimited script generation",
+        "Website scraping & analysis",
+        "Business intelligence tools",
       ],
-      priceId: "price_1SY0gtJJkefvaMj1YLfG9FYX",
+      productId: "YOUR_PRO_PRODUCT_ID",
     },
     {
       name: "Enterprise",
       price: "$99",
+      buttonText: "Subscribe",
       features: [
         "Unlimited AI Employees",
         "Dedicated Account Manager",
-        "On-premise Deployment",
-        "24/7 Support",
+        "On-premise Deployment Option",
+        "24/7 Premium Support",
+        "Advanced API Access",
+        "Custom AI model training",
+        "White-label options",
+        "SLA guarantees",
       ],
-      priceId: "price_1SY0hwJJkefvaMj1cwQePfc",
+      productId: "YOUR_ENTERPRISE_PRODUCT_ID",
     },
   ];
 
@@ -90,15 +103,22 @@ export function PricingSection() {
           {tiers.map((tier) => (
             <Card key={tier.name} className="flex flex-col">
               <CardHeader>
-                <CardTitle>{tier.name}</CardTitle>
+                <div className="flex items-center justify-between mb-2">
+                  <CardTitle>{tier.name}</CardTitle>
+                  {tier.trial && (
+                    <span className="text-xs bg-green-500/10 text-green-500 px-2 py-1 rounded-full">
+                      {tier.trial}
+                    </span>
+                  )}
+                </div>
                 <p className="text-4xl font-bold">{tier.price}<span className="text-lg font-normal text-muted-foreground">/month</span></p>
               </CardHeader>
               <CardContent className="flex flex-col flex-grow">
-                <ul className="space-y-4 flex-grow">
+                <ul className="space-y-3 flex-grow">
                   {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-center">
-                      <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
-                      {feature}
+                    <li key={feature} className="flex items-start">
+                      <CheckCircle className="mr-2 h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -107,7 +127,7 @@ export function PricingSection() {
                     onClick={() => handleSubscribe(tier)}
                     disabled={!!isLoading}
                 >
-                    {isLoading === tier.priceId ? <Loader2 className="h-4 w-4 animate-spin"/> : 'Subscribe'}
+                    {isLoading === tier.productId ? <Loader2 className="h-4 w-4 animate-spin"/> : (tier.buttonText || 'Subscribe')}
                 </Button>
               </CardContent>
             </Card>

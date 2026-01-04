@@ -29,11 +29,10 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Deploy to Firebase
-        uses: w9jds/firebase-action@master
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
         with:
-          action: deploy
-          args: --only hosting
-        env:
-          # yamllint disable-line rule:truthy
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'

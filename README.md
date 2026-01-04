@@ -1,65 +1,177 @@
-# Auraa AI - AI Employee Platform
+# Supabase CLI
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
+](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
 
-Auraa AI is a platform designed to deploy and manage autonomous AI employees. These AI agents can be configured with specific skills, assigned to various business tasks, and integrated into existing workflows to automate complex processes.
+[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
 
-## Key Features
+This repository contains all the functionality for Supabase CLI.
 
-- **🤖 Deploy AI Employees:** Choose from a variety of pre-built AI employee templates, each with specialized skills for different departments like marketing, legal, finance, and customer support.
-- **⚡ Skill Creation:** Discover and build hundreds of unique skills for your AI Employees to perform any task required for your business.
-- **📊 Project Management:** Automatically create entire projects, assign tasks to AI and human team members, and estimate project ETAs with capacity and resource planning.
-- **🎫 Customer Support Automation:** Empower your AI employees to handle customer support tickets by leveraging help center articles, internal knowledge bases, and past ticket data.
-- **📈 Social Media Management:** Automate the creation and posting of social media content across platforms like LinkedIn, Facebook, Instagram, and Twitter, maintaining a consistent brand voice.
+- [x] Running Supabase locally
+- [x] Managing database migrations
+- [x] Creating and deploying Supabase Functions
+- [x] Generating types directly from your database schema
+- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
 
-## Getting Started
+## Getting started
 
-This project is a React-based web application built with Vite and uses Firebase for backend services, including Firestore for the database and Firebase Authentication.
+### Install the CLI
 
-### Prerequisites
+Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
 
-- Node.js and npm
-- Firebase CLI
-- A configured Firebase project
+```bash
+npm i supabase --save-dev
+```
 
-### Installation
+When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/myuser/myrepo.git
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Run the development server:
-   ```bash
-   npm run dev
-   ```
+```
+NODE_OPTIONS=--no-experimental-fetch yarn add supabase
+```
 
-## Project Structure
+> **Note**
+For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
 
-- `src/`: Contains the main React application source code.
-  - `components/`: Reusable React components.
-  - `lib/`: Core application logic, including AI employee templates.
-  - `pages/`: Top-level page components.
-- `functions/`: Cloud Functions for Firebase.
-- `docs/`: Project documentation.
-- `firebase.json`: Configuration for Firebase services and deployment rules.
-- `CHANGELOG.md`: All notable changes to this project.
+<details>
+  <summary><b>macOS</b></summary>
 
-## Deployment
+  Available via [Homebrew](https://brew.sh). To install:
 
-This project is configured for deployment to Firebase Hosting. The GitHub Action in this repository will automatically deploy a preview of your app for each pull request. When a pull request is merged, the action will deploy to the live channel.
+  ```sh
+  brew install supabase/tap/supabase
+  ```
 
-## License
+  To install the beta release channel:
+  
+  ```sh
+  brew install supabase/tap/supabase-beta
+  brew link --overwrite supabase-beta
+  ```
+  
+  To upgrade:
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+  ```sh
+  brew upgrade supabase
+  ```
+</details>
 
-## Changelog
+<details>
+  <summary><b>Windows</b></summary>
 
-All notable changes to this project are documented in the [CHANGELOG.md](CHANGELOG.md) file.
+  Available via [Scoop](https://scoop.sh). To install:
 
-## Contact
+  ```powershell
+  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+  scoop install supabase
+  ```
 
-If you have any questions, you can contact us by email: support@auraa-ai.com
+  To upgrade:
+
+  ```powershell
+  scoop update supabase
+  ```
+</details>
+
+<details>
+  <summary><b>Linux</b></summary>
+
+  Available via [Homebrew](https://brew.sh) and Linux packages.
+
+  #### via Homebrew
+
+  To install:
+
+  ```sh
+  brew install supabase/tap/supabase
+  ```
+
+  To upgrade:
+
+  ```sh
+  brew upgrade supabase
+  ```
+
+  #### via Linux packages
+
+  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
+
+  ```sh
+  sudo apk add --allow-untrusted <...>.apk
+  ```
+
+  ```sh
+  sudo dpkg -i <...>.deb
+  ```
+
+  ```sh
+  sudo rpm -i <...>.rpm
+  ```
+
+  ```sh
+  sudo pacman -U <...>.pkg.tar.zst
+  ```
+</details>
+
+<details>
+  <summary><b>Other Platforms</b></summary>
+
+  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
+
+  ```sh
+  go install github.com/supabase/cli@latest
+  ```
+
+  Add a symlink to the binary in `$PATH` for easier access:
+
+  ```sh
+  ln -s "$(go env GOPATH)/bin/cli" /usr/bin/supabase
+  ```
+
+  This works on other non-standard Linux distros.
+</details>
+
+<details>
+  <summary><b>Community Maintained Packages</b></summary>
+
+  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
+  To install in your working directory:
+
+  ```bash
+  pkgx install supabase
+  ```
+
+  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
+</details>
+
+### Run the CLI
+
+```bash
+supabase bootstrap
+```
+
+Or using npx:
+
+```bash
+npx supabase bootstrap
+```
+
+The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
+
+## Docs
+
+Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
+
+## Breaking changes
+
+We follow semantic versioning for changes that directly impact CLI commands, flags, and configurations.
+
+However, due to dependencies on other service images, we cannot guarantee that schema migrations, seed.sql, and generated types will always work for the same CLI major version. If you need such guarantees, we encourage you to pin a specific version of CLI in package.json.
+
+## Developing
+
+To run from source:
+
+```sh
+# Go >= 1.22
+go run . help
+```

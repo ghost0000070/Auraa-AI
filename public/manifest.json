@@ -1,0 +1,38 @@
+{
+  "name": "Auraa AI Employees",
+  "short_name": "Auraa AI",
+  "description": "Deploy autonomous AI employees to grow your business. Marketing, Sales, and Support agents working 24/7.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/auraa-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/auraa-uploads/b67b6e27-f714-4f69-87f2-eded4b8eb656.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/auraa-uploads/b67b6e27-f714-4f69-87f2-eded4b8eb656.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    }
+  ]
+}

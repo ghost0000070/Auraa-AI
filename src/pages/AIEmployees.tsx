@@ -5,26 +5,13 @@ import { Button } from '@/components/ui/button';
 import { DeploymentRequestCard } from '@/components/DeploymentRequestCard';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2 } from 'lucide-react';
-import { db } from '@/firebase';
-import { collection, getDocs } from 'firebase/firestore';
-
-interface AIEmployee {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  system_prompt: string;
-  tools: unknown[];
-  avatar: {
-    url: string;
-    bgColor: string;
-  };
-}
+import { supabase } from '@/supabase';
+import { aiEmployeeTemplates, AIEmployeeTemplate } from '@/lib/ai-employee-templates';
 
 const AIEmployees: React.FC = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const [employees, setEmployees] = useState<AIEmployee[]>([]);
+  const [employees, setEmployees] = useState<AIEmployeeTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,23 +23,16 @@ const AIEmployees: React.FC = () => {
 
   useEffect(() => {
     const fetchEmployees = async () => {
-      if (!user) return; // Don't fetch if user is not logged in
+      if (!user) return;
 
       try {
-        // Ensure fresh auth token before Firestore reads
-        await user.getIdToken(true);
-        
         setLoading(true);
-        const employeesCollection = collection(db, 'ai_employees');
-        const employeeSnapshot = await getDocs(employeesCollection);
-        const employeesList = employeeSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        } as AIEmployee));
-        setEmployees(employeesList);
+        
+        // Use the local templates
+        setEmployees(aiEmployeeTemplates);
         setError(null);
       } catch (err) {
-        console.error("Error fetching AI employees:", err);
+        console.error("Error loading AI employees:", err);
         setError("Failed to load the AI workforce. Please try again later.");
       } finally {
         setLoading(false);
@@ -60,7 +40,7 @@ const AIEmployees: React.FC = () => {
     };
 
     fetchEmployees();
-  }, [user]); // Re-fetch if the user changes
+  }, [user]);
 
   if (authLoading || loading) {
     return (
@@ -111,7 +91,7 @@ const AIEmployees: React.FC = () => {
         {!error && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {employees.map((employee) => (
-              <DeploymentRequestCard key={employee.id} employee={employee} />
+              <DeploymentRequestCard key={employee.id} template={employee} />
             ))}
           </div>
         )}

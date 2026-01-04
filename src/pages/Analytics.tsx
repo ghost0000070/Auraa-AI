@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { db } from "@/firebase";
-import { collection, getDocs, Timestamp } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { supabase } from "@/supabase";
+import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -53,24 +52,20 @@ const Analytics = () => {
       
       setLoading(true);
       try {
-        // Ensure fresh auth token before Firestore reads
-        const auth = getAuth();
-        if (auth.currentUser) await auth.currentUser.getIdToken(true);
-        
         // Fetch all data in parallel
-        const [usersSnapshot, deploymentsSnapshot] = await Promise.all([
-            getDocs(collection(db, "users")),
-            getDocs(collection(db, "deployedEmployees"))
+        const [usersResult, deploymentsResult] = await Promise.all([
+            supabase.from("users").select('*', { count: 'exact' }),
+            supabase.from("deployed_employees").select('*')
         ]);
 
-        setTotalUsers(usersSnapshot.size);
-        setTotalDeployments(deploymentsSnapshot.size);
+        setTotalUsers(usersResult.count || 0);
+        setTotalDeployments(deploymentsResult.data?.length || 0);
 
         // Process data for charts
         const processSignups = () => {
             const userSignupCounts: Record<string, number> = {};
-            usersSnapshot.forEach(doc => {
-              const createdAt = (doc.data().createdAt as Timestamp)?.toDate();
+            usersResult.data?.forEach(user => {
+              const createdAt = user.created_at ? new Date(user.created_at) : null;
               if (createdAt) {
                 const date = createdAt.toISOString().split('T')[0];
                 userSignupCounts[date] = (userSignupCounts[date] || 0) + 1;
@@ -95,14 +90,13 @@ const Analytics = () => {
             const deploymentCountsRaw: Record<string, number> = {};
             const templateCountsRaw: Record<string, number> = {};
 
-            deploymentsSnapshot.forEach(doc => {
-                const data = doc.data();
-                const createdAt = (data.createdAt as Timestamp)?.toDate();
+            deploymentsResult.data?.forEach(deployment => {
+                const createdAt = deployment.created_at ? new Date(deployment.created_at) : null;
                 if (createdAt) {
                     const date = createdAt.toISOString().split('T')[0];
                     deploymentCountsRaw[date] = (deploymentCountsRaw[date] || 0) + 1;
                 }
-                const templateId = data.templateId;
+                const templateId = deployment.template_id;
                 if(templateId){
                     templateCountsRaw[templateId] = (templateCountsRaw[templateId] || 0) + 1;
                 }
