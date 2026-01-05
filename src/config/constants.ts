@@ -50,6 +50,32 @@ export const SUBSCRIPTION_PRICING = {
   competitor_enterprise_avg: 199,
 };
 
+// AI Employee Polar Product IDs
+// Create these products in Polar.sh dashboard, then add the IDs here
+// Each product should be a recurring monthly subscription at the listed price
+export const EMPLOYEE_POLAR_PRODUCTS: Record<string, string> = {
+  'marketing-pro': '',        // $99/mo - Create in Polar, add ID
+  'sales-sidekick': '',       // $129/mo - Create in Polar, add ID
+  'support-sentinel': '',     // $79/mo - Create in Polar, add ID
+  'business-analyst': '',     // $149/mo - Create in Polar, add ID
+  'dev-companion': '',        // $119/mo - Create in Polar, add ID
+  'operations-orchestrator': '', // $99/mo - Create in Polar, add ID
+  'security-analyst': '',     // $159/mo - Create in Polar, add ID
+  'ai-team-orchestrator': '', // $179/mo - Create in Polar, add ID
+};
+
+// AI Employee Prices (in dollars) - for reference
+export const EMPLOYEE_PRICES: Record<string, number> = {
+  'marketing-pro': 99,
+  'sales-sidekick': 129,
+  'support-sentinel': 79,
+  'business-analyst': 149,
+  'dev-companion': 119,
+  'operations-orchestrator': 99,
+  'security-analyst': 159,
+  'ai-team-orchestrator': 179,
+};
+
 // Rate Limiting Configuration
 export const RATE_LIMIT = {
   MAX_REQUESTS_PER_MINUTE: parseInt(import.meta.env.VITE_API_RATE_LIMIT || '100'),

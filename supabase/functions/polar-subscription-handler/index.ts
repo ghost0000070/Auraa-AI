@@ -163,20 +163,28 @@ serve(async (req) => {
           )
         }
 
-        // Convert price to cents for Polar
-        const priceInCents = employeePrice * 100
+        // Get the Polar product ID for this employee from environment variables
+        // Environment variable format: POLAR_EMPLOYEE_{TEMPLATE_ID}_PRODUCT_ID
+        // e.g., POLAR_EMPLOYEE_MARKETING_PRO_PRODUCT_ID
+        const envKey = `POLAR_EMPLOYEE_${employeeTemplateId.toUpperCase().replace(/-/g, '_')}_PRODUCT_ID`
+        const employeeProductId = Deno.env.get(envKey)
 
-        // Create a custom Polar checkout with dynamic pricing
-        // Note: This requires creating products dynamically or having pre-created products
-        // For now, we'll use the custom checkout with amount override
-        const organizationId = Deno.env.get('POLAR_ORGANIZATION_ID')
-        
+        if (!employeeProductId) {
+          console.error(`Missing Polar product ID for employee: ${employeeTemplateId}. Set ${envKey} in secrets.`)
+          return new Response(
+            JSON.stringify({ 
+              error: `Product not configured for ${employeeName}. Please contact support.`,
+              detail: `Missing environment variable: ${envKey}`
+            }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          )
+        }
+
+        // Create a Polar checkout for this employee's product
         const checkout = await polarRequest('/checkouts/custom/', {
           method: 'POST',
           body: JSON.stringify({
-            // Use a base product or create checkout with amount
-            product_id: Deno.env.get('POLAR_PRO_PRODUCT_ID'), // Base product for checkout
-            amount: priceInCents, // Override with employee price
+            product_id: employeeProductId,
             success_url: successUrl || `${req.headers.get('origin')}/marketplace?subscribed=${employeeTemplateId}`,
             cancel_url: cancelUrl || `${req.headers.get('origin')}/marketplace`,
             customer_email: user.email,
