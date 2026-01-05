@@ -51,17 +51,16 @@ export const SUBSCRIPTION_PRICING = {
 };
 
 // AI Employee Polar Product IDs
-// Create these products in Polar.sh dashboard, then add the IDs here
-// Each product should be a recurring monthly subscription at the listed price
+// Created in Polar.sh - monthly recurring subscriptions
 export const EMPLOYEE_POLAR_PRODUCTS: Record<string, string> = {
-  'marketing-pro': '',        // $99/mo - Create in Polar, add ID
-  'sales-sidekick': '',       // $129/mo - Create in Polar, add ID
-  'support-sentinel': '',     // $79/mo - Create in Polar, add ID
-  'business-analyst': '',     // $149/mo - Create in Polar, add ID
-  'dev-companion': '',        // $119/mo - Create in Polar, add ID
-  'operations-orchestrator': '', // $99/mo - Create in Polar, add ID
-  'security-analyst': '',     // $159/mo - Create in Polar, add ID
-  'ai-team-orchestrator': '', // $179/mo - Create in Polar, add ID
+  'marketing-pro': 'de3ed2d2-27f3-4573-834f-7290784ab0ab',        // $99/mo
+  'sales-sidekick': 'bfb616c0-d573-41fc-9421-bc1872672e78',       // $129/mo
+  'support-sentinel': '9dd57182-e64b-4c5d-8a9b-c18b56185063',     // $79/mo
+  'business-analyst': '001412c7-8d79-48d1-9255-959318d4109b',     // $149/mo
+  'dev-companion': '56a8eda5-079e-46a4-a967-65121ef4e776',        // $119/mo
+  'operations-orchestrator': 'ec6bb65c-ea95-4c1f-94c2-ce3e46402bc5', // $99/mo
+  'security-analyst': '2e6d7dba-f5b8-45d0-b8d8-12b667ccb5cb',     // $159/mo
+  'ai-team-orchestrator': 'd5f46d12-19be-45b4-a46f-3eee385dd737', // $179/mo
 };
 
 // AI Employee Prices (in dollars) - for reference
