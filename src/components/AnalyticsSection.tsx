@@ -76,18 +76,22 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ isDashboard 
             return;
           }
 
+          // platform_stats stores values as rows with stat_name/stat_value columns
           const { data: platformData } = await supabase
             .from('platform_stats')
-            .select('*')
-            .order('updated_at', { ascending: false })
-            .limit(1)
-            .single();
+            .select('stat_name, stat_value');
 
-          if (platformData) {
+          if (platformData && platformData.length > 0) {
+            // Build a map of stat_name -> stat_value
+            const statsMap: Record<string, string> = {};
+            platformData.forEach((row: { stat_name: string; stat_value: string }) => {
+              statsMap[row.stat_name] = row.stat_value;
+            });
+            
             setMetrics([
-              { value: platformData.gmv_analyzed || defaultMetrics[0].value, label: "in GMV analyzed", color: "text-accent" },
-              { value: platformData.orders_processed || defaultMetrics[1].value, label: "orders processed", color: "text-primary" },
-              { value: platformData.customers_served || defaultMetrics[2].value, label: "unique customers served", color: "text-success" }
+              { value: statsMap['gmv_analyzed'] || defaultMetrics[0].value, label: "in GMV analyzed", color: "text-accent" },
+              { value: statsMap['orders_processed'] || defaultMetrics[1].value, label: "orders processed", color: "text-primary" },
+              { value: statsMap['customers_served'] || defaultMetrics[2].value, label: "unique customers served", color: "text-success" }
             ]);
           } else {
             setMetrics(defaultMetrics);
