@@ -58,34 +58,32 @@ export function PricingSection() {
 
   const tiers: Tier[] = [
     {
-      name: "Pro",
+      name: "Pro Intro",
       price: "$39",
-      trial: "3-day free trial",
-      buttonText: "Start Free Trial",
+      trial: "30-day access to all AI employees",
+      buttonText: "Start 30-Day Intro",
       features: [
-        "10 AI Employees",
+        "30 days access to ALL AI employees",
         "Claude 3.5 Sonnet model included",
         "Advanced Analytics Dashboard",
         "Priority Support",
-        "Custom Integrations",
-        "Unlimited script generation",
-        "Website scraping & analysis",
+        "After 30 days: subscribe to employees you want",
+        "No commitment - cancel anytime",
       ],
       tier: "pro",
     },
     {
-      name: "Enterprise",
+      name: "Enterprise Intro",
       price: "$79",
-      buttonText: "Subscribe",
+      trial: "30-day access to all AI employees",
+      buttonText: "Start 30-Day Intro",
       features: [
-        "Unlimited AI Employees",
-        "Claude Sonnet 4.5 model included",
+        "30 days access to ALL AI employees",
+        "Claude Sonnet 4.5 model (most powerful)",
         "Dedicated Account Manager",
         "24/7 Premium Support",
         "Advanced API Access",
-        "Custom AI model training",
-        "White-label options",
-        "SLA guarantees",
+        "After 30 days: subscribe to employees you want",
       ],
       tier: "enterprise",
     },
@@ -94,9 +92,14 @@ export function PricingSection() {
   return (
     <section className="py-12 md:py-20">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-8">
-          Pricing
-        </h2>
+        <div className="text-center mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold mb-2">
+            Start with 30-Day Intro Access
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Try ALL AI employees for 30 days. After your intro period, subscribe only to the employees you want to keep at their individual prices.
+          </p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {tiers.map((tier) => (
             <Card key={tier.name} className="flex flex-col">

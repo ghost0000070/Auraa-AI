@@ -83,10 +83,21 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ALTER TABLE public.agent_tasks 
   ADD COLUMN IF NOT EXISTS action VARCHAR(255);
 
--- Backfill action from task_type if null
-UPDATE public.agent_tasks 
-SET action = task_type 
-WHERE action IS NULL AND task_type IS NOT NULL;
+-- Backfill action from task_type if it exists and action is null
+-- Using DO block to check if column exists first
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'agent_tasks' 
+    AND column_name = 'task_type'
+  ) THEN
+    UPDATE public.agent_tasks 
+    SET action = task_type 
+    WHERE action IS NULL AND task_type IS NOT NULL;
+  END IF;
+END $$;
 
 -- =====================================================
 -- Add missing index for action column
