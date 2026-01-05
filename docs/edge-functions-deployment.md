@@ -41,8 +41,8 @@ Before deploying, set the required secrets:
 supabase secrets set POLAR_WEBHOOK_SECRET="your_webhook_secret"
 supabase secrets set POLAR_ACCESS_TOKEN="your_access_token"
 supabase secrets set POLAR_ORGANIZATION_ID="your_org_id"
-supabase secrets set POLAR_PRO_PRODUCT_ID="your_pro_product_id"
-supabase secrets set POLAR_ENTERPRISE_PRODUCT_ID="your_enterprise_product_id"
+supabase secrets set POLAR_PRO_PRODUCT_ID="5b17226c-d73a-466e-88f1-d6a2662468be"
+supabase secrets set POLAR_ENTERPRISE_PRODUCT_ID="a9b9d4de-bdb1-4c75-bb41-a0f39c1888ea"
 
 # RSA Encryption Keys (for secure credential storage)
 supabase secrets set INTEGRATION_RSA_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----
