@@ -59,28 +59,28 @@ export function PricingSection() {
   const tiers: Tier[] = [
     {
       name: "Pro",
-      price: "$50",
+      price: "$39",
       trial: "3-day free trial",
       buttonText: "Start Free Trial",
       features: [
         "10 AI Employees",
+        "Claude 3.5 Sonnet model included",
         "Advanced Analytics Dashboard",
         "Priority Support",
         "Custom Integrations",
         "Unlimited script generation",
         "Website scraping & analysis",
-        "Business intelligence tools",
       ],
       tier: "pro",
     },
     {
       name: "Enterprise",
-      price: "$99",
+      price: "$79",
       buttonText: "Subscribe",
       features: [
         "Unlimited AI Employees",
+        "Claude Sonnet 4.5 model included",
         "Dedicated Account Manager",
-        "On-premise Deployment Option",
         "24/7 Premium Support",
         "Advanced API Access",
         "Custom AI model training",

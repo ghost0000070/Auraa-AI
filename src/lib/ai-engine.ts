@@ -1,10 +1,37 @@
 import type { PuterChatResponse } from "../types/puter";
 import { toast } from "sonner";
-import { AI_MODELS } from '@/config/constants';
+import { AI_MODELS, TIER_MODELS } from '@/config/constants';
 import { supabase } from '../supabase';
 
 // Use centralized model constants - Claude models via Puter.js (FREE)
 const MODELS = AI_MODELS;
+
+/**
+ * Get the Claude model based on user's subscription tier
+ * Free: Claude 3 Haiku (fast, basic)
+ * Pro: Claude 3.5 Sonnet (balanced, powerful)
+ * Enterprise: Claude Sonnet 4.5 (latest, most capable)
+ */
+export function getModelForTier(tier: string | null | undefined): string {
+    const normalizedTier = (tier || 'free').toLowerCase();
+    return TIER_MODELS[normalizedTier as keyof typeof TIER_MODELS] || TIER_MODELS.free;
+}
+
+/**
+ * Get user's subscription tier from Supabase
+ */
+export async function getUserTier(): Promise<string> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return 'free';
+    
+    const { data } = await supabase
+        .from('users')
+        .select('subscription_tier')
+        .eq('id', user.id)
+        .single();
+    
+    return data?.subscription_tier || 'free';
+}
 
 /**
  * Get the appropriate Claude model based on task category/complexity
@@ -257,6 +284,37 @@ Do not include markdown formatting around the JSON. Just the JSON.`;
     }
 }
 
+/**
+ * executeTaskWithTierModel - Execute task using user's subscription tier model
+ * Automatically detects user's tier and uses the appropriate Claude model:
+ * - Free: Claude 3 Haiku (basic)
+ * - Pro: Claude 3.5 Sonnet (balanced)
+ * - Enterprise: Claude Sonnet 4.5 (most capable)
+ */
+async function executeTaskWithTierModel(
+    taskName: string, 
+    data: unknown, 
+    context: string,
+    userTier?: string
+): Promise<{
+    success: boolean;
+    task?: string;
+    result?: unknown;
+    timestamp?: string;
+    provider?: string;
+    model?: string;
+    error?: string;
+}> {
+    // Get the tier if not provided
+    const tier = userTier || await getUserTier();
+    const model = getModelForTier(tier);
+    
+    console.log(`🎯 Using tier-based model: ${model} for ${tier} tier user`);
+    
+    const result = await executeTask(taskName, data, context, model);
+    return { ...result, model };
+}
+
 // --- Public API ---
 
 export const AIEngine = {
@@ -338,5 +396,17 @@ export const AIEngine = {
         
     // Add generic fallback for others
     runGenericTask: async (taskName: string, data: unknown) =>
-        executeTask(taskName, data, "Perform the requested task to the best of your ability.", MODELS.STANDARD)
+        executeTask(taskName, data, "Perform the requested task to the best of your ability.", MODELS.STANDARD),
+    
+    // 5. Tier-Aware Methods (use user's subscription model automatically)
+    runTaskWithTierModel: executeTaskWithTierModel,
+    
+    // Get user's tier-based model for display/info
+    getModelForUserTier: async () => {
+        const tier = await getUserTier();
+        return { tier, model: getModelForTier(tier) };
+    }
 };
+
+// Export utility functions for external use
+export { getModelForTier, getUserTier, executeTaskWithTierModel };

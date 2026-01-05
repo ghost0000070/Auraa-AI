@@ -33,6 +33,23 @@ export const AI_MODELS = {
   ANALYTICAL: 'claude-opus-4-5-20251101',
 } as const;
 
+// Model assigned per subscription tier (included with subscription)
+export const TIER_MODELS: Record<string, string> = {
+  free: 'claude-3-haiku-20240307',           // Fast, basic tasks
+  pro: 'claude-3-5-sonnet-20241022',         // Balanced, most business tasks
+  enterprise: 'claude-sonnet-4-5-20250929',  // Latest & most capable
+  admin: 'claude-opus-4-5-20251101',         // Full access
+  owner: 'claude-opus-4-5-20251101',         // Full access
+};
+
+// Subscription pricing (monthly)
+export const SUBSCRIPTION_PRICING = {
+  pro: 39,
+  enterprise: 79,
+  competitor_pro_avg: 59,      // Average competitor price
+  competitor_enterprise_avg: 199,
+};
+
 // Rate Limiting Configuration
 export const RATE_LIMIT = {
   MAX_REQUESTS_PER_MINUTE: parseInt(import.meta.env.VITE_API_RATE_LIMIT || '100'),
