@@ -1,5 +1,7 @@
-// Agent Run Edge Function - v2.0 with OpenAI/Anthropic fallback
-// Updated: 2026-01-04
+// Agent Run Edge Function - v3.0 with Anthropic emergency fallback only
+// Updated: 2026-01-05
+// Primary AI: Puter.js (free, client-side) - uses Claude models
+// Fallback: Anthropic API (emergency only, requires billing)
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -8,8 +10,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// AI API endpoints
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
+// Anthropic API endpoint (emergency fallback only)
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages'
 
 interface TaskPayload {
@@ -30,59 +31,20 @@ interface ActionResult {
   provider?: string
 }
 
-// Execute an action using OpenAI API
-async function executeOpenAIAction(action: string, params: Record<string, unknown>, context: string): Promise<ActionResult> {
-  const startTime = Date.now()
-  const apiKey = Deno.env.get('OPENAI_API_KEY')
-  
-  console.log('OpenAI API key present:', !!apiKey, 'length:', apiKey?.length || 0)
-  
-  if (!apiKey) {
-    return { success: false, error: 'OpenAI API key not configured', executionTimeMs: Date.now() - startTime }
-  }
-  
-  try {
-    const prompt = buildPrompt(action, params, context)
-
-    const response = await fetch(OPENAI_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 2000,
-      })
-    })
-
-    if (!response.ok) {
-      const errorBody = await response.text()
-      throw new Error(`OpenAI API error: ${response.status} - ${errorBody.substring(0, 200)}`)
-    }
-
-    const data = await response.json()
-    const content = data.choices?.[0]?.message?.content
-
-    return parseAIResponse(content, startTime, 'openai')
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      executionTimeMs: Date.now() - startTime,
-      provider: 'openai'
-    }
-  }
-}
-
-// Execute an action using Anthropic API
+// Execute an action using Anthropic API (EMERGENCY FALLBACK ONLY)
+// Primary AI should be Puter.js on the frontend (free Claude access)
 async function executeAnthropicAction(action: string, params: Record<string, unknown>, context: string): Promise<ActionResult> {
   const startTime = Date.now()
   const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
   
+  console.log('Emergency Anthropic fallback triggered for action:', action)
+  
   if (!apiKey) {
-    return { success: false, error: 'Anthropic API key not configured', executionTimeMs: Date.now() - startTime }
+    return { 
+      success: false, 
+      error: 'Anthropic API key not configured. Use frontend Puter.js for free AI.', 
+      executionTimeMs: Date.now() - startTime 
+    }
   }
   
   try {
@@ -96,6 +58,7 @@ async function executeAnthropicAction(action: string, params: Record<string, unk
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
+        // Use claude-3-haiku for emergency fallback (fast and cost-effective)
         model: 'claude-3-haiku-20240307',
         max_tokens: 2000,
         messages: [{ role: 'user', content: prompt }],
@@ -110,13 +73,13 @@ async function executeAnthropicAction(action: string, params: Record<string, unk
     const data = await response.json()
     const content = data.content?.[0]?.text
 
-    return parseAIResponse(content, startTime, 'anthropic')
+    return parseAIResponse(content, startTime, 'anthropic-emergency')
   } catch (error) {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
       executionTimeMs: Date.now() - startTime,
-      provider: 'anthropic'
+      provider: 'anthropic-emergency'
     }
   }
 }
@@ -157,42 +120,38 @@ function parseAIResponse(content: string, startTime: number, provider: string): 
   }
 }
 
-// Execute AI action with fallback chain: OpenAI -> Anthropic -> Error
+// Execute AI action - EMERGENCY ANTHROPIC FALLBACK ONLY
+// Primary AI: Puter.js on frontend (free Claude models)
+// This function is only called when frontend Puter.js is unavailable
 async function executeAIAction(action: string, params: Record<string, unknown>, context: string): Promise<ActionResult> {
-  // Try OpenAI first
-  const openaiResult = await executeOpenAIAction(action, params, context)
-  console.log('OpenAI result:', JSON.stringify(openaiResult))
-  if (openaiResult.success) {
-    return openaiResult
-  }
+  console.log('⚠️ Emergency AI fallback triggered - Puter.js unavailable')
   
-  // Fallback to Anthropic
+  // Use Anthropic as emergency fallback
   const anthropicResult = await executeAnthropicAction(action, params, context)
-  console.log('Anthropic result:', JSON.stringify(anthropicResult))
+  
   if (anthropicResult.success) {
     return anthropicResult
   }
   
-  // Both failed - check if it's a billing issue
+  // Check if it's a billing issue
   const isBillingIssue = 
-    openaiResult.error?.includes('quota') || 
-    openaiResult.error?.includes('429') ||
     anthropicResult.error?.includes('credit balance') ||
-    anthropicResult.error?.includes('billing')
+    anthropicResult.error?.includes('billing') ||
+    anthropicResult.error?.includes('400')
   
   if (isBillingIssue) {
     return {
       success: false,
-      error: 'AI backend billing required. Please use the app frontend for free AI via Puter.js, or add billing to OpenAI/Anthropic.',
-      executionTimeMs: (openaiResult.executionTimeMs || 0) + (anthropicResult.executionTimeMs || 0)
+      error: 'Emergency AI fallback requires Anthropic billing. Please use the app frontend for free AI via Puter.js.',
+      executionTimeMs: anthropicResult.executionTimeMs || 0
     }
   }
   
-  // Return detailed error for other issues
+  // Return the error
   return {
     success: false,
-    error: `AI providers failed. OpenAI: ${openaiResult.error}. Anthropic: ${anthropicResult.error}`,
-    executionTimeMs: (openaiResult.executionTimeMs || 0) + (anthropicResult.executionTimeMs || 0)
+    error: `Emergency AI fallback failed: ${anthropicResult.error}. Use frontend for free Puter.js AI.`,
+    executionTimeMs: anthropicResult.executionTimeMs || 0
   }
 }
 
@@ -242,13 +201,13 @@ serve(async (req) => {
   // Debug endpoint to check env vars
   const url = new URL(req.url)
   if (url.searchParams.get('debug') === 'env') {
-    const openaiKey = Deno.env.get('OPENAI_API_KEY')
     const anthropicKey = Deno.env.get('ANTHROPIC_API_KEY')
     return new Response(JSON.stringify({
-      openai_configured: !!openaiKey,
-      openai_key_length: openaiKey?.length || 0,
+      primary_ai: 'Puter.js (free Claude models on frontend)',
+      emergency_fallback: 'Anthropic API',
       anthropic_configured: !!anthropicKey,
       anthropic_key_length: anthropicKey?.length || 0,
+      note: 'Use frontend for free AI. This fallback is for emergencies only.',
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 

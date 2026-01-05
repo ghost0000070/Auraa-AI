@@ -18,11 +18,19 @@ export const TIER_LEVELS: Record<string, number> = {
   owner: 999,
 };
 
-// AI Models
+// AI Models - Claude models via Puter.js (free)
+// See https://puter.com/puterai/chat/models for full list
 export const AI_MODELS = {
-  COMPLEX: 'claude-opus-4-1',
-  STANDARD: 'claude-sonnet-4-5',
-  FAST: 'claude-haiku-4-5',
+  // For complex reasoning, analysis, and strategic tasks
+  COMPLEX: 'claude-opus-4-5-20251101',
+  // For standard tasks - balanced speed and quality
+  STANDARD: 'claude-sonnet-4-5-20250929',
+  // For fast, simple tasks - quick responses
+  FAST: 'claude-haiku-4-5-20251001',
+  // Specialized models for specific use cases
+  CODING: 'claude-sonnet-4-5-20250929',
+  CREATIVE: 'claude-opus-4-5-20251101',
+  ANALYTICAL: 'claude-opus-4-5-20251101',
 } as const;
 
 // Rate Limiting Configuration

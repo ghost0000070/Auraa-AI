@@ -3,16 +3,58 @@ import { toast } from "sonner";
 import { AI_MODELS } from '@/config/constants';
 import { supabase } from '../supabase';
 
-// Use centralized model constants
+// Use centralized model constants - Claude models via Puter.js (FREE)
 const MODELS = AI_MODELS;
 
 /**
- * callPuterAI - Primary Strategy (Free Client-Side AI)
+ * Get the appropriate Claude model based on task category/complexity
+ * All models are free via Puter.js
+ */
+export function getModelForCategory(category: string): string {
+    switch (category.toLowerCase()) {
+        // Complex reasoning and strategic tasks - use Opus
+        case 'strategy':
+        case 'analytics':
+        case 'business intelligence':
+        case 'executive':
+            return MODELS.COMPLEX;
+        
+        // Creative and content tasks - use Opus for quality
+        case 'marketing':
+        case 'content':
+        case 'creative':
+            return MODELS.CREATIVE;
+        
+        // Technical and coding tasks - use Sonnet for balanced performance
+        case 'engineering':
+        case 'development':
+        case 'technical':
+        case 'coding':
+            return MODELS.CODING;
+        
+        // Fast, simple tasks - use Haiku for speed
+        case 'support':
+        case 'customer service':
+        case 'quick response':
+            return MODELS.FAST;
+        
+        // Default to Sonnet for balanced performance
+        default:
+            return MODELS.STANDARD;
+    }
+}
+
+/**
+ * callPuterAI - Primary Strategy (Free Client-Side AI via Claude)
+ * Uses Puter.js to access Claude models for free
+ * Models: claude-opus (complex), claude-sonnet (standard), claude-haiku (fast)
  */
 async function callPuterAI(prompt: string, systemContext: string, model: string = MODELS.STANDARD): Promise<string> {
     if (typeof window === 'undefined' || !window.puter) {
         throw new Error("Puter.js not loaded or available");
     }
+
+    console.log(`🤖 Using Claude model via Puter.js: ${model}`);
 
     const fullPrompt = `
         System Context: ${systemContext}
@@ -40,11 +82,12 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
 }
 
 /**
- * callCloudFallback - Fallback Strategy (Supabase Edge Functions)
- * Uses the agent-run edge function with Puter's free Claude API
+ * callCloudFallback - EMERGENCY Fallback (Anthropic API via Edge Function)
+ * Only used when Puter.js is unavailable - requires Anthropic billing
+ * Primary AI should always be Puter.js (free Claude access)
  */
 async function callCloudFallback(taskName: string, data: unknown, context?: string): Promise<string> {
-    console.log(`⚠️ Puter AI failed. Trying cloud fallback for ${taskName}`);
+    console.log(`⚠️ EMERGENCY: Puter AI unavailable. Using Anthropic fallback for ${taskName}`);
     
     // Get current user
     const { data: { user } } = await supabase.auth.getUser();
