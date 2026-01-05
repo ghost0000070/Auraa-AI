@@ -40,7 +40,7 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
 
     try {
       // Create deployment request directly in Supabase
-      const { error } = await supabase
+      const { data: deploymentRequest, error } = await supabase
         .from('deployment_requests')
         .insert({
           user_id: user.id,
@@ -54,16 +54,34 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
 
       if (error) throw error;
 
+      // Call the deploy-ai-employee edge function to actually process the deployment
+      const { data: deployResult, error: deployError } = await supabase.functions.invoke('deploy-ai-employee', {
+        body: {
+          requestId: deploymentRequest.id,
+          userId: user.id,
+        },
+      });
+
+      if (deployError) {
+        console.error("Deployment function error:", deployError);
+        // Update request status to failed
+        await supabase
+          .from('deployment_requests')
+          .update({ status: 'failed' })
+          .eq('id', deploymentRequest.id);
+        throw new Error(deployError.message || 'Failed to deploy AI employee');
+      }
+
       toast({
         title: "Deployment Successful",
-        description: `${template.name} deployment request has been submitted.`,
+        description: `${template.name} has been deployed and is ready to work!`,
       });
       setIsDeployed(true);
     } catch (error) {
       console.error("Error deploying AI employee: ", error);
       toast({
         title: "Deployment Error",
-        description: "There was an error deploying the AI employee.",
+        description: error instanceof Error ? error.message : "There was an error deploying the AI employee.",
         variant: "destructive",
       });
     }
@@ -87,7 +105,7 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
             ) : (
               <Zap className="mr-2 h-4 w-4" />
             )}
-            {isDeployed ? 'Deployed' : 'Deploy'}
+            {isLoading ? 'Deploying...' : isDeployed ? 'Deployed' : 'Deploy'}
           </Button>
         </div>
       </CardContent>

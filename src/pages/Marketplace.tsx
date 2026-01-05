@@ -3,11 +3,33 @@ import React from 'react';
 import { aiEmployeeTemplates } from '@/lib/ai-employee-templates.tsx';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 
 const Marketplace: React.FC = () => {
+  const navigate = useNavigate();
+  const { user, isSubscriber } = useAuth();
+
+  const handleDeploy = (templateId: string, templateName: string) => {
+    if (!user) {
+      toast.error('Please sign in to deploy AI employees');
+      navigate('/auth');
+      return;
+    }
+    if (!isSubscriber) {
+      toast.error('Subscription required to deploy AI employees');
+      navigate('/pricing');
+      return;
+    }
+    // Navigate to AI employees page to use the deployment card
+    navigate('/ai-employees');
+  };
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-8">AI Employee Marketplace</h1>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {aiEmployeeTemplates.map((template) => (
           <Card key={template.id}>
@@ -33,7 +55,7 @@ const Marketplace: React.FC = () => {
               </div>
               <div className="flex justify-between items-center">
                 <p className="text-lg font-bold">${template.monthlyCost}/mo</p>
-                <Button>Deploy</Button>
+                <Button onClick={() => handleDeploy(template.id, template.name)}>Deploy</Button>
               </div>
             </CardContent>
           </Card>

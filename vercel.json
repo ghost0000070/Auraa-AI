@@ -1,11 +1,28 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
   "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    },
     {
       "source": "/assets/(.*)",
       "headers": [
@@ -23,6 +40,7 @@
     "VITE_OWNER_EMAIL": "@owner-email",
     "VITE_OWNER_UID": "@owner-uid",
     "VITE_ENABLE_ANALYTICS": "true",
-    "VITE_API_RATE_LIMIT": "100"
+    "VITE_API_RATE_LIMIT": "100",
+    "ANTHROPIC_API_KEY": "@anthropic-api-key"
   }
 }

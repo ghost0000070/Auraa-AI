@@ -82,12 +82,48 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
 }
 
 /**
+ * callVercelAIGateway - Secondary Strategy (Vercel AI Gateway with caching & observability)
+ * Uses Vercel AI SDK to call Anthropic with built-in caching and monitoring
+ * Fallback when Puter.js is unavailable
+ */
+async function callVercelAIGateway(prompt: string, systemContext: string, category: string = 'default'): Promise<string> {
+    console.log(`🌐 Using Vercel AI Gateway for category: ${category}`);
+    
+    const response = await fetch('/api/ai/generate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            prompt,
+            systemPrompt: systemContext,
+            category,
+            maxTokens: 4096,
+        }),
+    });
+
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(error.error || `Vercel AI Gateway failed: ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    if (!result.text) {
+        throw new Error('Empty response from Vercel AI Gateway');
+    }
+    
+    console.log(`✅ Vercel AI Gateway response (model: ${result.model}, tokens: ${result.usage?.totalTokens})`);
+    return result.text;
+}
+
+/**
  * callCloudFallback - EMERGENCY Fallback (Anthropic API via Edge Function)
- * Only used when Puter.js is unavailable - requires Anthropic billing
+ * Only used when both Puter.js AND Vercel AI Gateway are unavailable
  * Primary AI should always be Puter.js (free Claude access)
  */
 async function callCloudFallback(taskName: string, data: unknown, context?: string): Promise<string> {
-    console.log(`⚠️ EMERGENCY: Puter AI unavailable. Using Anthropic fallback for ${taskName}`);
+    console.log(`🚨 EMERGENCY: All primary providers unavailable. Using Supabase fallback for ${taskName}`);
     
     // Get current user
     const { data: { user } } = await supabase.auth.getUser();
@@ -146,7 +182,7 @@ Return a valid JSON object with your. analysis, results, and any generated conte
 Do not include markdown formatting around the JSON. Just the JSON.`;
 
     try {
-        // 1. Try Puter (Primary)
+        // 1. Try Puter (Primary - FREE)
         const result = await callPuterAI(prompt, system, model);
         
         // Parse Result
@@ -164,30 +200,59 @@ Do not include markdown formatting around the JSON. Just the JSON.`;
         };
 
     } catch (puterError: unknown) {
-        // 2. Fallback to Cloud
+        console.warn(`⚠️ Puter AI failed, trying Vercel AI Gateway...`, puterError);
+        
+        // 2. Try Vercel AI Gateway (Secondary - Cached & Observable)
         try {
-            const fallbackResult = await callCloudFallback(taskName, data, context);
+            // Determine category from model for proper routing
+            const category = model === MODELS.COMPLEX ? 'strategy' 
+                           : model === MODELS.FAST ? 'support' 
+                           : 'default';
             
-            // Parse Fallback Result
+            const vercelResult = await callVercelAIGateway(prompt, system, category);
+            
+            // Parse Result
             let parsedResult: unknown;
-            try { parsedResult = JSON.parse(fallbackResult); } 
-            catch (e) { parsedResult = { text_output: fallbackResult, raw_format: true }; }
+            try { parsedResult = JSON.parse(vercelResult); } 
+            catch (e) { parsedResult = { text_output: vercelResult, raw_format: true }; }
 
-            toast.success(`${taskName} completed (via Cloud Fallback)`, { id: toastId });
+            toast.success(`${taskName} completed (via Vercel AI)`, { id: toastId });
             return {
                 success: true,
                 task: taskName,
                 result: parsedResult,
                 timestamp: new Date().toISOString(),
-                provider: "cloud-fallback"
+                provider: "vercel-ai-gateway"
             };
-        } catch (cloudError: unknown) {
-             console.error(`Failed to execute ${taskName} on both providers.`, { puterError, cloudError });
-             toast.error(`Failed to execute ${taskName}`, { id: toastId });
-             return {
-                success: false,
-                error: cloudError instanceof Error ? cloudError.message : String(cloudError),
-             };
+
+        } catch (vercelError: unknown) {
+            console.warn(`⚠️ Vercel AI Gateway failed, trying emergency fallback...`, vercelError);
+            
+            // 3. Emergency Fallback to Supabase Edge Function
+            try {
+                const fallbackResult = await callCloudFallback(taskName, data, context);
+                
+                // Parse Fallback Result
+                let parsedResult: unknown;
+                try { parsedResult = JSON.parse(fallbackResult); } 
+                catch (e) { parsedResult = { text_output: fallbackResult, raw_format: true }; }
+
+                toast.success(`${taskName} completed (via Cloud Fallback)`, { id: toastId });
+                return {
+                    success: true,
+                    task: taskName,
+                    result: parsedResult,
+                    timestamp: new Date().toISOString(),
+                    provider: "cloud-fallback"
+                };
+            } catch (cloudError: unknown) {
+                console.error(`❌ Failed to execute ${taskName} on all providers.`, { puterError, vercelError, cloudError });
+                toast.error(`Failed to execute ${taskName}`, { id: toastId });
+                return {
+                    success: false,
+                    error: cloudError instanceof Error ? cloudError.message : String(cloudError),
+                };
+            }
         }
     }
 }

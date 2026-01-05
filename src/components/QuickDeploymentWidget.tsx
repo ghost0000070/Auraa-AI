@@ -6,11 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/toast-hooks';
 import { supabase } from '@/supabase';
 import { Rocket, Loader2, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
-
-interface EmployeeTemplate {
-  id: string;
-  name: string;
-}
+import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
+import { useNavigate } from 'react-router-dom';
 
 interface DeploymentRequest {
   id: string;
@@ -20,28 +17,14 @@ interface DeploymentRequest {
 }
 
 export const QuickDeploymentWidget: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isSubscriber } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<string | null>(null);
-  const [templates, setTemplates] = useState<EmployeeTemplate[]>([]);
   const [recentRequests, setRecentRequests] = useState<DeploymentRequest[]>([]);
 
-  const fetchTemplates = useCallback(async () => {
-    try {
-      const { data, error } = await supabase
-        .from('ai_employees')
-        .select('id, name, category')
-        .limit(10);
-      
-      if (error) throw error;
-      if (data) {
-        setTemplates(data.map(t => ({ id: t.id, name: t.name, category: t.category })));
-      }
-    } catch (error) {
-      console.error('Error fetching templates:', error);
-      toast({ title: "Error", description: "Could not fetch employee templates.", variant: "destructive" });
-    }
-  }, [toast]);
+  // Use local templates directly - get first 4 for quick deploy
+  const quickTemplates = aiEmployeeTemplates.slice(0, 4);
 
   const fetchRecentRequests = useCallback(async () => {
     if (!user) return;
@@ -68,13 +51,19 @@ export const QuickDeploymentWidget: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    fetchTemplates();
     fetchRecentRequests();
-  }, [fetchTemplates, fetchRecentRequests]);
+  }, [fetchRecentRequests]);
 
-  const handleQuickDeploy = async (template: EmployeeTemplate) => {
+  const handleQuickDeploy = async (template: typeof aiEmployeeTemplates[0]) => {
     if (!user) {
-      toast({ title: "Authentication Error", description: "You must be logged in to deploy.", variant: "destructive" });
+      toast({ title: "Authentication Required", description: "Please sign in to deploy AI employees.", variant: "destructive" });
+      navigate('/auth');
+      return;
+    }
+
+    if (!isSubscriber) {
+      toast({ title: "Subscription Required", description: "Upgrade to deploy AI employees.", variant: "destructive" });
+      navigate('/pricing');
       return;
     }
 
@@ -109,7 +98,7 @@ export const QuickDeploymentWidget: React.FC = () => {
 
         toast({ 
           title: "Deployment Started", 
-          description: `${template.name} is being deployed automatically.` 
+          description: `${template.name} is being deployed.` 
         });
         
     } catch (error) {
@@ -121,20 +110,19 @@ export const QuickDeploymentWidget: React.FC = () => {
       });
     } finally {
       setIsLoading(null);
-      await fetchRecentRequests(); // Refresh recent requests list
+      await fetchRecentRequests();
     }
   };
 
   const getStatusIcon = (status: string) => {
     const icons: Record<string, React.ReactElement> = {
       pending: <Clock className="w-4 h-4 text-amber-500" />,
+      processing: <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />,
       completed: <CheckCircle className="w-4 h-4 text-green-500" />,
       failed: <AlertTriangle className="w-4 h-4 text-red-500" />,
     };
     return icons[status] || <Clock className="w-4 h-4 text-muted-foreground" />;
   };
-  
-  const recommendedTemplates = templates.filter(t => ['Viral Vortex', 'Deal Striker', 'Word Smith', 'Support Sentinel'].includes(t.name));
 
   return (
     <Card className="bg-slate-800/50 border-slate-700/50">
@@ -146,7 +134,7 @@ export const QuickDeploymentWidget: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-2">
-          {recommendedTemplates.length > 0 ? recommendedTemplates.map((template) => (
+          {quickTemplates.map((template) => (
             <Button
               key={template.id}
               onClick={() => handleQuickDeploy(template)}
@@ -158,12 +146,21 @@ export const QuickDeploymentWidget: React.FC = () => {
               {isLoading === template.name ? <Loader2 className="w-4 h-4 animate-spin" /> : <Rocket className="w-3 h-3 mr-1" />}
               {template.name}
             </Button>
-          )) : <p className='text-xs text-center col-span-2'>Loading templates...</p>}
+          ))}
         </div>
+
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="w-full text-xs"
+          onClick={() => navigate('/marketplace')}
+        >
+          View All Templates →
+        </Button>
 
         {recentRequests.length > 0 && (
           <div className="space-y-2">
-            <p className="text-sm font-medium">Recent Requests:</p>
+            <p className="text-sm font-medium">Recent Deployments:</p>
             {recentRequests.map((request) => (
               <div key={request.id} className="flex items-center justify-between text-xs bg-slate-900/30 p-2 rounded">
                 <span className="truncate pr-2">{request.employeeName}</span>
@@ -181,3 +178,5 @@ export const QuickDeploymentWidget: React.FC = () => {
     </Card>
   );
 };
+
+export default QuickDeploymentWidget;

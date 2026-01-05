@@ -44,16 +44,9 @@ serve(async (req) => {
       .update({ status: 'processing' })
       .eq('id', requestId)
 
-    // Fetch the employee template
-    const { data: template, error: templateError } = await supabase
-      .from('ai_employees')
-      .select('*')
-      .eq('id', request.template_id)
-      .single()
-
-    if (templateError || !template) {
-      throw new Error('Employee template not found')
-    }
+    // Template info comes from the deployment request itself
+    // The template_id is the string ID from the frontend templates (e.g., "marketing-pro")
+    const templateId = request.template_id
 
     // Fetch user's business profile for context
     const { data: profile } = await supabase
@@ -64,8 +57,8 @@ serve(async (req) => {
 
     const deploymentConfig = {
       name: request.employee_name,
-      category: request.employee_category || template.category,
-      capabilities: template.capabilities,
+      category: request.employee_category,
+      templateId: templateId,
       businessContext: profile?.business_name || '',
       industry: profile?.industry || '',
       deployedAt: new Date().toISOString(),
@@ -95,7 +88,7 @@ serve(async (req) => {
                 content: `Create a deployment plan for an AI employee:
                 Name: ${deploymentConfig.name}
                 Category: ${deploymentConfig.category}
-                Capabilities: ${JSON.stringify(deploymentConfig.capabilities)}
+                Template: ${deploymentConfig.templateId}
                 Business: ${deploymentConfig.businessContext}
                 Industry: ${deploymentConfig.industry}
                 
@@ -119,9 +112,9 @@ serve(async (req) => {
       .from('deployed_employees')
       .insert({
         user_id: userId,
-        template_id: template.id,
+        template_id: templateId,
         name: request.employee_name,
-        category: request.employee_category || template.category,
+        category: request.employee_category,
         status: 'active',
         configuration: deploymentConfig,
         deployment_plan: deploymentPlan,
