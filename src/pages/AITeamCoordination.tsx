@@ -28,9 +28,7 @@ interface TeamCommunication {
   sender_employee: string;
   recipient_employee: string | null;
   message_type: string;
-  subject: string | null;
   content: string;
-  metadata: Record<string, unknown> | null;
   is_read: boolean;
   created_at: string;
   user_id: string;
@@ -38,13 +36,15 @@ interface TeamCommunication {
 
 interface TeamExecution {
   id: string;
-  workflow_id: string | null;
+  workflow_name: string | null;
   status: string;
-  current_step: number | null;
+  steps: unknown[] | null;
+  results: unknown | null;
+  started_at: string | null;
+  completed_at: string | null;
   created_at: string;
   updated_at: string;
   user_id: string;
-  type: string | null;
 }
 
 const AITeamCoordination = () => {
@@ -58,7 +58,6 @@ const AITeamCoordination = () => {
   const [newMessage, setNewMessage] = useState({
     recipient_employee: '',
     message_type: 'update',
-    subject: '',
     content: ''
   });
 
@@ -158,9 +157,7 @@ const AITeamCoordination = () => {
         };
       } catch (error) {
         console.error('Error setting up subscriptions:', error);
-        toast('Error', {
-          description: 'Failed to load team coordination data'
-        });
+        toast.error('Failed to load team coordination data');
         setLoading(false);
         return () => {};
       }
@@ -175,7 +172,7 @@ const AITeamCoordination = () => {
 
   const sendMessage = async () => {
     if (!user || !newMessage.content.trim()) {
-        toast('Error', { description: 'Please enter a message' });
+        toast.error('Please enter a message');
         return;
     }
 
@@ -183,21 +180,22 @@ const AITeamCoordination = () => {
         const { error } = await supabase
           .from('ai_team_communications')
           .insert({
-            ...newMessage,
             sender_employee: 'User',
+            recipient_employee: newMessage.recipient_employee || null,
+            message_type: newMessage.message_type,
+            content: newMessage.content,
             user_id: user.id,
-            metadata: {},
             is_read: false,
           });
 
         if (error) throw error;
 
-        toast('Success', { description: 'Message sent successfully' });
-        setNewMessage({ recipient_employee: '', message_type: 'update', subject: '', content: '' });
+        toast.success('Message sent successfully');
+        setNewMessage({ recipient_employee: '', message_type: 'update', content: '' });
         setShowMessageDialog(false);
     } catch (error) {
         console.error('Error sending message:', error);
-        toast('Error', { description: 'Failed to send message' });
+        toast.error('Failed to send message');
     }
   };
 
@@ -311,14 +309,6 @@ const AITeamCoordination = () => {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Subject</label>
-                      <Input
-                        value={newMessage.subject}
-                        onChange={(e) => setNewMessage(prev => ({ ...prev, subject: e.target.value }))}
-                        placeholder="Message subject"
-                      />
-                    </div>
-                    <div>
                       <label className="block text-sm font-medium mb-2">Message</label>
                       <Textarea
                         value={newMessage.content}
@@ -408,9 +398,6 @@ const AITeamCoordination = () => {
                           </div>
                         </div>
                         
-                        {comm.subject && (
-                          <h4 className="font-medium text-sm mb-1">{comm.subject}</h4>
-                        )}
                         <p className="text-sm text-muted-foreground">{comm.content}</p>
                         
                         {!comm.is_read && (
