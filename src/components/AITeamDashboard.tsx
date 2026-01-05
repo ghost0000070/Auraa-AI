@@ -163,7 +163,12 @@ const AITeamDashboard: React.FC = () => {
             setCommunications(prev => [newComm, ...prev]);
             if (!newComm.is_read) {
               toast(`New Message from ${newComm.sender_employee}`, { description: newComm.content });
-              supabase.from('ai_team_communications').update({ is_read: true }).eq('id', newComm.id).then();
+              supabase.from('ai_team_communications')
+                .update({ is_read: true })
+                .eq('id', newComm.id)
+                .then(({ error }) => {
+                  if (error) console.error('Failed to mark message as read:', error);
+                });
             }
           } else if (payload.eventType === 'UPDATE') {
             setCommunications(prev => prev.map(c => c.id === payload.new.id ? payload.new as any : c));

@@ -91,14 +91,26 @@ const AIEmployeePage: React.FC = () => {
     setIsSaving(true);
     try {
       const parsedConfig = JSON.parse(configDraft); // Validate JSON
-      const employeeDocRef = doc(db, 'ai_employees', deployedEmployee.id);
-      await updateDoc(employeeDocRef, { deployment_config: parsedConfig });
+      
+      const { error } = await supabase
+        .from('deployed_employees')
+        .update({ deployment_config: parsedConfig })
+        .eq('id', deployedEmployee.id);
+
+      if (error) {
+        throw error;
+      }
 
       setDeployedEmployee(prev => prev ? { ...prev, deployment_config: parsedConfig } : null);
-      toast("Success", { description: "Configuration saved successfully." });
+      toast.success("Configuration saved successfully.");
       setIsSettingsOpen(false);
     } catch (error) {
-      toast("Invalid JSON", { description: "The configuration is not valid JSON." });
+      console.error("Error saving config:", error);
+      if (error instanceof SyntaxError) {
+        toast.error("The configuration is not valid JSON.");
+      } else {
+        toast.error("Failed to save configuration.");
+      }
     } finally {
       setIsSaving(false);
     }

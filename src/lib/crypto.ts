@@ -3,6 +3,7 @@
 // Public key is fetched via edge function `integration-public-key` returning PEM.
 
 const TEXT_ENCODER = new TextEncoder();
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 
 export interface EncryptedEnvelope {
   version: 1;
@@ -42,7 +43,8 @@ export async function fetchIntegrationPublicKey(): Promise<string> {
   if (__integrationPublicKey) return __integrationPublicKey;
   const fallback = (import.meta as { env?: { VITE_INTEGRATION_RSA_PUBLIC_KEY?: string } })?.env?.VITE_INTEGRATION_RSA_PUBLIC_KEY;
   try {
-    const res = await fetch('/functions/v1/integration-public-key');
+    const functionUrl = `${SUPABASE_URL}/functions/v1/integration-public-key`;
+    const res = await fetch(functionUrl);
     if (res.ok) {
       const data = await res.json();
       if (data.publicKey) {
@@ -51,6 +53,7 @@ export async function fetchIntegrationPublicKey(): Promise<string> {
       }
     }
   } catch (e) {
+    console.warn('Failed to fetch integration public key:', e);
     if (!fallback) throw new Error('Failed to fetch integration public key and no fallback provided');
   }
   if (fallback) {

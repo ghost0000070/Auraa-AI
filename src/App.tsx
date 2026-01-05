@@ -1,12 +1,12 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './hooks/useAuth.tsx';
+import { AuthProvider } from './hooks/useAuth';
 import { Toaster } from '@/components/ui/sonner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import ErrorBoundary from './components/ErrorBoundary.tsx';
-import NotFound from './components/NotFound.tsx';
+import ErrorBoundary from './components/ErrorBoundary';
+import NotFound from './components/NotFound';
 
 const Index = lazy(() => import('./pages/Index'));
 const Auth = lazy(() => import('./pages/Auth'));
@@ -30,6 +30,7 @@ const Careers = lazy(() => import('./pages/Careers'));
 const Status = lazy(() => import('./pages/Status'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 
 const App: React.FC = () => {
   return (
@@ -50,6 +51,7 @@ const App: React.FC = () => {
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/pricing" element={<PricingPage />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/help" element={<Help />} />

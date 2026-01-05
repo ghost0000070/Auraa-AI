@@ -287,12 +287,16 @@ async function actionAnalyzeData(payload: Record<string, unknown>): Promise<Acti
 
   const prompt = `Analyze the following data. Analysis type: ${analysisType}\n\nData:\n${JSON.stringify(data, null, 2)}\n\nProvide a structured analysis in JSON format.`;
 
-  const response = await fetch('https://api.puter.com/ai/chat', {
+  const response = await fetch('https://api.puter.com/drivers/call', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'claude-3-5-sonnet',
-      messages: [{ role: 'user', content: prompt }],
+      interface: 'puter-chat-completion',
+      driver: 'claude-sonnet-4-5',
+      method: 'complete',
+      args: {
+        messages: [{ role: 'user', content: prompt }],
+      }
     }),
   });
 
@@ -305,7 +309,7 @@ async function actionAnalyzeData(payload: Record<string, unknown>): Promise<Acti
   }
 
   const result = await response.json();
-  const content = result.message?.content?.[0]?.text || result.choices?.[0]?.message?.content;
+  const content = result.message?.content?.[0]?.text || result.result;
 
   return {
     success: true,
@@ -322,12 +326,16 @@ async function actionGenerateContent(payload: Record<string, unknown>): Promise<
 
   const fullPrompt = `Generate ${contentType} content based on the following prompt:\n\n${prompt}`;
 
-  const response = await fetch('https://api.puter.com/ai/chat', {
+  const response = await fetch('https://api.puter.com/drivers/call', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'claude-3-5-sonnet',
-      messages: [{ role: 'user', content: fullPrompt }],
+      interface: 'puter-chat-completion',
+      driver: 'claude-sonnet-4-5',
+      method: 'complete',
+      args: {
+        messages: [{ role: 'user', content: fullPrompt }],
+      }
     }),
   });
 
@@ -340,7 +348,7 @@ async function actionGenerateContent(payload: Record<string, unknown>): Promise<
   }
 
   const result = await response.json();
-  const content = result.message?.content?.[0]?.text || result.choices?.[0]?.message?.content;
+  const content = result.message?.content?.[0]?.text || result.result;
 
   return {
     success: true,
