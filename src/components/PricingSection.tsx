@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Loader2 } from "lucide-react";
-import { useToast } from "@/components/ui/toast-hooks";
+import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -19,7 +19,6 @@ interface Tier {
 export function PricingSection() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState<string | null>(null);
 
   const handleSubscribe = async (tier: Tier) => {
@@ -51,11 +50,7 @@ export function PricingSection() {
 
     } catch (error) {
       console.error("Error creating checkout session:", error);
-      toast({
-        title: "Error",
-        description: (error as Error).message || "Could not create a checkout session.",
-        variant: "destructive",
-      });
+      toast.error((error as Error).message || "Could not create a checkout session.");
     } finally {
       setIsLoading(null);
     }

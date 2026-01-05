@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/toast-hooks';
+import { toast } from 'sonner';
 import { supabase } from '@/supabase';
 import { Rocket, Loader2, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
@@ -18,7 +18,6 @@ interface DeploymentRequest {
 
 export const QuickDeploymentWidget: React.FC = () => {
   const { user, isSubscriber } = useAuth();
-  const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [recentRequests, setRecentRequests] = useState<DeploymentRequest[]>([]);
@@ -56,13 +55,13 @@ export const QuickDeploymentWidget: React.FC = () => {
 
   const handleQuickDeploy = async (template: typeof aiEmployeeTemplates[0]) => {
     if (!user) {
-      toast({ title: "Authentication Required", description: "Please sign in to deploy AI employees.", variant: "destructive" });
+      toast.error("Please sign in to deploy AI employees.");
       navigate('/auth');
       return;
     }
 
     if (!isSubscriber) {
-      toast({ title: "Subscription Required", description: "Upgrade to deploy AI employees.", variant: "destructive" });
+      toast.error("Upgrade to deploy AI employees.");
       navigate('/pricing');
       return;
     }
@@ -96,18 +95,11 @@ export const QuickDeploymentWidget: React.FC = () => {
           }
         });
 
-        toast({ 
-          title: "Deployment Started", 
-          description: `${template.name} is being deployed.` 
-        });
+        toast.success(`Deployment Started: ${template.name} is being deployed.`);
         
     } catch (error) {
       console.error('Quick deploy error:', error);
-      toast({
-        title: "Deployment Failed",
-        description: (error as Error).message || "An unexpected error occurred.",
-        variant: "destructive",
-      });
+      toast.error((error as Error).message || "An unexpected error occurred.");
     } finally {
       setIsLoading(null);
       await fetchRecentRequests();

@@ -3,7 +3,7 @@ import { supabase } from '@/supabase';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { toast } from "@/components/ui/toast-hooks";
+import { toast } from "sonner";
 import { Loader2 } from 'lucide-react';
 
 interface Integration {
@@ -43,11 +43,7 @@ export const WebsiteIntegrations = () => {
       }
     } catch (error) {
       console.error('Error fetching website integrations: ', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch website integrations.",
-        variant: "destructive",
-      });
+      toast.error("Failed to fetch website integrations.");
     }
     setLoading(false);
   }, [user]);
@@ -73,20 +69,13 @@ export const WebsiteIntegrations = () => {
       
       if (fnError) throw fnError;
       
-      toast({
-        title: "Scraping Complete",
-        description: data?.message || "Website scraped successfully.",
-      });
+      toast.success(data?.message || "Website scraped successfully.");
       
       // Refetch integrations to show updated data
       setTimeout(fetchIntegrations, 2000);
     } catch (error) {
       console.error('Error initiating scrape: ', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to scrape website.",
-        variant: "destructive",
-      });
+      toast.error(error instanceof Error ? error.message : "Failed to scrape website.");
     }
     setScraping(null);
   };

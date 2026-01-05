@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/supabase';
-import { toast } from "@/components/ui/toast-hooks";
+import { toast } from "sonner";
 import { Loader2, Zap, CheckCircle } from 'lucide-react';
 import { AIEmployeeTemplate } from '@/lib/ai-employee-templates.tsx';
 
@@ -19,20 +19,12 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
 
   const handleDeploy = async () => {
     if (!user) {
-      toast({
-        title: "Authentication Error",
-        description: "You must be logged in to deploy AI employees.",
-        variant: "destructive",
-      });
+      toast.error("You must be logged in to deploy AI employees.");
       return;
     }
 
     if (!isSubscriber) {
-      toast({
-        title: "Subscription Required",
-        description: "You need an active subscription to deploy AI employees.",
-        variant: "destructive",
-      });
+      toast.error("You need an active subscription to deploy AI employees.");
       return;
     }
 
@@ -72,18 +64,11 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
         throw new Error(deployError.message || 'Failed to deploy AI employee');
       }
 
-      toast({
-        title: "Deployment Successful",
-        description: `${template.name} has been deployed and is ready to work!`,
-      });
+      toast.success(`${template.name} has been deployed and is ready to work!`);
       setIsDeployed(true);
     } catch (error) {
       console.error("Error deploying AI employee: ", error);
-      toast({
-        title: "Deployment Error",
-        description: error instanceof Error ? error.message : "There was an error deploying the AI employee.",
-        variant: "destructive",
-      });
+      toast.error(error instanceof Error ? error.message : "There was an error deploying the AI employee.");
     }
     setIsLoading(false);
   };
