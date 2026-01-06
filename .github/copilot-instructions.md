@@ -1,5 +1,34 @@
 # Auraa AI Platform - Copilot Instructions
 
+## Critical Guidelines
+
+### Memory & Context Awareness
+- **ALWAYS** remember previous conversations and maintain continuity across the session
+- **ALWAYS** keep the full codebase structure and patterns in mind when making changes
+- **ALWAYS** remember the purpose of this project: Auraa AI is a SaaS platform for deploying autonomous AI "employees" (agents) that can perform tasks, automations, and workflows for users
+- Understand what the platform does: enables users to deploy, manage, and interact with AI agents that handle various business tasks
+
+### Debugging Protocol (ULTRATHINK MODE)
+When debugging, activate **ULTRATHINK MODE**—be extremely over-thorough:
+1. **First Pass**: Identify the issue and understand the full context
+2. **Second Pass**: Trace the code path and check all related files
+3. **Third Pass**: Verify assumptions, check types, and validate logic
+4. **Fourth Pass**: Final review—confirm the fix is complete and doesn't introduce new issues
+
+**Debugging Checklist:**
+- [ ] Check the error message and stack trace carefully
+- [ ] Trace data flow from source to destination
+- [ ] Verify all imports and dependencies
+- [ ] Check for typos, case sensitivity, and syntax errors
+- [ ] Validate types match across function boundaries
+- [ ] Test edge cases and null/undefined scenarios
+- [ ] Confirm fix doesn't break existing functionality
+- [ ] Review related tests if they exist
+
+**Never rush debugging.** Take the time to understand the root cause, not just the symptom.
+
+---
+
 ## Architecture Overview
 
 Auraa AI is a React + TypeScript SaaS platform for deploying AI "employees" (autonomous agents). Key architectural layers:

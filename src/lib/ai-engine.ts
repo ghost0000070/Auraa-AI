@@ -408,5 +408,5 @@ export const AIEngine = {
     }
 };
 
-// Export utility functions for external use
-export { getModelForTier, getUserTier, executeTaskWithTierModel };
+// Export executeTaskWithTierModel for external use (getModelForTier and getUserTier are already exported at declaration)
+export { executeTaskWithTierModel };
