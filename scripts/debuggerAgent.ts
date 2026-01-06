@@ -107,7 +107,7 @@ async function fixCommonTypeScriptErrors(errors: string[]): Promise<number> {
       const lines = content.split('\n');
       const lineIndex = parseInt(lineStr) - 1;
       
-      let fixed = false;
+      const fixed = false;
       
       // TS2307: Cannot find module - might be missing import
       if (errorCode === 'TS2307' && message.includes('@/')) {
