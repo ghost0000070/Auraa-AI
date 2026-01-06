@@ -2,6 +2,7 @@ import type { PuterChatResponse } from "../types/puter";
 import { toast } from "sonner";
 import { AI_MODELS, TIER_MODELS } from '@/config/constants';
 import { supabase } from '../supabase';
+import puter from 'puter';
 
 // Use centralized model constants - Claude models via Puter.js (FREE)
 const MODELS = AI_MODELS;
@@ -77,8 +78,9 @@ export function getModelForCategory(category: string): string {
  * Models: claude-opus (complex), claude-sonnet (standard), claude-haiku (fast)
  */
 async function callPuterAI(prompt: string, systemContext: string, model: string = MODELS.STANDARD): Promise<string> {
-    if (typeof window === 'undefined' || !window.puter) {
-        throw new Error("Puter.js not loaded or available");
+    // Use puter npm package - works in browser environment
+    if (typeof window === 'undefined') {
+        throw new Error("Puter.js requires browser environment");
     }
 
     console.log(`🤖 Using Claude model via Puter.js: ${model}`);
@@ -94,7 +96,7 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
         3. Do not include markdown formatting (like \`\`\`json) in your response if JSON is requested.
     `;
 
-    const response = await window.puter.ai.chat(fullPrompt, { model });
+    const response = await puter.ai.chat(fullPrompt, { model });
     
     // Ensure response is of type PuterChatResponse, not AsyncIterable
     if ((response as AsyncIterable<unknown>)[Symbol.asyncIterator]) {
