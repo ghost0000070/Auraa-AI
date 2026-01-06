@@ -18,7 +18,6 @@ const AIEmployees = lazy(() => import('./pages/AIEmployees'));
 const AIEmployeePage = lazy(() => import('./pages/AIEmployeePage'));
 const BusinessIntelligence = lazy(() => import('./pages/BusinessIntelligence'));
 const BusinessProfile = lazy(() => import('./pages/BusinessProfile'));
-const AITeamCoordination = lazy(() => import('./pages/AITeamCoordination'));
 const AITeamWorkflows = lazy(() => import('./pages/AITeamWorkflows'));
 const IntegrationsPage = lazy(() => import("./pages/IntegrationsPage"));
 const PuterIntegration = lazy(() => import("./components/PuterIntegration"));
@@ -70,7 +69,6 @@ const App: React.FC = () => {
                   <Route path="/ai-employees/:id" element={<ProtectedRoute><AIEmployeePage /></ProtectedRoute>} />
                   <Route path="/business-intelligence" element={<ProtectedRoute><BusinessIntelligence /></ProtectedRoute>} />
                   <Route path="/business-profile" element={<ProtectedRoute><BusinessProfile /></ProtectedRoute>} />
-                  <Route path="/ai-team-coordination" element={<ProtectedRoute><AITeamCoordination /></ProtectedRoute>} />
                   <Route path="/ai-team-workflows" element={<ProtectedRoute><AITeamWorkflows /></ProtectedRoute>} />
                   <Route path="/integrations" element={<ProtectedRoute><IntegrationsPage /></ProtectedRoute>} />
                   <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />

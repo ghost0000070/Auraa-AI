@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, Users, Zap, BarChart3, Settings, Bot, Workflow, Brain, Network, TrendingUp } from "lucide-react";
+import { ChevronDown, Users, Zap, BarChart3, Settings, Bot, Workflow, Brain, TrendingUp } from "lucide-react";
 
 export const Header = () => {
   const { user, subscriptionStatus, signOut } = useAuth();
@@ -56,10 +56,6 @@ export const Header = () => {
                   <DropdownMenuItem onClick={() => navigate('/ai-team-workflows')} className="cursor-pointer">
                     <Workflow className="w-4 h-4 mr-2" />
                     Team Workflows
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/ai-team-coordination')} className="cursor-pointer">
-                    <Network className="w-4 h-4 mr-2" />
-                    Team Coordination
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
