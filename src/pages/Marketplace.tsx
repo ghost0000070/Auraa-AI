@@ -18,12 +18,13 @@ interface EmployeeSubscription {
 
 const Marketplace: React.FC = () => {
   const navigate = useNavigate();
-  const { user, isSubscriber } = useAuth();
+  const { user, isSubscriber, isAdmin } = useAuth();
   const [employeeSubs, setEmployeeSubs] = useState<EmployeeSubscription[]>([]);
   const [loading, setLoading] = useState<string | null>(null);
   const [introEndsAt, setIntroEndsAt] = useState<Date | null>(null);
   
-  const isInIntro = isSubscriber && introEndsAt && new Date() < introEndsAt;
+  // Admins/owners have unlimited access, otherwise check intro period
+  const isInIntro = isAdmin || (isSubscriber && introEndsAt && new Date() < introEndsAt);
 
   // Fetch user's employee subscriptions
   useEffect(() => {
@@ -55,6 +56,8 @@ const Marketplace: React.FC = () => {
   }, [user]);
 
   const hasEmployeeAccess = (templateId: string) => {
+    // Admins/owners have access to everything
+    if (isAdmin) return true;
     // During intro period, all employees are accessible
     if (isInIntro) return true;
     // Otherwise, check for individual subscription
@@ -165,8 +168,8 @@ const Marketplace: React.FC = () => {
           </div>
         )}
 
-        {/* Post-Intro Banner */}
-        {isSubscriber && !isInIntro && employeeSubs.length === 0 && (
+        {/* Post-Intro Banner - Hidden for admins */}
+        {!isAdmin && isSubscriber && !isInIntro && employeeSubs.length === 0 && (
           <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-xl p-6 mb-10">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div>

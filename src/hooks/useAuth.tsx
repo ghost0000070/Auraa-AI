@@ -4,6 +4,7 @@ import { useState, useEffect, createContext, useContext, useCallback, type React
 import { User } from '@supabase/supabase-js';
 import { supabase, onAuthStateChanged } from '@/supabase';
 import { errorTracker } from '@/lib/errorTracking';
+import { OWNER_EMAIL, OWNER_UID } from '@/config/constants';
 
 interface AuthContextType {
   user: User | null;
@@ -67,7 +68,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
 
       if (userData) {
-        const isUserAdmin = userData.role === 'admin' || userData.role === 'owner';
+        // Check if user is owner by env vars OR database role
+        const isOwnerByEnv = currentUser.id === OWNER_UID || currentUser.email === OWNER_EMAIL;
+        const isUserAdmin = isOwnerByEnv || userData.role === 'admin' || userData.role === 'owner';
         setIsAdmin(isUserAdmin);
         
         // Admin/Owner has unlimited access
