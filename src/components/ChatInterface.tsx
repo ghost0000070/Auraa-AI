@@ -75,13 +75,22 @@ interface Message {
   text: string;
 }
 
-export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType }) => {
+export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, onClose }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const template = aiEmployeeTemplates.find(e => e.id === employeeType);
+
+  // Make onClose available for use (e.g., in header or via keyboard escape)
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
 
   useEffect(() => {
     const welcomeMessage = template 

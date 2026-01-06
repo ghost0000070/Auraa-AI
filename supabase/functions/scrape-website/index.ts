@@ -12,8 +12,25 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // Verify authorization header
+  const authHeader = req.headers.get('Authorization')
+  if (!authHeader) {
+    return new Response(
+      JSON.stringify({ error: 'Missing authorization header' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+
+  // Store body variables early to avoid double req.json() parsing
+  let integrationId: string | undefined
+  let url: string | undefined
+  let userId: string | undefined
+
   try {
-    const { integrationId, url, userId } = await req.json()
+    const body = await req.json()
+    integrationId = body.integrationId
+    url = body.url
+    userId = body.userId
 
     if (!integrationId || !url || !userId) {
       return new Response(
@@ -26,6 +43,16 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
+
+    // Verify the user exists and the auth token is valid
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    if (authError || !user || user.id !== userId) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: Invalid user or token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
 
     // Update status to scraping
     await supabase
@@ -143,16 +170,13 @@ serve(async (req) => {
     
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-    if (supabaseUrl && supabaseKey) {
+    if (supabaseUrl && supabaseKey && integrationId && userId) {
       const supabase = createClient(supabaseUrl, supabaseKey)
-      const { integrationId, userId } = await req.json().catch(() => ({}))
-      if (integrationId && userId) {
-        await supabase
-          .from('website_integrations')
-          .update({ status: 'error' })
-          .eq('id', integrationId)
-          .eq('user_id', userId)
-      }
+      await supabase
+        .from('website_integrations')
+        .update({ status: 'error' })
+        .eq('id', integrationId)
+        .eq('user_id', userId)
     }
 
     return new Response(

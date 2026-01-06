@@ -12,6 +12,15 @@ serve(async (req) => {
   }
 
   try {
+    // Verify authorization header
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Missing authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     const { prompt, userId, puterUsername } = await req.json()
 
     if (!prompt || !userId) {
@@ -21,10 +30,20 @@ serve(async (req) => {
       )
     }
 
-    // Initialize Supabase client
+    // Initialize Supabase client and verify the user
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
+
+    // Verify the user exists and the auth token is valid
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    if (authError || !user || user.id !== userId) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: Invalid user or token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
 
     // Call Puter's free Claude API (no API key required)
     const aiResponse = await fetch('https://api.puter.com/drivers/call', {
@@ -86,7 +105,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         script: generatedScript,
-        requestId: data.id 
+        requestId: data?.id || null
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -2,123 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Auraa AI - Connected Account Subscription</title>
-  <meta name="description" content="Subscribe to Auraa AI platform services" />
+  <title>Auraa AI - Checkout</title>
+  <meta name="description" content="Auraa AI subscription checkout" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="https://js.stripe.com/clover/stripe.js"></script>
+  <meta http-equiv="refresh" content="0;url=/pricing" />
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: white;
     }
-    
     .container {
-      background: white;
-      border-radius: 8px;
-      padding: 40px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    h1 {
-      color: #333;
-      margin-bottom: 10px;
-    }
-    
-    .subtitle {
-      color: #666;
-      margin-bottom: 30px;
-    }
-    
-    #checkout {
-      margin-top: 20px;
-    }
-    
-    .loading {
       text-align: center;
       padding: 40px;
-      color: #666;
     }
-    
-    .error {
-      background: #fee;
-      border: 1px solid #fcc;
-      border-radius: 4px;
-      padding: 15px;
-      color: #c33;
-      margin-top: 20px;
+    a {
+      color: #8b5cf6;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Subscribe to Auraa AI Platform</h1>
-    <p class="subtitle">Get access to premium AI features and services</p>
-    
-    <div id="checkout">
-      <div class="loading">Loading checkout form...</div>
-    </div>
-    
-    <div id="error" class="error" style="display: none;"></div>
+    <h1>Redirecting to Checkout...</h1>
+    <p>If you are not redirected automatically, <a href="/pricing">click here</a>.</p>
   </div>
-
-  <script>
-    // Initialize Stripe.js with your publishable key
-    const stripe = Stripe('YOUR_PUBLISHABLE_KEY'); // Replace with your actual publishable key
-
-    // Configuration - update these with your actual values
-    const CONFIG = {
-      apiBaseUrl: 'https://YOUR_REGION-YOUR_PROJECT.cloudfunctions.net', // Replace with your Cloud Functions URL
-      connectedAccountId: 'acct_xxxxxxxxxxxxxx', // Replace with actual connected account ID
-      priceId: 'price_xxxxxxxxxxxxxx', // Replace with actual price ID
-      returnUrl: window.location.origin + '/checkout-return.html'
-    };
-
-    initialize();
-
-    // Fetch Checkout Session and initialize embedded checkout
-    async function initialize() {
-      try {
-        const fetchClientSecret = async () => {
-          const response = await fetch(`${CONFIG.apiBaseUrl}/createCheckoutSessionEndpoint`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              connectedAccountId: CONFIG.connectedAccountId,
-              priceId: CONFIG.priceId,
-              returnUrl: CONFIG.returnUrl
-            }),
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to create checkout session');
-          }
-
-          const { clientSecret } = await response.json();
-          return clientSecret;
-        };
-
-        // Initialize Embedded Checkout
-        const checkout = await stripe.initEmbeddedCheckout({
-          fetchClientSecret,
-        });
-
-        // Mount Checkout
-        checkout.mount('#checkout');
-
-      } catch (error) {
-        console.error('Error initializing checkout:', error);
-        document.getElementById('checkout').innerHTML = '';
-        const errorDiv = document.getElementById('error');
-        errorDiv.textContent = 'Failed to load checkout form: ' + error.message;
-        errorDiv.style.display = 'block';
-      }
-    }
-  </script>
 </body>
 </html>

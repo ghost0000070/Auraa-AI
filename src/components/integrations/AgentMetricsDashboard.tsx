@@ -1,6 +1,6 @@
 import { useAgentMetrics } from '@/hooks/useAgentMetrics';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Activity, TrendingUp, AlertCircle, CheckCircle } from 'lucide-react';
+import { Activity, TrendingUp, AlertCircle, CheckCircle, Clock, BarChart3 } from 'lucide-react';
 
 export function AgentMetricsDashboard() {
   const { data: metrics, isLoading, error } = useAgentMetrics();
@@ -31,7 +31,7 @@ export function AgentMetricsDashboard() {
       );
   }
   
-  if (!metrics || metrics.length === 0) {
+  if (!metrics) {
       return (
         <div className="text-center py-8 text-muted-foreground border rounded-lg border-dashed border-border">
             <Activity className="w-8 h-8 mx-auto mb-2 opacity-20"/>
@@ -40,33 +40,54 @@ export function AgentMetricsDashboard() {
       );
   }
 
-  // Helper to determine icon based on metric name
-  const getIcon = (name: string) => {
-      const lowerName = name.toLowerCase();
-      if (lowerName.includes('error') || lowerName.includes('fail')) return <AlertCircle className="h-4 w-4 text-red-500" />;
-      if (lowerName.includes('success') || lowerName.includes('complete')) return <CheckCircle className="h-4 w-4 text-green-500" />;
-      return <TrendingUp className="h-4 w-4 text-blue-500" />;
-  };
+  // Metrics is an object with these properties: totalTasks, completedTasks, failedTasks, pendingTasks, successRate, avgResponseTime
+  const metricCards = [
+    {
+      title: 'Total Tasks',
+      value: metrics.totalTasks,
+      icon: <BarChart3 className="h-4 w-4 text-blue-500" />,
+    },
+    {
+      title: 'Completed',
+      value: metrics.completedTasks,
+      icon: <CheckCircle className="h-4 w-4 text-green-500" />,
+    },
+    {
+      title: 'Failed',
+      value: metrics.failedTasks,
+      icon: <AlertCircle className="h-4 w-4 text-red-500" />,
+    },
+    {
+      title: 'Success Rate',
+      value: `${metrics.successRate.toFixed(1)}%`,
+      icon: <TrendingUp className="h-4 w-4 text-emerald-500" />,
+    },
+    {
+      title: 'Pending',
+      value: metrics.pendingTasks,
+      icon: <Clock className="h-4 w-4 text-yellow-500" />,
+    },
+    {
+      title: 'Avg Response Time',
+      value: metrics.avgResponseTime ? `${metrics.avgResponseTime.toFixed(1)}s` : 'N/A',
+      icon: <Activity className="h-4 w-4 text-purple-500" />,
+    },
+  ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {metrics.map((metric) => (
-         <Card key={metric.id}>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {metricCards.map((metric) => (
+         <Card key={metric.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                    {metric.name as string || 'Unknown Metric'}
+                    {metric.title}
                 </CardTitle>
-                {getIcon(metric.name as string || '')}
+                {metric.icon}
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">
-                    {typeof metric.value === 'number' ? metric.value.toLocaleString() : String(metric.value)}
+                    {typeof metric.value === 'number' ? metric.value.toLocaleString() : metric.value}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                    {metric.timestamp && typeof metric.timestamp === 'object' && 'seconds' in metric.timestamp 
-                        ? new Date((metric.timestamp as {seconds: number}).seconds * 1000).toLocaleDateString() 
-                        : 'Just now'}
-                </p>
             </CardContent>
          </Card>
       ))}

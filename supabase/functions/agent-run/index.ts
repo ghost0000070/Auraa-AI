@@ -267,13 +267,22 @@ serve(async (req) => {
 
     // Update queue status if using queue
     if (queueId) {
+      // First get current attempts count
+      const { data: queueData } = await supabase
+        .from('agent_task_queue')
+        .select('attempts')
+        .eq('id', queueId)
+        .single()
+      
+      const currentAttempts = queueData?.attempts || 0
+      
       await supabase
         .from('agent_task_queue')
         .update({ 
           status: 'processing', 
           locked_at: new Date().toISOString(),
           locked_by: 'agent-run-function',
-          attempts: supabase.rpc('increment_attempts', { row_id: queueId })
+          attempts: currentAttempts + 1
         })
         .eq('id', queueId)
     }

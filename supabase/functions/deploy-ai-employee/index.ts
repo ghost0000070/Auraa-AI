@@ -11,8 +11,23 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // Verify authorization header
+  const authHeader = req.headers.get('Authorization')
+  if (!authHeader) {
+    return new Response(
+      JSON.stringify({ error: 'Missing authorization header' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+
+  // Store body variables early to avoid double req.json() parsing
+  let requestId: string | undefined
+  let userId: string | undefined
+
   try {
-    const { requestId, userId } = await req.json()
+    const body = await req.json()
+    requestId = body.requestId
+    userId = body.userId
 
     if (!requestId || !userId) {
       return new Response(
@@ -25,6 +40,16 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
+
+    // Verify the user exists and the auth token is valid
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    if (authError || !user || user.id !== userId) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: Invalid user or token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
 
     // Fetch deployment request
     const { data: request, error: fetchError } = await supabase
@@ -175,19 +200,16 @@ serve(async (req) => {
     
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-    if (supabaseUrl && supabaseKey) {
+    if (supabaseUrl && supabaseKey && requestId && userId) {
       const supabase = createClient(supabaseUrl, supabaseKey)
-      const { requestId, userId } = await req.json().catch(() => ({}))
-      if (requestId && userId) {
-        await supabase
-          .from('deployment_requests')
-          .update({ 
-            status: 'failed',
-            error_message: error instanceof Error ? error.message : 'Unknown error',
-          })
-          .eq('id', requestId)
-          .eq('user_id', userId)
-      }
+      await supabase
+        .from('deployment_requests')
+        .update({ 
+          status: 'failed',
+          error_message: error instanceof Error ? error.message : 'Unknown error',
+        })
+        .eq('id', requestId)
+        .eq('user_id', userId)
     }
 
     return new Response(

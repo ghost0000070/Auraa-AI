@@ -361,7 +361,7 @@ const AITeamDashboard: React.FC = () => {
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <span className="text-xs text-muted-foreground hidden sm:inline-block">
-                                        {task.createdAt ? new Date(task.createdAt.seconds * 1000).toLocaleString() : ''}
+                                        {task.createdAt ? new Date(task.createdAt).toLocaleString() : (task.created_at ? new Date(task.created_at).toLocaleString() : '')}
                                     </span>
                                     <Badge className={`${getStatusColor(task.status)} text-white`}>{task.status}</Badge>
                                     <Button variant="ghost" size="sm" className="p-0 w-8 h-8">
@@ -391,7 +391,7 @@ const AITeamDashboard: React.FC = () => {
                                 )}
                                 
                                 <p className="text-xs text-muted-foreground mt-2 text-right">
-                                    Finished: {task.finished_at ? new Date(task.finished_at.seconds * 1000).toLocaleString() : 'N/A'}
+                                    Finished: {task.finished_at ? new Date(task.finished_at).toLocaleString() : 'N/A'}
                                 </p>
                             </div>
                         </CollapsibleContent>
@@ -429,7 +429,7 @@ const AITeamDashboard: React.FC = () => {
                         </span>
                     </div>
                     <span className="text-[10px] text-muted-foreground whitespace-nowrap ml-2">
-                        {comm.created_at ? formatDistanceToNow(new Date(comm.created_at.seconds * 1000), { addSuffix: true }) : ''}
+                        {comm.created_at ? formatDistanceToNow(new Date(comm.created_at), { addSuffix: true }) : ''}
                     </span>
                     </div>
                     <p className="text-sm text-foreground leading-snug">{comm.content}</p>
@@ -458,7 +458,7 @@ const AITeamDashboard: React.FC = () => {
                         <CardContent>
                             <div className="text-2xl font-bold">{metric.value}</div>
                             <p className="text-xs text-muted-foreground">
-                                {metric.timestamp ? new Date(metric.timestamp.seconds * 1000).toLocaleDateString() : ''}
+                                {metric.timestamp ? new Date(metric.timestamp).toLocaleDateString() : ''}
                             </p>
                         </CardContent>
                     </Card>
