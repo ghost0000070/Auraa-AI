@@ -164,6 +164,10 @@ const BusinessProfile = () => {
         .from('business_profiles')
         .upsert(profileData);
 
+      if (error) {
+        throw error;
+      }
+
       toast.success("Profile Saved", {
         description: "Your business profile has been saved successfully.",
       });

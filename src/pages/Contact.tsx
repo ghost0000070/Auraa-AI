@@ -47,6 +47,7 @@ const Contact = () => {
         message: '',
       });
     } catch (error) {
+      console.error('Error sending message:', error);
       toast.error("Failed to send message", {
         description: "Please try emailing us directly.",
       });
