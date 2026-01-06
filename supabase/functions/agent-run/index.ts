@@ -1,3 +1,7 @@
+// Agent Run Edge Function - v3.0 with Anthropic emergency fallback only
+// Updated: 2026-01-05
+// Primary AI: Puter.js (free, client-side) - uses Claude models
+// Fallback: Anthropic API (emergency only, requires billing)
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -6,8 +10,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Puter.com free Claude API endpoint
-const PUTER_API_URL = 'https://api.puter.com/ai/chat'
+// Anthropic API endpoint (emergency fallback only)
+const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages'
 
 interface TaskPayload {
   taskId?: string
@@ -24,15 +28,65 @@ interface ActionResult {
   result?: unknown
   error?: string
   executionTimeMs?: number
+  provider?: string
 }
 
-// Execute an action using Puter's free Claude API
-async function executePuterAction(action: string, params: Record<string, unknown>, context: string): Promise<ActionResult> {
+// Execute an action using Anthropic API (EMERGENCY FALLBACK ONLY)
+// Primary AI should be Puter.js on the frontend (free Claude access)
+async function executeAnthropicAction(action: string, params: Record<string, unknown>, context: string): Promise<ActionResult> {
   const startTime = Date.now()
+  const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
+  
+  console.log('Emergency Anthropic fallback triggered for action:', action)
+  
+  if (!apiKey) {
+    return { 
+      success: false, 
+      error: 'Anthropic API key not configured. Use frontend Puter.js for free AI.', 
+      executionTimeMs: Date.now() - startTime 
+    }
+  }
   
   try {
-    const prompt = `
-You are an AI agent executing the action: ${action}
+    const prompt = buildPrompt(action, params, context)
+
+    const response = await fetch(ANTHROPIC_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        // Use claude-3-haiku for emergency fallback (fast and cost-effective)
+        model: 'claude-3-haiku-20240307',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }],
+      })
+    })
+
+    if (!response.ok) {
+      const errorBody = await response.text()
+      throw new Error(`Anthropic API error: ${response.status} - ${errorBody.substring(0, 200)}`)
+    }
+
+    const data = await response.json()
+    const content = data.content?.[0]?.text
+
+    return parseAIResponse(content, startTime, 'anthropic-emergency')
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      executionTimeMs: Date.now() - startTime,
+      provider: 'anthropic-emergency'
+    }
+  }
+}
+
+// Build the prompt for AI actions
+function buildPrompt(action: string, params: Record<string, unknown>, context: string): string {
+  return `You are an AI agent executing the action: ${action}
 
 Context: ${context}
 
@@ -42,47 +96,62 @@ Instructions:
 1. Analyze the action and parameters
 2. Generate appropriate output based on the action type
 3. Return ONLY a valid JSON object with your results
-4. Do not include markdown formatting
+4. Do not include markdown formatting or code blocks
 
-For action "${action}", provide relevant output.
-`
+For action "${action}", provide relevant output.`
+}
 
-    const response = await fetch(PUTER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'claude-3-5-sonnet',
-        messages: [{ role: 'user', content: prompt }]
-      })
-    })
+// Parse AI response
+function parseAIResponse(content: string, startTime: number, provider: string): ActionResult {
+  let result: unknown
+  try {
+    // Try to extract JSON from response
+    const jsonMatch = content.match(/\{[\s\S]*\}/)
+    result = jsonMatch ? JSON.parse(jsonMatch[0]) : { text_output: content, raw_format: true }
+  } catch {
+    result = { text_output: content, raw_format: true }
+  }
 
-    if (!response.ok) {
-      throw new Error(`Puter API error: ${response.status}`)
-    }
+  return {
+    success: true,
+    result,
+    executionTimeMs: Date.now() - startTime,
+    provider
+  }
+}
 
-    const data = await response.json()
-    const content = data.message?.content?.[0]?.text || data.choices?.[0]?.message?.content
-
-    let result: unknown
-    try {
-      result = JSON.parse(content)
-    } catch {
-      result = { text_output: content, raw_format: true }
-    }
-
-    return {
-      success: true,
-      result,
-      executionTimeMs: Date.now() - startTime
-    }
-  } catch (error) {
+// Execute AI action - EMERGENCY ANTHROPIC FALLBACK ONLY
+// Primary AI: Puter.js on frontend (free Claude models)
+// This function is only called when frontend Puter.js is unavailable
+async function executeAIAction(action: string, params: Record<string, unknown>, context: string): Promise<ActionResult> {
+  console.log('⚠️ Emergency AI fallback triggered - Puter.js unavailable')
+  
+  // Use Anthropic as emergency fallback
+  const anthropicResult = await executeAnthropicAction(action, params, context)
+  
+  if (anthropicResult.success) {
+    return anthropicResult
+  }
+  
+  // Check if it's a billing issue
+  const isBillingIssue = 
+    anthropicResult.error?.includes('credit balance') ||
+    anthropicResult.error?.includes('billing') ||
+    anthropicResult.error?.includes('400')
+  
+  if (isBillingIssue) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      executionTimeMs: Date.now() - startTime
+      error: 'Emergency AI fallback requires Anthropic billing. Please use the app frontend for free AI via Puter.js.',
+      executionTimeMs: anthropicResult.executionTimeMs || 0
     }
+  }
+  
+  // Return the error
+  return {
+    success: false,
+    error: `Emergency AI fallback failed: ${anthropicResult.error}. Use frontend for free Puter.js AI.`,
+    executionTimeMs: anthropicResult.executionTimeMs || 0
   }
 }
 
@@ -105,8 +174,8 @@ async function executeInternalAction(action: string, params: Record<string, unkn
       
       case 'analyze_data':
       case 'generate_content':
-        // These use AI, delegate to Puter
-        return await executePuterAction(action, params, 'Perform the requested analysis or generation')
+        // These use AI, delegate to AI provider chain
+        return await executeAIAction(action, params, 'Perform the requested analysis or generation')
       
       default:
         return {
@@ -127,6 +196,19 @@ async function executeInternalAction(action: string, params: Record<string, unkn
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
+  }
+
+  // Debug endpoint to check env vars
+  const url = new URL(req.url)
+  if (url.searchParams.get('debug') === 'env') {
+    const anthropicKey = Deno.env.get('ANTHROPIC_API_KEY')
+    return new Response(JSON.stringify({
+      primary_ai: 'Puter.js (free Claude models on frontend)',
+      emergency_fallback: 'Anthropic API',
+      anthropic_configured: !!anthropicKey,
+      anthropic_key_length: anthropicKey?.length || 0,
+      note: 'Use frontend for free AI. This fallback is for emergencies only.',
+    }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 
   try {
@@ -203,7 +285,7 @@ serve(async (req) => {
       result = await executeInternalAction(action, params)
     } else {
       // For external_api, email, webhook - use AI to help format/process
-      result = await executePuterAction(action, params, context || actionDef.description || '')
+      result = await executeAIAction(action, params, context || actionDef.description || '')
     }
 
     // Log the action execution

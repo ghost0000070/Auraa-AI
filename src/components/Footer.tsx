@@ -50,7 +50,7 @@ export const Footer = () => {
         
         <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">
-            © 2024 Auraa-AI. All rights reserved.
+            © {new Date().getFullYear()} Auraa-AI. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="https://twitter.com/Auraa_AI" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">

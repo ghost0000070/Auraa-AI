@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from "sonner";
 import { formatDistanceToNow } from 'date-fns';
 import { 
-  Activity, Code, ChevronDown, ChevronUp, AlertCircle, ArrowRight, CheckCircle, Clock, TrendingUp, MessageSquare, Loader2 
+  Activity, Code, ChevronDown, ChevronUp, AlertCircle, ArrowRight, CheckCircle, Clock, TrendingUp, MessageSquare, Loader2, Rocket, Bot 
 } from 'lucide-react';
 import {
   Collapsible,
@@ -16,6 +16,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useNavigate } from 'react-router-dom';
 
 interface AgentTask {
   id: string;
@@ -47,14 +48,15 @@ interface Metric {
 interface Employee {
   id: string;
   name: string;
-  role: string;
+  category: string;
   status: 'active' | 'idle' | 'offline';
-  avatar?: string;
-  currentTask?: string;
+  template_id?: string;
+  created_at?: string;
 }
 
 const AITeamDashboard: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState<AgentTask[]>([]);
   const [communications, setCommunications] = useState<Communication[]>([]);
   const [metrics, setMetrics] = useState<Metric[]>([]);
@@ -76,17 +78,17 @@ const AITeamDashboard: React.FC = () => {
     const loadData = async () => {
       try {
         // Load tasks
-        handleLoading('agent_tasks', true);
+        handleLoading('tasks', true);
         const { data: tasksData } = await supabase
           .from('agent_tasks')
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false });
         if (tasksData) setTasks(tasksData as any[]);
-        handleLoading('agent_tasks', false);
+        handleLoading('tasks', false);
 
         // Load communications
-        handleLoading('ai_team_communications', true);
+        handleLoading('comms', true);
         const { data: commsData } = await supabase
           .from('ai_team_communications')
           .select('*')
@@ -107,26 +109,31 @@ const AITeamDashboard: React.FC = () => {
               .in('id', unreadComms.map((c: any) => c.id));
           }
         }
-        handleLoading('ai_team_communications', false);
+        handleLoading('comms', false);
 
         // Load metrics
-        handleLoading('agent_metrics', true);
+        handleLoading('metrics', true);
         const { data: metricsData } = await supabase
           .from('agent_metrics')
           .select('*')
           .eq('user_id', user.id)
-          .order('timestamp', { ascending: false });
+          .order('created_at', { ascending: false });
         if (metricsData) setMetrics(metricsData as any[]);
-        handleLoading('agent_metrics', false);
+        handleLoading('metrics', false);
 
-        // Load employees
-        handleLoading('ai_employees', true);
-        const { data: employeesData } = await supabase
-          .from('ai_employees')
+        // Load deployed employees (not ai_employees which is templates)
+        handleLoading('employees', true);
+        const { data: employeesData, error: employeesError } = await supabase
+          .from('deployed_employees')
           .select('*')
-          .eq('created_by', user.id);
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        
+        if (employeesError) {
+          console.error('Error loading employees:', employeesError);
+        }
         if (employeesData) setEmployees(employeesData as any[]);
-        handleLoading('ai_employees', false);
+        handleLoading('employees', false);
 
       } catch (error) {
         console.error('Error loading dashboard data:', error);
@@ -163,7 +170,12 @@ const AITeamDashboard: React.FC = () => {
             setCommunications(prev => [newComm, ...prev]);
             if (!newComm.is_read) {
               toast(`New Message from ${newComm.sender_employee}`, { description: newComm.content });
-              supabase.from('ai_team_communications').update({ is_read: true }).eq('id', newComm.id).then();
+              supabase.from('ai_team_communications')
+                .update({ is_read: true })
+                .eq('id', newComm.id)
+                .then(({ error }) => {
+                  if (error) console.error('Failed to mark message as read:', error);
+                });
             }
           } else if (payload.eventType === 'UPDATE') {
             setCommunications(prev => prev.map(c => c.id === payload.new.id ? payload.new as any : c));
@@ -187,10 +199,10 @@ const AITeamDashboard: React.FC = () => {
     const employeesChannel = supabase
       .channel('employees_rt')
       .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'ai_employees', filter: `created_by=eq.${user.id}` },
+        { event: '*', schema: 'public', table: 'deployed_employees', filter: `user_id=eq.${user.id}` },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            setEmployees(prev => [...prev, payload.new as any]);
+            setEmployees(prev => [payload.new as any, ...prev]);
           } else if (payload.eventType === 'UPDATE') {
             setEmployees(prev => prev.map(e => e.id === payload.new.id ? payload.new as any : e));
           } else if (payload.eventType === 'DELETE') {
@@ -253,36 +265,40 @@ const AITeamDashboard: React.FC = () => {
       <Card className="lg:col-span-2">
         <CardHeader>
           <CardTitle>Team Overview</CardTitle>
-          <CardDescription>Current status of your AI workforce</CardDescription>
+          <CardDescription>Your deployed AI workforce</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {loading.employees ? <p>Loading employees...</p> : employees.length === 0 ? (
-                 <div className="col-span-2 text-center text-muted-foreground py-8">
-                    No employees found. Deploy an agent to see them here.
+                 <div className="col-span-2 flex flex-col items-center justify-center py-12">
+                    <div className="bg-slate-700/30 p-4 rounded-full mb-4">
+                      <Bot className="h-12 w-12 text-slate-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-2">No AI Employees Deployed Yet</h3>
+                    <p className="text-muted-foreground text-center max-w-md mb-4">
+                      Deploy your first AI employee to start automating tasks and boosting productivity.
+                    </p>
+                    <Button onClick={() => navigate('/marketplace')} className="gap-2">
+                      <Rocket className="h-4 w-4" />
+                      Deploy Your First AI Employee
+                    </Button>
                  </div>
             ) : (
                 employees.map(employee => (
                     <div key={employee.id} className="flex items-center justify-between p-3 border rounded-lg">
                         <div className="flex items-center space-x-3">
                             <Avatar>
-                                <AvatarImage src={employee.avatar} />
-                                <AvatarFallback>{employee.name.substring(0,2).toUpperCase()}</AvatarFallback>
+                                <AvatarFallback className="bg-primary/20 text-primary">{employee.name?.substring(0,2).toUpperCase() || 'AI'}</AvatarFallback>
                             </Avatar>
                             <div>
                                 <p className="font-semibold">{employee.name}</p>
-                                <p className="text-xs text-muted-foreground">{employee.role}</p>
+                                <p className="text-xs text-muted-foreground">{employee.category}</p>
                             </div>
                         </div>
                         <div className="flex flex-col items-end">
                             <Badge className={`${getStatusColor(employee.status)} text-white mb-1`}>
                                 {employee.status}
                             </Badge>
-                            {employee.currentTask && (
-                                <span className="text-xs text-muted-foreground truncate max-w-[150px]">
-                                    {employee.currentTask}
-                                </span>
-                            )}
                         </div>
                     </div>
                 ))

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/supabase';
-import { toast } from "@/components/ui/toast-hooks";
+import { toast } from "sonner";
 import { Loader2, Zap, CheckCircle } from 'lucide-react';
 import { AIEmployeeTemplate } from '@/lib/ai-employee-templates.tsx';
 
@@ -19,20 +19,12 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
 
   const handleDeploy = async () => {
     if (!user) {
-      toast({
-        title: "Authentication Error",
-        description: "You must be logged in to deploy AI employees.",
-        variant: "destructive",
-      });
+      toast.error("You must be logged in to deploy AI employees.");
       return;
     }
 
     if (!isSubscriber) {
-      toast({
-        title: "Subscription Required",
-        description: "You need an active subscription to deploy AI employees.",
-        variant: "destructive",
-      });
+      toast.error("You need an active subscription to deploy AI employees.");
       return;
     }
 
@@ -40,7 +32,7 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
 
     try {
       // Create deployment request directly in Supabase
-      const { error } = await supabase
+      const { data: deploymentRequest, error } = await supabase
         .from('deployment_requests')
         .insert({
           user_id: user.id,
@@ -54,18 +46,29 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
 
       if (error) throw error;
 
-      toast({
-        title: "Deployment Successful",
-        description: `${template.name} deployment request has been submitted.`,
+      // Call the deploy-ai-employee edge function to actually process the deployment
+      const { data: deployResult, error: deployError } = await supabase.functions.invoke('deploy-ai-employee', {
+        body: {
+          requestId: deploymentRequest.id,
+          userId: user.id,
+        },
       });
+
+      if (deployError) {
+        console.error("Deployment function error:", deployError);
+        // Update request status to failed
+        await supabase
+          .from('deployment_requests')
+          .update({ status: 'failed' })
+          .eq('id', deploymentRequest.id);
+        throw new Error(deployError.message || 'Failed to deploy AI employee');
+      }
+
+      toast.success(`${template.name} has been deployed and is ready to work!`);
       setIsDeployed(true);
     } catch (error) {
       console.error("Error deploying AI employee: ", error);
-      toast({
-        title: "Deployment Error",
-        description: "There was an error deploying the AI employee.",
-        variant: "destructive",
-      });
+      toast.error(error instanceof Error ? error.message : "There was an error deploying the AI employee.");
     }
     setIsLoading(false);
   };
@@ -87,7 +90,7 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
             ) : (
               <Zap className="mr-2 h-4 w-4" />
             )}
-            {isDeployed ? 'Deployed' : 'Deploy'}
+            {isLoading ? 'Deploying...' : isDeployed ? 'Deployed' : 'Deploy'}
           </Button>
         </div>
       </CardContent>

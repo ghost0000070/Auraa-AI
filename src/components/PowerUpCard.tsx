@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Zap, Crown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { toast } from "@/components/ui/toast-hooks";
+import { toast } from "sonner";
 
 interface PowerUpCardProps {
   id: string;
@@ -37,11 +37,7 @@ export const PowerUpCard = ({
     }
 
     if (!hasAccess) {
-      toast({
-        title: "Premium Required",
-        description: `This power-up requires a ${tier_requirement} subscription.`,
-        variant: "destructive"
-      });
+      toast.error(`Premium Required: This power-up requires a ${tier_requirement} subscription.`);
       return;
     }
 

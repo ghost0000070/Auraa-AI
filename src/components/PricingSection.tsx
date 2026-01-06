@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Loader2 } from "lucide-react";
-import { useToast } from "@/components/ui/toast-hooks";
+import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -19,7 +19,6 @@ interface Tier {
 export function PricingSection() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState<string | null>(null);
 
   const handleSubscribe = async (tier: Tier) => {
@@ -51,11 +50,7 @@ export function PricingSection() {
 
     } catch (error) {
       console.error("Error creating checkout session:", error);
-      toast({
-        title: "Error",
-        description: (error as Error).message || "Could not create a checkout session.",
-        variant: "destructive",
-      });
+      toast.error((error as Error).message || "Could not create a checkout session.");
     } finally {
       setIsLoading(null);
     }
@@ -63,34 +58,32 @@ export function PricingSection() {
 
   const tiers: Tier[] = [
     {
-      name: "Pro",
-      price: "$50",
-      trial: "3-day free trial",
-      buttonText: "Start Free Trial",
+      name: "Pro Intro",
+      price: "$39",
+      trial: "30-day access to all AI employees",
+      buttonText: "Start 30-Day Intro",
       features: [
-        "10 AI Employees",
+        "30 days access to ALL AI employees",
+        "Claude 3.5 Sonnet model included",
         "Advanced Analytics Dashboard",
         "Priority Support",
-        "Custom Integrations",
-        "Unlimited script generation",
-        "Website scraping & analysis",
-        "Business intelligence tools",
+        "After 30 days: subscribe to employees you want",
+        "No commitment - cancel anytime",
       ],
       tier: "pro",
     },
     {
-      name: "Enterprise",
-      price: "$99",
-      buttonText: "Subscribe",
+      name: "Enterprise Intro",
+      price: "$79",
+      trial: "30-day access to all AI employees",
+      buttonText: "Start 30-Day Intro",
       features: [
-        "Unlimited AI Employees",
+        "30 days access to ALL AI employees",
+        "Claude Sonnet 4.5 model (most powerful)",
         "Dedicated Account Manager",
-        "On-premise Deployment Option",
         "24/7 Premium Support",
         "Advanced API Access",
-        "Custom AI model training",
-        "White-label options",
-        "SLA guarantees",
+        "After 30 days: subscribe to employees you want",
       ],
       tier: "enterprise",
     },
@@ -99,9 +92,14 @@ export function PricingSection() {
   return (
     <section className="py-12 md:py-20">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-8">
-          Pricing
-        </h2>
+        <div className="text-center mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold mb-2">
+            Start with 30-Day Intro Access
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Try ALL AI employees for 30 days. After your intro period, subscribe only to the employees you want to keep at their individual prices.
+          </p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {tiers.map((tier) => (
             <Card key={tier.name} className="flex flex-col">

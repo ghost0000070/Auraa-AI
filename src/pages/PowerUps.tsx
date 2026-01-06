@@ -39,7 +39,7 @@ const PowerUps = () => {
                 setPowerUps(currentPowerUps =>
                     currentPowerUps.map(p => {
                         const found = userPowerUps.find((up: any) => up.powerup_id === p.id);
-                        return found ? { ...p, status: found.status } : p;
+                        return found ? { ...p, status: found.is_active ? 'active' : 'inactive' } : p;
                     })
                 );
             }
@@ -69,9 +69,7 @@ const PowerUps = () => {
           .upsert({ 
             user_id: user.id,
             powerup_id: id, 
-            powerup_name: powerUp.name, 
             is_active: newStatus === 'active',
-            status: newStatus,
             activated_at: newStatus === 'active' ? new Date().toISOString() : null,
           }, {
             onConflict: 'user_id,powerup_id'

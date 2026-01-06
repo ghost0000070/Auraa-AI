@@ -64,23 +64,23 @@ serve(async (req) => {
     const aiData = await aiResponse.json()
     const generatedScript = aiData.message?.content?.[0]?.text || aiData.result
 
-    // Update the database with the generated script
+    // Insert the record with the generated script (not update)
     const { data, error } = await supabase
       .from('puter_script_requests')
-      .update({
+      .insert({
+        user_id: userId,
+        prompt: prompt,
+        puter_username: puterUsername,
         generated_script: generatedScript,
         status: 'completed',
         completed_at: new Date().toISOString(),
       })
-      .eq('user_id', userId)
-      .eq('prompt', prompt)
-      .eq('status', 'processing')
       .select()
       .single()
 
     if (error) {
-      console.error('Database update error:', error)
-      throw error
+      console.error('Database insert error:', error)
+      // Don't throw - still return the script even if DB fails
     }
 
     return new Response(
@@ -97,7 +97,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

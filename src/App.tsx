@@ -6,8 +6,8 @@ import { Toaster } from '@/components/ui/sonner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import ErrorBoundary from './components/ErrorBoundary.tsx';
-import NotFound from './components/NotFound.tsx';
+import ErrorBoundary from './components/ErrorBoundary';
+import NotFound from './components/NotFound';
 
 const Index = lazy(() => import('./pages/Index'));
 const Auth = lazy(() => import('./pages/Auth'));
@@ -24,6 +24,14 @@ const IntegrationsPage = lazy(() => import("./pages/IntegrationsPage"));
 const PuterIntegration = lazy(() => import("./components/PuterIntegration"));
 const Marketplace = lazy(() => import('./pages/Marketplace'));
 const PricingPage = lazy(() => import('./pages/PricingPage'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Help = lazy(() => import('./pages/Help'));
+const Docs = lazy(() => import('./pages/Docs'));
+const Careers = lazy(() => import('./pages/Careers'));
+const Status = lazy(() => import('./pages/Status'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 
 const App: React.FC = () => {
   return (
@@ -44,7 +52,15 @@ const App: React.FC = () => {
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/pricing" element={<PricingPage />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/help" element={<Help />} />
+                  <Route path="/docs" element={<Docs />} />
+                  <Route path="/careers" element={<Careers />} />
+                  <Route path="/status" element={<Status />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<TermsOfService />} />
 
                   {/* Protected Routes */}
                   <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const TermsOfService = () => {
@@ -8,7 +9,7 @@ const TermsOfService = () => {
           <CardTitle className="text-center text-2xl font-bold">Terms of Service</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p><strong>Last Updated: [Date]</strong></p>
+          <p><strong>Last Updated: January 1, 2026</strong></p>
 
           <h2 className="text-xl font-semibold">1. Agreement to Terms</h2>
           <p>By using our application, Auraa, you agree to be bound by these Terms of Service. If you do not agree to these Terms, do not use the Application.</p>
@@ -28,10 +29,10 @@ const TermsOfService = () => {
           <p>You may not access or use the Application for any purpose other than that for which we make the Application available. The Application may not be used in connection with any commercial endeavors except those that are specifically endorsed or approved by us.</p>
 
           <h2 className="text-xl font-semibold">5. Governing Law</h2>
-          <p>These Terms of Service and your use of the Application are governed by and construed in accordance with the laws of the State of [Your State], without regard to its conflict of law principles.</p>
+          <p>These Terms of Service and your use of the Application are governed by and construed in accordance with the laws of the State of Delaware, USA, without regard to its conflict of law principles.</p>
 
           <h2 className="text-xl font-semibold">6. Contact Us</h2>
-          <p>To resolve a complaint regarding the Application or to receive further information regarding use of the Application, please contact us at: [Contact Information]</p>
+          <p>To resolve a complaint regarding the Application or to receive further information regarding use of the Application, please contact us at: <a href="mailto:support@auraa-ai.com" className="text-primary hover:underline">support@auraa-ai.com</a></p>
         </CardContent>
       </Card>
     </div>

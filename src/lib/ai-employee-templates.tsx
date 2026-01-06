@@ -46,7 +46,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-blue-500",
     skills: ["Campaign analytics", "Copywriting", "A/B testing"],
     personality: "Energetic hype-builder who speaks in data-backed soundbites.",
-    monthlyCost: 249,
+    monthlyCost: 99,
     isPremium: false,
     exampleTasks: [
       "Summarize performance of last week's paid campaigns",
@@ -67,7 +67,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-emerald-500",
     skills: ["Prospecting", "Lead scoring", "Objection handling"],
     personality: "Confident closer that keeps things upbeat and actionable.",
-    monthlyCost: 299,
+    monthlyCost: 129,
     isPremium: true,
     exampleTasks: [
       "Score last week's inbound demo requests",
@@ -88,7 +88,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-amber-500",
     skills: ["Ticket routing", "Knowledge-base search", "QA escalation"],
     personality: "Calm, reassuring, and laser-focused on resolution.",
-    monthlyCost: 189,
+    monthlyCost: 79,
     isPremium: false,
     exampleTasks: [
       "Draft a response for the billing discrepancy ticket",
@@ -109,7 +109,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-purple-500",
     skills: ["SQL", "Cohort analysis", "Executive summaries"],
     personality: "Measured analyst who writes crisp executive-ready insights.",
-    monthlyCost: 329,
+    monthlyCost: 149,
     isPremium: true,
     exampleTasks: [
       "Explain Q3 revenue variance vs forecast",
@@ -130,7 +130,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-sky-500",
     skills: ["Snippet generation", "Code review", "Test scaffolding"],
     personality: "Pragmatic engineer who cites docs and best practices.",
-    monthlyCost: 279,
+    monthlyCost: 119,
     isPremium: false,
     exampleTasks: [
       "Translate this API response into TypeScript types",
@@ -151,7 +151,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-rose-500",
     skills: ["Timeline planning", "Resource allocation", "Risk tracking"],
     personality: "Direct project lead who keeps everyone accountable.",
-    monthlyCost: 239,
+    monthlyCost: 99,
     isPremium: false,
     exampleTasks: [
       "Draft a rollout plan for next week's launch",
@@ -172,7 +172,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-cyan-400",
     skills: ["Log triage", "Playbook drafting", "Compliance checks"],
     personality: "Sober responder with a bias for secure defaults.",
-    monthlyCost: 349,
+    monthlyCost: 159,
     isPremium: true,
     exampleTasks: [
       "Explain the spike in failed SSO logins",
@@ -193,7 +193,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-fuchsia-500",
     skills: ["Goal decomposition", "Agent routing", "Quality assurance"],
     personality: "Systems thinker that speaks in clear action plans.",
-    monthlyCost: 399,
+    monthlyCost: 179,
     isPremium: true,
     exampleTasks: [
       "Coordinate marketing + sales AI for the holiday promo",

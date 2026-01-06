@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "@/components/ui/toast-hooks";
+import { toast } from "sonner";
 import { supabase } from "@/supabase";
 
 import AITeamDashboard from '@/components/AITeamDashboard';
@@ -19,10 +19,7 @@ export default function Dashboard() {
 
   const handleManageSubscription = async () => {
     if (!user) {
-      toast({
-        title: "Not signed in",
-        description: "You must be signed in to manage your subscription.",
-      });
+      toast.error("You must be signed in to manage your subscription.");
       return;
     }
 
@@ -52,10 +49,7 @@ export default function Dashboard() {
       } else if (data?.error) {
         // No subscription found - offer to create one
         if (!data.hasSubscription) {
-          toast({
-            title: "No Active Subscription",
-            description: "You don't have an active subscription. Redirecting to pricing...",
-          });
+          toast.info("You don't have an active subscription. Redirecting to pricing...");
           // Redirect to pricing page after a short delay
           setTimeout(() => {
             window.location.href = '/pricing';
@@ -66,11 +60,7 @@ export default function Dashboard() {
       }
     } catch (error) {
       console.error("Error managing subscription:", error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Could not access subscription management. Please try again later.",
-        variant: "destructive",
-      });
+      toast.error(error instanceof Error ? error.message : "Could not access subscription management. Please try again later.");
     } finally {
       setIsManagingSubscription(false);
     }

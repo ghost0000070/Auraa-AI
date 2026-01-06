@@ -7,10 +7,13 @@ const corsHeaders = {
 }
 
 interface SubscriptionAction {
-  action: 'create-checkout' | 'get-subscription' | 'cancel-subscription' | 'update-subscription' | 'get-portal-url' | 'list-products'
+  action: 'create-checkout' | 'create-employee-checkout' | 'get-subscription' | 'cancel-subscription' | 'update-subscription' | 'get-portal-url' | 'list-products'
   userId?: string
   productId?: string
   tier?: 'pro' | 'enterprise'
+  employeeTemplateId?: string
+  employeeName?: string
+  employeePrice?: number
   successUrl?: string
   cancelUrl?: string
   metadata?: Record<string, string>
@@ -136,6 +139,62 @@ serve(async (req) => {
               user_id: user.id,
               tier: tier || 'unknown',
               ...metadata
+            }
+          })
+        })
+
+        return new Response(
+          JSON.stringify({ 
+            checkoutUrl: checkout.url,
+            checkoutId: checkout.id
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+
+      case 'create-employee-checkout': {
+        // Create checkout for individual AI employee subscription
+        const { employeeTemplateId, employeeName, employeePrice, successUrl, cancelUrl } = body
+
+        if (!employeeTemplateId || !employeeName || !employeePrice) {
+          return new Response(
+            JSON.stringify({ error: 'employeeTemplateId, employeeName, and employeePrice are required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          )
+        }
+
+        // Get the Polar product ID for this employee from environment variables
+        // Environment variable format: POLAR_EMPLOYEE_{TEMPLATE_ID}_PRODUCT_ID
+        // e.g., POLAR_EMPLOYEE_MARKETING_PRO_PRODUCT_ID
+        const envKey = `POLAR_EMPLOYEE_${employeeTemplateId.toUpperCase().replace(/-/g, '_')}_PRODUCT_ID`
+        const employeeProductId = Deno.env.get(envKey)
+
+        if (!employeeProductId) {
+          console.error(`Missing Polar product ID for employee: ${employeeTemplateId}. Set ${envKey} in secrets.`)
+          return new Response(
+            JSON.stringify({ 
+              error: `Product not configured for ${employeeName}. Please contact support.`,
+              detail: `Missing environment variable: ${envKey}`
+            }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          )
+        }
+
+        // Create a Polar checkout for this employee's product
+        const checkout = await polarRequest('/checkouts/custom/', {
+          method: 'POST',
+          body: JSON.stringify({
+            product_id: employeeProductId,
+            success_url: successUrl || `${req.headers.get('origin')}/marketplace?subscribed=${employeeTemplateId}`,
+            cancel_url: cancelUrl || `${req.headers.get('origin')}/marketplace`,
+            customer_email: user.email,
+            customer_name: userData?.full_name || userData?.display_name || undefined,
+            metadata: {
+              user_id: user.id,
+              checkout_type: 'employee_subscription',
+              employee_template_id: employeeTemplateId,
+              employee_name: employeeName,
+              employee_price: String(employeePrice),
             }
           })
         })
@@ -319,7 +378,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Subscription handler error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }

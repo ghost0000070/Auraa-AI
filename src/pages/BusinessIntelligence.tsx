@@ -10,10 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from 'sonner';
 import { supabase } from '@/supabase';
 import { 
-  TrendingUp, 
   Target, 
-  DollarSign, 
-  Users, 
   BarChart3, 
   Brain, 
   Plus,
@@ -24,20 +21,16 @@ import {
   Lightbulb
 } from 'lucide-react';
 import { Header } from '@/components/Header';
-import { JsonValue } from '@/types/json';
 
 interface BusinessGoal {
   id: string;
-  goal_name: string | null;
-  title: string | null;
+  title: string;
   description: string | null;
   target_value: number | null;
   current_value: number | null;
   unit: string | null;
-  goal_type: string | null;
   status: string;
-  assigned_employees: string[];
-  progress_history: unknown;
+  due_date: string | null;
   created_at: string;
   updated_at: string;
   user_id: string;
@@ -45,16 +38,13 @@ interface BusinessGoal {
 
 interface SharedKnowledge {
   id: string;
-  knowledge_type: string | null;
-  title: string | null;
-  content: string;
-  source_employee: string | null;
-  relevance_tags: string[];
-  confidence_score: number | null;
-  is_verified: boolean | null;
+  title: string;
+  content: string | null;
+  category: string | null;
+  tags: string[];
+  source: string | null;
   created_at: string;
   user_id: string;
-  metadata: JsonValue | null;
 }
 
 const BusinessIntelligence = () => {
@@ -64,24 +54,12 @@ const BusinessIntelligence = () => {
   const [loading, setLoading] = useState(true);
   const [showGoalDialog, setShowGoalDialog] = useState(false);
   const [newGoal, setNewGoal] = useState({
-    goal_name: '',
+    title: '',
     description: '',
     target_value: 0,
     unit: '',
-    goal_type: 'revenue',
-    deadline: '',
-    priority: 'medium',
-    assigned_employees: [] as string[]
+    due_date: '' as string | null
   });
-
-  const goalTypes = [
-    { value: 'revenue', label: 'Revenue', icon: DollarSign },
-    { value: 'leads', label: 'Leads', icon: Users },
-    { value: 'conversion', label: 'Conversion', icon: TrendingUp },
-    { value: 'engagement', label: 'Engagement', icon: BarChart3 },
-    { value: 'efficiency', label: 'Efficiency', icon: Target },
-    { value: 'custom', label: 'Custom', icon: Brain }
-  ];
 
   const statusColors = {
     active: 'default' as const,
@@ -116,9 +94,7 @@ const BusinessIntelligence = () => {
       setKnowledge(knowledgeData);
     } catch (error) {
       console.error('❌ Error fetching BI data:', error);
-      toast("Error", {
-        description: 'Failed to fetch business intelligence data'
-      });
+      toast.error('Failed to fetch business intelligence data');
     } finally {
       setLoading(false);
     }
@@ -134,43 +110,44 @@ const BusinessIntelligence = () => {
 
   const createGoal = async () => {
     try {
-      if (!newGoal.goal_name.trim() || !user) {
-        toast('Error', {
-          description: 'Please enter a goal name'
-        });
+      if (!newGoal.title.trim() || !user) {
+        toast.error('Please enter a goal title');
         return;
       }
 
       const { error } = await supabase
         .from('business_goals')
         .insert({
-          ...newGoal,
+          title: newGoal.title,
+          description: newGoal.description || null,
+          target_value: newGoal.target_value || null,
+          unit: newGoal.unit || null,
+          due_date: newGoal.due_date || null,
           user_id: user.id,
           current_value: 0,
           status: 'active',
         });
 
-      toast('Success', {
-        description: 'Business goal created successfully'
-      });
+      if (error) {
+        console.error('Error creating goal:', error);
+        toast.error('Failed to create goal: ' + error.message);
+        return;
+      }
+
+      toast.success('Business goal created successfully');
 
       setNewGoal({
-        goal_name: '',
+        title: '',
         description: '',
         target_value: 0,
         unit: '',
-        goal_type: 'revenue',
-        deadline: '',
-        priority: 'medium',
-        assigned_employees: []
+        due_date: null
       });
       setShowGoalDialog(false);
-      fetchData();
+      await fetchData();
     } catch (error) {
       console.error('Error creating goal:', error);
-      toast('Error', {
-        description: 'Failed to create goal'
-      });
+      toast.error('Failed to create goal');
     }
   };
 
@@ -188,14 +165,13 @@ const BusinessIntelligence = () => {
     }
   };
 
-  const getKnowledgeIcon = (type: string | null) => {
-    if (!type) return <Brain className="w-4 h-4" />;
-    switch (type) {
+  const getKnowledgeIcon = (category: string | null) => {
+    if (!category) return <Brain className="w-4 h-4" />;
+    switch (category.toLowerCase()) {
       case 'insight': return <Lightbulb className="w-4 h-4 text-yellow-500" />;
       case 'strategy': return <Target className="w-4 h-4 text-blue-500" />;
       case 'data': return <BarChart3 className="w-4 h-4 text-green-500" />;
       case 'lesson': return <Brain className="w-4 h-4 text-purple-500" />;
-      case 'template': return <Users className="w-4 h-4 text-orange-500" />;
       default: return <Brain className="w-4 h-4" />;
     }
   };
@@ -240,10 +216,10 @@ const BusinessIntelligence = () => {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2">Goal Name</label>
+                      <label className="block text-sm font-medium mb-2">Goal Title</label>
                       <Input
-                        value={newGoal.goal_name}
-                        onChange={(e) => setNewGoal(prev => ({ ...prev, goal_name: e.target.value }))}
+                        value={newGoal.title}
+                        onChange={(e) => setNewGoal(prev => ({ ...prev, title: e.target.value }))}
                         placeholder="e.g., Increase Monthly Revenue"
                       />
                     </div>
@@ -275,39 +251,12 @@ const BusinessIntelligence = () => {
                         />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-2">Goal Type</label>
-                        <select
-                          value={newGoal.goal_type}
-                          onChange={(e) => setNewGoal(prev => ({ ...prev, goal_type: e.target.value }))}
-                          className="w-full p-2 border rounded-md"
-                        >
-                          {goalTypes.map(type => (
-                            <option key={type.value} value={type.value}>{type.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-2">Priority</label>
-                        <select
-                          value={newGoal.priority}
-                          onChange={(e) => setNewGoal(prev => ({ ...prev, priority: e.target.value }))}
-                          className="w-full p-2 border rounded-md"
-                        >
-                          <option value="low">Low</option>
-                          <option value="medium">Medium</option>
-                          <option value="high">High</option>
-                          <option value="critical">Critical</option>
-                        </select>
-                      </div>
-                    </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Deadline</label>
+                      <label className="block text-sm font-medium mb-2">Due Date</label>
                       <Input
                         type="date"
-                        value={newGoal.deadline}
-                        onChange={(e) => setNewGoal(prev => ({ ...prev, deadline: e.target.value }))}
+                        value={newGoal.due_date || ''}
+                        onChange={(e) => setNewGoal(prev => ({ ...prev, due_date: e.target.value || null }))}
                       />
                     </div>
                   </div>
@@ -316,7 +265,7 @@ const BusinessIntelligence = () => {
                     <Button variant="outline" onClick={() => setShowGoalDialog(false)}>
                       Cancel
                     </Button>
-                    <Button onClick={createGoal} disabled={!newGoal.goal_name.trim()}>
+                    <Button onClick={createGoal} disabled={!newGoal.title.trim()}>
                       Create Goal
                     </Button>
                   </div>
@@ -340,18 +289,16 @@ const BusinessIntelligence = () => {
                 <div className="space-y-4">
                   {goals.map(goal => {
                     const progress = getProgressPercentage(goal.current_value, goal.target_value);
-                    const goalType = goalTypes.find(t => t.value === goal.goal_type);
-                    const IconComponent = goalType?.icon || Target;
                     
                     return (
                       <Card key={goal.id} className="p-4">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center space-x-3">
                             <div className="p-2 rounded-lg bg-primary/10">
-                              <IconComponent className="w-4 h-4 text-primary" />
+                              <Target className="w-4 h-4 text-primary" />
                             </div>
                              <div>
-                               <h4 className="font-semibold">{goal.goal_name || goal.title || 'Untitled Goal'}</h4>
+                               <h4 className="font-semibold">{goal.title || 'Untitled Goal'}</h4>
                                <p className="text-sm text-muted-foreground">{goal.description || 'No description'}</p>
                              </div>
                           </div>
@@ -378,16 +325,11 @@ const BusinessIntelligence = () => {
                            </div>
                          </div>
 
-                        {goal.assigned_employees.length > 0 && (
+                        {goal.due_date && (
                           <div className="mt-3 pt-3 border-t">
-                            <p className="text-xs text-muted-foreground mb-2">Assigned AI Employees:</p>
-                            <div className="flex flex-wrap gap-1">
-                              {goal.assigned_employees.map((employee, idx) => (
-                                <Badge key={idx} variant="outline" className="text-xs">
-                                  {employee}
-                                </Badge>
-                              ))}
-                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              Due: {new Date(goal.due_date).toLocaleDateString()}
+                            </p>
                           </div>
                         )}
                       </Card>
@@ -420,16 +362,8 @@ const BusinessIntelligence = () => {
                     <Card key={item.id} className="p-3">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center space-x-2">
-                          {getKnowledgeIcon(item.knowledge_type)}
-                          <span className="text-sm font-medium capitalize">{item.knowledge_type}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          {item.is_verified && (
-                            <CheckCircle className="w-3 h-3 text-green-500" />
-                          )}
-                           <Badge variant="outline" className="text-xs">
-                             {((item.confidence_score || 0) * 100).toFixed(0)}%
-                           </Badge>
+                          {getKnowledgeIcon(item.category)}
+                          <span className="text-sm font-medium capitalize">{item.category || 'General'}</span>
                         </div>
                       </div>
                        <h4 className="font-medium text-sm mb-1">{item.title || 'Untitled'}</h4>
@@ -437,12 +371,12 @@ const BusinessIntelligence = () => {
                          {item.content}
                        </p>
                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                         <span>by {item.source_employee || 'Unknown'}</span>
+                         <span>by {item.source || 'Unknown'}</span>
                          <span>{new Date(item.created_at).toLocaleDateString()}</span>
                        </div>
-                      {item.relevance_tags.length > 0 && (
+                      {item.tags && item.tags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-2">
-                          {item.relevance_tags.slice(0, 3).map((tag, idx) => (
+                          {item.tags.slice(0, 3).map((tag, idx) => (
                             <Badge key={idx} variant="secondary" className="text-xs">
                               {tag}
                             </Badge>

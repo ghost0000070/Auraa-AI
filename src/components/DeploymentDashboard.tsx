@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/supabase';
-import { useToast } from '@/components/ui/toast-hooks';
+import { toast } from 'sonner';
 import { 
   Clock, CheckCircle, XCircle, Zap, Activity, AlertTriangle, Loader2
 } from 'lucide-react';
@@ -37,7 +37,6 @@ interface DeployedEmployee {
 
 export const DeploymentDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
   const [requests, setRequests] = useState<DeploymentRequest[]>([]);
   const [employees, setEmployees] = useState<DeployedEmployee[]>([]);
   const [loading, setLoading] = useState({ requests: true, employees: true });
@@ -160,7 +159,7 @@ export const DeploymentDashboard: React.FC = () => {
         console.error('Error setting up subscriptions:', error);
         handleLoading('requests', false);
         handleLoading('employees', false);
-        toast({ title: 'Error', description: 'Failed to load deployment data', variant: 'destructive' });
+        toast.error('Failed to load deployment data');
         return () => {};
       }
     };
@@ -170,7 +169,7 @@ export const DeploymentDashboard: React.FC = () => {
     return () => {
       cleanupPromise.then(cleanup => cleanup());
     };
-  }, [user, toast]);
+  }, [user]);
 
   const stats = {
     pending: requests.filter(r => r.status === 'pending').length,

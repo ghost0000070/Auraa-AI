@@ -90,15 +90,15 @@ export function useAgentRealtime() {
         .from('agent_events')
         .select('*')
         .eq('user_id', user.id)
-        .order('timestamp', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(10);
       
       if (data) {
         setEvents(data.map(event => ({
           id: event.id,
-          type: event.type,
-          message: event.message,
-          timestamp: new Date(event.timestamp)
+          type: event.type || event.event_type || 'unknown',
+          message: event.message || (typeof event.payload === 'object' ? JSON.stringify(event.payload) : String(event.payload)) || '',
+          timestamp: new Date(event.timestamp || event.created_at)
         })));
       }
     };
@@ -114,9 +114,9 @@ export function useAgentRealtime() {
             const newEvent = payload.new;
             setEvents(prev => [{
               id: newEvent.id,
-              type: newEvent.type,
-              message: newEvent.message,
-              timestamp: new Date(newEvent.timestamp)
+              type: newEvent.type || newEvent.event_type || 'unknown',
+              message: newEvent.message || (typeof newEvent.payload === 'object' ? JSON.stringify(newEvent.payload) : String(newEvent.payload)) || '',
+              timestamp: new Date(newEvent.timestamp || newEvent.created_at)
             }, ...prev].slice(0, 10));
           }
         }

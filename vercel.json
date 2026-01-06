@@ -1,11 +1,28 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
   "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    },
     {
       "source": "/assets/(.*)",
       "headers": [
@@ -15,13 +32,5 @@
         }
       ]
     }
-  ],
-  "env": {
-    "VITE_SUPABASE_URL": "@supabase-url",
-    "VITE_SUPABASE_ANON_KEY": "@supabase-anon-key",
-    "VITE_POLAR_ACCESS_TOKEN": "@polar-access-token",
-    "VITE_OWNER_EMAIL": "@owner-email",
-    "VITE_OWNER_UID": "@owner-uid",
-    "VITE_ENABLE_ANALYTICS": "true"
-  }
+  ]
 }

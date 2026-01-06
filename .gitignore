@@ -116,3 +116,5 @@ serviceAccountKey.json
 # Artifact files
 latest
 .keys/
+private.pem
+public.pem

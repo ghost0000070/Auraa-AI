@@ -17,7 +17,7 @@ import { TemplateIcon } from '@/components/TemplateIcon';
 interface DeployedEmployee {
   id: string;
   name: string;
-  deployment_config: Record<string, unknown>;
+  configuration: Record<string, unknown>;
   template_id: string; // Storing the template ID is more robust
   user_id: string;
 }
@@ -73,7 +73,7 @@ const AIEmployeePage: React.FC = () => {
           setStaticData(staticInfo);
         }
 
-        setConfigDraft(JSON.stringify(employeeData.deployment_config, null, 2));
+        setConfigDraft(JSON.stringify(employeeData.configuration || {}, null, 2));
       } catch (error) {
         console.error("Error fetching employee:", error);
         toast.error("Error", { description: "Failed to fetch AI employee data." });
@@ -91,14 +91,26 @@ const AIEmployeePage: React.FC = () => {
     setIsSaving(true);
     try {
       const parsedConfig = JSON.parse(configDraft); // Validate JSON
-      const employeeDocRef = doc(db, 'ai_employees', deployedEmployee.id);
-      await updateDoc(employeeDocRef, { deployment_config: parsedConfig });
+      
+      const { error } = await supabase
+        .from('deployed_employees')
+        .update({ configuration: parsedConfig })
+        .eq('id', deployedEmployee.id);
 
-      setDeployedEmployee(prev => prev ? { ...prev, deployment_config: parsedConfig } : null);
-      toast("Success", { description: "Configuration saved successfully." });
+      if (error) {
+        throw error;
+      }
+
+      setDeployedEmployee(prev => prev ? { ...prev, configuration: parsedConfig } : null);
+      toast.success("Configuration saved successfully.");
       setIsSettingsOpen(false);
     } catch (error) {
-      toast("Invalid JSON", { description: "The configuration is not valid JSON." });
+      console.error("Error saving config:", error);
+      if (error instanceof SyntaxError) {
+        toast.error("The configuration is not valid JSON.");
+      } else {
+        toast.error("Failed to save configuration.");
+      }
     } finally {
       setIsSaving(false);
     }
@@ -118,7 +130,7 @@ const AIEmployeePage: React.FC = () => {
         <ChatInterface
           employeeType={staticData.id}
           employeeName={deployedEmployee.name}
-          businessContext={JSON.stringify(deployedEmployee.deployment_config)}
+          businessContext={JSON.stringify(deployedEmployee.configuration || {})}
           onClose={() => setShowChat(false)}
         />
       </div>

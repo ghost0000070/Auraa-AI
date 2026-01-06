@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '@/supabase';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from "@/components/ui/toast-hooks";
+import { toast } from "sonner";
 import { Clipboard, Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { usePuter } from '@/hooks/usePuter'; // Import the new hook
@@ -38,21 +38,14 @@ const PuterIntegration: React.FC = () => {
       
       if (data?.script) {
         setGeneratedScript(data.script);
-        toast({
-          title: 'Script Generated',
-          description: 'Your Puter script has been generated successfully!',
-        });
+        toast.success('Script Generated: Your Puter script has been generated successfully!');
       }
 
     } catch (err) {
       console.error("Error generating script: ", err);
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       setError(errorMessage);
-      toast({
-        title: 'Error',
-        description: 'Failed to generate script. Please try again.',
-        variant: 'destructive',
-      });
+      toast.error('Failed to generate script. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -60,10 +53,7 @@ const PuterIntegration: React.FC = () => {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generatedScript);
-    toast({
-      title: 'Copied to Clipboard',
-      description: 'The Puter script has been copied to your clipboard.',
-    });
+    toast.success('Copied to Clipboard: The Puter script has been copied.');
   };
 
   return (

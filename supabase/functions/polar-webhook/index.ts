@@ -84,36 +84,70 @@ serve(async (req) => {
         break
 
       case 'order.created': {
-        // Payment successful - update user subscription
+        // Payment successful - check if it's an intro subscription or employee subscription
         const customerEmail = data.customer?.email
+        const metadata = data.metadata || {}
         
         if (customerEmail) {
           // Find user by email
           const { data: users } = await supabase
             .from('users')
-            .select('id')
+            .select('id, intro_subscription_used')
             .eq('email', customerEmail)
             .single()
 
           if (users) {
-            // Determine subscription tier based on product
-            const productId = data.product_id
-            const subscriptionTier = PRODUCT_TIERS[productId] || 'pro'
+            // Check if this is an employee subscription checkout
+            if (metadata.checkout_type === 'employee_subscription') {
+              // Create employee subscription record
+              const introEndsAt = new Date()
+              introEndsAt.setDate(introEndsAt.getDate() + 30)
+              
+              await supabase
+                .from('employee_subscriptions')
+                .upsert({
+                  user_id: users.id,
+                  employee_template_id: metadata.employee_template_id,
+                  employee_name: metadata.employee_name,
+                  status: 'active',
+                  is_trial: false,
+                  monthly_price: parseInt(metadata.employee_price || '0') * 100,
+                  polar_subscription_id: data.subscription_id || null,
+                  polar_checkout_id: data.id,
+                  subscribed_at: new Date().toISOString(),
+                  current_period_start: new Date().toISOString(),
+                  current_period_end: introEndsAt.toISOString(),
+                }, { onConflict: 'user_id,employee_template_id' })
 
-            // Update user subscription
-            await supabase
-              .from('users')
-              .update({
-                subscription_tier: subscriptionTier,
-                subscription_status: 'active',
-                subscription_id: data.subscription_id || null,
-                polar_customer_id: data.customer?.id,
-                polar_order_id: data.id,
-                updated_at: new Date().toISOString(),
-              })
-              .eq('id', users.id)
+              console.log(`✅ Created employee subscription for ${metadata.employee_name} for user ${users.id}`)
+            } else {
+              // This is an intro subscription (Pro or Enterprise)
+              const productId = data.product_id
+              const subscriptionTier = PRODUCT_TIERS[productId] || 'pro'
 
-            console.log(`✅ Updated user ${users.id} to ${subscriptionTier} tier`)
+              // Calculate intro period end (30 days from now)
+              const introEndsAt = new Date()
+              introEndsAt.setDate(introEndsAt.getDate() + 30)
+
+              // Update user subscription with intro period
+              await supabase
+                .from('users')
+                .update({
+                  subscription_tier: subscriptionTier,
+                  subscription_status: 'active',
+                  subscription_id: data.subscription_id || null,
+                  polar_customer_id: data.customer?.id,
+                  polar_order_id: data.id,
+                  // Set intro period
+                  intro_subscription_started_at: new Date().toISOString(),
+                  intro_subscription_ends_at: introEndsAt.toISOString(),
+                  intro_subscription_used: true,
+                  updated_at: new Date().toISOString(),
+                })
+                .eq('id', users.id)
+
+              console.log(`✅ Updated user ${users.id} to ${subscriptionTier} tier with 30-day intro period ending ${introEndsAt.toISOString()}`)
+            }
           } else {
             console.warn(`⚠️ No user found with email: ${customerEmail}`)
           }
@@ -192,7 +226,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Webhook error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
