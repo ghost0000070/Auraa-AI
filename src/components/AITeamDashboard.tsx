@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from "sonner";
 import { formatDistanceToNow } from 'date-fns';
 import { 
-  Activity, Code, ChevronDown, ChevronUp, AlertCircle, ArrowRight, CheckCircle, Clock, TrendingUp, MessageSquare, Loader2, Rocket, Bot 
+  Activity, Code, ChevronDown, ChevronUp, AlertCircle, ArrowRight, CheckCircle, Clock, TrendingUp, MessageSquare, Loader2, Rocket, Bot, Zap, XCircle, AlertTriangle
 } from 'lucide-react';
 import {
   Collapsible,
@@ -17,6 +17,14 @@ import { Button } from '@/components/ui/button';
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from 'react-router-dom';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface AgentTask {
   id: string;
@@ -54,6 +62,14 @@ interface Employee {
   created_at?: string;
 }
 
+interface DeploymentRequest {
+  id: string;
+  createdAt: Date;
+  status: string;
+  employeeName: string;
+  employeeCategory?: string;
+}
+
 const AITeamDashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -61,9 +77,10 @@ const AITeamDashboard: React.FC = () => {
   const [communications, setCommunications] = useState<Communication[]>([]);
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [requests, setRequests] = useState<DeploymentRequest[]>([]);
   const [expandedTask, setExpandedTask] = useState<string | null>(null);
   const [loading, setLoading] = useState<Record<string, boolean>>({
-    tasks: true, comms: true, metrics: true, employees: true
+    tasks: true, comms: true, metrics: true, employees: true, requests: true
   });
 
   const handleLoading = (section: string, status: boolean) => {
@@ -134,6 +151,26 @@ const AITeamDashboard: React.FC = () => {
         }
         if (employeesData) setEmployees(employeesData as any[]);
         handleLoading('employees', false);
+
+        // Load deployment requests
+        handleLoading('requests', true);
+        const { data: requestsData } = await supabase
+          .from('deployment_requests')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(10);
+        
+        if (requestsData) {
+          setRequests(requestsData.map((r: any) => ({
+            id: r.id,
+            createdAt: new Date(r.created_at),
+            status: r.status,
+            employeeName: r.employee_name,
+            employeeCategory: r.employee_category
+          })));
+        }
+        handleLoading('requests', false);
 
       } catch (error) {
         console.error('Error loading dashboard data:', error);
@@ -212,11 +249,43 @@ const AITeamDashboard: React.FC = () => {
       )
       .subscribe();
 
+    const requestsChannel = supabase
+      .channel('requests_rt')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'deployment_requests', filter: `user_id=eq.${user.id}` },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newReq = payload.new as any;
+            setRequests(prev => [{
+              id: newReq.id,
+              createdAt: new Date(newReq.created_at),
+              status: newReq.status,
+              employeeName: newReq.employee_name,
+              employeeCategory: newReq.employee_category
+            }, ...prev.slice(0, 9)]);
+          } else if (payload.eventType === 'UPDATE') {
+            setRequests(prev => prev.map(r => 
+              r.id === payload.new.id 
+                ? {
+                    id: payload.new.id,
+                    createdAt: new Date(payload.new.created_at),
+                    status: payload.new.status,
+                    employeeName: payload.new.employee_name,
+                    employeeCategory: payload.new.employee_category
+                  }
+                : r
+            ));
+          }
+        }
+      )
+      .subscribe();
+
     return () => {
       tasksChannel.unsubscribe();
       commsChannel.unsubscribe();
       metricsChannel.unsubscribe();
       employeesChannel.unsubscribe();
+      requestsChannel.unsubscribe();
     };
   }, [user]);
 
@@ -239,6 +308,17 @@ const AITeamDashboard: React.FC = () => {
     }
     return icons[action] || <Code className="h-5 w-5 mr-2" />;
   }
+
+  const getRequestStatusUi = (status: string) => {
+    const ui: Record<string, { icon: React.ReactElement, color: string }> = {
+      pending: { icon: <Clock className="w-4 h-4 text-amber-500" />, color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+      completed: { icon: <CheckCircle className="w-4 h-4 text-green-500" />, color: 'bg-green-500/20 text-green-300 border-green-500/30' },
+      active: { icon: <Zap className="w-4 h-4 text-green-500" />, color: 'bg-green-500/20 text-green-300 border-green-500/30' },
+      failed: { icon: <XCircle className="w-4 h-4 text-red-500" />, color: 'bg-red-500/20 text-red-300 border-red-500/30' },
+      inactive: { icon: <XCircle className="w-4 h-4 text-red-500" />, color: 'bg-red-500/20 text-red-300 border-red-500/30' }
+    };
+    return ui[status] || { icon: <AlertTriangle className="w-4 h-4 text-muted-foreground" />, color: 'bg-muted/20 text-muted-foreground border-muted' };
+  };
 
   const toggleExpand = (taskId: string) => {
     setExpandedTask(expandedTask === taskId ? null : taskId);
@@ -441,6 +521,48 @@ const AITeamDashboard: React.FC = () => {
                 ))
             )}
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="lg:col-span-2">
+        <CardHeader>
+          <CardTitle>Recent Deployment Requests</CardTitle>
+          <CardDescription>Latest deployment activity</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading.requests ? <p>Loading requests...</p> : requests.length === 0 ? (
+            <div className="text-center text-muted-foreground py-8 flex flex-col items-center">
+              <Rocket className="w-8 h-8 mb-2 opacity-20"/>
+              <p>No deployment requests yet.</p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Employee Name</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Requested</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {requests.map((request) => {
+                  const { icon, color } = getRequestStatusUi(request.status);
+                  return (
+                    <TableRow key={request.id}>
+                      <TableCell className="font-medium">{request.employeeName}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className={`flex items-center gap-1 w-fit ${color}`}>
+                          {icon}
+                          <span className="capitalize">{request.status}</span>
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{formatDistanceToNow(request.createdAt, { addSuffix: true })}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
 

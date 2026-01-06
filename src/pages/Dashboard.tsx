@@ -6,7 +6,6 @@ import { supabase } from "@/supabase";
 
 import AITeamDashboard from '@/components/AITeamDashboard';
 import { QuickDeploymentWidget } from '@/components/QuickDeploymentWidget';
-import { DeploymentDashboard } from '@/components/DeploymentDashboard';
 import { AnalyticsSection } from '@/components/AnalyticsSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
@@ -104,7 +103,6 @@ export default function Dashboard() {
         <Tabs defaultValue="team">
             <TabsList className="mb-4">
                 <TabsTrigger value="team">Team Dashboard</TabsTrigger>
-                <TabsTrigger value="deployment">Deployment</TabsTrigger>
                 <TabsTrigger value="analytics">Analytics</TabsTrigger>
             </TabsList>
             
@@ -117,10 +115,6 @@ export default function Dashboard() {
                         <QuickDeploymentWidget />
                     </div>
                 </div>
-            </TabsContent>
-            
-            <TabsContent value="deployment">
-                <DeploymentDashboard />
             </TabsContent>
             
             <TabsContent value="analytics">
