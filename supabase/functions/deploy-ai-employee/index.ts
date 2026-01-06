@@ -132,47 +132,17 @@ serve(async (req) => {
     }
 
     // Use Puter's free Claude API to generate a deployment script/plan
-    let deploymentPlan = 'Basic deployment configuration'
+    let deploymentPlan = `Deployment configuration for ${request.employee_name}:
+- Category: ${request.employee_category}
+- Template: ${templateId}
+- Business: ${profile?.business_name || 'Not specified'}
+- Industry: ${profile?.industry || 'General'}
+- Deployed: ${new Date().toISOString()}
 
-    try {
-      const aiResponse = await fetch('https://api.puter.com/drivers/call', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          interface: 'puter-chat-completion',
-          driver: 'claude-sonnet-4-5',
-          method: 'complete',
-          args: {
-            messages: [
-              {
-                role: 'system',
-                content: 'You are an AI deployment specialist. Create deployment configurations for AI employees.'
-              },
-              {
-                role: 'user',
-                content: `Create a deployment plan for an AI employee:
-                Name: ${deploymentConfig.name}
-                Category: ${deploymentConfig.category}
-                Template: ${deploymentConfig.templateId}
-                Business: ${deploymentConfig.businessContext}
-                Industry: ${deploymentConfig.industry}
-                
-                Provide a structured deployment plan including setup steps, integrations, and configuration.`
-              }
-            ]
-          }
-        }),
-      })
+This AI employee is now active and ready to assist with ${request.employee_category} tasks.`
 
-      if (aiResponse.ok) {
-        const aiData = await aiResponse.json()
-        deploymentPlan = aiData.message?.content?.[0]?.text || aiData.result
-      }
-    } catch (aiError) {
-      console.error('AI deployment plan error:', aiError)
-    }
+    // Note: Puter AI can be called here but for speed, using default plan
+    // The actual AI interactions happen in the frontend via Puter.js
 
     // Create deployed employee record
     console.log('Creating deployed employee with data:', {
