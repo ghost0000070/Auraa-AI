@@ -175,6 +175,15 @@ serve(async (req) => {
     }
 
     // Create deployed employee record
+    console.log('Creating deployed employee with data:', {
+      user_id: authenticatedUserId,
+      template_id: templateId,
+      name: request.employee_name,
+      role: request.employee_category || 'AI Employee',
+      category: request.employee_category,
+      status: 'active',
+    })
+    
     const { data: deployed, error: deployError } = await supabase
       .from('deployed_employees')
       .insert({
@@ -191,11 +200,15 @@ serve(async (req) => {
       .single()
 
     if (deployError) {
-      throw deployError
+      console.error('Deploy insert error:', JSON.stringify(deployError))
+      throw new Error(`Failed to insert deployed_employees: ${deployError.message} (code: ${deployError.code})`)
     }
+    
+    console.log('Deployed employee created:', deployed?.id)
 
     // Update deployment request status to completed
-    await supabase
+    console.log('Updating deployment request to completed')
+    const { error: updateError } = await supabase
       .from('deployment_requests')
       .update({ 
         status: 'completed',
@@ -203,9 +216,14 @@ serve(async (req) => {
         completed_at: new Date().toISOString(),
       })
       .eq('id', requestId)
+    
+    if (updateError) {
+      console.error('Update deployment request error:', JSON.stringify(updateError))
+    }
 
     // Create initial task for the deployed employee
-    await supabase
+    console.log('Creating initial task')
+    const { error: taskError } = await supabase
       .from('agent_tasks')
       .insert({
         user_id: authenticatedUserId,
@@ -215,9 +233,14 @@ serve(async (req) => {
         description: 'AI Employee initialization and setup',
         status: 'pending',
       })
+    
+    if (taskError) {
+      console.error('Task insert error:', JSON.stringify(taskError))
+    }
 
     // Initialize metrics
-    await supabase
+    console.log('Creating metrics')
+    const { error: metricsError } = await supabase
       .from('agent_metrics')
       .insert({
         user_id: authenticatedUserId,
@@ -226,6 +249,12 @@ serve(async (req) => {
         avg_completion_time: 0,
         success_rate: 100,
       })
+    
+    if (metricsError) {
+      console.error('Metrics insert error:', JSON.stringify(metricsError))
+    }
+    
+    console.log('Deployment successful!')
 
     return new Response(
       JSON.stringify({ 
