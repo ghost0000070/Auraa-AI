@@ -2,7 +2,9 @@ import type { PuterChatResponse } from "../types/puter";
 import { toast } from "sonner";
 import { AI_MODELS, TIER_MODELS } from '@/config/constants';
 import { supabase } from '../supabase';
-import puter from 'puter';
+
+// Puter.js is loaded via CDN in index.html, available as window.puter
+// Use type declaration from src/types/puter.d.ts
 
 // Use centralized model constants - Claude models via Puter.js (FREE)
 const MODELS = AI_MODELS;
@@ -95,6 +97,12 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
         2. Return ONLY valid JSON if the context asks for it.
         3. Do not include markdown formatting (like \`\`\`json) in your response if JSON is requested.
     `;
+
+    // Guard: ensure Puter is available in the browser
+    const puter = (typeof window !== 'undefined' ? (window as any).puter : null);
+    if (!puter?.ai?.chat) {
+        throw new Error('Puter.js is not loaded. Please refresh and allow the Puter script to load.');
+    }
 
     const response = await puter.ai.chat(fullPrompt, { model });
     

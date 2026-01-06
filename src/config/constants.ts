@@ -18,28 +18,28 @@ export const TIER_LEVELS: Record<string, number> = {
   owner: 999,
 };
 
-// AI Models - Claude models via Puter.js (free)
-// See https://puter.com/puterai/chat/models for full list
+// AI Models - Claude models available via Puter.js (free via browser)
+// Using models that are verified working with Puter.js
 export const AI_MODELS = {
   // For complex reasoning, analysis, and strategic tasks
-  COMPLEX: 'claude-opus-4-5-20251101',
+  COMPLEX: 'claude-3-5-sonnet-20241022',
   // For standard tasks - balanced speed and quality
-  STANDARD: 'claude-sonnet-4-5-20250929',
+  STANDARD: 'claude-3-5-sonnet-20241022',
   // For fast, simple tasks - quick responses
-  FAST: 'claude-haiku-4-5-20251001',
+  FAST: 'claude-3-haiku-20240307',
   // Specialized models for specific use cases
-  CODING: 'claude-sonnet-4-5-20250929',
-  CREATIVE: 'claude-opus-4-5-20251101',
-  ANALYTICAL: 'claude-opus-4-5-20251101',
+  CODING: 'claude-3-5-sonnet-20241022',
+  CREATIVE: 'claude-3-5-sonnet-20241022',
+  ANALYTICAL: 'claude-3-5-sonnet-20241022',
 } as const;
 
-// Model assigned per subscription tier (included with subscription)
+// Model assigned per subscription tier (all available via Puter.js free)
 export const TIER_MODELS: Record<string, string> = {
   free: 'claude-3-haiku-20240307',           // Fast, basic tasks
   pro: 'claude-3-5-sonnet-20241022',         // Balanced, most business tasks
-  enterprise: 'claude-sonnet-4-5-20250929',  // Latest & most capable
-  admin: 'claude-opus-4-5-20251101',         // Full access
-  owner: 'claude-opus-4-5-20251101',         // Full access
+  enterprise: 'claude-3-5-sonnet-20241022',  // Most capable available
+  admin: 'claude-3-5-sonnet-20241022',       // Full access
+  owner: 'claude-3-5-sonnet-20241022',       // Full access
 };
 
 // Subscription pricing (monthly)

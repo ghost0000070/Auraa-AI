@@ -24,14 +24,13 @@ export interface Puter {
     print: (text: string) => void;
 }
 
-declare module 'puter' {
-    const puter: Puter;
-    export default puter;
-}
+// Remove the broken npm module declaration
+// Puter.js is loaded via CDN script tag in index.html
 
 declare global {
     interface Window {
         puter: Puter;
     }
+    // Global puter variable available from CDN script
     const puter: Puter;
 }

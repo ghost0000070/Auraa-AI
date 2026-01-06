@@ -146,6 +146,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
       
       console.log('AI response received:', result.provider);
 
+      if (!result?.completion?.text) {
+        throw new Error('AI returned empty response');
+      }
+
       const aiResponseText = result.completion.text;
 
       const aiMessage: Message = { sender: 'ai', text: aiResponseText };

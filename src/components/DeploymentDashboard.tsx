@@ -254,7 +254,7 @@ export const DeploymentDashboard: React.FC = () => {
                                   <TableRow 
                                     key={employee.id} 
                                     className="cursor-pointer hover:bg-slate-800/50"
-                                    onClick={() => navigate(`/ai-employee/${employee.id}`)}
+                                    onClick={() => navigate(`/ai-employees/${employee.id}`)}
                                   >
                                       <TableCell className="font-medium">{employee.name}</TableCell>
                                       <TableCell><Badge variant="outline" className={`flex items-center gap-1 w-fit ${color}`}>{icon}<span className="capitalize">{employee.status}</span></Badge></TableCell>

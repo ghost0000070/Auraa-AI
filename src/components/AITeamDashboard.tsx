@@ -154,21 +154,27 @@ const AITeamDashboard: React.FC = () => {
 
         // Load deployment requests
         handleLoading('requests', true);
-        const { data: requestsData } = await supabase
-          .from('deployment_requests')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(10);
-        
-        if (requestsData) {
-          setRequests(requestsData.map((r: any) => ({
-            id: r.id,
-            createdAt: new Date(r.created_at),
-            status: r.status,
-            employeeName: r.employee_name,
-            employeeCategory: r.employee_category
-          })));
+        try {
+          const { data: requestsData, error: requestsError } = await supabase
+            .from('deployment_requests')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(10);
+          
+          if (requestsError) {
+            console.error('Error loading deployment requests:', requestsError);
+          } else if (requestsData) {
+            setRequests(requestsData.map((r: any) => ({
+              id: r.id,
+              createdAt: new Date(r.created_at),
+              status: r.status,
+              employeeName: r.employee_name || 'Unknown',
+              employeeCategory: r.employee_category
+            })));
+          }
+        } catch (e) {
+          console.error('Exception loading deployment requests:', e);
         }
         handleLoading('requests', false);
 
@@ -368,7 +374,7 @@ const AITeamDashboard: React.FC = () => {
                     <div 
                       key={employee.id} 
                       className="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-slate-800/50 transition-colors"
-                      onClick={() => navigate(`/ai-employee/${employee.id}`)}
+                      onClick={() => navigate(`/ai-employees/${employee.id}`)}
                     >
                         <div className="flex items-center space-x-3">
                             <Avatar>

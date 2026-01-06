@@ -24,7 +24,7 @@ export const AIEmployeeCard = ({
 
   const handleClick = () => {
     if (clickable) {
-      navigate(`/ai-employee/${name.toLowerCase()}`);
+      navigate(`/ai-employees/${name.toLowerCase()}`);
     }
   };
 
