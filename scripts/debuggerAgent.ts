@@ -99,7 +99,7 @@ async function fixCommonTypeScriptErrors(errors: string[]): Promise<number> {
     const match = error.match(/^(.+?)\((\d+),(\d+)\): error (TS\d+): (.+)$/);
     if (!match) continue;
     
-    const [, filePath, lineStr, _colStr, errorCode, message] = match;
+    const [, filePath, lineStr, , errorCode, message] = match;
     const fullPath = join(ROOT_DIR, filePath);
     
     try {
@@ -108,44 +108,68 @@ async function fixCommonTypeScriptErrors(errors: string[]): Promise<number> {
       const lineIndex = parseInt(lineStr) - 1;
       
       let fixed = false;
+      let newContent = content;
       
-      // TS2307: Cannot find module - might be missing import
+      // TS2307: Cannot find module - check if it's a missing @/ import
       if (errorCode === 'TS2307' && message.includes('@/')) {
-        log(`  → Checking import path in ${filePath}:${lineStr}`, COLORS.dim);
-        // Could add logic to fix import paths
+        log(`  → Import path error in ${filePath}:${lineStr} - manual fix needed`, COLORS.yellow);
       }
       
-      // TS2339: Property does not exist - might need type assertion
+      // TS2339: Property does not exist - add type assertion
       if (errorCode === 'TS2339') {
-        log(`  → Property access error in ${filePath}:${lineStr}`, COLORS.dim);
+        log(`  → Property access error in ${filePath}:${lineStr} - consider using 'as any' or proper typing`, COLORS.yellow);
       }
       
       // TS2345: Argument type mismatch
       if (errorCode === 'TS2345') {
-        log(`  → Type mismatch in ${filePath}:${lineStr}`, COLORS.dim);
+        log(`  → Type mismatch in ${filePath}:${lineStr} - check function signature`, COLORS.yellow);
       }
       
-      // TS7006: Parameter implicitly has 'any' type
+      // TS7006: Parameter implicitly has 'any' type - add : any
       if (errorCode === 'TS7006') {
         const line = lines[lineIndex];
-        // Try to add : any to untyped parameters
-        if (line && !line.includes(': ')) {
-          log(`  → Adding type annotation in ${filePath}:${lineStr}`, COLORS.yellow);
+        if (line) {
+          // Find the parameter name from the error message
+          const paramMatch = message.match(/Parameter '(\w+)' implicitly has an 'any' type/);
+          if (paramMatch) {
+            const paramName = paramMatch[1];
+            // Replace "paramName" or "paramName)" with "paramName: any" or "paramName: any)"
+            const newLine = line.replace(
+              new RegExp(`\\b${paramName}\\b(?!\\s*:)(?=\\s*[,)=])`),
+              `${paramName}: any`
+            );
+            if (newLine !== line) {
+              lines[lineIndex] = newLine;
+              newContent = lines.join('\n');
+              fixed = true;
+              log(`  ✓ Added type annotation for '${paramName}' in ${filePath}:${lineStr}`, COLORS.green);
+            }
+          }
         }
       }
       
       // TS2554: Expected X arguments, but got Y
       if (errorCode === 'TS2554') {
-        log(`  → Argument count mismatch in ${filePath}:${lineStr}`, COLORS.dim);
+        log(`  → Argument count mismatch in ${filePath}:${lineStr} - check function call`, COLORS.yellow);
+      }
+      
+      // TS2322: Type 'X' is not assignable to type 'Y'
+      if (errorCode === 'TS2322') {
+        log(`  → Type assignment error in ${filePath}:${lineStr} - check variable types`, COLORS.yellow);
+      }
+      
+      // TS2532: Object is possibly 'undefined' - add optional chaining
+      if (errorCode === 'TS2532') {
+        log(`  → Possible undefined in ${filePath}:${lineStr} - consider optional chaining (?.)`, COLORS.yellow);
       }
       
       if (fixed) {
-        await writeFile(fullPath, lines.join('\n'), 'utf-8');
+        await writeFile(fullPath, newContent, 'utf-8');
         fixedCount++;
-        log(`  ✓ Fixed ${errorCode} in ${filePath}`, COLORS.green);
       }
     } catch (err) {
       // File might not exist or be readable
+      log(`  ✗ Could not read ${filePath}: ${err}`, COLORS.red);
     }
   }
   

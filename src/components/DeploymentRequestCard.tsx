@@ -47,11 +47,16 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
       if (error) throw error;
 
       // Call the deploy-ai-employee edge function to actually process the deployment
+      // Get the current session to pass Authorization header explicitly
+      const { data: { session } } = await supabase.auth.getSession();
       const { data: deployResult, error: deployError } = await supabase.functions.invoke('deploy-ai-employee', {
         body: {
           requestId: deploymentRequest.id,
           userId: user.id,
         },
+        headers: session?.access_token ? {
+          Authorization: `Bearer ${session.access_token}`,
+        } : undefined,
       });
 
       if (deployError) {

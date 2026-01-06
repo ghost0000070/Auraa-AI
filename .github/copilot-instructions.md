@@ -8,6 +8,15 @@
 - **ALWAYS** remember the purpose of this project: Auraa AI is a SaaS platform for deploying autonomous AI "employees" (agents) that can perform tasks, automations, and workflows for users
 - Understand what the platform does: enables users to deploy, manage, and interact with AI agents that handle various business tasks
 
+### Supabase Database Operations
+- **ALWAYS** use the Supabase CLI's linked project approach for database operations
+- Never use direct `psql` connections or raw connection strings
+- Use `supabase db push` to apply migrations to the remote database
+- Use `supabase migration repair --status applied <version>` to fix migration conflicts
+- Use `supabase migration list` to check migration status
+- The project is already linked to: `iupgzyloawweklvbyjlx`
+- For schema changes, create migration files in `supabase/migrations/` with timestamp format: `YYYYMMDDHHMMSS_description.sql`
+
 ### Debugging Protocol (ULTRATHINK MODE)
 When debugging, activate **ULTRATHINK MODE**—be extremely over-thorough:
 1. **First Pass**: Identify the issue and understand the full context

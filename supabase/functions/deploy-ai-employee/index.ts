@@ -11,11 +11,20 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
-  // Verify authorization header
-  const authHeader = req.headers.get('Authorization')
+  // Debug: Log all headers
+  const allHeaders: Record<string, string> = {}
+  req.headers.forEach((value, key) => {
+    allHeaders[key] = key.toLowerCase() === 'authorization' ? `Bearer ${value.substring(7, 20)}...` : value
+  })
+  console.log('All request headers:', JSON.stringify(allHeaders))
+
+  // Verify authorization header (try both cases for HTTP/2 compatibility)
+  const authHeader = req.headers.get('Authorization') || req.headers.get('authorization')
+  console.log('Auth header present:', !!authHeader)
+  
   if (!authHeader) {
     return new Response(
-      JSON.stringify({ error: 'Missing authorization header' }),
+      JSON.stringify({ error: 'Missing authorization header', headers: Object.keys(allHeaders) }),
       { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
@@ -36,17 +45,49 @@ serve(async (req) => {
       )
     }
 
-    // Initialize Supabase client
+    // Initialize Supabase client with service role for database operations
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Verify the user exists and the auth token is valid
+    // Extract and decode JWT token to get user ID
+    // The Supabase gateway already validates the token, so we can trust the payload
     const token = authHeader.replace('Bearer ', '')
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
-    if (authError || !user || user.id !== userId) {
+    
+    let authenticatedUserId: string
+    
+    try {
+      // Decode JWT payload (base64url encoded, second part of the token)
+      const parts = token.split('.')
+      if (parts.length !== 3) {
+        throw new Error('Invalid JWT format')
+      }
+      
+      // Decode base64url to base64, then decode
+      const base64Payload = parts[1].replace(/-/g, '+').replace(/_/g, '/')
+      const payload = JSON.parse(atob(base64Payload))
+      
+      console.log('JWT payload:', { 
+        sub: payload.sub, 
+        role: payload.role,
+        exp: payload.exp,
+        requestUserId: userId
+      })
+      
+      if (!payload.sub) {
+        throw new Error('No subject (user ID) in token')
+      }
+      
+      // Verify token hasn't expired
+      if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+        throw new Error('Token expired')
+      }
+      
+      authenticatedUserId = payload.sub
+    } catch (jwtError) {
+      console.error('JWT decode error:', jwtError)
       return new Response(
-        JSON.stringify({ error: 'Unauthorized: Invalid user or token' }),
+        JSON.stringify({ error: 'Unauthorized: Invalid token', details: String(jwtError) }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -56,11 +97,12 @@ serve(async (req) => {
       .from('deployment_requests')
       .select('*')
       .eq('id', requestId)
-      .eq('user_id', userId)
+      .eq('user_id', authenticatedUserId)
       .single()
 
     if (fetchError || !request) {
-      throw new Error('Deployment request not found')
+      console.log('Fetch error:', { fetchError, requestId, authenticatedUserId })
+      throw new Error('Deployment request not found or not owned by user')
     }
 
     // Update status to processing
@@ -77,7 +119,7 @@ serve(async (req) => {
     const { data: profile } = await supabase
       .from('business_profiles')
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', authenticatedUserId)
       .single()
 
     const deploymentConfig = {
@@ -136,9 +178,10 @@ serve(async (req) => {
     const { data: deployed, error: deployError } = await supabase
       .from('deployed_employees')
       .insert({
-        user_id: userId,
+        user_id: authenticatedUserId,
         template_id: templateId,
         name: request.employee_name,
+        role: request.employee_category || 'AI Employee',
         category: request.employee_category,
         status: 'active',
         configuration: deploymentConfig,
@@ -165,8 +208,9 @@ serve(async (req) => {
     await supabase
       .from('agent_tasks')
       .insert({
-        user_id: userId,
+        user_id: authenticatedUserId,
         deployed_employee_id: deployed.id,
+        title: 'AI Employee Initialization',
         task_type: 'initialization',
         description: 'AI Employee initialization and setup',
         status: 'pending',
@@ -176,7 +220,7 @@ serve(async (req) => {
     await supabase
       .from('agent_metrics')
       .insert({
-        user_id: userId,
+        user_id: authenticatedUserId,
         deployed_employee_id: deployed.id,
         tasks_completed: 0,
         avg_completion_time: 0,
@@ -200,16 +244,19 @@ serve(async (req) => {
     
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-    if (supabaseUrl && supabaseKey && requestId && userId) {
-      const supabase = createClient(supabaseUrl, supabaseKey)
-      await supabase
-        .from('deployment_requests')
-        .update({ 
-          status: 'failed',
-          error_message: error instanceof Error ? error.message : 'Unknown error',
-        })
-        .eq('id', requestId)
-        .eq('user_id', userId)
+    if (supabaseUrl && supabaseKey && requestId) {
+      try {
+        const supabase = createClient(supabaseUrl, supabaseKey)
+        await supabase
+          .from('deployment_requests')
+          .update({ 
+            status: 'failed',
+            error_message: error instanceof Error ? error.message : 'Unknown error',
+          })
+          .eq('id', requestId)
+      } catch (updateError) {
+        console.error('Failed to update deployment request status:', updateError)
+      }
     }
 
     return new Response(

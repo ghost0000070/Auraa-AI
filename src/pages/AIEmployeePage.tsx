@@ -23,7 +23,7 @@ interface DeployedEmployee {
 }
 
 const AIEmployeePage: React.FC = () => {
-  const { employeeId } = useParams<{ employeeId: string }>();
+  const { id: employeeId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
 
