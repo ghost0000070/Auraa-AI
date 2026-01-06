@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, Users, Zap, BarChart3, Settings, Bot, Workflow, Brain, TrendingUp } from "lucide-react";
+import { ChevronDown, Zap, BarChart3, Settings, Brain, TrendingUp } from "lucide-react";
 
 export const Header = () => {
   const { user, subscriptionStatus, signOut } = useAuth();
@@ -39,27 +39,6 @@ export const Header = () => {
         <div className="hidden md:flex items-center space-x-2">
           {user ? (
             <>
-              {/* AI Team Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                    <Bot className="w-4 h-4 mr-2" />
-                    AI Team
-                    <ChevronDown className="w-4 h-4 ml-2" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 bg-background border-border shadow-lg z-50">
-                  <DropdownMenuItem onClick={() => navigate('/ai-employees')} className="cursor-pointer">
-                    <Users className="w-4 h-4 mr-2" />
-                    AI Employees
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/ai-team-workflows')} className="cursor-pointer">
-                    <Workflow className="w-4 h-4 mr-2" />
-                    Team Workflows
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
               {/* Analytics & Intelligence Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
