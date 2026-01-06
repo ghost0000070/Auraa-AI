@@ -98,13 +98,35 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
 
     const response = await puter.ai.chat(fullPrompt, { model });
     
+    console.log('🔍 Puter response type:', typeof response, response);
+    
     // Ensure response is of type PuterChatResponse, not AsyncIterable
     if ((response as AsyncIterable<unknown>)[Symbol.asyncIterator]) {
         // Handle streaming response if necessary, or throw if not expected
         throw new Error("Streaming response from Puter AI not handled by this function.");
     }
 
-    const content = (response as PuterChatResponse).message?.content?.[0]?.text;
+    // Handle different response formats from Puter API
+    let content: string | undefined;
+    
+    // Format 1: { message: { content: [{ text: '...' }] } }
+    if ((response as PuterChatResponse).message?.content?.[0]?.text) {
+        content = (response as PuterChatResponse).message.content[0].text;
+    }
+    // Format 2: { text: '...' } (direct text response)
+    else if ((response as { text?: string }).text) {
+        content = (response as { text: string }).text;
+    }
+    // Format 3: { content: '...' }
+    else if ((response as { content?: string }).content) {
+        content = (response as { content: string }).content;
+    }
+    // Format 4: String response directly
+    else if (typeof response === 'string') {
+        content = response;
+    }
+    
+    console.log('🔍 Extracted content:', content?.substring(0, 100) + '...');
     
     if (!content) throw new Error("Empty response or unexpected format from Puter AI");
     return content;

@@ -285,7 +285,11 @@ const AITeamDashboard: React.FC = () => {
                  </div>
             ) : (
                 employees.map(employee => (
-                    <div key={employee.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div 
+                      key={employee.id} 
+                      className="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-slate-800/50 transition-colors"
+                      onClick={() => navigate(`/ai-employee/${employee.id}`)}
+                    >
                         <div className="flex items-center space-x-3">
                             <Avatar>
                                 <AvatarFallback className="bg-primary/20 text-primary">{employee.name?.substring(0,2).toUpperCase() || 'AI'}</AvatarFallback>

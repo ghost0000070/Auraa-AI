@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -37,6 +38,7 @@ interface DeployedEmployee {
 
 export const DeploymentDashboard: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [requests, setRequests] = useState<DeploymentRequest[]>([]);
   const [employees, setEmployees] = useState<DeployedEmployee[]>([]);
   const [loading, setLoading] = useState({ requests: true, employees: true });
@@ -249,7 +251,11 @@ export const DeploymentDashboard: React.FC = () => {
                           {employees.map((employee) => {
                               const { icon, color } = getStatusUi(employee.status);
                               return (
-                                  <TableRow key={employee.id}>
+                                  <TableRow 
+                                    key={employee.id} 
+                                    className="cursor-pointer hover:bg-slate-800/50"
+                                    onClick={() => navigate(`/ai-employee/${employee.id}`)}
+                                  >
                                       <TableCell className="font-medium">{employee.name}</TableCell>
                                       <TableCell><Badge variant="outline" className={`flex items-center gap-1 w-fit ${color}`}>{icon}<span className="capitalize">{employee.status}</span></Badge></TableCell>
                                       <TableCell>{formatDistanceToNow(employee.createdAt, { addSuffix: true })}</TableCell>

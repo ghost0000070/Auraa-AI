@@ -67,6 +67,8 @@ const buildContextPayload = async (employeeId: string, userId: string, userInput
 
 interface ChatInterfaceProps {
   employeeType: string;
+  employeeName?: string;
+  businessContext?: string;
   onClose: () => void;
 }
 
@@ -75,7 +77,7 @@ interface Message {
   text: string;
 }
 
-export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, onClose }) => {
+export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, employeeName, businessContext, onClose }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -93,12 +95,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, onCl
   }, [onClose]);
 
   useEffect(() => {
-    const welcomeMessage = template 
-      ? `Hello! I'm ${template.name}, your new ${template.category} expert. How can I assist you with your business goals today?`
-      : `Hello! I'm your new AI employee. How can I help you today?`;
+    const name = employeeName || template?.name || 'AI Assistant';
+    const category = template?.category || 'general';
+    const welcomeMessage = `Hello! I'm ${name}, your ${category} expert. How can I assist you with your business goals today?`;
     
     setMessages([{ sender: 'ai', text: welcomeMessage }]);
-  }, [employeeType, template]);
+  }, [employeeType, template, employeeName]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -126,19 +128,23 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, onCl
       
       // Construct a rich system context string for Puter AI
       const contextString = JSON.stringify({
-          role: template.name || "AI Assistant",
+          role: employeeName || template.name || "AI Assistant",
           profession: template.category,
           personality: template.personality,
           skills: template.skills,
-          businessContext: payload.companyContext,
+          businessContext: businessContext ? JSON.parse(businessContext) : payload.companyContext,
           specificContext: payload
       }, null, 2);
+
+      console.log('Sending to AI with context:', contextString.substring(0, 200) + '...');
 
       // Use client-side AIEngine instead of Cloud Functions
       const result = await AIEngine.generateChatCompletion(
           currentInput, 
           contextString // Passing detailed context as 'personality'
       );
+      
+      console.log('AI response received:', result.provider);
 
       const aiResponseText = result.completion.text;
 
@@ -146,9 +152,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, onCl
       setMessages(prev => [...prev, aiMessage]);
 
     } catch (error) {
-      const errorMessage: Message = { sender: 'ai', text: "Sorry, I'm having trouble connecting to my neural network right now. Please try again later." };
-      setMessages(prev => [...prev, errorMessage]);
       console.error('Error getting AI response:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage: Message = { 
+        sender: 'ai', 
+        text: `Sorry, I'm having trouble connecting right now. Error: ${errorMsg}. Please try again.` 
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
