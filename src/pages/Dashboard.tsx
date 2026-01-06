@@ -9,12 +9,11 @@ import { QuickDeploymentWidget } from '@/components/QuickDeploymentWidget';
 import { AnalyticsSection } from '@/components/AnalyticsSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
+import { AITeamCoordinationPanel } from '@/components/AITeamCoordinationPanel';
 
 export default function Dashboard() {
-  const { user, loading, isAdmin, subscriptionStatus, signOut } = useAuth();
+  const { user, loading, subscriptionStatus, signOut } = useAuth();
   const [isManagingSubscription, setIsManagingSubscription] = useState(false);
-
-  const isSubscriber = isAdmin || subscriptionStatus?.subscribed;
 
   const handleManageSubscription = async () => {
     if (!user) {
@@ -94,15 +93,10 @@ export default function Dashboard() {
       </header>
 
       <main className="flex-1 p-6">
-        {!isSubscriber && (
-          <div className="p-4 mb-6 text-center text-white bg-red-500 rounded-lg">
-            <p>Your subscription is not active. Please <Button variant="link" className="text-white" onClick={handleManageSubscription}>subscribe</Button> to use the AI features.</p>
-          </div>
-        )}
-
         <Tabs defaultValue="team">
             <TabsList className="mb-4">
                 <TabsTrigger value="team">Team Dashboard</TabsTrigger>
+                <TabsTrigger value="coordination">AI Team Coordination</TabsTrigger>
                 <TabsTrigger value="analytics">Analytics</TabsTrigger>
             </TabsList>
             
@@ -115,6 +109,12 @@ export default function Dashboard() {
                         <QuickDeploymentWidget />
                     </div>
                 </div>
+            </TabsContent>
+
+            <TabsContent value="coordination">
+              <div className="space-y-6">
+                <AITeamCoordinationPanel variant="embedded" />
+              </div>
             </TabsContent>
             
             <TabsContent value="analytics">

@@ -48,6 +48,20 @@ const PricingPage = () => {
     }
   };
 
+  if (user) {
+    return (
+      <div className="min-h-screen bg-background py-16">
+        <div className="container mx-auto px-4 text-center space-y-4">
+          <h1 className="text-4xl font-bold">Billing is managed in your dashboard</h1>
+          <p className="text-muted-foreground">You are already signed in. Manage or view your plan from the dashboard.</p>
+          <div className="flex justify-center">
+            <Button onClick={() => navigate('/dashboard')}>Go to Dashboard</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background py-16">
       <div className="container mx-auto px-4">
