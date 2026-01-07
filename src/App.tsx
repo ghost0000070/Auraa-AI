@@ -46,7 +46,7 @@ const App: React.FC = () => {
         <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <div className="flex flex-col min-h-screen bg-background">
             <Header />
-            <main className="flex-grow bg-background">
+            <main className="flex-grow bg-background pt-16">
               <Suspense fallback={
                 <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 to-slate-950">
                   <div className="text-center space-y-4">

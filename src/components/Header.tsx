@@ -95,7 +95,7 @@ export const Header = () => {
                     <ChevronDown className="w-3 h-3 ml-1" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 bg-background border-border">
+                <DropdownMenuContent align="end" className="w-48 bg-background border-border z-[100]">
                   <DropdownMenuItem onClick={() => navigate('/business-profile')} className="cursor-pointer">
                     <User className="w-4 h-4 mr-2" />
                     Business Profile
