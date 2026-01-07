@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { supabase } from "@/supabase";
-import { useNavigate } from "react-router-dom";
 
 import AITeamDashboard from '@/components/AITeamDashboard';
 import { QuickDeploymentWidget } from '@/components/QuickDeploymentWidget';
@@ -11,12 +10,10 @@ import { AnalyticsSection } from '@/components/AnalyticsSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
 import { AITeamCoordinationPanel } from '@/components/AITeamCoordinationPanel';
-import { Key, Calendar, FileText, CreditCard, ClipboardList } from "lucide-react";
 
 export default function Dashboard() {
   const { user, loading, subscriptionStatus, signOut } = useAuth();
   const [isManagingSubscription, setIsManagingSubscription] = useState(false);
-  const navigate = useNavigate();
 
   const handleManageSubscription = async () => {
     if (!user) {
@@ -96,30 +93,6 @@ export default function Dashboard() {
       </header>
 
       <main className="flex-1 p-6">
-        {/* Quick Actions Bar */}
-        <div className="flex flex-wrap gap-2 mb-6 p-3 bg-card/50 rounded-lg border border-border">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/scheduling')} className="flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
-            Scheduling
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => navigate('/logs')} className="flex items-center gap-2">
-            <FileText className="w-4 h-4" />
-            Agent Logs
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => navigate('/api-keys')} className="flex items-center gap-2">
-            <Key className="w-4 h-4" />
-            API Keys
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => navigate('/billing')} className="flex items-center gap-2">
-            <CreditCard className="w-4 h-4" />
-            Billing
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => navigate('/audit')} className="flex items-center gap-2">
-            <ClipboardList className="w-4 h-4" />
-            Audit Trail
-          </Button>
-        </div>
-
         <Tabs defaultValue="team">
             <TabsList className="mb-4">
                 <TabsTrigger value="team">Team Dashboard</TabsTrigger>
