@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/supabase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
+import { useAgentMetrics } from '@/hooks/useAgentMetrics';
 import { toast } from "sonner";
 import { formatDistanceToNow } from 'date-fns';
 import { 
-  Activity, Code, ChevronDown, ChevronUp, AlertCircle, ArrowRight, CheckCircle, Clock, TrendingUp, MessageSquare, Loader2, Rocket, Bot, Zap, XCircle, AlertTriangle
+  Activity, Code, ChevronDown, ChevronUp, AlertCircle, ArrowRight, CheckCircle, Clock, MessageSquare, Loader2, Rocket, Bot, TrendingUp
 } from 'lucide-react';
 import {
   Collapsible,
@@ -15,26 +16,19 @@ import {
 } from "@/components/ui/collapsible";
 import { Button } from '@/components/ui/button';
 import { Progress } from "@/components/ui/progress";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useNavigate } from 'react-router-dom';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 interface AgentTask {
   id: string;
   action: string;
-  status: 'success' | 'running' | 'queued' | 'error';
+  status: 'success' | 'running' | 'queued' | 'error' | 'completed' | 'pending' | 'failed';
   parameters: { url?: string; [key: string]: unknown; };
   result?: unknown;
   error?: string;
-  finished_at?: { seconds: number; nanoseconds: number; };
-  createdAt: { seconds: number; nanoseconds: number; };
+  finished_at?: string;
+  started_at?: string;
+  created_at?: string;
 }
 
 interface Communication {
@@ -43,14 +37,7 @@ interface Communication {
   recipient_employee: string;
   content: string;
   is_read: boolean;
-  created_at?: { seconds: number; nanoseconds: number; };
-}
-
-interface Metric {
-  id: string;
-  name: string;
-  value: number;
-  timestamp: { seconds: number; nanoseconds: number; };
+  created_at?: string;
 }
 
 interface Employee {
@@ -62,32 +49,146 @@ interface Employee {
   created_at?: string;
 }
 
-interface DeploymentRequest {
+interface PerformanceMetrics {
+  totalTasks: number;
+  completedTasks: number;
+  failedTasks: number;
+  pendingTasks: number;
+  runningTasks: number;
+  successRate: number;
+  avgResponseTime: number;
+  tasksToday: number;
+  activeEmployees: number;
+}
+
+interface MetricCard {
   id: string;
-  createdAt: Date;
-  status: string;
-  employeeName: string;
-  employeeCategory?: string;
+  name: string;
+  value: string | number;
+  helper?: string;
+  timestamp?: string;
+  trend?: 'up' | 'down';
 }
 
 const AITeamDashboard: React.FC = () => {
   const { user } = useAuth();
+  const { data: agentMetrics, isLoading: metricsLoading } = useAgentMetrics();
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<AgentTask[]>([]);
   const [communications, setCommunications] = useState<Communication[]>([]);
-  const [metrics, setMetrics] = useState<Metric[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
-  const [requests, setRequests] = useState<DeploymentRequest[]>([]);
   const [expandedTask, setExpandedTask] = useState<string | null>(null);
   const [loading, setLoading] = useState<Record<string, boolean>>({
-    tasks: true, comms: true, metrics: true, employees: true, requests: true
+    tasks: true, comms: true, employees: true
   });
 
   const handleLoading = (section: string, status: boolean) => {
     setLoading(prev => ({...prev, [section]: status}));
   }
   
-  const allDataLoaded = Object.values(loading).every(v => !v);
+  const allDataLoaded = Object.values(loading).every(v => !v) && !metricsLoading;
+
+  // Calculate real performance metrics from tasks
+  const performanceMetrics = useMemo((): PerformanceMetrics => {
+    const completed = tasks.filter(t => t.status === 'completed' || t.status === 'success').length;
+    const failed = tasks.filter(t => t.status === 'failed' || t.status === 'error').length;
+    const pending = tasks.filter(t => t.status === 'pending' || t.status === 'queued').length;
+    const running = tasks.filter(t => t.status === 'running').length;
+    const total = tasks.length;
+    
+    // Calculate success rate (excluding pending/running)
+    const finishedTasks = completed + failed;
+    const successRate = finishedTasks > 0 ? Math.round((completed / finishedTasks) * 100) : 100;
+    
+    // Calculate average response time from completed tasks
+    const completedWithTime = tasks.filter(t => 
+      (t.status === 'completed' || t.status === 'success') && t.started_at && t.finished_at
+    );
+    
+    let avgResponseTime = 0;
+    if (completedWithTime.length > 0) {
+      const totalTime = completedWithTime.reduce((sum, t) => {
+        const start = new Date(t.started_at!).getTime();
+        const end = new Date(t.finished_at!).getTime();
+        return sum + (end - start);
+      }, 0);
+      avgResponseTime = Math.round(totalTime / completedWithTime.length / 1000); // in seconds
+    }
+    
+    // Calculate tasks today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tasksToday = tasks.filter(t => {
+      if (!t.created_at) return false;
+      const taskDate = new Date(t.created_at);
+      return taskDate >= today;
+    }).length;
+    
+    // Count active employees
+    const activeEmployees = employees.filter(e => e.status === 'active').length;
+    
+    return {
+      totalTasks: total,
+      completedTasks: completed,
+      failedTasks: failed,
+      pendingTasks: pending,
+      runningTasks: running,
+      successRate,
+      avgResponseTime,
+      tasksToday,
+      activeEmployees
+    };
+  }, [tasks, employees]);
+
+  const metricCards: MetricCard[] = useMemo(() => {
+    const successRate = agentMetrics?.successRate ?? performanceMetrics.successRate;
+    const avgResponseTime = agentMetrics?.avgResponseTime ?? performanceMetrics.avgResponseTime;
+
+    return [
+      {
+        id: 'total-tasks',
+        name: 'Total Tasks',
+        value: agentMetrics?.totalTasks ?? performanceMetrics.totalTasks,
+        helper: 'All-time volume',
+        trend: 'up'
+      },
+      {
+        id: 'success-rate',
+        name: 'Success Rate',
+        value: `${Math.round(successRate)}%`,
+        helper: 'Completed vs failed',
+        trend: successRate < 70 ? 'down' : 'up'
+      },
+      {
+        id: 'avg-response',
+        name: 'Avg Response Time',
+        value: avgResponseTime ? `${Math.round(avgResponseTime)}s` : '—',
+        helper: 'Completed tasks',
+        trend: 'up'
+      },
+      {
+        id: 'tasks-today',
+        name: 'Tasks Today',
+        value: performanceMetrics.tasksToday,
+        helper: 'Since midnight',
+        trend: 'up'
+      },
+      {
+        id: 'failed-tasks',
+        name: 'Failed Tasks',
+        value: performanceMetrics.failedTasks,
+        helper: 'Across all tasks',
+        trend: performanceMetrics.failedTasks > 0 ? 'down' : 'up'
+      },
+      {
+        id: 'active-employees',
+        name: 'Active Employees',
+        value: performanceMetrics.activeEmployees,
+        helper: 'Currently online',
+        trend: 'up'
+      }
+    ];
+  }, [agentMetrics, performanceMetrics]);
 
   useEffect(() => {
     if (!user) return;
@@ -100,8 +201,9 @@ const AITeamDashboard: React.FC = () => {
           .from('agent_tasks')
           .select('*')
           .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-        if (tasksData) setTasks(tasksData as any[]);
+          .order('created_at', { ascending: false })
+          .limit(50);
+        if (tasksData) setTasks(tasksData as AgentTask[]);
         handleLoading('tasks', false);
 
         // Load communications
@@ -110,11 +212,12 @@ const AITeamDashboard: React.FC = () => {
           .from('ai_team_communications')
           .select('*')
           .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false })
+          .limit(20);
         if (commsData) {
-          setCommunications(commsData as any[]);
+          setCommunications(commsData as Communication[]);
           // Handle unread messages
-          const unreadComms = commsData.filter((c: any) => !c.is_read);
+          const unreadComms = commsData.filter((c: Communication) => !c.is_read);
           for (const comm of unreadComms) {
             toast(`New Message from ${comm.sender_employee}`, { description: comm.content });
           }
@@ -123,22 +226,12 @@ const AITeamDashboard: React.FC = () => {
             await supabase
               .from('ai_team_communications')
               .update({ is_read: true })
-              .in('id', unreadComms.map((c: any) => c.id));
+              .in('id', unreadComms.map((c: Communication) => c.id));
           }
         }
         handleLoading('comms', false);
 
-        // Load metrics
-        handleLoading('metrics', true);
-        const { data: metricsData } = await supabase
-          .from('agent_metrics')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-        if (metricsData) setMetrics(metricsData as any[]);
-        handleLoading('metrics', false);
-
-        // Load deployed employees (not ai_employees which is templates)
+        // Load deployed employees
         handleLoading('employees', true);
         const { data: employeesData, error: employeesError } = await supabase
           .from('deployed_employees')
@@ -149,34 +242,8 @@ const AITeamDashboard: React.FC = () => {
         if (employeesError) {
           console.error('Error loading employees:', employeesError);
         }
-        if (employeesData) setEmployees(employeesData as any[]);
+        if (employeesData) setEmployees(employeesData as Employee[]);
         handleLoading('employees', false);
-
-        // Load deployment requests
-        handleLoading('requests', true);
-        try {
-          const { data: requestsData, error: requestsError } = await supabase
-            .from('deployment_requests')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(10);
-          
-          if (requestsError) {
-            console.error('Error loading deployment requests:', requestsError);
-          } else if (requestsData) {
-            setRequests(requestsData.map((r: any) => ({
-              id: r.id,
-              createdAt: new Date(r.created_at),
-              status: r.status,
-              employeeName: r.employee_name || 'Unknown',
-              employeeCategory: r.employee_category
-            })));
-          }
-        } catch (e) {
-          console.error('Exception loading deployment requests:', e);
-        }
-        handleLoading('requests', false);
 
       } catch (error) {
         console.error('Error loading dashboard data:', error);
@@ -193,9 +260,9 @@ const AITeamDashboard: React.FC = () => {
         { event: '*', schema: 'public', table: 'agent_tasks', filter: `user_id=eq.${user.id}` },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            setTasks(prev => [payload.new as any, ...prev]);
+            setTasks(prev => [payload.new as AgentTask, ...prev].slice(0, 50));
           } else if (payload.eventType === 'UPDATE') {
-            setTasks(prev => prev.map(t => t.id === payload.new.id ? payload.new as any : t));
+            setTasks(prev => prev.map(t => t.id === payload.new.id ? payload.new as AgentTask : t));
           } else if (payload.eventType === 'DELETE') {
             setTasks(prev => prev.filter(t => t.id !== payload.old.id));
           }
@@ -209,8 +276,8 @@ const AITeamDashboard: React.FC = () => {
         { event: '*', schema: 'public', table: 'ai_team_communications', filter: `user_id=eq.${user.id}` },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            const newComm = payload.new as any;
-            setCommunications(prev => [newComm, ...prev]);
+            const newComm = payload.new as Communication;
+            setCommunications(prev => [newComm, ...prev].slice(0, 20));
             if (!newComm.is_read) {
               toast(`New Message from ${newComm.sender_employee}`, { description: newComm.content });
               supabase.from('ai_team_communications')
@@ -221,19 +288,7 @@ const AITeamDashboard: React.FC = () => {
                 });
             }
           } else if (payload.eventType === 'UPDATE') {
-            setCommunications(prev => prev.map(c => c.id === payload.new.id ? payload.new as any : c));
-          }
-        }
-      )
-      .subscribe();
-
-    const metricsChannel = supabase
-      .channel('metrics_rt')
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'agent_metrics', filter: `user_id=eq.${user.id}` },
-        (payload) => {
-          if (payload.eventType === 'INSERT') {
-            setMetrics(prev => [payload.new as any, ...prev]);
+            setCommunications(prev => prev.map(c => c.id === payload.new.id ? payload.new as Communication : c));
           }
         }
       )
@@ -245,42 +300,11 @@ const AITeamDashboard: React.FC = () => {
         { event: '*', schema: 'public', table: 'deployed_employees', filter: `user_id=eq.${user.id}` },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            setEmployees(prev => [payload.new as any, ...prev]);
+            setEmployees(prev => [payload.new as Employee, ...prev]);
           } else if (payload.eventType === 'UPDATE') {
-            setEmployees(prev => prev.map(e => e.id === payload.new.id ? payload.new as any : e));
+            setEmployees(prev => prev.map(e => e.id === payload.new.id ? payload.new as Employee : e));
           } else if (payload.eventType === 'DELETE') {
             setEmployees(prev => prev.filter(e => e.id !== payload.old.id));
-          }
-        }
-      )
-      .subscribe();
-
-    const requestsChannel = supabase
-      .channel('requests_rt')
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'deployment_requests', filter: `user_id=eq.${user.id}` },
-        (payload) => {
-          if (payload.eventType === 'INSERT') {
-            const newReq = payload.new as any;
-            setRequests(prev => [{
-              id: newReq.id,
-              createdAt: new Date(newReq.created_at),
-              status: newReq.status,
-              employeeName: newReq.employee_name,
-              employeeCategory: newReq.employee_category
-            }, ...prev.slice(0, 9)]);
-          } else if (payload.eventType === 'UPDATE') {
-            setRequests(prev => prev.map(r => 
-              r.id === payload.new.id 
-                ? {
-                    id: payload.new.id,
-                    createdAt: new Date(payload.new.created_at),
-                    status: payload.new.status,
-                    employeeName: payload.new.employee_name,
-                    employeeCategory: payload.new.employee_category
-                  }
-                : r
-            ));
           }
         }
       )
@@ -289,9 +313,7 @@ const AITeamDashboard: React.FC = () => {
     return () => {
       tasksChannel.unsubscribe();
       commsChannel.unsubscribe();
-      metricsChannel.unsubscribe();
       employeesChannel.unsubscribe();
-      requestsChannel.unsubscribe();
     };
   }, [user]);
 
@@ -314,17 +336,6 @@ const AITeamDashboard: React.FC = () => {
     }
     return icons[action] || <Code className="h-5 w-5 mr-2" />;
   }
-
-  const getRequestStatusUi = (status: string) => {
-    const ui: Record<string, { icon: React.ReactElement, color: string }> = {
-      pending: { icon: <Clock className="w-4 h-4 text-amber-500" />, color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
-      completed: { icon: <CheckCircle className="w-4 h-4 text-green-500" />, color: 'bg-green-500/20 text-green-300 border-green-500/30' },
-      active: { icon: <Zap className="w-4 h-4 text-green-500" />, color: 'bg-green-500/20 text-green-300 border-green-500/30' },
-      failed: { icon: <XCircle className="w-4 h-4 text-red-500" />, color: 'bg-red-500/20 text-red-300 border-red-500/30' },
-      inactive: { icon: <XCircle className="w-4 h-4 text-red-500" />, color: 'bg-red-500/20 text-red-300 border-red-500/30' }
-    };
-    return ui[status] || { icon: <AlertTriangle className="w-4 h-4 text-muted-foreground" />, color: 'bg-muted/20 text-muted-foreground border-muted' };
-  };
 
   const toggleExpand = (taskId: string) => {
     setExpandedTask(expandedTask === taskId ? null : taskId);
@@ -451,7 +462,7 @@ const AITeamDashboard: React.FC = () => {
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <span className="text-xs text-muted-foreground hidden sm:inline-block">
-                                        {task.createdAt ? new Date(task.createdAt).toLocaleString() : (task.created_at ? new Date(task.created_at).toLocaleString() : '')}
+                                        {task.created_at ? new Date(task.created_at).toLocaleString() : ''}
                                     </span>
                                     <Badge className={`${getStatusColor(task.status)} text-white`}>{task.status}</Badge>
                                     <Button variant="ghost" size="sm" className="p-0 w-8 h-8">
@@ -465,7 +476,7 @@ const AITeamDashboard: React.FC = () => {
                                 <p className="mb-2"><strong>ID:</strong> <span className="text-xs font-mono">{task.id}</span></p>
                                 {task.parameters?.url && <p className="mb-2"><strong>Target:</strong> <a href={task.parameters.url} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">{task.parameters.url}</a></p>}
                                 
-                                {task.result && (
+                                  {task.result !== undefined && task.result !== null && (
                                     <div className="mt-2">
                                         <strong>Result:</strong>
                                         <pre className="mt-1 p-2 bg-gray-900 text-gray-100 rounded text-xs overflow-auto max-h-60">
@@ -474,7 +485,7 @@ const AITeamDashboard: React.FC = () => {
                                     </div>
                                 )}
                                 
-                                {task.error && (
+                                {task.error && typeof task.error === 'string' && (
                                     <div className="mt-2 p-2 bg-destructive/10 border border-destructive/30 rounded text-destructive text-sm">
                                         <strong>Error:</strong> {task.error}
                                     </div>
@@ -530,71 +541,40 @@ const AITeamDashboard: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Card className="lg:col-span-2">
-        <CardHeader>
-          <CardTitle>Recent Deployment Requests</CardTitle>
-          <CardDescription>Latest deployment activity</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {loading.requests ? <p>Loading requests...</p> : requests.length === 0 ? (
-            <div className="text-center text-muted-foreground py-8 flex flex-col items-center">
-              <Rocket className="w-8 h-8 mb-2 opacity-20"/>
-              <p>No deployment requests yet.</p>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Employee Name</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Requested</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {requests.map((request) => {
-                  const { icon, color } = getRequestStatusUi(request.status);
-                  return (
-                    <TableRow key={request.id}>
-                      <TableCell className="font-medium">{request.employeeName}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className={`flex items-center gap-1 w-fit ${color}`}>
-                          {icon}
-                          <span className="capitalize">{request.status}</span>
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{formatDistanceToNow(request.createdAt, { addSuffix: true })}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-
       <Card className="lg:col-span-3">
         <CardHeader>
           <CardTitle>Performance Metrics</CardTitle>
         </CardHeader>
         <CardContent>
-           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {loading.metrics ? <p>Loading metrics...</p> : metrics.length === 0 ? (
-                  <div className="col-span-4 text-center text-muted-foreground py-4">No metrics available.</div>
+           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {metricsLoading ? (
+                <p>Loading metrics...</p>
               ) : (
-                  metrics.slice(0, 4).map(metric => (
-                    <Card key={metric.id}>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium truncate" title={metric.name || 'Metric'}>{metric.name || 'Metric'}</CardTitle>
-                            {(metric.name || '').toLowerCase().includes('failed') || (metric.name || '').toLowerCase().includes('error') ? <AlertCircle className="h-4 w-4 text-red-500"/> : <TrendingUp className="h-4 w-4 text-green-500"/>}
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{metric.value}</div>
-                            <p className="text-xs text-muted-foreground">
-                                {metric.timestamp ? new Date(metric.timestamp).toLocaleDateString() : ''}
-                            </p>
-                        </CardContent>
-                    </Card>
-                  ))
+                metricCards.map(metric => (
+                  <Card key={metric.id}>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <div>
+                        <CardTitle className="text-sm font-medium truncate" title={metric.name}>{metric.name}</CardTitle>
+                        {metric.helper && (
+                          <p className="text-xs text-muted-foreground">{metric.helper}</p>
+                        )}
+                      </div>
+                      {metric.trend === 'down' ? (
+                        <AlertCircle className="h-4 w-4 text-red-500" />
+                      ) : (
+                        <TrendingUp className="h-4 w-4 text-green-500" />
+                      )}
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{metric.value}</div>
+                      {metric.timestamp && (
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(metric.timestamp).toLocaleDateString()}
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))
               )}
            </div>
         </CardContent>

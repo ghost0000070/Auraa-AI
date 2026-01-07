@@ -9,6 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown, Zap, BarChart3, Settings, Brain, TrendingUp } from "lucide-react";
+import { NotificationCenter } from "./NotificationCenter";
+import { ThemeToggle } from "./ThemeToggle";
 
 export const Header = () => {
   const { user, subscriptionStatus, signOut } = useAuth();
@@ -107,8 +109,10 @@ export const Header = () => {
         </div>
         
         <div className="flex items-center space-x-4">
+          <ThemeToggle />
           {user ? (
             <>
+              <NotificationCenter />
               {subscriptionStatus?.subscribed && (
                 <Badge variant="secondary" className="capitalize">
                   {subscriptionStatus.subscription_tier} Plan

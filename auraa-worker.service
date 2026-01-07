@@ -1,0 +1,26 @@
+[Unit]
+Description=Auraa AI Agent Worker
+After=network.target
+
+[Service]
+Type=simple
+User=ghost
+WorkingDirectory=/home/ghost/VS_code_Projects/Auraa-AI
+Environment=NODE_ENV=production
+EnvironmentFile=/home/ghost/VS_code_Projects/Auraa-AI/.env
+ExecStart=/usr/bin/npx tsx scripts/agentWorker.ts
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=append:/var/log/auraa/worker.log
+StandardError=append:/var/log/auraa/worker-error.log
+
+# Security
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/ghost/VS_code_Projects/Auraa-AI/logs
+
+[Install]
+WantedBy=multi-user.target

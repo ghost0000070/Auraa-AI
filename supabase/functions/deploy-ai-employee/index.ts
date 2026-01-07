@@ -132,7 +132,7 @@ serve(async (req) => {
     }
 
     // Use Puter's free Claude API to generate a deployment script/plan
-    let deploymentPlan = `Deployment configuration for ${request.employee_name}:
+    const deploymentPlan = `Deployment configuration for ${request.employee_name}:
 - Category: ${request.employee_category}
 - Template: ${templateId}
 - Business: ${profile?.business_name || 'Not specified'}
