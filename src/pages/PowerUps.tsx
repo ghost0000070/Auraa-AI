@@ -16,6 +16,17 @@ interface PowerUp {
   details: Record<string, unknown>;
 }
 
+interface UserPowerUp {
+  id: string;
+  user_id: string;
+  powerup_id: string;
+  is_active: boolean;
+  activated_at: string;
+  expires_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 const PowerUps = () => {
   const { user } = useAuth();
   const [powerUps, setPowerUps] = useState<PowerUp[]>([
@@ -38,7 +49,7 @@ const PowerUps = () => {
             if (userPowerUps && !error) {
                 setPowerUps(currentPowerUps =>
                     currentPowerUps.map(p => {
-                        const found = userPowerUps.find((up: any) => up.powerup_id === p.id);
+                        const found = userPowerUps.find((up: UserPowerUp) => up.powerup_id === p.id);
                         return found ? { ...p, status: found.is_active ? 'active' : 'inactive' } : p;
                     })
                 );
