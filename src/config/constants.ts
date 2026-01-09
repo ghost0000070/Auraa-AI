@@ -18,28 +18,28 @@ export const TIER_LEVELS: Record<string, number> = {
   owner: 999,
 };
 
-// AI Models - Using FREE models via Puter.js
-// These models don't consume credits or cost money
+// AI Models - Using FREE Gemini models via Puter.js (no credits required)
+// Claude models cost Puter credits - Gemini is completely free
 export const AI_MODELS = {
   // For complex reasoning, analysis, and strategic tasks
   COMPLEX: 'gemini-2.0-flash',
   // For standard tasks - balanced speed and quality
   STANDARD: 'gemini-2.0-flash',
   // For fast, simple tasks - quick responses
-  FAST: 'gemini-2.5-flash-lite',
+  FAST: 'gemini-2.0-flash-lite',
   // Specialized models for specific use cases
   CODING: 'gemini-2.0-flash',
   CREATIVE: 'gemini-2.0-flash',
   ANALYTICAL: 'gemini-2.0-flash',
 } as const;
 
-// Model assigned per subscription tier (using FREE Puter models)
+// Model assigned per subscription tier (all FREE Gemini models)
 export const TIER_MODELS: Record<string, string> = {
-  free: 'gemini-2.5-flash-lite',      // Fast, basic tasks (FREE)
-  pro: 'gemini-2.0-flash',            // Balanced, most business tasks (FREE)
-  enterprise: 'gemini-2.0-flash',     // Most capable available (FREE)
-  admin: 'gemini-2.0-flash',          // Full access (FREE)
-  owner: 'gemini-2.0-flash',          // Full access (FREE)
+  free: 'gemini-2.0-flash-lite',     // Fast, basic tasks (FREE)
+  pro: 'gemini-2.0-flash',           // Balanced, most business tasks (FREE)
+  enterprise: 'gemini-2.0-flash',    // Most capable available (FREE)
+  admin: 'gemini-2.0-flash',         // Full access (FREE)
+  owner: 'gemini-2.0-flash',         // Full access (FREE)
 };
 
 // Subscription pricing (monthly)
