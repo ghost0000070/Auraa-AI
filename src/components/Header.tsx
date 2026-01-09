@@ -19,13 +19,15 @@ import {
   FileText,
   Calendar,
   CreditCard,
-  User
+  User,
+  BookOpen,
+  Bot
 } from "lucide-react";
 import { NotificationCenter } from "./NotificationCenter";
 import { ThemeToggle } from "./ThemeToggle";
 
 export const Header = () => {
-  const { user, subscriptionStatus, signOut } = useAuth();
+  const { user, subscriptionStatus, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -108,6 +110,15 @@ export const Header = () => {
                     <CreditCard className="w-4 h-4 mr-2" />
                     Billing
                   </DropdownMenuItem>
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => navigate('/blog/admin')} className="cursor-pointer">
+                        <Bot className="w-4 h-4 mr-2" />
+                        Blog Admin
+                      </DropdownMenuItem>
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </>
@@ -122,6 +133,15 @@ export const Header = () => {
               <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors px-3 py-2 text-sm">
                 Pricing
               </a>
+              <Button 
+                variant={isActive('/blog') ? 'secondary' : 'ghost'} 
+                size="sm"
+                onClick={() => navigate('/blog')} 
+                className="text-sm"
+              >
+                <BookOpen className="w-4 h-4 mr-1.5" />
+                Blog
+              </Button>
             </>
           )}
         </div>

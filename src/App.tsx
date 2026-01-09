@@ -39,6 +39,11 @@ const ApiKeys = lazy(() => import('./pages/ApiKeys'));
 const AgentScheduling = lazy(() => import('./pages/AgentScheduling'));
 const AuditTrail = lazy(() => import('./pages/AuditTrail'));
 
+// Blog pages
+const Blog = lazy(() => import('./pages/Blog'));
+const BlogPost = lazy(() => import('./pages/BlogPost'));
+const BlogAdmin = lazy(() => import('./pages/BlogAdmin'));
+
 const App: React.FC = () => {
   return (
     <AuthProvider>
@@ -72,6 +77,10 @@ const App: React.FC = () => {
                     <Route path="/privacy" element={<PrivacyPolicy />} />
                     <Route path="/terms" element={<TermsOfService />} />
 
+                    {/* Blog Routes - Public */}
+                    <Route path="/blog" element={<Blog />} />
+                    <Route path="/blog/:slug" element={<BlogPost />} />
+
                     {/* Onboarding - requires auth but NOT business profile */}
                     <Route path="/onboarding" element={<ProtectedRoute requireBusinessProfile={false}><Onboarding /></ProtectedRoute>} />
 
@@ -92,6 +101,9 @@ const App: React.FC = () => {
                     <Route path="/api-keys" element={<ProtectedRoute><ApiKeys /></ProtectedRoute>} />
                     <Route path="/scheduling" element={<ProtectedRoute><AgentScheduling /></ProtectedRoute>} />
                     <Route path="/audit" element={<ProtectedRoute><AuditTrail /></ProtectedRoute>} />
+
+                    {/* Blog Admin - Protected, Admin only */}
+                    <Route path="/blog/admin" element={<ProtectedRoute><BlogAdmin /></ProtectedRoute>} />
 
                     {/* Not Found Route */}
                     <Route path="*" element={<NotFound />} />

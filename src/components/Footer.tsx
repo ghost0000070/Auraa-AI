@@ -32,7 +32,7 @@ export const Footer = () => {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/contact" className="hover:text-foreground transition-colors">Contact Sales</Link></li>
               <li><Link to="/careers" className="hover:text-foreground transition-colors">Careers</Link></li>
-              <li><a href="https://medium.com/@auraa-ai" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Blog</a></li>
+              <li><Link to="/blog" className="hover:text-foreground transition-colors">Blog</Link></li>
               <li><Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link></li>
             </ul>
           </div>
