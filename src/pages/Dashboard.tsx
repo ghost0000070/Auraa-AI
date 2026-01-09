@@ -12,10 +12,14 @@ import React from "react";
 import { AITeamCoordinationPanel } from '@/components/AITeamCoordinationPanel';
 import { MyEmployeesPanel } from '@/components/MyEmployeesPanel';
 import { EmployeeActivityDashboard } from '@/components/EmployeeActivityDashboard';
+import { useAutonomousLoop } from '@/hooks/useAutonomousLoop';
 
 export default function Dashboard() {
   const { user, loading, subscriptionStatus, signOut } = useAuth();
   const [isManagingSubscription, setIsManagingSubscription] = useState(false);
+
+  // Trigger autonomous employee loop when user visits dashboard
+  useAutonomousLoop();
 
   const handleManageSubscription = async () => {
     if (!user) {
