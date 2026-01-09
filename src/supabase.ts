@@ -13,12 +13,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // Create Supabase client
+// Using sessionStorage instead of localStorage so users are logged out when browser closes
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
-    storage: window.localStorage,
+    storage: window.sessionStorage, // Session ends when browser/tab closes
   },
   realtime: {
     params: {
