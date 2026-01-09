@@ -4,7 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2, Send, User, Bot } from 'lucide-react';
-import { aiEmployeeTemplates } from '@/lib/ai-employee-templates.tsx';
+import { aiEmployeeTemplates } from '@/lib/ai-employee-templates';
 import { supabase } from '@/supabase';
 import { TemplateIcon } from './TemplateIcon';
 import { AIEngine } from '@/lib/ai-engine'; // Import client-side AI Engine

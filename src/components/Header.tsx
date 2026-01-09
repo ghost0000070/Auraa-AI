@@ -12,7 +12,6 @@ import {
 import { 
   ChevronDown, 
   LayoutDashboard, 
-  Users, 
   Store, 
   Settings,
   Key,
@@ -28,7 +27,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { OWNER_EMAIL } from "@/config/constants";
 
 export const Header = () => {
-  const { user, subscriptionStatus, signOut, isAdmin } = useAuth();
+  const { user, subscriptionStatus, signOut, isAdmin: _isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isOwner = user?.email === OWNER_EMAIL;

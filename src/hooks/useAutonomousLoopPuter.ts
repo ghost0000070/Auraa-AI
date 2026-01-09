@@ -512,7 +512,7 @@ export function useAutonomousLoopPuter() {
       // Check profile completeness
       const hasGoals = profile.goals?.length > 0;
       const hasChallenges = profile.key_challenges?.length > 0;
-      const hasProducts = profile.key_products?.length > 0;
+      // Note: key_products is available in profile but not currently used
       
       if (!hasGoals && !hasChallenges) {
         console.log('⚠️ No goals or challenges set - employees work better with clear direction!');

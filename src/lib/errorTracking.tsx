@@ -47,7 +47,7 @@ class ErrorTracker {
         replaysSessionSampleRate: 0.1,
         replaysOnErrorSampleRate: 1.0,
         // Only send errors in production
-        beforeSend(event, hint) {
+        beforeSend(event, _hint) {
           // Filter out non-critical errors in development
           if (SENTRY_CONFIG.ENVIRONMENT === 'development') {
             return null;

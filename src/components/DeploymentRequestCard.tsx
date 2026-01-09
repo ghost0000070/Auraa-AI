@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/supabase';
 import { toast } from "sonner";
 import { Loader2, Zap, CheckCircle } from 'lucide-react';
-import { AIEmployeeTemplate } from '@/lib/ai-employee-templates.tsx';
+import { AIEmployeeTemplate } from '@/lib/ai-employee-templates';
 
 interface DeploymentRequestCardProps {
   template: AIEmployeeTemplate;
@@ -49,7 +49,7 @@ export const DeploymentRequestCard: React.FC<DeploymentRequestCardProps> = ({ te
       // Call the deploy-ai-employee edge function to actually process the deployment
       // Get the current session to pass Authorization header explicitly
       const { data: { session } } = await supabase.auth.getSession();
-      const { data: deployResult, error: deployError } = await supabase.functions.invoke('deploy-ai-employee', {
+      const { data: _deployResult, error: deployError } = await supabase.functions.invoke('deploy-ai-employee', {
         body: {
           requestId: deploymentRequest.id,
           userId: user.id,

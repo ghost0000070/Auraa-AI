@@ -8,18 +8,17 @@ import AITeamDashboard from '@/components/AITeamDashboard';
 import { QuickDeploymentWidget } from '@/components/QuickDeploymentWidget';
 import { AnalyticsSection } from '@/components/AnalyticsSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React from "react";
 import { AITeamCoordinationPanel } from '@/components/AITeamCoordinationPanel';
 import { MyEmployeesPanel } from '@/components/MyEmployeesPanel';
 import { EmployeeActivityDashboard } from '@/components/EmployeeActivityDashboard';
 import { useAutonomousLoopPuter } from '@/hooks/useAutonomousLoopPuter';
 
 export default function Dashboard() {
-  const { user, loading, subscriptionStatus, signOut } = useAuth();
+  const { user, loading, subscriptionStatus: _subscriptionStatus, signOut } = useAuth();
   const [isManagingSubscription, setIsManagingSubscription] = useState(false);
 
   // Run autonomous employee loop using Puter AI (free, client-side)
-  const { isProcessing, lastRun } = useAutonomousLoopPuter();
+  useAutonomousLoopPuter();
 
   const handleManageSubscription = async () => {
     if (!user) {

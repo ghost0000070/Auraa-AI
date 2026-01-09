@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, Code, Webhook, Key, Database, Zap, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";

@@ -1,5 +1,4 @@
 
-import * as React from 'react';
 import { useState, useEffect, createContext, useContext, useCallback, type ReactNode } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase, onAuthStateChanged } from '@/supabase';

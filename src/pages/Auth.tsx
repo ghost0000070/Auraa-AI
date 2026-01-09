@@ -117,7 +117,7 @@ const Auth = () => {
 
         if (data.user) {
           // Check if user profile exists, create if not
-          const { data: userProfile, error: profileError } = await supabase
+          const { data: _userProfile, error: profileError } = await supabase
             .from('users')
             .select('*')
             .eq('id', data.user.id)

@@ -2,7 +2,7 @@ import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 
 interface Props {
-  data: { name: string; value: number; fill: string }[];
+  data: { name: string; value: number; fill?: string }[];
 }
 
 const SimplePieChart: React.FC<Props> = ({ data }) => {

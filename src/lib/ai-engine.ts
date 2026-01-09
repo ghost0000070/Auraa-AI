@@ -41,7 +41,6 @@ export async function getBusinessContext(userId: string): Promise<BusinessContex
         .from('business_profiles')
         .select('*')
         .eq('user_id', userId)
-        .eq('is_active', true)
         .single();
     
     if (error || !data) {
@@ -50,14 +49,29 @@ export async function getBusinessContext(userId: string): Promise<BusinessContex
     }
 
     return {
-        companyName: data.company_name || 'Unknown Company',
+        companyName: data.business_name || 'Unknown Company',
         industry: data.industry || 'General',
         description: data.description || '',
         targetAudience: data.target_audience || '',
-        website: data.website,
+        website: data.website_url,
         brandVoice: data.brand_voice,
         goals: data.business_goals || [],
-        additionalContext: data.additional_data || {},
+        additionalContext: {
+            ...(data.additional_data || {}),
+            // Enhanced profile fields
+            uniqueValueProposition: data.unique_value_proposition,
+            missionStatement: data.mission_statement,
+            keyProducts: data.key_products,
+            competitorNames: data.competitor_names,
+            primarySeoKeywords: data.primary_seo_keywords,
+            idealCustomerProfile: data.ideal_customer_profile,
+            socialMedia: data.social_media,
+            monthlyBudget: data.monthly_budget,
+            revenueGoal: data.revenue_goal,
+            currentChallenges: data.current_challenges,
+            shortTermGoals: data.short_term_goals,
+            longTermGoals: data.long_term_goals,
+        },
     };
 }
 
@@ -700,7 +714,7 @@ export const AIEngine = {
     getAutonomousDecision: async (
         userId: string,
         employeeId: string,
-        templateId: string,
+        _templateId: string,
         decisionPrompt: string,
         autonomousDuties: string[]
     ): Promise<{
