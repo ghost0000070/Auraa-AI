@@ -26,6 +26,10 @@ export interface AIEmployeeTemplate {
   isPremium: boolean;
   exampleTasks: string[];
   backendTask: string;
+  /** Proactive duties this employee performs autonomously without user prompting */
+  autonomousDuties: string[];
+  /** Decision prompt - what the AI asks itself when deciding what to do */
+  decisionPrompt: string;
 }
 
 const image = (keyword: string) =>
@@ -54,6 +58,16 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
       "Suggest a new nurture drip for freemium users",
     ],
     backendTask: "analyzeMarketingData",
+    autonomousDuties: [
+      "Research competitor marketing strategies and identify gaps we can exploit",
+      "Analyze our target audience and suggest content themes that resonate",
+      "Generate social media content ideas based on trending topics in our industry",
+      "Review our brand messaging and suggest improvements for better conversion",
+      "Identify untapped marketing channels suitable for our business",
+      "Create campaign concepts for upcoming seasons or events",
+      "Analyze what makes successful businesses in our industry stand out",
+    ],
+    decisionPrompt: "As the Marketing Pro, analyze the business profile and determine: What marketing opportunity should I pursue right now to grow this business? Consider content gaps, audience engagement opportunities, and competitive advantages.",
   },
   {
     id: "sales-sidekick",
@@ -75,6 +89,16 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
       "Summarize stalled deals and next steps",
     ],
     backendTask: "automateSalesOutreach",
+    autonomousDuties: [
+      "Research ideal customer profiles and identify new market segments",
+      "Develop sales pitch variations for different buyer personas",
+      "Analyze common objections and create response strategies",
+      "Identify partnership opportunities with complementary businesses",
+      "Create outreach templates for different stages of the sales cycle",
+      "Research pricing strategies used by successful competitors",
+      "Generate lead qualification criteria based on business goals",
+    ],
+    decisionPrompt: "As the Sales Sidekick, analyze the business profile and determine: What sales action should I take right now to increase revenue? Consider lead generation, pitch optimization, and closing strategies.",
   },
   {
     id: "support-sentinel",
@@ -96,6 +120,16 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
       "Summarize top issues from the last 24h",
     ],
     backendTask: "handleSupportTicket",
+    autonomousDuties: [
+      "Analyze common customer pain points and suggest product improvements",
+      "Create FAQ content based on frequently asked questions",
+      "Develop customer onboarding guides and tutorials",
+      "Identify at-risk customers based on support patterns",
+      "Research best practices for customer retention in our industry",
+      "Create response templates for common scenarios",
+      "Suggest process improvements to reduce support volume",
+    ],
+    decisionPrompt: "As the Support Sentinel, analyze the business profile and determine: What customer experience improvement should I work on right now? Consider FAQ gaps, onboarding friction, and retention opportunities.",
   },
   {
     id: "business-analyst",
@@ -117,6 +151,16 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
       "Summarize churn reasons for enterprise accounts",
     ],
     backendTask: "analyzeBusinessData",
+    autonomousDuties: [
+      "Research industry benchmarks and compare our business performance",
+      "Identify key metrics we should be tracking based on our goals",
+      "Analyze market trends affecting our industry",
+      "Create strategic recommendations for business growth",
+      "Research successful business models in similar industries",
+      "Identify operational inefficiencies and cost-saving opportunities",
+      "Develop KPI frameworks for measuring business health",
+    ],
+    decisionPrompt: "As the Business Analyst, analyze the business profile and determine: What strategic insight should I develop right now to help leadership make better decisions? Consider market analysis, competitive positioning, and growth opportunities.",
   },
   {
     id: "dev-companion",
@@ -138,6 +182,16 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
       "Explain this Prisma migration error in simple terms",
     ],
     backendTask: "generateCode",
+    autonomousDuties: [
+      "Research technology stack improvements for better performance",
+      "Identify automation opportunities in development workflows",
+      "Suggest architecture improvements based on best practices",
+      "Create technical documentation templates",
+      "Research emerging technologies relevant to our business",
+      "Develop coding standards and guidelines",
+      "Identify potential technical debt and remediation strategies",
+    ],
+    decisionPrompt: "As the Dev Companion, analyze the business profile and determine: What technical improvement should I research or document right now to help the business scale? Consider automation, architecture, and developer productivity.",
   },
   {
     id: "operations-orchestrator",
@@ -159,6 +213,16 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
       "Prepare a stand-up summary for leadership",
     ],
     backendTask: "manageProjectTasks",
+    autonomousDuties: [
+      "Research operational best practices for our industry",
+      "Identify process bottlenecks and suggest improvements",
+      "Create standard operating procedures for key workflows",
+      "Research vendor options for common business needs",
+      "Develop risk management frameworks",
+      "Analyze resource allocation and optimization opportunities",
+      "Create project templates for recurring initiatives",
+    ],
+    decisionPrompt: "As the Ops Orchestrator, analyze the business profile and determine: What operational improvement should I work on right now to make the business run more efficiently? Consider processes, workflows, and resource optimization.",
   },
   {
     id: "security-analyst",
@@ -180,6 +244,16 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
       "List remediation steps for the open CVE alert",
     ],
     backendTask: "analyzeSecurityThreat",
+    autonomousDuties: [
+      "Research security best practices for our industry",
+      "Identify compliance requirements and create checklists",
+      "Develop security policies and guidelines",
+      "Research common threats targeting businesses like ours",
+      "Create incident response playbooks",
+      "Analyze data privacy requirements and recommendations",
+      "Suggest security tools and practices for our tech stack",
+    ],
+    decisionPrompt: "As the Security Analyst, analyze the business profile and determine: What security improvement should I research or document right now to protect the business? Consider compliance, threat prevention, and security best practices.",
   },
   {
     id: "ai-team-orchestrator",
@@ -201,5 +275,15 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
       "Audit yesterday's agent outputs for accuracy",
     ],
     backendTask: "orchestrateAiTeam",
+    autonomousDuties: [
+      "Analyze how all employees can work together more effectively",
+      "Identify tasks that require cross-functional collaboration",
+      "Review employee outputs and suggest quality improvements",
+      "Develop strategic initiatives that leverage multiple employees",
+      "Create workflows for complex multi-step business processes",
+      "Monitor overall team performance and suggest optimizations",
+      "Delegate research tasks to appropriate specialized employees",
+    ],
+    decisionPrompt: "As the AI Team Orchestrator, analyze the business profile and all active employees to determine: What strategic initiative should I coordinate right now that leverages multiple team members? Consider cross-functional opportunities and team synergies.",
   },
 ];
