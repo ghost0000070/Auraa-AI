@@ -11,12 +11,14 @@ interface AuthContextType {
   loading: boolean;
   isAdmin: boolean;
   isSubscriber: boolean;
+  hasBusinessProfile: boolean;
   subscriptionStatus: {
     subscribed: boolean;
     subscription_tier: string | null;
     subscription_end: string | null;
   } | null;
   checkSubscription: () => Promise<void>;
+  checkBusinessProfile: () => Promise<boolean>;
   signOut: () => Promise<void>;
 }
 
@@ -38,11 +40,36 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [hasBusinessProfile, setHasBusinessProfile] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState<{
     subscribed: boolean;
     subscription_tier: string | null;
     subscription_end: string | null;
   } | null>(null);
+
+  const checkBusinessProfile = useCallback(async (): Promise<boolean> => {
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    
+    if (!currentUser) {
+      setHasBusinessProfile(false);
+      return false;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('business_profiles')
+        .select('id')
+        .eq('user_id', currentUser.id)
+        .single();
+
+      const hasProfile = !error && !!data;
+      setHasBusinessProfile(hasProfile);
+      return hasProfile;
+    } catch {
+      setHasBusinessProfile(false);
+      return false;
+    }
+  }, []);
 
   const checkSubscription = useCallback(async () => {
     const { data: { user: currentUser } } = await supabase.auth.getUser();
@@ -107,6 +134,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(null);
       setSubscriptionStatus(null);
       setIsAdmin(false);
+      setHasBusinessProfile(false);
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -118,15 +146,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setLoading(false);
       
       if (currentUser) {
-        await checkSubscription();
+        await Promise.all([checkSubscription(), checkBusinessProfile()]);
       } else {
         setSubscriptionStatus(null);
         setIsAdmin(false);
+        setHasBusinessProfile(false);
       }
     });
 
     return () => unsubscribe();
-  }, [checkSubscription]);
+  }, [checkSubscription, checkBusinessProfile]);
 
   const isSubscriber = isAdmin || subscriptionStatus?.subscribed || false;
 
@@ -136,8 +165,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       loading,
       isAdmin,
       isSubscriber,
+      hasBusinessProfile,
       subscriptionStatus,
       checkSubscription,
+      checkBusinessProfile,
       signOut
     }}>
       {children}

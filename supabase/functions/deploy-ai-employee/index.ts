@@ -116,11 +116,32 @@ serve(async (req) => {
     const templateId = request.template_id
 
     // Fetch user's business profile for context
-    const { data: profile } = await supabase
+    let { data: profile } = await supabase
       .from('business_profiles')
       .select('*')
       .eq('user_id', authenticatedUserId)
       .single()
+
+    // Auto-create a basic business profile if none exists (for autonomous loop)
+    if (!profile) {
+      console.log('No business profile found, creating default for autonomous loop...')
+      const { data: newProfile, error: profileError } = await supabase
+        .from('business_profiles')
+        .insert({
+          user_id: authenticatedUserId,
+          business_name: 'My Business',
+          industry: 'General',
+          description: 'Please update your business profile for better AI employee performance.',
+          target_audience: 'General audience',
+        })
+        .select()
+        .single()
+      
+      if (!profileError && newProfile) {
+        profile = newProfile
+        console.log('Created default business profile:', newProfile.id)
+      }
+    }
 
     const deploymentConfig = {
       name: request.employee_name,

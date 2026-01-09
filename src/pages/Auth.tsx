@@ -14,18 +14,20 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, hasBusinessProfile, checkBusinessProfile } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged((currentUser) => {
+    const unsubscribe = onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
-        navigate('/dashboard');
+        // Check if user has business profile to decide where to redirect
+        const hasProfile = await checkBusinessProfile();
+        navigate(hasProfile ? '/dashboard' : '/onboarding');
       }
     });
     return () => unsubscribe();
-  }, [user, navigate]);
+  }, [user, navigate, checkBusinessProfile, hasBusinessProfile]);
 
   useEffect(() => {
     if (error) {
@@ -57,7 +59,7 @@ const Auth = () => {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/dashboard`,
+            emailRedirectTo: `${window.location.origin}/onboarding`,
           }
         });
 

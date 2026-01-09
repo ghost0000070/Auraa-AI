@@ -12,6 +12,7 @@ import NotFound from './components/NotFound';
 
 const Index = lazy(() => import('./pages/Index'));
 const Auth = lazy(() => import('./pages/Auth'));
+const Onboarding = lazy(() => import('./pages/Onboarding'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Analytics = lazy(() => import('./pages/Analytics'));
 const PowerUps = lazy(() => import('./pages/PowerUps'));
@@ -68,7 +69,10 @@ const App: React.FC = () => {
                     <Route path="/privacy" element={<PrivacyPolicy />} />
                     <Route path="/terms" element={<TermsOfService />} />
 
-                    {/* Protected Routes */}
+                    {/* Onboarding - requires auth but NOT business profile */}
+                    <Route path="/onboarding" element={<ProtectedRoute requireBusinessProfile={false}><Onboarding /></ProtectedRoute>} />
+
+                    {/* Protected Routes - require business profile */}
                     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                     <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
                     <Route path="/power-ups" element={<ProtectedRoute><PowerUps /></ProtectedRoute>} />
