@@ -64,10 +64,12 @@ import { toast } from 'sonner';
 import { blogService, blogAgent, enableAutoReply } from '@/lib/blog-engine';
 import { supabase } from '@/supabase';
 import { useAuth } from '@/hooks/useAuth';
+import { OWNER_EMAIL } from '@/config/constants';
 import type { BlogPost, BlogComment, BlogCategory, BlogAgentAction, BlogSettings } from '@/types/blog';
 
 const BlogAdmin: React.FC = () => {
-  const { isAdmin } = useAuth();
+  const { user } = useAuth();
+  const isOwner = user?.email === OWNER_EMAIL;
   
   // Data state
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -321,14 +323,14 @@ const BlogAdmin: React.FC = () => {
     aiGenerated: posts.filter(p => p.is_ai_generated).length,
   };
 
-  if (!isAdmin) {
+  if (!isOwner) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 flex items-center justify-center">
         <Card className="bg-red-900/20 border-red-500/30 max-w-md">
           <CardContent className="pt-6 text-center">
             <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
-            <p className="text-gray-400">You need admin privileges to access the Blog Admin panel.</p>
+            <p className="text-gray-400">You don't have permission to access the Blog Admin panel.</p>
           </CardContent>
         </Card>
       </div>

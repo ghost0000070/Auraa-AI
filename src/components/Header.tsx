@@ -25,11 +25,13 @@ import {
 } from "lucide-react";
 import { NotificationCenter } from "./NotificationCenter";
 import { ThemeToggle } from "./ThemeToggle";
+import { OWNER_EMAIL } from "@/config/constants";
 
 export const Header = () => {
   const { user, subscriptionStatus, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const isOwner = user?.email === OWNER_EMAIL;
 
   const handleAuthClick = () => {
     if (user) {
@@ -110,7 +112,7 @@ export const Header = () => {
                     <CreditCard className="w-4 h-4 mr-2" />
                     Billing
                   </DropdownMenuItem>
-                  {isAdmin && (
+                  {isOwner && (
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => navigate('/blog/admin')} className="cursor-pointer">
