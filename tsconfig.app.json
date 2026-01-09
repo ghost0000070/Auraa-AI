@@ -25,6 +25,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "scripts"],
-  "exclude": ["node_modules", "functions", "dist", "supabase", "api"]
+  "include": ["src"],
+  "exclude": ["node_modules", "functions", "dist", "supabase", "api", "scripts"]
 }
