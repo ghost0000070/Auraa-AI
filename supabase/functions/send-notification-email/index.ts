@@ -8,7 +8,7 @@ const corsHeaders = {
 
 interface EmailRequest {
   userId: string
-  type: 'task_completed' | 'deployment_alert' | 'daily_digest' | 'weekly_summary' | 'security_alert' | 'welcome'
+  type: 'task_completed' | 'deployment_alert' | 'daily_digest' | 'weekly_summary' | 'security_alert' | 'welcome' | 'contact_form'
   subject?: string
   data?: Record<string, unknown>
 }
@@ -158,6 +158,29 @@ const templates: Record<string, (data: Record<string, unknown>) => EmailTemplate
       </div>
     `,
     text: `Welcome to Auraa AI!\n\nHi ${data.name || 'there'},\n\nThank you for joining Auraa AI. We're excited to help you build your AI workforce!\n\nGet Started:\n1. Deploy your first AI employee\n2. Connect your tools\n3. Watch the magic happen\n\nGo to Dashboard: ${data.dashboardUrl || 'https://app.auraa.ai/dashboard'}`
+  }),
+
+  contact_form: (data) => ({
+    subject: data.subject ? `Contact Form: ${data.subject}` : 'New Contact Form Submission',
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #7c3aed;">New Contact Form Submission</h1>
+        <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
+          <p style="margin: 0;"><strong>From:</strong> ${data.name || 'Unknown'}</p>
+          <p style="margin: 8px 0 0;"><strong>Email:</strong> ${data.email || 'N/A'}</p>
+          ${data.company ? `<p style="margin: 8px 0 0;"><strong>Company:</strong> ${data.company}</p>` : ''}
+          <p style="margin: 8px 0 0;"><strong>Subject:</strong> ${data.subject || 'No subject'}</p>
+        </div>
+        <div style="background: white; border: 1px solid #e5e7eb; padding: 16px; border-radius: 8px;">
+          <p style="margin: 0;"><strong>Message:</strong></p>
+          <p style="margin: 8px 0 0; white-space: pre-wrap;">${data.message || 'No message'}</p>
+        </div>
+        <p style="color: #6b7280; font-size: 14px; margin-top: 16px;">
+          Reply to: <a href="mailto:${data.email}">${data.email}</a>
+        </p>
+      </div>
+    `,
+    text: `New Contact Form Submission\n\nFrom: ${data.name || 'Unknown'}\nEmail: ${data.email || 'N/A'}\n${data.company ? `Company: ${data.company}\n` : ''}Subject: ${data.subject || 'No subject'}\n\nMessage:\n${data.message || 'No message'}\n\nReply to: ${data.email}`
   })
 }
 

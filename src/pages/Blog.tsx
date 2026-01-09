@@ -28,7 +28,8 @@ const Blog: React.FC = () => {
   const [totalPosts, setTotalPosts] = useState(0);
   
   const currentCategory = searchParams.get('category') || 'all';
-  const currentPage = parseInt(searchParams.get('page') || '1');
+  const pageParam = parseInt(searchParams.get('page') || '1', 10);
+  const currentPage = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
   const postsPerPage = 9;
 
   useEffect(() => {

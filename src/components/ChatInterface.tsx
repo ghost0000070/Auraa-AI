@@ -126,13 +126,23 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
       // Build context for the AI
       const payload = await buildContextPayload(employeeType, user.id, currentInput);
       
+      // Parse business context safely
+      let parsedBusinessContext = payload.companyContext;
+      if (businessContext) {
+        try {
+          parsedBusinessContext = JSON.parse(businessContext);
+        } catch (e) {
+          console.warn('Invalid business context JSON, using default:', e);
+        }
+      }
+      
       // Construct a rich system context string for Puter AI
       const contextString = JSON.stringify({
           role: employeeName || template.name || "AI Assistant",
           profession: template.category,
           personality: template.personality,
           skills: template.skills,
-          businessContext: businessContext ? JSON.parse(businessContext) : payload.companyContext,
+          businessContext: parsedBusinessContext,
           specificContext: payload
       }, null, 2);
 
