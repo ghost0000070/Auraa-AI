@@ -7,13 +7,16 @@ const corsHeaders = {
 }
 
 interface SubscriptionAction {
-  action: 'create-checkout' | 'create-employee-checkout' | 'get-subscription' | 'cancel-subscription' | 'update-subscription' | 'get-portal-url' | 'list-products'
+  action: 'create-checkout' | 'create-employee-checkout' | 'create-powerup-checkout' | 'cancel-powerup' | 'get-subscription' | 'cancel-subscription' | 'update-subscription' | 'get-portal-url' | 'list-products'
   userId?: string
   productId?: string
   tier?: 'pro' | 'enterprise'
   employeeTemplateId?: string
   employeeName?: string
   employeePrice?: number
+  powerupId?: string
+  powerupName?: string
+  powerupPrice?: number
   successUrl?: string
   cancelUrl?: string
   metadata?: Record<string, string>
@@ -204,6 +207,117 @@ serve(async (req) => {
             checkoutUrl: checkout.url,
             checkoutId: checkout.id
           }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+
+      case 'create-powerup-checkout': {
+        // Create checkout for individual Power-Up subscription
+        const { powerupId, powerupName, powerupPrice, successUrl, cancelUrl } = body
+
+        if (!powerupId || !powerupName || !powerupPrice) {
+          return new Response(
+            JSON.stringify({ error: 'powerupId, powerupName, and powerupPrice are required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          )
+        }
+
+        // Get the Polar product ID for this powerup from environment variables
+        // Environment variable format: POLAR_POWERUP_{POWERUP_ID}_PRODUCT_ID
+        // e.g., POLAR_POWERUP_ANOMALY_DETECTION_PRODUCT_ID
+        const envKey = `POLAR_POWERUP_${powerupId.toUpperCase().replace(/-/g, '_')}_PRODUCT_ID`
+        const powerupProductId = Deno.env.get(envKey)
+
+        if (!powerupProductId) {
+          console.error(`Missing Polar product ID for powerup: ${powerupId}. Set ${envKey} in secrets.`)
+          return new Response(
+            JSON.stringify({ 
+              error: `Product not configured for ${powerupName}. Please contact support.`,
+              detail: `Missing environment variable: ${envKey}`
+            }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          )
+        }
+
+        // Create a Polar checkout for this powerup's product
+        const checkout = await polarRequest('/checkouts/custom/', {
+          method: 'POST',
+          body: JSON.stringify({
+            product_id: powerupProductId,
+            success_url: successUrl || `${req.headers.get('origin')}/power-ups?subscribed=${powerupId}`,
+            cancel_url: cancelUrl || `${req.headers.get('origin')}/power-ups`,
+            customer_email: user.email,
+            customer_name: userData?.full_name || userData?.display_name || undefined,
+            metadata: {
+              user_id: user.id,
+              checkout_type: 'powerup_subscription',
+              powerup_id: powerupId,
+              powerup_name: powerupName,
+              powerup_price: String(powerupPrice),
+            }
+          })
+        })
+
+        return new Response(
+          JSON.stringify({ 
+            checkoutUrl: checkout.url,
+            checkoutId: checkout.id
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+
+      case 'cancel-powerup': {
+        // Cancel a powerup subscription
+        const { powerupId } = body
+
+        if (!powerupId) {
+          return new Response(
+            JSON.stringify({ error: 'powerupId is required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          )
+        }
+
+        // Get the user's powerup subscription
+        const { data: powerupSub } = await adminSupabase
+          .from('user_powerups')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('powerup_id', powerupId)
+          .single()
+
+        if (!powerupSub) {
+          return new Response(
+            JSON.stringify({ error: 'Powerup subscription not found' }),
+            { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          )
+        }
+
+        // If there's a Polar subscription ID, cancel it
+        if (powerupSub.polar_subscription_id) {
+          try {
+            await polarRequest(`/subscriptions/${powerupSub.polar_subscription_id}`, {
+              method: 'PATCH',
+              body: JSON.stringify({
+                cancel_at_period_end: true
+              })
+            })
+          } catch (err) {
+            console.warn('Could not cancel Polar subscription:', err)
+          }
+        }
+
+        // Mark as inactive in our database
+        await adminSupabase
+          .from('user_powerups')
+          .update({
+            is_active: false,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', powerupSub.id)
+
+        return new Response(
+          JSON.stringify({ success: true, message: 'Powerup subscription cancelled' }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
