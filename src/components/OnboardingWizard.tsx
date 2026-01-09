@@ -120,7 +120,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }) => {
     setLoading(true);
     try {
       // Save business profile
-      await supabase.from('business_profiles').upsert({
+      const { error: profileError } = await supabase.from('business_profiles').upsert({
         user_id: user.id,
         business_name: businessName,
         industry: industry,
@@ -128,11 +128,19 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }) => {
         updated_at: new Date().toISOString(),
       });
 
+      if (profileError) {
+        throw profileError;
+      }
+
       // Mark onboarding as complete
-      await supabase
+      const { error: userError } = await supabase
         .from('users')
         .update({ onboarding_completed: true })
         .eq('id', user.id);
+
+      if (userError) {
+        throw userError;
+      }
 
       toast.success('Welcome aboard! Your AI workforce is ready.');
       setOpen(false);

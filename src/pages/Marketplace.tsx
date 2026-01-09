@@ -313,7 +313,7 @@ const Marketplace: React.FC = () => {
             </p>
             <div className="flex gap-4 justify-center">
               <Button variant="outline" onClick={() => navigate('/pricing')}>View Intro Offers</Button>
-              <Button onClick={() => navigate('/ai-employees')} className="bg-gradient-to-r from-primary to-blue-600">
+              <Button onClick={() => navigate(isSubscriber ? '/dashboard' : '/pricing')} className="bg-gradient-to-r from-primary to-blue-600">
                 {isSubscriber ? 'Go to Dashboard' : 'Get Started'}
               </Button>
             </div>

@@ -41,7 +41,7 @@ const AIEmployeePage: React.FC = () => {
       return;
     }
     if (!employeeId) {
-        navigate('/ai-employees');
+        navigate('/dashboard');
         return;
     }
 
@@ -56,13 +56,13 @@ const AIEmployeePage: React.FC = () => {
 
         if (error || !employeeData) {
           toast.error("Error", { description: "Could not find the specified AI employee." });
-          navigate('/ai-employees');
+          navigate('/dashboard');
           return;
         }
         
         if (employeeData.user_id !== user.id) {
             toast.error("Access Denied", { description: "You do not have permission to view this employee." });
-            navigate('/ai-employees');
+            navigate('/dashboard');
             return;
         }
 
@@ -77,7 +77,7 @@ const AIEmployeePage: React.FC = () => {
       } catch (error) {
         console.error("Error fetching employee:", error);
         toast.error("Error", { description: "Failed to fetch AI employee data." });
-        navigate('/ai-employees');
+        navigate('/dashboard');
       } finally {
         setIsLoading(false);
       }
@@ -141,9 +141,9 @@ const AIEmployeePage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-950">
       <header className="border-b border-slate-700/50 bg-slate-900/70 backdrop-blur">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate('/ai-employees')}>
+          <Button variant="ghost" onClick={() => navigate('/dashboard')}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Power Guardians
+            Back to Dashboard
           </Button>
         </div>
       </header>
