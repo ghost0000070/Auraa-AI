@@ -133,27 +133,40 @@ interface BusinessProfile {
 }
 
 /**
- * Call Puter AI API for autonomous decisions
+ * Call AI API for autonomous decisions
+ * Uses Anthropic API (edge function compatible)
  */
 async function callPuterAI(prompt: string, systemPrompt: string): Promise<string> {
-  const response = await fetch('https://api.puter.com/ai/chat', {
+  const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
+  
+  if (!apiKey) {
+    throw new Error('ANTHROPIC_API_KEY not configured');
+  }
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+    },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-5',
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 2000,
+      system: systemPrompt,
       messages: [
-        { role: 'system', content: systemPrompt },
         { role: 'user', content: prompt },
       ],
     }),
   });
 
   if (!response.ok) {
-    throw new Error(`Puter API error: ${response.status}`);
+    const errorText = await response.text();
+    throw new Error(`Anthropic API error: ${response.status} - ${errorText.substring(0, 200)}`);
   }
 
   const data = await response.json();
-  return data.message?.content?.[0]?.text || data.text || JSON.stringify(data);
+  return data.content?.[0]?.text || JSON.stringify(data);
 }
 
 /**

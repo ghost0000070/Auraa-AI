@@ -12,14 +12,14 @@ import React from "react";
 import { AITeamCoordinationPanel } from '@/components/AITeamCoordinationPanel';
 import { MyEmployeesPanel } from '@/components/MyEmployeesPanel';
 import { EmployeeActivityDashboard } from '@/components/EmployeeActivityDashboard';
-import { useAutonomousLoop } from '@/hooks/useAutonomousLoop';
+import { useAutonomousLoopPuter } from '@/hooks/useAutonomousLoopPuter';
 
 export default function Dashboard() {
   const { user, loading, subscriptionStatus, signOut } = useAuth();
   const [isManagingSubscription, setIsManagingSubscription] = useState(false);
 
-  // Trigger autonomous employee loop when user visits dashboard
-  useAutonomousLoop();
+  // Run autonomous employee loop using Puter AI (free, client-side)
+  const { isProcessing, lastRun } = useAutonomousLoopPuter();
 
   const handleManageSubscription = async () => {
     if (!user) {
