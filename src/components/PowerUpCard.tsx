@@ -16,7 +16,7 @@ interface PowerUpCardProps {
 }
 
 export const PowerUpCard = ({ 
-  id, 
+  id: _id, 
   name, 
   description, 
   category, 

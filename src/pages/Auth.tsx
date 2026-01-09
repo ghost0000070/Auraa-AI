@@ -117,7 +117,7 @@ const Auth = () => {
 
         if (data.user) {
           // Check if user profile exists, create if not
-          const { data: _userProfile, error: profileError } = await supabase
+          const { error: profileError } = await supabase
             .from('users')
             .select('*')
             .eq('id', data.user.id)
@@ -136,8 +136,9 @@ const Auth = () => {
           }
         }
       }
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during authentication');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred during authentication';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -158,8 +159,9 @@ const Auth = () => {
       if (error) throw error;
       
       setSuccessMessage(`If an account exists for ${email}, you will receive a password reset link. Please check your inbox.`);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Password reset failed';
+      setError(message);
     } finally {
       setIsLoading(false);
     }

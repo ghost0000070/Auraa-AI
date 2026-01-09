@@ -41,7 +41,7 @@ const Contact = () => {
 
     try {
       // Send via edge function
-      const { data, error } = await supabase.functions.invoke('send-notification-email', {
+      const { data: _data, error } = await supabase.functions.invoke('send-notification-email', {
         body: {
           userId: user?.id || 'anonymous',
           type: 'contact_form',

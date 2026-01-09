@@ -11,7 +11,7 @@ interface ErrorContext {
     email?: string;
   };
   tags?: Record<string, string>;
-  extra?: Record<string, any>;
+  extra?: Record<string, unknown>;
 }
 
 class ErrorTracker {

@@ -14,7 +14,7 @@ import { EmployeeActivityDashboard } from '@/components/EmployeeActivityDashboar
 import { useAutonomousLoopPuter } from '@/hooks/useAutonomousLoopPuter';
 
 export default function Dashboard() {
-  const { user, loading, subscriptionStatus: _subscriptionStatus, signOut } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const [isManagingSubscription, setIsManagingSubscription] = useState(false);
 
   // Run autonomous employee loop using Puter AI (free, client-side)

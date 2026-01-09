@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { supabase } from "@/supabase";
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,7 +17,7 @@ interface ChartData {
 }
 
 const Analytics = () => {
-  const { user, isAdmin, loading: authLoading } = useAuth();
+  const { isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [userCounts, setUserCounts] = useState<ChartData[]>([]);
   const [deploymentCounts, setDeploymentCounts] = useState<ChartData[]>([]);

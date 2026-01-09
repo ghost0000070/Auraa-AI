@@ -118,9 +118,10 @@ const Onboarding = () => {
 
       toast.success('Business profile created! Your AI employees are ready to work.');
       navigate('/dashboard');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating business profile:', error);
-      toast.error(error.message || 'Failed to create business profile');
+      const message = error instanceof Error ? error.message : 'Failed to create business profile';
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

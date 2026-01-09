@@ -33,7 +33,7 @@ export const WebsiteIntegrations = () => {
       if (error) throw error;
 
       if (data) {
-        setIntegrations(data.map((i: any) => ({
+        setIntegrations(data.map((i) => ({
           id: i.id,
           url: i.url,
           createdAt: i.created_at,
