@@ -319,7 +319,7 @@ async function callBlogAI(
     throw new Error('Blog AI requires browser environment');
   }
   
-  const puter = (window as any).puter;
+  const puter = (window as unknown as { puter?: { ai?: { chat?: (prompt: string, options: { model: string }) => Promise<unknown> } } }).puter;
   if (!puter?.ai?.chat) {
     throw new Error('Puter.js not available');
   }
@@ -331,14 +331,17 @@ async function callBlogAI(
   // Extract content from response
   let content: string | undefined;
   
-  if (response.message?.content?.[0]?.text) {
-    content = response.message.content[0].text;
-  } else if (response.text) {
-    content = response.text;
-  } else if (response.content) {
-    content = response.content;
-  } else if (typeof response === 'string') {
-    content = response;
+  // Type guard for response structure
+  const resp = response as { message?: { content?: Array<{ text?: string }> }; text?: string; content?: string } | string;
+  
+  if (typeof resp === 'string') {
+    content = resp;
+  } else if (resp.message?.content?.[0]?.text) {
+    content = resp.message.content[0].text;
+  } else if (resp.text) {
+    content = resp.text;
+  } else if (resp.content) {
+    content = resp.content;
   }
   
   if (!content) {
@@ -491,7 +494,7 @@ Generate a thoughtful, helpful reply.`;
       const replyData = JSON.parse(jsonMatch[0]);
       
       // Post the reply
-      const { data: replyComment, error } = await supabase
+      const { error } = await supabase
         .from('blog_comments')
         .insert({
           post_id: postId,
@@ -798,13 +801,13 @@ Content (first 500 chars): ${post.content.substring(0, 500)}...`;
   async handleCommand(command: BlogAgentCommandRequest): Promise<BlogAgentCommandResponse> {
     try {
       let result: unknown;
-      let actionId = '';
+      const actionId = '';
       
       switch (command.command) {
         case 'generate_post': {
           const res = await this.generatePost(
             command.params.topic as string,
-            command.params as any
+            command.params as { category?: string; keywords?: string[]; tone?: string; length?: 'short' | 'medium' | 'long' }
           );
           result = res.post;
           break;

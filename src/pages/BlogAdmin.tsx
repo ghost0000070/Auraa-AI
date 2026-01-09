@@ -2,16 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Bot,
-  Plus,
   Sparkles,
   FileText,
   MessageCircle,
   TrendingUp,
   Settings,
   Trash2,
-  Edit,
   Eye,
-  EyeOff,
   Archive,
   Send,
   RefreshCw,
@@ -20,7 +17,6 @@ import {
   Wand2,
   CheckCircle,
   AlertCircle,
-  Clock,
   BarChart3,
   PenTool,
   Loader2
@@ -29,7 +25,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Select,
@@ -61,7 +57,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { blogService, blogAgent, enableAutoReply } from '@/lib/blog-engine';
+import { blogService, blogAgent } from '@/lib/blog-engine';
 import { supabase } from '@/supabase';
 import { useAuth } from '@/hooks/useAuth';
 import { OWNER_EMAIL } from '@/config/constants';
@@ -77,7 +73,6 @@ const BlogAdmin: React.FC = () => {
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [agentActions, setAgentActions] = useState<BlogAgentAction[]>([]);
   const [settings, setSettings] = useState<BlogSettings | null>(null);
-  const [loading, setLoading] = useState(true);
   
   // UI state
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -100,17 +95,12 @@ const BlogAdmin: React.FC = () => {
     brief_outline: string[];
   }>>([]);
   const [generatingIdeas, setGeneratingIdeas] = useState(false);
-  
-  // Edit state
-  const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
-  const [showEditDialog, setShowEditDialog] = useState(false);
 
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = async () => {
-    setLoading(true);
     try {
       // Load posts (all statuses for admin)
       const { data: allPosts } = await supabase
@@ -149,8 +139,6 @@ const BlogAdmin: React.FC = () => {
     } catch (error) {
       console.error('Error loading admin data:', error);
       toast.error('Failed to load data');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -259,7 +247,7 @@ const BlogAdmin: React.FC = () => {
       } else {
         toast.error(result.error || 'Failed to optimize', { id: toastId });
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to optimize SEO', { id: toastId });
     }
   };
@@ -284,7 +272,7 @@ const BlogAdmin: React.FC = () => {
       } else {
         toast.error(result.error || 'Failed to reply', { id: toastId });
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to generate reply', { id: toastId });
     }
   };
@@ -755,7 +743,7 @@ const BlogAdmin: React.FC = () => {
                       />
                     </div>
                     
-                    <Select value={selectedStatus} onValueChange={(v: any) => setSelectedStatus(v)}>
+                    <Select value={selectedStatus} onValueChange={(v: 'all' | 'published' | 'draft' | 'archived') => setSelectedStatus(v)}>
                       <SelectTrigger className="w-32 bg-white/5 border-white/10 text-white">
                         <SelectValue />
                       </SelectTrigger>

@@ -218,3 +218,168 @@ export interface BlogPostPageProps {
   relatedPosts: BlogPost[];
   hasLiked: boolean;
 }
+
+// ============================================================================
+// Blog Automation Types
+// ============================================================================
+
+export interface BlogContentCalendar {
+  id: string;
+  title: string;
+  topic: string;
+  category_id: string | null;
+  keywords: string[];
+  scheduled_date: string;
+  scheduled_time: string;
+  status: 'scheduled' | 'generating' | 'generated' | 'published' | 'failed' | 'cancelled';
+  post_id: string | null;
+  generation_prompt: string | null;
+  notes: string | null;
+  priority: number;
+  created_at: string;
+  updated_at: string;
+  // Joined
+  category?: BlogCategory;
+  post?: BlogPost;
+}
+
+export interface BlogLearningMetrics {
+  id: string;
+  post_id: string;
+  views_24h: number;
+  views_7d: number;
+  views_30d: number;
+  likes_count: number;
+  comments_count: number;
+  shares_count: number;
+  avg_read_time_seconds: number;
+  bounce_rate: number;
+  word_count: number;
+  reading_level: string | null;
+  sentiment_score: number;
+  engagement_score: number;
+  virality_score: number;
+  quality_score: number;
+  is_top_performer: boolean;
+  learned_patterns: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+  // Joined
+  post?: BlogPost;
+}
+
+export interface BlogTopicPerformance {
+  id: string;
+  topic: string;
+  category_id: string | null;
+  total_posts: number;
+  total_views: number;
+  total_likes: number;
+  total_comments: number;
+  avg_engagement_score: number;
+  trending_score: number;
+  last_posted_at: string | null;
+  recommended_frequency_days: number;
+  successful_keywords: string[];
+  successful_titles: string[];
+  optimal_length: number | null;
+  best_posting_time: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined
+  category?: BlogCategory;
+}
+
+export interface BlogAutomationRun {
+  id: string;
+  run_type: 'idea_generation' | 'post_generation' | 'auto_reply' | 'auto_moderation' | 'seo_optimization' | 'learning_update' | 'scheduled_publish';
+  status: 'running' | 'completed' | 'failed' | 'partial';
+  items_processed: number;
+  items_succeeded: number;
+  items_failed: number;
+  input_data: Record<string, unknown>;
+  output_data: Record<string, unknown>;
+  error_message: string | null;
+  started_at: string;
+  completed_at: string | null;
+  duration_ms: number | null;
+}
+
+export interface BlogIdeaQueue {
+  id: string;
+  title: string;
+  topic: string;
+  category_id: string | null;
+  brief_description: string | null;
+  outline: string[];
+  target_keywords: string[];
+  estimated_engagement: string | null;
+  relevance_score: number;
+  trend_score: number;
+  priority_score: number;
+  status: 'pending' | 'approved' | 'scheduled' | 'rejected' | 'used';
+  used_in_post_id: string | null;
+  inspiration_source: 'trend' | 'learning' | 'product_update' | 'user_request' | 'competitor' | 'ai_creative' | null;
+  created_at: string;
+  reviewed_at: string | null;
+  // Joined
+  category?: BlogCategory;
+}
+
+export interface BlogReplyTemplate {
+  id: string;
+  comment_type: 'question' | 'praise' | 'criticism' | 'suggestion' | 'spam' | 'general';
+  template_pattern: string;
+  example_replies: string[];
+  times_used: number;
+  avg_satisfaction_score: number;
+  is_active: boolean;
+  learned_from_post_ids: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+// Extended BlogSettings with automation fields
+export interface BlogSettingsExtended extends BlogSettings {
+  auto_generate_ideas: boolean;
+  idea_generation_frequency: 'daily' | 'weekly' | 'biweekly' | 'monthly';
+  auto_schedule_posts: boolean;
+  posts_per_week: number;
+  preferred_posting_days: string[];
+  preferred_posting_time: string;
+  learning_enabled: boolean;
+  learning_update_frequency: 'hourly' | 'daily' | 'weekly';
+  auto_seo_optimization: boolean;
+  content_focus_areas: string[];
+}
+
+// ============================================================================
+// Automation Action Types
+// ============================================================================
+
+export interface AutomationSchedule {
+  type: 'idea_generation' | 'post_generation' | 'learning_update' | 'content_review';
+  frequency: 'hourly' | 'daily' | 'weekly' | 'monthly';
+  lastRun: string | null;
+  nextRun: string;
+  enabled: boolean;
+}
+
+export interface LearningInsight {
+  type: 'topic' | 'keyword' | 'format' | 'timing' | 'length';
+  insight: string;
+  confidence: number;
+  dataPoints: number;
+  recommendation: string;
+}
+
+export interface ContentIdea {
+  title: string;
+  topic: string;
+  category: string;
+  keywords: string[];
+  outline: string[];
+  estimatedEngagement: 'low' | 'medium' | 'high' | 'viral';
+  source: BlogIdeaQueue['inspiration_source'];
+  reasoning: string;
+}

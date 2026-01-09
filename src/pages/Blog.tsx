@@ -7,8 +7,6 @@ import {
   Eye, 
   Heart, 
   MessageCircle,
-  ChevronRight,
-  Tag,
   ArrowRight,
   Sparkles
 } from 'lucide-react';
