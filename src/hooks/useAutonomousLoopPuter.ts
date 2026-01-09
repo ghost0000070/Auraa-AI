@@ -112,16 +112,14 @@ function getTemplateKey(employee: DeployedEmployee): string {
  * Call Puter AI (client-side, free)
  */
 async function callPuterAI(prompt: string, systemPrompt: string): Promise<string> {
-  const puter = (window as any).puter;
-  
-  if (!puter?.ai?.chat) {
+  if (!window.puter?.ai?.chat) {
     throw new Error('Puter AI not available');
   }
 
-  const response = await puter.ai.chat(
+  const response = await window.puter.ai.chat(
     `${systemPrompt}\n\n${prompt}`,
     { model: 'claude-sonnet-4-5' }
-  );
+  ) as { message?: { content?: Array<{ text?: string }> }; text?: string };
 
   return response?.message?.content?.[0]?.text || response?.text || JSON.stringify(response);
 }
@@ -263,8 +261,7 @@ export function useAutonomousLoopPuter() {
     if (!user || hasRunRef.current || isProcessing) return;
     
     // Check if Puter is available
-    const puter = (window as any).puter;
-    if (!puter?.ai?.chat) {
+    if (!window.puter?.ai?.chat) {
       console.log('⏭️ Puter AI not available, skipping loop');
       return;
     }

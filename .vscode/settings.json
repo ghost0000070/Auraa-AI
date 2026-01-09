@@ -27,6 +27,7 @@
     "cSpell.words": [
         "genkit",
         "googleai",
+        "supabase",
         "vertexai"
     ],
     "sonarlint.connectedMode.project": {
@@ -45,7 +46,7 @@
         "./supabase/functions"
     ],
     "deno.lint": true,
-    "deno.unstable": false,
+    "deno.unstable": [],
     "claudeCode.selectedModel": "claude haiku 4.5",
     "claudeCode.preferredLocation": "sidebar",
     "claudeCode.initialPermissionMode": "bypassPermissions",

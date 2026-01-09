@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { AuthProvider } from './hooks/useAuth.tsx';
 import { ThemeProvider } from './hooks/useTheme.tsx';
@@ -59,6 +59,9 @@ const App: React.FC = () => {
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/auth" element={<Auth />} />
+                    <Route path="/login" element={<Navigate to="/auth" replace />} />
+                    <Route path="/signup" element={<Navigate to="/auth" replace />} />
+                    <Route path="/signin" element={<Navigate to="/auth" replace />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/pricing" element={<PricingPage />} />
                     <Route path="/contact" element={<Contact />} />
