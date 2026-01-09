@@ -153,12 +153,93 @@ serve(async (req) => {
       category: request.employee_category,
       templateId: templateId,
       businessContext: profile?.business_name || '',
+      businessDescription: profile?.description || '',
       industry: profile?.industry || '',
+      targetAudience: profile?.target_audience || '',
+      brandVoice: profile?.brand_voice || 'professional',
+      goals: profile?.goals || [],
+      websiteUrl: profile?.website_url || '',
       deployedAt: new Date().toISOString(),
+      capabilities: {
+        sales: templateId === 'sales-sidekick' ? {
+          prospectingEnabled: true,
+          leadScoringEnabled: true,
+          outreachAutomation: true,
+          objectionHandling: true,
+          pipelineManagement: true,
+          followUpAutomation: true,
+        } : undefined,
+        marketing: templateId === 'marketing-pro' ? {
+          contentCreation: true,
+          campaignAnalytics: true,
+          abTesting: true,
+          seoOptimization: true,
+        } : undefined,
+        support: templateId === 'support-sentinel' ? {
+          ticketTriaging: true,
+          knowledgeBaseSearch: true,
+          escalationManagement: true,
+        } : undefined,
+      },
+      autonomyLevel: 'supervised', // supervised, semi-autonomous, fully-autonomous
+      notificationPreferences: {
+        onTaskComplete: true,
+        onInsightGenerated: true,
+        onActionRequired: true,
+      },
     }
 
-    // Use Puter's free Claude API to generate a deployment script/plan
-    const deploymentPlan = `Deployment configuration for ${request.employee_name}:
+    // Generate a rich deployment plan based on the template
+    const templatePlans: Record<string, string> = {
+      'sales-sidekick': `🎯 Sales Sidekick (Milli) Deployment Plan:
+
+ROLE: Pipeline Hunter & Sales Automation Specialist
+BUSINESS: ${profile?.business_name || 'Your Business'}
+INDUSTRY: ${profile?.industry || 'General'}
+
+CORE CAPABILITIES:
+• Lead Prospecting & Research - Identify and qualify potential customers
+• Lead Scoring - Prioritize leads based on conversion likelihood  
+• Personalized Outreach - Craft tailored messages for each prospect
+• Objection Handling - Prepare responses to common sales objections
+• Pipeline Management - Track deals and suggest next actions
+• Follow-up Automation - Draft timely follow-ups that close
+
+AUTONOMOUS DUTIES:
+• Research ideal customer profiles for ${profile?.business_name || 'your business'}
+• Develop sales pitch variations for different buyer personas
+• Analyze industry-specific objections and create response strategies
+• Identify partnership opportunities in ${profile?.industry || 'your industry'}
+• Create outreach templates for different sales stages
+
+READY TO: Help you close more deals and grow revenue!`,
+
+      'marketing-pro': `📢 Marketing Pro (Echo) Deployment Plan:
+
+ROLE: Campaign Architect & Content Strategist
+BUSINESS: ${profile?.business_name || 'Your Business'}
+
+CORE CAPABILITIES:
+• Campaign Analytics & A/B Testing
+• Content Creation & SEO Optimization
+• Audience Research & Targeting
+
+READY TO: Amplify your brand and drive engagement!`,
+
+      'support-sentinel': `🛡️ Support Sentinel (Cassie) Deployment Plan:
+
+ROLE: Customer Guardian & Ticket Specialist
+BUSINESS: ${profile?.business_name || 'Your Business'}
+
+CORE CAPABILITIES:
+• Ticket Triaging & Priority Routing
+• Knowledge Base Integration
+• Empathetic Response Drafting
+
+READY TO: Keep your customers happy 24/7!`,
+    }
+
+    const deploymentPlan = templatePlans[templateId] || `Deployment configuration for ${request.employee_name}:
 - Category: ${request.employee_category}
 - Template: ${templateId}
 - Business: ${profile?.business_name || 'Not specified'}

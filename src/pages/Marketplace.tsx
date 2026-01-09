@@ -100,13 +100,66 @@ const Marketplace: React.FC = () => {
     }
   };
 
-  const handleDeploy = (templateId: string) => {
+  const handleDeploy = async (templateId: string) => {
     if (!hasEmployeeAccess(templateId)) {
       toast.error('Please subscribe to this AI employee first');
       return;
     }
-    toast.success('Redirecting to dashboard to manage your employees...');
-    navigate('/dashboard');
+
+    const template = aiEmployeeTemplates.find(t => t.id === templateId);
+    if (!template || !user) return;
+
+    setLoading(templateId);
+
+    try {
+      // Create deployment request
+      const { data: deploymentRequest, error } = await supabase
+        .from('deployment_requests')
+        .insert({
+          user_id: user.id,
+          employee_name: template.name,
+          employee_category: template.category,
+          status: 'pending',
+          template_id: template.id,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Call the deploy-ai-employee edge function
+      const { data: { session } } = await supabase.auth.getSession();
+      const { data: deployResult, error: deployError } = await supabase.functions.invoke('deploy-ai-employee', {
+        body: {
+          requestId: deploymentRequest.id,
+          userId: user.id,
+        },
+        headers: session?.access_token ? {
+          Authorization: `Bearer ${session.access_token}`,
+        } : undefined,
+      });
+
+      if (deployError) {
+        console.error('Deployment error:', deployError);
+        await supabase
+          .from('deployment_requests')
+          .update({ status: 'failed' })
+          .eq('id', deploymentRequest.id);
+        throw new Error(deployError.message || 'Failed to deploy AI employee');
+      }
+
+      if (deployResult?.error) {
+        throw new Error(deployResult.error);
+      }
+
+      toast.success(`${template.name} deployed successfully!`);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Deploy error:', error);
+      toast.error((error as Error).message || 'Failed to deploy employee');
+    } finally {
+      setLoading(null);
+    }
   };
 
   const daysUntilIntroEnds = introEndsAt 
@@ -250,18 +303,28 @@ const Marketplace: React.FC = () => {
                     <Button 
                       onClick={() => handleDeploy(template.id)} 
                       className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:opacity-90"
+                      disabled={loading === template.id}
                     >
-                      <Zap className="w-4 h-4 mr-2" />
-                      Deploy Now
+                      {loading === template.id ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Zap className="w-4 h-4 mr-2" />
+                      )}
+                      {loading === template.id ? 'Deploying...' : 'Deploy Now'}
                     </Button>
                   ) : hasAccess ? (
                     <div className="space-y-2">
                       <Button 
                         onClick={() => handleDeploy(template.id)} 
                         className="w-full bg-gradient-to-r from-primary to-blue-600 hover:opacity-90"
+                        disabled={loading === template.id}
                       >
-                        <Zap className="w-4 h-4 mr-2" />
-                        Deploy (Intro Access)
+                        {loading === template.id ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Zap className="w-4 h-4 mr-2" />
+                        )}
+                        {loading === template.id ? 'Deploying...' : 'Deploy (Intro Access)'}
                       </Button>
                       <Button 
                         onClick={() => handleSubscribeToEmployee(template.id, template.name, template.monthlyCost)} 
