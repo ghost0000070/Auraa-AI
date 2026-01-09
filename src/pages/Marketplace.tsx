@@ -105,7 +105,8 @@ const Marketplace: React.FC = () => {
       toast.error('Please subscribe to this AI employee first');
       return;
     }
-    navigate('/ai-employees');
+    toast.success('Redirecting to dashboard to manage your employees...');
+    navigate('/dashboard');
   };
 
   const daysUntilIntroEnds = introEndsAt 
