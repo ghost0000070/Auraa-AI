@@ -18,28 +18,28 @@ export const TIER_LEVELS: Record<string, number> = {
   owner: 999,
 };
 
-// AI Models - Claude models available via Puter.js (free via browser)
-// Using models that are verified working with Puter.js
+// AI Models - Using FREE models via Puter.js
+// These models don't consume credits or cost money
 export const AI_MODELS = {
   // For complex reasoning, analysis, and strategic tasks
-  COMPLEX: 'claude-3-5-sonnet-20241022',
+  COMPLEX: 'gemini-2.0-flash',
   // For standard tasks - balanced speed and quality
-  STANDARD: 'claude-3-5-sonnet-20241022',
+  STANDARD: 'gemini-2.0-flash',
   // For fast, simple tasks - quick responses
-  FAST: 'claude-3-haiku-20240307',
+  FAST: 'gemini-2.5-flash-lite',
   // Specialized models for specific use cases
-  CODING: 'claude-3-5-sonnet-20241022',
-  CREATIVE: 'claude-3-5-sonnet-20241022',
-  ANALYTICAL: 'claude-3-5-sonnet-20241022',
+  CODING: 'gemini-2.0-flash',
+  CREATIVE: 'gemini-2.0-flash',
+  ANALYTICAL: 'gemini-2.0-flash',
 } as const;
 
-// Model assigned per subscription tier (all available via Puter.js free)
+// Model assigned per subscription tier (using FREE Puter models)
 export const TIER_MODELS: Record<string, string> = {
-  free: 'claude-3-haiku-20240307',           // Fast, basic tasks
-  pro: 'claude-3-5-sonnet-20241022',         // Balanced, most business tasks
-  enterprise: 'claude-3-5-sonnet-20241022',  // Most capable available
-  admin: 'claude-3-5-sonnet-20241022',       // Full access
-  owner: 'claude-3-5-sonnet-20241022',       // Full access
+  free: 'gemini-2.5-flash-lite',      // Fast, basic tasks (FREE)
+  pro: 'gemini-2.0-flash',            // Balanced, most business tasks (FREE)
+  enterprise: 'gemini-2.0-flash',     // Most capable available (FREE)
+  admin: 'gemini-2.0-flash',          // Full access (FREE)
+  owner: 'gemini-2.0-flash',          // Full access (FREE)
 };
 
 // Subscription pricing (monthly)

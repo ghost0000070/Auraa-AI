@@ -300,9 +300,9 @@ export function getModelForCategory(category: string): string {
 }
 
 /**
- * callPuterAI - Primary Strategy (Free Client-Side AI via Claude)
- * Uses Puter.js to access Claude models for free
- * Models: claude-opus (complex), claude-sonnet (standard), claude-haiku (fast)
+ * callPuterAI - Primary Strategy (Free Client-Side AI)
+ * Uses Puter.js to access AI models for FREE (no credits required)
+ * Models: gemini-2.0-flash (standard), gemini-2.5-flash-lite (fast)
  */
 async function callPuterAI(prompt: string, systemContext: string, model: string = MODELS.STANDARD): Promise<string> {
     // Use puter npm package - works in browser environment
