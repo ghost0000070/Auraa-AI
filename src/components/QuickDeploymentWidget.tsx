@@ -86,7 +86,7 @@ export const QuickDeploymentWidget: React.FC = () => {
         // Automatically trigger deployment via Edge Function
         // Get the current session to pass Authorization header explicitly
         const { data: { session } } = await supabase.auth.getSession();
-        supabase.functions.invoke('deploy-ai-employee', {
+        const { data: deployResult, error: deployError } = await supabase.functions.invoke('deploy-ai-employee', {
           body: {
             requestId: data.id,
             userId: user.id,
@@ -94,13 +94,17 @@ export const QuickDeploymentWidget: React.FC = () => {
           headers: session?.access_token ? {
             Authorization: `Bearer ${session.access_token}`,
           } : undefined,
-        }).then(({ error: deployError }) => {
-          if (deployError) {
-            console.error('Auto-deployment error:', deployError);
-          }
         });
 
-        toast.success(`Deployment Started: ${template.name} is being deployed.`);
+        if (deployError) {
+          console.error('Auto-deployment error:', deployError);
+          toast.error(`Deployment failed: ${deployError.message || 'Unknown error'}`);
+        } else if (deployResult?.error) {
+          console.error('Deployment result error:', deployResult.error);
+          toast.error(`Deployment failed: ${deployResult.error}`);
+        } else {
+          toast.success(`${template.name} deployed successfully!`);
+        }
         
     } catch (error) {
       console.error('Quick deploy error:', error);

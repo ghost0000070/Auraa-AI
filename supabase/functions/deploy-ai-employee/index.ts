@@ -48,6 +48,11 @@ serve(async (req) => {
     // Initialize Supabase client with service role for database operations
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    
+    console.log('Initializing Supabase client with service role')
+    console.log('SUPABASE_URL:', supabaseUrl ? 'set' : 'NOT SET')
+    console.log('SUPABASE_SERVICE_ROLE_KEY:', supabaseServiceKey ? 'set (length: ' + supabaseServiceKey.length + ')' : 'NOT SET')
+    
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     // Extract and decode JWT token to get user ID
@@ -166,29 +171,26 @@ This AI employee is now active and ready to assist with ${request.employee_categ
     // The actual AI interactions happen in the frontend via Puter.js
 
     // Create deployed employee record
-    console.log('Creating deployed employee with data:', {
+    const insertData = {
       user_id: authenticatedUserId,
       template_id: templateId,
       name: request.employee_name,
       role: request.employee_category || 'AI Employee',
       category: request.employee_category,
       status: 'active',
-    })
+      configuration: deploymentConfig,
+      deployment_plan: deploymentPlan,
+    }
+    
+    console.log('Inserting deployed employee with data:', JSON.stringify(insertData))
     
     const { data: deployed, error: deployError } = await supabase
       .from('deployed_employees')
-      .insert({
-        user_id: authenticatedUserId,
-        template_id: templateId,
-        name: request.employee_name,
-        role: request.employee_category || 'AI Employee',
-        category: request.employee_category,
-        status: 'active',
-        configuration: deploymentConfig,
-        deployment_plan: deploymentPlan,
-      })
+      .insert(insertData)
       .select()
       .single()
+
+    console.log('Insert result - deployed:', JSON.stringify(deployed), 'error:', JSON.stringify(deployError))
 
     if (deployError) {
       console.error('Deploy insert error:', JSON.stringify(deployError))
