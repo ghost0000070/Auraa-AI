@@ -40,8 +40,8 @@ const image = (keyword: string) =>
 export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   {
     id: "marketing-pro",
-    name: "Marketing Pro",
-    role: "Growth Strategist",
+    name: "Echo",
+    role: "Marketing Pro • Growth Strategist",
     category: "Marketing",
     description: "Analyzes campaign data, writes high-converting copy, and optimizes funnels end-to-end.",
     icon: Megaphone,
@@ -71,8 +71,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "sales-sidekick",
-    name: "Sales Sidekick",
-    role: "Pipeline Hunter",
+    name: "Milli",
+    role: "Sales Sidekick • Pipeline Hunter",
     category: "Sales",
     description: "Automates personalized outreach, surfaces hot leads, and drafts follow-ups that close.",
     icon: DollarSign,
@@ -102,8 +102,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "support-sentinel",
-    name: "Support Sentinel",
-    role: "Customer Guardian",
+    name: "Cassie",
+    role: "Support Sentinel • Customer Guardian",
     category: "Support",
     description: "Triages tickets, drafts empathetic replies, and keeps CSAT green around the clock.",
     icon: MessageSquareText,
@@ -133,8 +133,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "business-analyst",
-    name: "Business Analyst",
-    role: "Insight Architect",
+    name: "Dexter",
+    role: "Business Analyst • Insight Architect",
     category: "Business",
     description: "Connects revenue, product, and ops data to surface actionable narratives for leadership.",
     icon: Database,
@@ -164,8 +164,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "dev-companion",
-    name: "Dev Companion",
-    role: "Full-stack Partner",
+    name: "Cipher",
+    role: "Dev Companion • Full-stack Partner",
     category: "Engineering",
     description: "Generates boilerplate, explains stack traces, and reviews pull requests in minutes.",
     icon: Code,
@@ -195,8 +195,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "operations-orchestrator",
-    name: "Ops Orchestrator",
-    role: "Workflow Director",
+    name: "Atlas",
+    role: "Ops Orchestrator • Workflow Director",
     category: "Operations",
     description: "Keeps projects, vendors, and inventory humming with proactive nudges and alerts.",
     icon: GanttChart,
@@ -226,8 +226,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "security-analyst",
-    name: "Security Analyst",
-    role: "Threat Hunter",
+    name: "Vex",
+    role: "Security Analyst • Threat Hunter",
     category: "Security",
     description: "Monitors telemetry, reviews alerts, and recommends mitigation steps instantly.",
     icon: ShieldCheck,
@@ -257,8 +257,8 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   },
   {
     id: "ai-team-orchestrator",
-    name: "AI Team Orchestrator",
-    role: "Multi-agent Conductor",
+    name: "Cortex",
+    role: "AI Team Orchestrator • Multi-agent Conductor",
     category: "AI",
     description: "Routes work between specialized agents, validates outputs, and hands off final briefs.",
     icon: Workflow,

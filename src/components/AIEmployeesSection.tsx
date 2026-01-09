@@ -5,43 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/supabase";
-// Import guardian images
-import dataNexusImage from "@/assets/data-daemon-guardian.jpg";
-import dealStrikerImage from "@/assets/deal-striker-guardian.jpg";
-import supportShieldImage from "@/assets/support-sentinel-guardian.jpg";
-import wordForgeImage from "@/assets/word-smith-guardian.jpg";
-
-const aiEmployees = [
-  {
-    name: "Milli",
-    role: "Sales Manager",
-    image: dealStrikerImage,
-    skills: ["Cold Call Scripts", "Email Campaigns", "Deal Closing", "Client Pitches"],
-    variant: "featured" as const,
-    category: "sales"
-  },
-  {
-    name: "Cassie", 
-    role: "Customer Support Specialist",
-    image: supportShieldImage,
-    skills: ["Ticket Resolution", "Live Chat", "Brand Voice", "Customer Retention"],
-    category: "customer_service"
-  },
-  {
-    name: "Content Creator",
-    role: "Content Creator", 
-    image: wordForgeImage,
-    skills: ["Blog Posts", "Social Content", "Storytelling", "Audience Engagement"],
-    category: "content"
-  },
-  {
-    name: "Dexter",
-    role: "Data Analyst",
-    image: dataNexusImage,
-    skills: ["Data Analysis", "Forecasting", "Business Insights", "Performance Tracking"],
-    category: "analytics"
-  }
-];
+import { aiEmployeeTemplates } from "@/lib/ai-employee-templates";
 
 export const AIEmployeesSection = () => {
   const { user, subscriptionStatus } = useAuth();
@@ -101,8 +65,17 @@ export const AIEmployeesSection = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          {aiEmployees.map((employee, index) => (
-            <AIEmployeeCard key={index} {...employee} clickable={true} />
+          {aiEmployeeTemplates.map((employee) => (
+            <AIEmployeeCard 
+              key={employee.id} 
+              name={employee.name}
+              role={employee.role}
+              image={employee.image}
+              skills={employee.skills.slice(0, 4)}
+              category={employee.category.toLowerCase()}
+              clickable={true}
+              variant={employee.id === 'sales-sidekick' ? 'featured' : undefined}
+            />
           ))}
         </div>
         
