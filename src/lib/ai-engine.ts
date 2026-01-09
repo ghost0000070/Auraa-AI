@@ -65,9 +65,9 @@ export async function getBusinessContext(userId: string): Promise<BusinessContex
  * Fetch employee-specific context including memories and insights
  */
 export async function getEmployeeContext(employeeId: string, userId: string): Promise<EmployeeContext | null> {
-    // Get employee info
+    // Get employee info from deployed_employees (user's actual deployed instances)
     const { data: employee } = await supabase
-        .from('ai_employees')
+        .from('deployed_employees')
         .select('id, name, template_id')
         .eq('id', employeeId)
         .eq('user_id', userId)

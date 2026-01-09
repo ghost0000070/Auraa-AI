@@ -54,7 +54,7 @@ export const MyEmployeesPanel: React.FC = () => {
       setLoading(true);
       try {
         const { data, error } = await supabase
-          .from('ai_employees')
+          .from('deployed_employees')
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false });
@@ -77,7 +77,7 @@ export const MyEmployeesPanel: React.FC = () => {
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
-        table: 'ai_employees',
+        table: 'deployed_employees',
         filter: `user_id=eq.${user.id}`
       }, (payload) => {
         if (payload.eventType === 'INSERT') {
@@ -101,7 +101,7 @@ export const MyEmployeesPanel: React.FC = () => {
     setActionLoading(employeeId);
     try {
       const { error } = await supabase
-        .from('ai_employees')
+        .from('deployed_employees')
         .delete()
         .eq('id', employeeId)
         .eq('user_id', user?.id);
