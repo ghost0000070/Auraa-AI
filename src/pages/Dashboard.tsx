@@ -10,6 +10,7 @@ import { AnalyticsSection } from '@/components/AnalyticsSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
 import { AITeamCoordinationPanel } from '@/components/AITeamCoordinationPanel';
+import { MyEmployeesPanel } from '@/components/MyEmployeesPanel';
 
 export default function Dashboard() {
   const { user, loading, subscriptionStatus, signOut } = useAuth();
@@ -93,12 +94,17 @@ export default function Dashboard() {
       </header>
 
       <main className="flex-1 p-6">
-        <Tabs defaultValue="team">
+        <Tabs defaultValue="employees">
             <TabsList className="mb-4">
-                <TabsTrigger value="team">Team Dashboard</TabsTrigger>
-                <TabsTrigger value="coordination">AI Team Coordination</TabsTrigger>
+                <TabsTrigger value="employees">My Employees</TabsTrigger>
+                <TabsTrigger value="team">Team Overview</TabsTrigger>
+                <TabsTrigger value="coordination">Coordination</TabsTrigger>
                 <TabsTrigger value="analytics">Analytics</TabsTrigger>
             </TabsList>
+            
+            <TabsContent value="employees">
+                <MyEmployeesPanel />
+            </TabsContent>
             
             <TabsContent value="team">
                 <div className="grid gap-6 md:grid-cols-3">

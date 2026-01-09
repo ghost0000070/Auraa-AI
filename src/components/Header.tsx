@@ -67,16 +67,6 @@ export const Header = () => {
               </Button>
               
               <Button 
-                variant={isActive('/ai-employees') ? 'secondary' : 'ghost'} 
-                size="sm"
-                onClick={() => navigate('/ai-employees')} 
-                className="text-sm"
-              >
-                <Users className="w-4 h-4 mr-1.5" />
-                Employees
-              </Button>
-              
-              <Button 
                 variant={isActive('/marketplace') ? 'secondary' : 'ghost'} 
                 size="sm"
                 onClick={() => navigate('/marketplace')} 
