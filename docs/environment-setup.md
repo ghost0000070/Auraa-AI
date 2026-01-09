@@ -216,7 +216,41 @@ Navigate to: **Polar Dashboard > Settings**
 
 ---
 
-## 8. Verification Checklist
+## 8. Autonomous Employee Loop (Vercel Cron)
+
+The platform includes an automated background loop that processes all active AI employees every 5 minutes. This runs automatically via Vercel Cron - no user setup required.
+
+### How It Works
+
+1. **Vercel Cron** triggers `/api/autonomous-loop` every 5 minutes
+2. The API route calls the `autonomous-loop` Supabase Edge Function
+3. The edge function processes all active employees in `deployed_employees` table
+4. Each employee decides what to do based on their role and business context
+5. Actions and insights are stored in `autonomous_actions` and `business_insights` tables
+
+### Required Vercel Environment Variables
+
+| Variable Name | Description |
+|---------------|-------------|
+| `SUPABASE_URL` | Your Supabase project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key for backend access |
+| `CRON_SECRET` | (Optional) Secret to verify cron requests |
+
+### Setup in Vercel Dashboard
+
+1. Go to **Project Settings > Environment Variables**
+2. Add `SUPABASE_SERVICE_ROLE_KEY` with your service role key
+3. (Optional) Add `CRON_SECRET` for additional security
+
+### Verifying the Loop
+
+- Check Vercel Functions logs for `/api/autonomous-loop`
+- Check Supabase Edge Function logs: `supabase functions logs autonomous-loop`
+- View activity in Dashboard > Activity tab
+
+---
+
+## 9. Verification Checklist
 
 After configuration, verify each platform:
 
@@ -270,3 +304,14 @@ supabase functions logs agent-run
    - Verify Resend API key is valid
    - Check domain is verified in Resend dashboard
    - Test with Resend's test endpoint first
+
+6. **Autonomous loop not running**
+   - Verify `SUPABASE_SERVICE_ROLE_KEY` is set in Vercel
+   - Check Vercel Cron logs in dashboard
+   - Ensure at least one employee is deployed with status='active'
+   - Verify business profile exists for the user
+
+7. **Employees not taking actions**
+   - Check `business_profiles` table has a profile for the user
+   - Verify `deployed_employees` has status='active'
+   - Check `autonomous-loop` function logs for errors
