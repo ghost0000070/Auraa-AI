@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
 import { AITeamCoordinationPanel } from '@/components/AITeamCoordinationPanel';
 import { MyEmployeesPanel } from '@/components/MyEmployeesPanel';
+import { EmployeeActivityDashboard } from '@/components/EmployeeActivityDashboard';
 
 export default function Dashboard() {
   const { user, loading, subscriptionStatus, signOut } = useAuth();
@@ -97,6 +98,7 @@ export default function Dashboard() {
         <Tabs defaultValue="employees">
             <TabsList className="mb-4">
                 <TabsTrigger value="employees">My Employees</TabsTrigger>
+                <TabsTrigger value="activity">Activity</TabsTrigger>
                 <TabsTrigger value="team">Team Overview</TabsTrigger>
                 <TabsTrigger value="coordination">Coordination</TabsTrigger>
                 <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -104,6 +106,10 @@ export default function Dashboard() {
             
             <TabsContent value="employees">
                 <MyEmployeesPanel />
+            </TabsContent>
+            
+            <TabsContent value="activity">
+                <EmployeeActivityDashboard />
             </TabsContent>
             
             <TabsContent value="team">
