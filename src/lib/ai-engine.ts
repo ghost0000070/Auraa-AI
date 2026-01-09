@@ -386,9 +386,14 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
 async function callVercelAIGateway(prompt: string, systemContext: string, category: string = 'default'): Promise<string> {
     console.log(`🌐 Using Edge Function fallback for category: ${category}`);
     
-    // Get auth token for edge function
+    // Get auth token and user ID for edge function
     const { data: { session } } = await supabase.auth.getSession();
     const authToken = session?.access_token;
+    const userId = session?.user?.id;
+    
+    if (!userId) {
+        throw new Error('User must be authenticated to use AI fallback');
+    }
     
     const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/agent-run`, {
         method: 'POST',
@@ -397,10 +402,14 @@ async function callVercelAIGateway(prompt: string, systemContext: string, catego
             'Authorization': authToken ? `Bearer ${authToken}` : '',
         },
         body: JSON.stringify({
-            task: 'custom_prompt',
-            prompt,
-            systemContext,
-            category,
+            action: 'direct_prompt',
+            params: {
+                prompt,
+                systemContext,
+                category,
+            },
+            userId,
+            context: systemContext,
         }),
     });
 

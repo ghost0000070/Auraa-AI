@@ -215,6 +215,32 @@ serve(async (req) => {
     const payload: TaskPayload = await req.json()
     const { taskId, queueId, action, params, context = '', userId, employeeId } = payload
 
+    // Handle direct prompt mode (for ai-engine fallback)
+    if (action === 'direct_prompt' && params?.prompt) {
+      console.log('📝 Direct prompt mode - bypassing action lookup')
+      const promptResult = await executeAIAction('generate_content', {
+        prompt: params.prompt,
+        systemContext: params.systemContext || context,
+        category: params.category || 'default'
+      }, params.systemContext as string || context)
+      
+      return new Response(
+        JSON.stringify({
+          success: promptResult.success,
+          text: typeof promptResult.result === 'object' && promptResult.result !== null 
+            ? (promptResult.result as Record<string, unknown>).text_output || JSON.stringify(promptResult.result)
+            : String(promptResult.result || ''),
+          error: promptResult.error,
+          model: 'anthropic-emergency',
+          usage: { totalTokens: 0 }
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: promptResult.success ? 200 : 500,
+        }
+      )
+    }
+
     if (!action || !userId) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields: action and userId' }),
