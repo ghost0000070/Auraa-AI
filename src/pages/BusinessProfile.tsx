@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/supabase";
 import { toast } from "sonner";
-import { Header } from "@/components/Header";
 import { 
   Building2, 
   Target, 
@@ -151,8 +150,11 @@ const BusinessProfile = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("basics");
   
-  // Temp inputs for array fields
-  const [newValue, setNewValue] = useState('');
+  // Temp inputs for array fields - separate state for each to avoid conflicts
+  const [newCoreValue, setNewCoreValue] = useState('');
+  const [newKeyword, setNewKeyword] = useState('');
+  const [newGoal, setNewGoal] = useState('');
+  const [newChallenge, setNewChallenge] = useState('');
   const [newCompetitor, setNewCompetitor] = useState({ name: '', notes: '' });
   const [newProduct, setNewProduct] = useState({ name: '', description: '', price: '' });
   const [newService, setNewService] = useState({ name: '', description: '' });
@@ -221,13 +223,13 @@ const BusinessProfile = () => {
     }));
   };
 
-  const addToArray = (field: keyof EnhancedBusinessProfile, value: string) => {
+  const addToArray = (field: keyof EnhancedBusinessProfile, value: string, clearFn?: () => void) => {
     if (!value.trim()) return;
     const current = profile[field] as string[];
     if (!current.includes(value.trim())) {
       handleInputChange(field, [...current, value.trim()]);
     }
-    setNewValue('');
+    if (clearFn) clearFn();
   };
 
   const removeFromArray = (field: keyof EnhancedBusinessProfile, index: number) => {
@@ -333,8 +335,6 @@ const BusinessProfile = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-950 text-white">
-      <Header />
-      
       <main className="container mx-auto px-6 py-8 pt-24 max-w-4xl">
         {/* Completeness Banner */}
         <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-primary/20 to-blue-600/20 border border-primary/30">
@@ -560,13 +560,13 @@ const BusinessProfile = () => {
                   <label className="text-sm font-medium mb-2 block text-slate-300">Core Values</label>
                   <div className="flex gap-2 mb-2">
                     <Input
-                      value={newValue}
-                      onChange={(e) => setNewValue(e.target.value)}
+                      value={newCoreValue}
+                      onChange={(e) => setNewCoreValue(e.target.value)}
                       placeholder="Add a core value"
                       className="bg-slate-900/60 border-slate-700 text-white"
-                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addToArray('coreValues', newValue))}
+                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addToArray('coreValues', newCoreValue, () => setNewCoreValue('')))}
                     />
-                    <Button onClick={() => addToArray('coreValues', newValue)} size="icon" variant="secondary">
+                    <Button onClick={() => addToArray('coreValues', newCoreValue, () => setNewCoreValue(''))} size="icon" variant="secondary">
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>
@@ -586,13 +586,13 @@ const BusinessProfile = () => {
                   <label className="text-sm font-medium mb-2 block text-slate-300">Primary Keywords (SEO)</label>
                   <div className="flex gap-2 mb-2">
                     <Input
-                      value={newValue}
-                      onChange={(e) => setNewValue(e.target.value)}
+                      value={newKeyword}
+                      onChange={(e) => setNewKeyword(e.target.value)}
                       placeholder="Add a keyword"
                       className="bg-slate-900/60 border-slate-700 text-white"
-                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addToArray('primaryKeywords', newValue))}
+                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addToArray('primaryKeywords', newKeyword, () => setNewKeyword('')))}
                     />
-                    <Button onClick={() => addToArray('primaryKeywords', newValue)} size="icon" variant="secondary">
+                    <Button onClick={() => addToArray('primaryKeywords', newKeyword, () => setNewKeyword(''))} size="icon" variant="secondary">
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>
@@ -815,13 +815,13 @@ const BusinessProfile = () => {
                   <p className="text-xs text-slate-500 mb-2">What do you want to achieve? Your AI employees will prioritize work that supports these goals.</p>
                   <div className="flex gap-2 mb-2">
                     <Input
-                      value={newValue}
-                      onChange={(e) => setNewValue(e.target.value)}
+                      value={newGoal}
+                      onChange={(e) => setNewGoal(e.target.value)}
                       placeholder="e.g., Increase MRR by 50%, Get 1000 new customers, Launch in Europe"
                       className="bg-slate-900/60 border-slate-700 text-white"
-                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addToArray('goals', newValue))}
+                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addToArray('goals', newGoal, () => setNewGoal('')))}
                     />
-                    <Button onClick={() => addToArray('goals', newValue)} size="icon" variant="secondary">
+                    <Button onClick={() => addToArray('goals', newGoal, () => setNewGoal(''))} size="icon" variant="secondary">
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>
@@ -842,13 +842,13 @@ const BusinessProfile = () => {
                   <p className="text-xs text-slate-500 mb-2">What problems should your AI employees help solve?</p>
                   <div className="flex gap-2 mb-2">
                     <Input
-                      value={newValue}
-                      onChange={(e) => setNewValue(e.target.value)}
+                      value={newChallenge}
+                      onChange={(e) => setNewChallenge(e.target.value)}
                       placeholder="e.g., Low conversion rates, High churn, Not enough leads"
                       className="bg-slate-900/60 border-slate-700 text-white"
-                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addToArray('keyChallenges', newValue))}
+                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addToArray('keyChallenges', newChallenge, () => setNewChallenge('')))}
                     />
-                    <Button onClick={() => addToArray('keyChallenges', newValue)} size="icon" variant="secondary">
+                    <Button onClick={() => addToArray('keyChallenges', newChallenge, () => setNewChallenge(''))} size="icon" variant="secondary">
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>

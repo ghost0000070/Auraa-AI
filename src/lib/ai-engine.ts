@@ -380,23 +380,27 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
 }
 
 /**
- * callVercelAIGateway - Secondary Strategy (Vercel AI Gateway with caching & observability)
- * Uses Vercel AI SDK to call Anthropic with built-in caching and monitoring
- * Fallback when Puter.js is unavailable
+ * callVercelAIGateway - Secondary Strategy (Supabase Edge Function)
+ * Fallback when Puter.js is unavailable - routes to agent-run edge function
  */
 async function callVercelAIGateway(prompt: string, systemContext: string, category: string = 'default'): Promise<string> {
-    console.log(`🌐 Using Vercel AI Gateway for category: ${category}`);
+    console.log(`🌐 Using Edge Function fallback for category: ${category}`);
     
-    const response = await fetch('/api/ai/generate', {
+    // Get auth token for edge function
+    const { data: { session } } = await supabase.auth.getSession();
+    const authToken = session?.access_token;
+    
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/agent-run`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': authToken ? `Bearer ${authToken}` : '',
         },
         body: JSON.stringify({
+            task: 'custom_prompt',
             prompt,
-            systemPrompt: systemContext,
+            systemContext,
             category,
-            maxTokens: 4096,
         }),
     });
 
