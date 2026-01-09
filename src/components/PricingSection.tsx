@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { aiEmployeeTemplates } from "@/lib/ai-employee-templates";
 
 export function PricingSection() {
   const { user } = useAuth();
@@ -20,52 +21,16 @@ export function PricingSection() {
     }
   };
 
-  const employees = [
-    {
-      name: "Marketing Pro",
-      price: "$99",
-      icon: "🎯",
-      features: [
-        "Campaign analytics & optimization",
-        "High-converting copywriting",
-        "A/B testing automation",
-        "Social media management",
-      ],
-    },
-    {
-      name: "Sales Sidekick",
-      price: "$129",
-      icon: "💰",
-      features: [
-        "Automated lead outreach",
-        "Pipeline management",
-        "Personalized follow-ups",
-        "CRM integration",
-      ],
-    },
-    {
-      name: "Support Sentinel",
-      price: "$79",
-      icon: "🛡️",
-      features: [
-        "24/7 ticket resolution",
-        "Live chat automation",
-        "Knowledge base powered",
-        "Multi-channel support",
-      ],
-    },
-    {
-      name: "Business Analyst",
-      price: "$149",
-      icon: "📊",
-      features: [
-        "Advanced data analysis",
-        "Forecasting & insights",
-        "Performance tracking",
-        "Custom reporting",
-      ],
-    },
-  ];
+  // Get first 4 employees from templates for preview
+  const previewEmployees = aiEmployeeTemplates.slice(0, 4).map(employee => ({
+    name: employee.name,
+    role: employee.role,
+    price: `$${employee.monthlyCost}`,
+    icon: employee.category === 'Marketing' ? "🎯" : 
+          employee.category === 'Sales' ? "💰" :
+          employee.category === 'Support' ? "🛡️" : "📊",
+    features: employee.skills.map(skill => skill),
+  }));
 
   return (
     <section className="py-12 md:py-20 bg-muted/30">
@@ -80,16 +45,17 @@ export function PricingSection() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-12">
-          {employees.map((employee) => (
+          {previewEmployees.map((employee) => (
             <Card key={employee.name} className="flex flex-col hover:border-primary transition-colors">
               <CardHeader>
                 <div className="text-4xl mb-2">{employee.icon}</div>
                 <CardTitle className="text-xl">{employee.name}</CardTitle>
+                <div className="text-xs text-muted-foreground mb-2">{employee.role}</div>
                 <p className="text-3xl font-bold text-primary">{employee.price}<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
               </CardHeader>
               <CardContent className="flex-grow">
                 <ul className="space-y-2">
-                  {employee.features.map((feature) => (
+                  {employee.features.slice(0, 4).map((feature) => (
                     <li key={feature} className="flex items-start text-sm">
                       <CheckCircle className="mr-2 h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
                       <span>{feature}</span>
