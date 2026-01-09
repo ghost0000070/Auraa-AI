@@ -58,6 +58,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { blogService, blogAgent } from '@/lib/blog-engine';
+import { blogAutomation } from '@/lib/blog-automation';
 import { supabase } from '@/supabase';
 import { useAuth } from '@/hooks/useAuth';
 import { OWNER_EMAIL } from '@/config/constants';
@@ -311,6 +312,87 @@ const BlogAdmin: React.FC = () => {
       toast.success('Settings updated');
     }
   };
+
+  // Automation handlers
+  const handleStartAutomation = async () => {
+    try {
+      await blogAutomation.start();
+      setAutomationRunning(true);
+      toast.success('Blog automation started!');
+    } catch (error) {
+      console.error('Failed to start automation:', error);
+      toast.error('Failed to start automation');
+    }
+  };
+
+  const handleStopAutomation = () => {
+    blogAutomation.stop();
+    setAutomationRunning(false);
+    toast.success('Blog automation stopped');
+  };
+
+  const handleGenerateIdeasAuto = async () => {
+    const toastId = toast.loading('Generating new ideas...');
+    try {
+      const ideas = await blogAutomation.generateIdeas();
+      if (ideas.length > 0) {
+        toast.success(`Generated ${ideas.length} new ideas!`, { id: toastId });
+        // Refresh idea queue
+        const { data } = await supabase
+          .from('blog_idea_queue')
+          .select('*')
+          .eq('status', 'pending')
+          .order('priority_score', { ascending: false })
+          .limit(20);
+        setIdeaQueue(data || []);
+      } else {
+        toast.error('No ideas generated', { id: toastId });
+      }
+    } catch (error) {
+      console.error('Failed to generate ideas:', error);
+      toast.error('Failed to generate ideas', { id: toastId });
+    }
+  };
+
+  const handleTriggerLearning = async () => {
+    const toastId = toast.loading('Updating learning metrics...');
+    try {
+      await blogAutomation.updateLearning();
+      toast.success('Learning metrics updated!', { id: toastId });
+    } catch (error) {
+      console.error('Failed to update learning:', error);
+      toast.error('Failed to update learning', { id: toastId });
+    }
+  };
+
+  // Load automation data
+  const loadAutomationData = async () => {
+    try {
+      // Load idea queue
+      const { data: ideas } = await supabase
+        .from('blog_idea_queue')
+        .select('*')
+        .eq('status', 'pending')
+        .order('priority_score', { ascending: false })
+        .limit(20);
+      setIdeaQueue(ideas || []);
+
+      // Load recent automation runs
+      const { data: runs } = await supabase
+        .from('blog_automation_runs')
+        .select('*')
+        .order('started_at', { ascending: false })
+        .limit(10);
+      setAutomationRuns(runs || []);
+    } catch (error) {
+      console.error('Failed to load automation data:', error);
+    }
+  };
+
+  // Load automation data on mount
+  useEffect(() => {
+    loadAutomationData();
+  }, []);
 
   const filteredPosts = posts.filter(post => {
     if (selectedStatus !== 'all' && post.status !== selectedStatus) return false;
