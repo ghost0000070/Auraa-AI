@@ -95,6 +95,25 @@ const BlogAdmin: React.FC = () => {
     brief_outline: string[];
   }>>([]);
   const [generatingIdeas, setGeneratingIdeas] = useState(false);
+  
+  // Automation state
+  const [automationRunning, setAutomationRunning] = useState(false);
+  const [ideaQueue, setIdeaQueue] = useState<Array<{
+    id: string;
+    title: string;
+    brief_description: string;
+    topic: string;
+    priority_score: number;
+  }>>([]);
+  const [automationRuns, setAutomationRuns] = useState<Array<{
+    id: string;
+    run_type: string;
+    status: string;
+    items_processed: number;
+    items_succeeded: number;
+    duration_ms: number | null;
+    started_at: string;
+  }>>([]);
 
   useEffect(() => {
     loadData();
