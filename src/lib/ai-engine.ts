@@ -315,8 +315,8 @@ export function getModelForCategory(category: string): string {
 
 /**
  * callPuterAI - Primary Strategy (Free Client-Side AI)
- * Uses Puter.js to access Claude models for FREE (no credits required)
- * Models: claude-3-5-haiku (fast), claude-3-5-sonnet (balanced)
+ * Uses Puter.js to access AI models for FREE (no credits required)
+ * Models: gpt-5-mini (FREE, no credits needed)
  */
 async function callPuterAI(prompt: string, systemContext: string, model: string = MODELS.STANDARD): Promise<string> {
     // Use puter npm package - works in browser environment

@@ -162,8 +162,8 @@ export const AITeamCoordinationPanel: React.FC<AITeamCoordinationPanelProps> = (
           .subscribe();
 
         return () => {
-          supabase.removeChannel(commsChannel);
-          supabase.removeChannel(execChannel);
+          commsChannel.unsubscribe();
+          execChannel.unsubscribe();
         };
       } catch (error) {
         console.error('Error setting up subscriptions:', error);

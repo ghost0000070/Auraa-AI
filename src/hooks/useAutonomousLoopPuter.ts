@@ -5,6 +5,26 @@ import { useAuth } from '@/hooks/useAuth';
 const LOOP_INTERVAL_MS = 2 * 60 * 1000; // 2 minutes - more aggressive
 const MAX_ACTIONS_PER_EMPLOYEE = 2; // Allow multiple actions per cycle
 
+/**
+ * Safely truncate a result to a max length.
+ * Handles strings, objects, and undefined/null values.
+ */
+function safeResultString(result: unknown, maxLength = 10000, fallback = 'Completed'): string {
+  if (result === undefined || result === null) {
+    return fallback;
+  }
+  if (typeof result === 'string') {
+    return result.substring(0, maxLength);
+  }
+  // If it's an object, stringify it
+  try {
+    const str = JSON.stringify(result);
+    return str.substring(0, maxLength);
+  } catch {
+    return fallback;
+  }
+}
+
 // Enhanced employee template configurations with rich autonomous duties
 const EMPLOYEE_TEMPLATES: Record<string, { autonomousDuties: string[]; decisionPrompt: string; workTypes: string[] }> = {
   'marketing-pro': {
@@ -164,18 +184,18 @@ function getTemplateKey(employee: DeployedEmployee): string {
 }
 
 /**
- * Call Puter AI (client-side, FREE - using Claude models via Puter.js)
- * All Claude models are FREE through Puter.js
+ * Call Puter AI (client-side, FREE - using Claude via Puter.js)
+ * Claude models are FREE through Puter.js - no credits required
  */
 async function callPuterAI(prompt: string, systemPrompt: string): Promise<string> {
   if (!window.puter?.ai?.chat) {
     throw new Error('Puter AI not available');
   }
 
-  // Use FREE Claude 3.5 Haiku model via Puter.js (fast, no credits required)
+  // Use FREE Claude model via Puter.js (no credits required)
   const response = await window.puter.ai.chat(
     `${systemPrompt}\n\n${prompt}`,
-    { model: 'claude-3-5-haiku' }
+    { model: 'claude-3-5-sonnet' }
   ) as { message?: { content?: Array<{ text?: string }> }; text?: string };
 
   return response?.message?.content?.[0]?.text || response?.text || JSON.stringify(response);
@@ -402,7 +422,7 @@ Write in ${businessContext.brand_voice || 'Professional'} voice.`
       template_id: templateKey,
       memory_type: 'deliverable',
       title: decision.actionTitle,
-      content: actionResult.result?.substring(0, 10000) || 'Completed',
+      content: safeResultString(actionResult.result, 10000, 'Completed'),
       outcome: 'success',
       metadata: {
         actionType: decision.actionType,
@@ -436,7 +456,7 @@ Write in ${businessContext.brand_voice || 'Professional'} voice.`
       action_description: decision.actionDescription,
       priority: decision.priority || 7,
       status: 'completed',
-      result: actionResult.result?.substring(0, 10000),
+      result: safeResultString(actionResult.result, 10000, ''),
       started_at: new Date().toISOString(),
       completed_at: new Date().toISOString(),
     });

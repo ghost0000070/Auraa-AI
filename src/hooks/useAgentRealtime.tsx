@@ -124,8 +124,8 @@ export function useAgentRealtime() {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(tasksChannel);
-      supabase.removeChannel(eventsChannel);
+      tasksChannel.unsubscribe();
+      eventsChannel.unsubscribe();
     };
   }, [user]);
 

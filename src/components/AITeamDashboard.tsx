@@ -311,9 +311,9 @@ const AITeamDashboard: React.FC = () => {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(tasksChannel);
-      supabase.removeChannel(commsChannel);
-      supabase.removeChannel(employeesChannel);
+      tasksChannel.unsubscribe();
+      commsChannel.unsubscribe();
+      employeesChannel.unsubscribe();
     };
   }, [user]);
 
