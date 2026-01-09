@@ -9,6 +9,7 @@ import { Mail, MessageSquare, Building2, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/supabase';
 
 const Contact = () => {
   const navigate = useNavigate();
@@ -29,11 +30,37 @@ const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Basic validation
+    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
-      // For now, show success and offer mailto fallback
-      // In production, this would call an edge function or email service
+      // Send via edge function
+      const { data, error } = await supabase.functions.invoke('send-notification-email', {
+        body: {
+          userId: user?.id || 'anonymous',
+          type: 'contact_form',
+          subject: `Contact Form: ${formData.subject}`,
+          data: {
+            name: formData.name,
+            email: formData.email,
+            company: formData.company,
+            subject: formData.subject,
+            message: formData.message,
+          }
+        }
+      });
+
+      if (error) {
+        console.error('Email send error:', error);
+        throw new Error(error.message || 'Failed to send message');
+      }
+
       toast.success("Message Received!", {
         description: "We'll get back to you within 24 hours.",
       });
@@ -47,8 +74,9 @@ const Contact = () => {
         message: '',
       });
     } catch (error) {
+      console.error('Contact form error:', error);
       toast.error("Failed to send message", {
-        description: "Please try emailing us directly.",
+        description: "Please try emailing us directly at support@auraa-ai.com",
       });
     } finally {
       setIsSubmitting(false);

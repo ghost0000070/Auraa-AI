@@ -41,8 +41,10 @@ export const PowerUpCard = ({
       return;
     }
 
-    // Navigate to power-up execution page
-    navigate(`/power-ups/${id}/execute`);
+    // Power-up execution coming soon
+    toast.info("Coming Soon!", {
+      description: `${name} integration is currently in development. Stay tuned!`
+    });
   };
 
   return (

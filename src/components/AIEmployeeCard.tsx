@@ -25,7 +25,8 @@ export const AIEmployeeCard = ({
 
   const handleClick = () => {
     if (clickable) {
-      navigate(`/ai-employees/${name.toLowerCase()}`);
+      // Navigate to marketplace where users can subscribe to employees
+      navigate('/marketplace');
     }
   };
 

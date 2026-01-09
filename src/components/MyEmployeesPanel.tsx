@@ -240,7 +240,7 @@ export const MyEmployeesPanel: React.FC = () => {
                     variant="outline" 
                     size="sm" 
                     className="flex-1"
-                    onClick={() => navigate(`/ai-employees/${employee.template_id}`)}
+                    onClick={() => navigate(`/ai-employees/${employee.id}`)}
                   >
                     <MessageSquare className="w-3 h-3 mr-1" />
                     Chat
