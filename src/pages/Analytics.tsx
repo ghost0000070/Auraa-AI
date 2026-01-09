@@ -2,6 +2,8 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { supabase } from "@/supabase";
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from 'react-router-dom';
+import { AlertCircle } from 'lucide-react';
 
 // Lazy load the chart components
 const SimpleBarChart = lazy(() => import('@/components/SimpleBarChart'));
@@ -15,6 +17,8 @@ interface ChartData {
 }
 
 const Analytics = () => {
+  const { user, isAdmin, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [userCounts, setUserCounts] = useState<ChartData[]>([]);
   const [deploymentCounts, setDeploymentCounts] = useState<ChartData[]>([]);
   const [templateCounts, setTemplateCounts] = useState<ChartData[]>([]);
@@ -22,11 +26,20 @@ const Analytics = () => {
   const [totalDeployments, setTotalDeployments] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // Admin-only page - redirect non-admins
   useEffect(() => {
+    if (!authLoading && !isAdmin) {
+      navigate('/dashboard');
+    }
+  }, [isAdmin, authLoading, navigate]);
+
+  useEffect(() => {
+    if (!isAdmin) return; // Don't fetch if not admin
+    
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch all data in parallel
+        // Fetch all data in parallel (admin only)
         const [usersResult, deploymentsResult] = await Promise.all([
             supabase.from("users").select('*', { count: 'exact' }),
             supabase.from("deployed_employees").select('*')
@@ -108,59 +121,76 @@ const Analytics = () => {
     };
 
     fetchData();
-  }, []);
+  }, [isAdmin]);
+
+  if (authLoading || loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">
+        <div className="text-center space-y-4">
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent" />
+          <p className="text-lg text-white">Loading analytics...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Access denied for non-admins
+  if (!isAdmin) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">
+        <Card className="bg-red-900/20 border-red-500/30 max-w-md">
+          <CardContent className="pt-6 text-center">
+            <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-2">Admin Access Required</h2>
+            <p className="text-gray-400">This analytics dashboard is only available to administrators.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-4">Analytics Dashboard</h1>
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="bg-slate-800/50 border border-slate-700/50 text-white h-24 animate-pulse"><CardContent/></Card>
-            <Card className="bg-slate-800/50 border border-slate-700/50 text-white h-24 animate-pulse"><CardContent/></Card>
-            <Card className="col-span-1 md:col-span-2 bg-slate-800/50 border border-slate-700/50 text-white h-64 animate-pulse"><CardContent/></Card>
-            <Card className="col-span-1 md:col-span-2 bg-slate-800/50 border border-slate-700/50 text-white h-64 animate-pulse"><CardContent/></Card>
-            <Card className="col-span-1 md:col-span-4 bg-slate-800/50 border border-slate-700/50 text-white h-80 animate-pulse"><CardContent/></Card>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 py-8">
+      <div className="container mx-auto px-4">
+        <h1 className="text-3xl font-bold mb-8 text-white">System Analytics (Admin)</h1>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <Card className="bg-slate-800/50 border border-slate-700/50 text-white">
+            <CardContent>
+              <h2 className="text-xl font-semibold mb-2 pt-6">Total Users</h2>
+              <p className="text-3xl font-bold">{totalUsers}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-slate-800/50 border border-slate-700/50 text-white">
+            <CardContent>
+              <h2 className="text-xl font-semibold mb-2 pt-6">Total AI Deployments</h2>
+              <p className="text-3xl font-bold">{totalDeployments}</p>
+            </CardContent>
+          </Card>
         </div>
-      ) : (
-        <div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            <Card className="bg-slate-800/50 border border-slate-700/50 text-white">
-              <CardContent>
-                <h2 className="text-xl font-semibold mb-2 pt-6">Total Users</h2>
-                <p className="text-3xl font-bold">{totalUsers}</p>
-              </CardContent>
-            </Card>
 
-            <Card className="bg-slate-800/50 border border-slate-700/50 text-white">
-              <CardContent>
-                <h2 className="text-xl font-semibold mb-2 pt-6">Total AI Deployments</h2>
-                <p className="text-3xl font-bold">{totalDeployments}</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Suspense fallback={<div className="h-64 bg-slate-800/50 border border-slate-700/50 rounded-lg animate-pulse"></div>}>
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-2">User Signups Over Time</h2>
-                <SimpleLineChart data={userCounts} />
-              </div>
-          </Suspense>
-
-          <Suspense fallback={<div className="h-64 bg-slate-800/50 border border-slate-700/50 rounded-lg animate-pulse"></div>}>
+        <Suspense fallback={<div className="h-64 bg-slate-800/50 border border-slate-700/50 rounded-lg animate-pulse"></div>}>
             <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-2">AI Employee Deployments Over Time</h2>
-                <SimpleBarChart data={deploymentCounts} />
+              <h2 className="text-xl font-semibold mb-2 text-white">User Signups Over Time</h2>
+              <SimpleLineChart data={userCounts} />
             </div>
-          </Suspense>
+        </Suspense>
 
-          <Suspense fallback={<div className="h-80 bg-slate-800/50 border border-slate-700/50 rounded-lg animate-pulse"></div>}>
-            <div>
-                <h2 className="text-xl font-semibold mb-2">Most Popular AI Employee Templates</h2>
-                <SimplePieChart data={templateCounts} />
-            </div>
-          </Suspense>
-        </div>
-      )}
+        <Suspense fallback={<div className="h-64 bg-slate-800/50 border border-slate-700/50 rounded-lg animate-pulse"></div>}>
+          <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-2 text-white">AI Employee Deployments Over Time</h2>
+              <SimpleBarChart data={deploymentCounts} />
+          </div>
+        </Suspense>
+
+        <Suspense fallback={<div className="h-80 bg-slate-800/50 border border-slate-700/50 rounded-lg animate-pulse"></div>}>
+          <div>
+              <h2 className="text-xl font-semibold mb-2 text-white">Most Popular AI Employee Templates</h2>
+              <SimplePieChart data={templateCounts} />
+          </div>
+        </Suspense>
+      </div>
     </div>
   );
 };

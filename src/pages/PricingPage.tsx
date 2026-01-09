@@ -1,61 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { supabase } from '@/supabase';
 
 const PricingPage = () => {
-  const { user, subscriptionStatus } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleCheckout = async (tier: 'pro' | 'enterprise') => {
-    if (!user) {
-      toast.error("Please sign in first to subscribe.");
-      navigate('/auth');
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      // Call the Polar subscription handler edge function
-      const { data, error } = await supabase.functions.invoke('polar-subscription-handler', {
-        body: {
-          action: 'create-checkout',
-          tier,
-          successUrl: `${window.location.origin}/dashboard?subscription=success`,
-          cancelUrl: `${window.location.origin}/pricing`,
-        }
-      });
-
-      if (error) throw error;
-
-      if (data?.checkoutUrl) {
-        // Redirect to Polar Checkout
-        window.location.href = data.checkoutUrl;
-      } else if (data?.error) {
-        throw new Error(data.error);
-      } else {
-        toast.error("Failed to initiate checkout.");
-      }
-    } catch (error) {
-      console.error("Checkout Error:", error);
-      toast.error(error instanceof Error ? error.message : "Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  // Per-employee pricing model - redirect to marketplace/dashboard
   if (user) {
     return (
       <div className="min-h-screen bg-background py-16">
         <div className="container mx-auto px-4 text-center space-y-4">
-          <h1 className="text-4xl font-bold">Billing is managed in your dashboard</h1>
-          <p className="text-muted-foreground">You are already signed in. Manage or view your plan from the dashboard.</p>
-          <div className="flex justify-center">
-            <Button onClick={() => navigate('/dashboard')}>Go to Dashboard</Button>
+          <h1 className="text-4xl font-bold">Browse AI Employees</h1>
+          <p className="text-muted-foreground">Subscribe to individual AI employees - pay only for what you need.</p>
+          <div className="flex justify-center gap-4">
+            <Button onClick={() => navigate('/dashboard')}>View My Employees</Button>
+            <Button variant="outline" onClick={() => navigate('/#ai-employees')}>Browse Marketplace</Button>
           </div>
         </div>
       </div>
@@ -65,111 +26,75 @@ const PricingPage = () => {
   return (
     <div className="min-h-screen bg-background py-16">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-center mb-4">Choose Your Plan</h1>
-        <p className="text-center text-muted-foreground mb-12">Start your 3-day free trial. Cancel anytime.</p>
+        <h1 className="text-4xl font-bold text-center mb-4">Pay Per Employee</h1>
+        <p className="text-center text-muted-foreground mb-12">Subscribe to individual AI employees. No tiers, no packages - just what you need.</p>
         
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {/* Pro Plan */}
-          <Card className="relative border-2 hover:border-primary transition-colors">
-            <CardContent className="p-8">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold">Pro</h2>
-                <p className="text-muted-foreground">Perfect for growing businesses</p>
-              </div>
-
-              <div className="mb-6">
-                <span className="text-4xl font-bold">$50</span>
-                <span className="text-muted-foreground">/month</span>
-              </div>
-
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> 10 AI Employees
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> Advanced Analytics Dashboard
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> Priority Support
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> Custom Integrations
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> Unlimited script generation
-                </li>
-              </ul>
-
-              {subscriptionStatus?.subscription_tier === 'pro' ? (
-                <Button className="w-full" variant="outline" disabled>
-                  Current Plan
-                </Button>
-              ) : (
-                <Button className="w-full" onClick={() => handleCheckout('pro')} disabled={isLoading}>
-                  {isLoading ? 'Loading...' : 'Start Free Trial'}
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Enterprise Plan */}
-          <Card className="relative border-2 border-primary bg-primary/5">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-              <span className="bg-primary text-primary-foreground text-sm px-3 py-1 rounded-full">Most Popular</span>
+        <div className="max-w-4xl mx-auto space-y-8">
+          {/* Employee Pricing Overview */}
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="bg-card p-6 rounded-lg border text-center">
+              <div className="text-3xl font-bold text-primary mb-2">$79-$179</div>
+              <p className="text-sm text-muted-foreground">Per employee/month</p>
             </div>
-            <CardContent className="p-8">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold">Enterprise</h2>
-                <p className="text-muted-foreground">For scaling teams</p>
+            <div className="bg-card p-6 rounded-lg border text-center">
+              <div className="text-3xl font-bold text-primary mb-2">8+</div>
+              <p className="text-sm text-muted-foreground">AI Employees Available</p>
+            </div>
+            <div className="bg-card p-6 rounded-lg border text-center">
+              <div className="text-3xl font-bold text-primary mb-2">24/7</div>
+              <p className="text-sm text-muted-foreground">Always Working</p>
+            </div>
+          </div>
+
+          {/* Example Employees */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-card p-6 rounded-lg border">
+              <h3 className="text-xl font-bold mb-2">🎯 Marketing Pro</h3>
+              <p className="text-muted-foreground mb-4">Campaign analytics, copywriting, A/B testing</p>
+              <div className="text-2xl font-bold mb-4">$99/month</div>
+              <Button className="w-full" onClick={() => navigate('/#ai-employees')}>View All Employees</Button>
+            </div>
+
+            <div className="bg-card p-6 rounded-lg border">
+              <h3 className="text-xl font-bold mb-2">💰 Sales Sidekick</h3>
+              <p className="text-muted-foreground mb-4">Lead outreach, pipeline management, follow-ups</p>
+              <div className="text-2xl font-bold mb-4">$129/month</div>
+              <Button className="w-full" onClick={() => navigate('/#ai-employees')}>View All Employees</Button>
+            </div>
+          </div>
+
+          {/* How it Works */}
+          <div className="bg-primary/10 p-8 rounded-lg border border-primary/20">
+            <h3 className="text-2xl font-bold mb-4 text-center">How Per-Employee Pricing Works</h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="text-4xl mb-2">1️⃣</div>
+                <h4 className="font-bold mb-2">Browse Employees</h4>
+                <p className="text-sm text-muted-foreground">Choose from our marketplace of specialized AI employees</p>
               </div>
-
-              <div className="mb-6">
-                <span className="text-4xl font-bold">$99</span>
-                <span className="text-muted-foreground">/month</span>
+              <div className="text-center">
+                <div className="text-4xl mb-2">2️⃣</div>
+                <h4 className="font-bold mb-2">Subscribe</h4>
+                <p className="text-sm text-muted-foreground">Pay monthly for each employee you activate</p>
               </div>
+              <div className="text-center">
+                <div className="text-4xl mb-2">3️⃣</div>
+                <h4 className="font-bold mb-2">Scale Anytime</h4>
+                <p className="text-sm text-muted-foreground">Add or remove employees as your needs change</p>
+              </div>
+            </div>
+          </div>
 
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> Unlimited AI Employees
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> Dedicated Account Manager
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> 24/7 Premium Support
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> Advanced API Access
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> Custom AI model training
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> White-label options
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span> SLA guarantees
-                </li>
-              </ul>
-
-              {subscriptionStatus?.subscription_tier === 'enterprise' ? (
-                <Button className="w-full" variant="outline" disabled>
-                  Current Plan
-                </Button>
-              ) : (
-                <Button className="w-full" onClick={() => handleCheckout('enterprise')} disabled={isLoading}>
-                  {isLoading ? 'Loading...' : 'Subscribe'}
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+          {/* CTA */}
+          <div className="text-center">
+            <Button size="lg" onClick={() => navigate('/auth')}>
+              Sign Up to Browse Employees
+            </Button>
+            <p className="text-sm text-muted-foreground mt-4">
+              Already have an account? <a href="/auth" className="text-primary hover:underline">Sign in</a>
+            </p>
+          </div>
         </div>
-
-        {!user && (
-          <p className="text-center text-muted-foreground mt-8">
-            Already have an account? <a href="/auth" className="text-primary hover:underline">Sign in</a>
-          </p>
-        )}
       </div>
     </div>
   );

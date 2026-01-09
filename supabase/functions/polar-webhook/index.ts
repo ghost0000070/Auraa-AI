@@ -66,14 +66,29 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Product ID mapping - UPDATE THESE WITH YOUR ACTUAL POLAR PRODUCT IDS
+    // OLD TIER PRODUCTS (Being phased out)
     const PRODUCT_TIERS: Record<string, string> = {
-      // Add your Polar product IDs here
-      // 'prod_xxxxx': 'pro',
-      // 'prod_yyyyy': 'enterprise',
       [Deno.env.get('POLAR_PRO_PRODUCT_ID') || 'pro_product']: 'pro',
       [Deno.env.get('POLAR_ENTERPRISE_PRODUCT_ID') || 'enterprise_product']: 'enterprise',
     }
+
+    // NEW: Employee subscription product mapping
+    const EMPLOYEE_PRODUCTS: Record<string, { id: string, price: number }> = {
+      'marketing-pro': { id: Deno.env.get('POLAR_MARKETING_PRO_ID') || 'de3ed2d2-27f3-4573-834f-7290784ab0ab', price: 99 },
+      'sales-sidekick': { id: Deno.env.get('POLAR_SALES_SIDEKICK_ID') || 'bfb616c0-d573-41fc-9421-bc1872672e78', price: 129 },
+      'support-sentinel': { id: Deno.env.get('POLAR_SUPPORT_SENTINEL_ID') || '9dd57182-e64b-4c5d-8a9b-c18b56185063', price: 79 },
+      'business-analyst': { id: Deno.env.get('POLAR_BUSINESS_ANALYST_ID') || '001412c7-8d79-48d1-9255-959318d4109b', price: 149 },
+      'dev-companion': { id: Deno.env.get('POLAR_DEV_COMPANION_ID') || '56a8eda5-079e-46a4-a967-65121ef4e776', price: 119 },
+      'operations-orchestrator': { id: Deno.env.get('POLAR_OPERATIONS_ID') || 'ec6bb65c-ea95-4c1f-94c2-ce3e46402bc5', price: 99 },
+      'security-analyst': { id: Deno.env.get('POLAR_SECURITY_ANALYST_ID') || '2e6d7dba-f5b8-45d0-b8d8-12b667ccb5cb', price: 159 },
+      'ai-team-orchestrator': { id: Deno.env.get('POLAR_TEAM_ORCHESTRATOR_ID') || 'd5f46d12-19be-45b4-a46f-3eee385dd737', price: 179 },
+    }
+
+    // Reverse lookup: Product ID -> Employee Template ID
+    const PRODUCT_TO_EMPLOYEE: Record<string, string> = {}
+    Object.entries(EMPLOYEE_PRODUCTS).forEach(([templateId, { id }]) => {
+      PRODUCT_TO_EMPLOYEE[id] = templateId
+    })
 
     // Handle different webhook events
     switch (event) {
@@ -159,6 +174,7 @@ serve(async (req) => {
       case 'subscription.updated': {
         // Subscription status changed
         const subCustomerEmail = data.customer?.email
+        const productId = data.product_id
         
         if (subCustomerEmail) {
           const { data: users } = await supabase
@@ -168,27 +184,55 @@ serve(async (req) => {
             .single()
 
           if (users) {
-            const productId = data.product_id
-            const subscriptionTier = PRODUCT_TIERS[productId] || 'pro'
+            // Check if this is an employee subscription
+            const employeeTemplateId = PRODUCT_TO_EMPLOYEE[productId]
             
-            await supabase
-              .from('users')
-              .update({
-                subscription_tier: subscriptionTier,
-                subscription_status: data.status,
-                subscription_id: data.id,
-                subscription_ends_at: data.current_period_end || null,
-                updated_at: new Date().toISOString(),
-              })
-              .eq('id', users.id)
+            if (employeeTemplateId) {
+              // Handle employee subscription
+              const employeeProduct = EMPLOYEE_PRODUCTS[employeeTemplateId]
+              
+              await supabase
+                .from('employee_subscriptions')
+                .upsert({
+                  user_id: users.id,
+                  employee_template_id: employeeTemplateId,
+                  polar_subscription_id: data.id,
+                  polar_product_id: productId,
+                  polar_customer_id: data.customer_id,
+                  status: data.status,
+                  monthly_price: employeeProduct.price,
+                  current_period_start: data.current_period_start,
+                  current_period_end: data.current_period_end,
+                  updated_at: new Date().toISOString(),
+                }, { onConflict: 'polar_subscription_id' })
+
+              console.log(`✅ ${event}: Employee subscription ${employeeTemplateId} for user ${users.id} - status: ${data.status}`)
+            } else {
+              // Old tier subscription (being phased out)
+              const subscriptionTier = PRODUCT_TIERS[productId] || 'pro'
+              
+              await supabase
+                .from('users')
+                .update({
+                  subscription_tier: subscriptionTier,
+                  subscription_status: data.status,
+                  subscription_id: data.id,
+                  subscription_ends_at: data.current_period_end || null,
+                  updated_at: new Date().toISOString(),
+                })
+                .eq('id', users.id)
+
+              console.log(`⚠️ ${event}: Old tier subscription ${subscriptionTier} for user ${users.id} (being phased out)`)
+            }
           }
         }
         break
       }
 
       case 'subscription.canceled': {
-        // Subscription canceled - downgrade to free
+        // Subscription canceled
         const canceledEmail = data.customer?.email
+        const productId = data.product_id
         
         if (canceledEmail) {
           const { data: users } = await supabase
@@ -198,14 +242,35 @@ serve(async (req) => {
             .single()
 
           if (users) {
-            await supabase
-              .from('users')
-              .update({
-                subscription_tier: 'free',
-                subscription_status: 'canceled',
-                updated_at: new Date().toISOString(),
-              })
-              .eq('id', users.id)
+            // Check if this is an employee subscription
+            const employeeTemplateId = PRODUCT_TO_EMPLOYEE[productId]
+            
+            if (employeeTemplateId) {
+              // Cancel employee subscription
+              await supabase
+                .from('employee_subscriptions')
+                .update({
+                  status: 'canceled',
+                  canceled_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString(),
+                })
+                .eq('user_id', users.id)
+                .eq('polar_subscription_id', data.id)
+
+              console.log(`✅ Canceled employee subscription ${employeeTemplateId} for user ${users.id}`)
+            } else {
+              // Old tier subscription
+              await supabase
+                .from('users')
+                .update({
+                  subscription_tier: 'free',
+                  subscription_status: 'canceled',
+                  updated_at: new Date().toISOString(),
+                })
+                .eq('id', users.id)
+
+              console.log(`⚠️ Canceled old tier subscription for user ${users.id}`)
+            }
           }
         }
         break

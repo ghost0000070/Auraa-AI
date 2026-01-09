@@ -672,6 +672,13 @@ const BlogAdmin: React.FC = () => {
               <Lightbulb className="w-4 h-4 mr-2" />
               Ideas
             </TabsTrigger>
+            <TabsTrigger value="automation" className="data-[state=active]:bg-purple-600">
+              <Bot className="w-4 h-4 mr-2" />
+              Automation
+              {automationRunning && (
+                <span className="ml-2 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              )}
+            </TabsTrigger>
             <TabsTrigger value="settings" className="data-[state=active]:bg-purple-600">
               <Settings className="w-4 h-4 mr-2" />
               Settings
