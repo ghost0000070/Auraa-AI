@@ -164,18 +164,18 @@ function getTemplateKey(employee: DeployedEmployee): string {
 }
 
 /**
- * Call Puter AI (client-side, FREE - using GPT-5 mini)
- * GPT-5 mini is FREE and doesn't require credits
+ * Call Puter AI (client-side, FREE - using Claude models via Puter.js)
+ * All Claude models are FREE through Puter.js
  */
 async function callPuterAI(prompt: string, systemPrompt: string): Promise<string> {
   if (!window.puter?.ai?.chat) {
     throw new Error('Puter AI not available');
   }
 
-  // Use FREE GPT-5 mini model (no credits required)
+  // Use FREE Claude 3.5 Haiku model via Puter.js (fast, no credits required)
   const response = await window.puter.ai.chat(
     `${systemPrompt}\n\n${prompt}`,
-    { model: 'gpt-5-mini' }
+    { model: 'claude-3-5-haiku' }
   ) as { message?: { content?: Array<{ text?: string }> }; text?: string };
 
   return response?.message?.content?.[0]?.text || response?.text || JSON.stringify(response);

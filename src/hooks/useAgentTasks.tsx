@@ -85,7 +85,7 @@ export function useAgentTasks() {
       .subscribe();
 
     return () => {
-      channel.unsubscribe();
+      supabase.removeChannel(channel);
     };
   }, [user]);
 

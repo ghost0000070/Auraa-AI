@@ -46,16 +46,29 @@ serve(async (req) => {
 
     // STRICT: Require webhook secret in production
     if (!webhookSecret) {
-      console.warn('⚠️ POLAR_WEBHOOK_SECRET not configured - webhook validation disabled')
-    } else if (signature) {
-      const isValid = await verifyPolarSignature(rawBody, signature, webhookSecret)
-      if (!isValid) {
-        console.error('Invalid webhook signature')
-        return new Response(
-          JSON.stringify({ error: 'Invalid webhook signature' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
+      console.error('❌ POLAR_WEBHOOK_SECRET not configured - rejecting webhook')
+      return new Response(
+        JSON.stringify({ error: 'Webhook secret not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    
+    // Verify signature
+    if (!signature) {
+      console.error('❌ Missing webhook signature header')
+      return new Response(
+        JSON.stringify({ error: 'Missing webhook signature' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    
+    const isValid = await verifyPolarSignature(rawBody, signature, webhookSecret)
+    if (!isValid) {
+      console.error('❌ Invalid webhook signature')
+      return new Response(
+        JSON.stringify({ error: 'Invalid webhook signature' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
     const payload = JSON.parse(rawBody)

@@ -315,8 +315,8 @@ export function getModelForCategory(category: string): string {
 
 /**
  * callPuterAI - Primary Strategy (Free Client-Side AI)
- * Uses Puter.js to access AI models for FREE (no credits required)
- * Models: gpt-5-mini (FREE, no credits needed)
+ * Uses Puter.js to access Claude models for FREE (no credits required)
+ * Models: claude-3-5-haiku (fast), claude-3-5-sonnet (balanced)
  */
 async function callPuterAI(prompt: string, systemContext: string, model: string = MODELS.STANDARD): Promise<string> {
     // Use puter npm package - works in browser environment
@@ -962,7 +962,7 @@ Respond with JSON:
         try {
             // Create a team communication for the delegation
             const { data: comm, error: commError } = await supabase
-                .from('team_communications')
+                .from('ai_team_communications')
                 .insert({
                     user_id: userId,
                     sender_employee: fromEmployeeId,

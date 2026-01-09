@@ -297,7 +297,7 @@ const BusinessProfile = () => {
 
       const { error } = await supabase
         .from('business_profiles')
-        .upsert(profileData);
+        .upsert(profileData, { onConflict: 'user_id' });
 
       if (error) throw error;
 

@@ -19,27 +19,27 @@ export const TIER_LEVELS: Record<string, number> = {
 };
 
 // AI Models - Using FREE models via Puter.js
-// GPT-5 mini is free and doesn't consume credits
+// Claude models are available for free through Puter.js
 export const AI_MODELS = {
   // For complex reasoning, analysis, and strategic tasks
-  COMPLEX: 'gpt-5-mini',
+  COMPLEX: 'claude-3-5-sonnet',
   // For standard tasks - balanced speed and quality
-  STANDARD: 'gpt-5-mini',
+  STANDARD: 'claude-3-5-sonnet',
   // For fast, simple tasks - quick responses
-  FAST: 'gpt-5-mini',
+  FAST: 'claude-3-5-haiku',
   // Specialized models for specific use cases
-  CODING: 'gpt-5-mini',
-  CREATIVE: 'gpt-5-mini',
-  ANALYTICAL: 'gpt-5-mini',
+  CODING: 'claude-3-5-sonnet',
+  CREATIVE: 'claude-3-5-sonnet',
+  ANALYTICAL: 'claude-3-5-sonnet',
 } as const;
 
 // Model assigned per subscription tier (using FREE Puter models)
 export const TIER_MODELS: Record<string, string> = {
-  free: 'gpt-5-mini',      // Fast, basic tasks (FREE)
-  pro: 'gpt-5-mini',       // Balanced, most business tasks (FREE)
-  enterprise: 'gpt-5-mini', // Most capable available (FREE)
-  admin: 'gpt-5-mini',     // Full access (FREE)
-  owner: 'gpt-5-mini',     // Full access (FREE)
+  free: 'claude-3-5-haiku',      // Fast, basic tasks (FREE)
+  pro: 'claude-3-5-sonnet',       // Balanced, most business tasks (FREE)
+  enterprise: 'claude-3-5-sonnet', // Most capable available (FREE)
+  admin: 'claude-3-5-sonnet',     // Full access (FREE)
+  owner: 'claude-3-5-sonnet',     // Full access (FREE)
 };
 
 // Subscription pricing (monthly)

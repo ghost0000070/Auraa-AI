@@ -7,8 +7,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-// Puter API endpoint for Claude
-const PUTER_API_URL = "https://api.puter.com/ai/chat";
+// Anthropic API for server-side AI (Puter.js is client-side only)
+const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 
 interface BlogAgentRequest {
   action: 
@@ -86,41 +86,46 @@ Optimize the provided blog post for search engines:
 Return a JSON object with: seo_title, seo_description, seo_keywords[], suggested_headings[], linking_opportunities[]`,
 };
 
-async function callPuterAI(prompt: string, systemPrompt: string): Promise<string> {
-  const response = await fetch(PUTER_API_URL, {
+async function callAnthropicAI(prompt: string, systemPrompt: string): Promise<string> {
+  const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
+  if (!apiKey) {
+    throw new Error("ANTHROPIC_API_KEY not configured");
+  }
+
+  const response = await fetch(ANTHROPIC_API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-3-5-sonnet-20241022',
+      max_tokens: 4096,
+      system: systemPrompt,
       messages: [
-        { role: 'system', content: systemPrompt },
         { role: 'user', content: prompt }
       ],
     }),
   });
 
   if (!response.ok) {
-    throw new Error(`Puter AI error: ${response.status}`);
+    const errorText = await response.text();
+    throw new Error(`Anthropic API error: ${response.status} - ${errorText}`);
   }
 
   const data = await response.json();
   
-  // Extract content from response
+  // Extract content from Anthropic response format
   let content = '';
-  if (data.message?.content?.[0]?.text) {
-    content = data.message.content[0].text;
-  } else if (data.text) {
-    content = data.text;
-  } else if (data.content) {
+  if (data.content?.[0]?.text) {
+    content = data.content[0].text;
+  } else if (typeof data.content === 'string') {
     content = data.content;
-  } else if (typeof data === 'string') {
-    content = data;
   }
   
   if (!content) {
-    throw new Error('Empty response from Puter AI');
+    throw new Error('Empty response from Anthropic API');
   }
   
   return content;
@@ -147,10 +152,30 @@ serve(async (req) => {
   }
 
   try {
+    // Verify authorization - require either service role key or valid JWT
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Missing Authorization header" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
+
+    // Verify the JWT token
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
+    
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: "Invalid or expired token" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     const { action, params } = await req.json() as BlogAgentRequest;
 
@@ -167,7 +192,7 @@ Target Keywords: ${(params.keywords as string[])?.join(', ') || 'AI employees, a
 Tone: professional yet approachable
 Length: 800-1200 words`;
 
-        const aiResponse = await callPuterAI(prompt, SYSTEM_PROMPTS.generatePost);
+        const aiResponse = await callAnthropicAI(prompt, SYSTEM_PROMPTS.generatePost);
         
         // Parse JSON from response
         const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
@@ -244,7 +269,7 @@ Comment from ${comment.guest_name || 'a reader'}:
 
 Generate a thoughtful, helpful reply.`;
 
-        const aiResponse = await callPuterAI(prompt, SYSTEM_PROMPTS.replyComment);
+        const aiResponse = await callAnthropicAI(prompt, SYSTEM_PROMPTS.replyComment);
         
         const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
         if (!jsonMatch) {
@@ -309,7 +334,7 @@ Generate a thoughtful, helpful reply.`;
         const prompt = `Comment from ${comment.guest_name || 'Anonymous'}:
 "${comment.content}"`;
 
-        const aiResponse = await callPuterAI(prompt, SYSTEM_PROMPTS.moderateComment);
+        const aiResponse = await callAnthropicAI(prompt, SYSTEM_PROMPTS.moderateComment);
         
         const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
         if (!jsonMatch) {
@@ -346,7 +371,7 @@ Generate a thoughtful, helpful reply.`;
         const context = params.context as string || 
           'Generate 5 blog post ideas for the Auraa AI platform, focusing on AI employees and business automation.';
         
-        const aiResponse = await callPuterAI(context, SYSTEM_PROMPTS.generateIdeas);
+        const aiResponse = await callAnthropicAI(context, SYSTEM_PROMPTS.generateIdeas);
         
         const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
         if (!jsonMatch) {
@@ -389,7 +414,7 @@ Excerpt: ${post.excerpt}
 
 Content (first 500 chars): ${post.content.substring(0, 500)}...`;
 
-        const aiResponse = await callPuterAI(prompt, SYSTEM_PROMPTS.optimizeSeo);
+        const aiResponse = await callAnthropicAI(prompt, SYSTEM_PROMPTS.optimizeSeo);
         
         const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
         if (!jsonMatch) {
