@@ -7,18 +7,32 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Toaster } from '@/components/ui/toaster';
 import { toast } from 'sonner';
-import { supabase, onAuthStateChanged, setRememberMe, getRememberMe } from '@/supabase';
+import { supabase, onAuthStateChanged } from '@/supabase';
+
+// Remember email storage keys
+const REMEMBER_EMAIL_KEY = 'auraa_remember_email';
+const SAVED_EMAIL_KEY = 'auraa_saved_email';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMeState] = useState(getRememberMe());
+  const [rememberEmail, setRememberEmail] = useState(false);
   const navigate = useNavigate();
   const { user, hasBusinessProfile, checkBusinessProfile } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Load saved email on mount
+  useEffect(() => {
+    const shouldRemember = localStorage.getItem(REMEMBER_EMAIL_KEY) === 'true';
+    const savedEmail = localStorage.getItem(SAVED_EMAIL_KEY) || '';
+    setRememberEmail(shouldRemember);
+    if (shouldRemember && savedEmail) {
+      setEmail(savedEmail);
+    }
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(async (currentUser) => {
@@ -84,8 +98,14 @@ const Auth = () => {
           setIsSignUp(false);
         }
       } else {
-        // Set remember me preference before signing in
-        setRememberMe(rememberMe);
+        // Save or clear email based on remember preference
+        if (rememberEmail) {
+          localStorage.setItem(REMEMBER_EMAIL_KEY, 'true');
+          localStorage.setItem(SAVED_EMAIL_KEY, email);
+        } else {
+          localStorage.removeItem(REMEMBER_EMAIL_KEY);
+          localStorage.removeItem(SAVED_EMAIL_KEY);
+        }
         
         // Sign in with Supabase
         const { data, error: signInError } = await supabase.auth.signInWithPassword({
@@ -186,15 +206,15 @@ const Auth = () => {
             {!isSignUp && (
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  id="remember-me"
-                  checked={rememberMe}
-                  onCheckedChange={(checked) => setRememberMeState(checked === true)}
+                  id="remember-email"
+                  checked={rememberEmail}
+                  onCheckedChange={(checked) => setRememberEmail(checked === true)}
                 />
                 <label
-                  htmlFor="remember-me"
+                  htmlFor="remember-email"
                   className="text-sm text-muted-foreground cursor-pointer select-none"
                 >
-                  Remember me
+                  Remember my email
                 </label>
               </div>
             )}
