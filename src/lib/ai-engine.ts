@@ -300,9 +300,9 @@ export function getModelForCategory(category: string): string {
 }
 
 /**
- * callPuterAI - Primary Strategy (FREE Gemini AI via Puter.js)
- * Uses Puter.js to access Gemini models for FREE (no credits required)
- * Models: gemini-2.0-flash (standard), gemini-2.0-flash-lite (fast)
+ * callPuterAI - Primary Strategy (Free Client-Side AI)
+ * Uses Puter.js to access AI models for FREE (no credits required)
+ * Models: gpt-5-mini (FREE, no credits needed)
  */
 async function callPuterAI(prompt: string, systemContext: string, model: string = MODELS.STANDARD): Promise<string> {
     // Use puter npm package - works in browser environment
@@ -310,7 +310,7 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
         throw new Error("Puter.js requires browser environment");
     }
 
-    console.log(`🤖 Using FREE Gemini model via Puter.js: ${model}`);
+    console.log(`🤖 Using Claude model via Puter.js: ${model}`);
 
     const fullPrompt = `
         System Context: ${systemContext}

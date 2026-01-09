@@ -164,17 +164,18 @@ function getTemplateKey(employee: DeployedEmployee): string {
 }
 
 /**
- * Call Puter AI (client-side, FREE Gemini - no credits required)
+ * Call Puter AI (client-side, FREE - using GPT-5 mini)
+ * GPT-5 mini is FREE and doesn't require credits
  */
 async function callPuterAI(prompt: string, systemPrompt: string): Promise<string> {
   if (!window.puter?.ai?.chat) {
     throw new Error('Puter AI not available');
   }
 
-  // Using gemini-2.0-flash which is FREE (Claude costs Puter credits)
+  // Use FREE GPT-5 mini model (no credits required)
   const response = await window.puter.ai.chat(
     `${systemPrompt}\n\n${prompt}`,
-    { model: 'gemini-2.0-flash' }
+    { model: 'gpt-5-mini' }
   ) as { message?: { content?: Array<{ text?: string }> }; text?: string };
 
   return response?.message?.content?.[0]?.text || response?.text || JSON.stringify(response);

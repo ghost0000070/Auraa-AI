@@ -18,28 +18,28 @@ export const TIER_LEVELS: Record<string, number> = {
   owner: 999,
 };
 
-// AI Models - Using FREE Gemini models via Puter.js (no credits required)
-// Claude models cost Puter credits - Gemini is completely free
+// AI Models - Using FREE models via Puter.js
+// GPT-5 mini is free and doesn't consume credits
 export const AI_MODELS = {
   // For complex reasoning, analysis, and strategic tasks
-  COMPLEX: 'gemini-2.0-flash',
+  COMPLEX: 'gpt-5-mini',
   // For standard tasks - balanced speed and quality
-  STANDARD: 'gemini-2.0-flash',
+  STANDARD: 'gpt-5-mini',
   // For fast, simple tasks - quick responses
-  FAST: 'gemini-2.0-flash-lite',
+  FAST: 'gpt-5-mini',
   // Specialized models for specific use cases
-  CODING: 'gemini-2.0-flash',
-  CREATIVE: 'gemini-2.0-flash',
-  ANALYTICAL: 'gemini-2.0-flash',
+  CODING: 'gpt-5-mini',
+  CREATIVE: 'gpt-5-mini',
+  ANALYTICAL: 'gpt-5-mini',
 } as const;
 
-// Model assigned per subscription tier (all FREE Gemini models)
+// Model assigned per subscription tier (using FREE Puter models)
 export const TIER_MODELS: Record<string, string> = {
-  free: 'gemini-2.0-flash-lite',     // Fast, basic tasks (FREE)
-  pro: 'gemini-2.0-flash',           // Balanced, most business tasks (FREE)
-  enterprise: 'gemini-2.0-flash',    // Most capable available (FREE)
-  admin: 'gemini-2.0-flash',         // Full access (FREE)
-  owner: 'gemini-2.0-flash',         // Full access (FREE)
+  free: 'gpt-5-mini',      // Fast, basic tasks (FREE)
+  pro: 'gpt-5-mini',       // Balanced, most business tasks (FREE)
+  enterprise: 'gpt-5-mini', // Most capable available (FREE)
+  admin: 'gpt-5-mini',     // Full access (FREE)
+  owner: 'gpt-5-mini',     // Full access (FREE)
 };
 
 // Subscription pricing (monthly)
