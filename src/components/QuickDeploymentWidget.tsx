@@ -86,14 +86,17 @@ export const QuickDeploymentWidget: React.FC = () => {
         // Automatically trigger deployment via Edge Function
         // Get the current session to pass Authorization header explicitly
         const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.access_token) {
+          throw new Error('No valid session found. Please sign in again.');
+        }
         const { data: deployResult, error: deployError } = await supabase.functions.invoke('deploy-ai-employee', {
           body: {
             requestId: data.id,
             userId: user.id,
           },
-          headers: session?.access_token ? {
+          headers: {
             Authorization: `Bearer ${session.access_token}`,
-          } : undefined,
+          },
         });
 
         if (deployError) {

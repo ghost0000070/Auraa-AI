@@ -70,9 +70,7 @@ const NotificationCenter: React.FC = () => {
 
         <ScrollArea className="h-80">
           {isLoading ? (
-            <div className="flex justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
-            </div>
+            <div className="flex items-center justify-center h-24">Loading notifications...</div>
           ) : notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
               <Bell className="w-10 h-10 mb-2 opacity-20" />

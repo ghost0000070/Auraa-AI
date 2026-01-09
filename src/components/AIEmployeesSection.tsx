@@ -18,9 +18,7 @@ export const AIEmployeesSection = () => {
     }
 
     if (!subscriptionStatus?.subscribed) {
-      toast.error("Subscription Required", {
-        description: "Custom AI Employee creation requires an active subscription.",
-      });
+      setError('Subscription Required: Custom AI Employee creation requires an active subscription.');
       return;
     }
 
@@ -38,7 +36,7 @@ export const AIEmployeesSection = () => {
             }
           });
       } catch (error) {
-        console.warn("Analytics tracking failed:", error);
+        setError('Analytics tracking failed');
       }
     }
 

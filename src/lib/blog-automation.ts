@@ -32,11 +32,9 @@ class BlogAutomationService {
    */
   async start(): Promise<void> {
     if (this.isRunning) {
-      console.log('[BlogAutomation] Already running');
       return;
     }
-
-    console.log('[BlogAutomation] Starting automation service...');
+    this.isRunning = true;
     this.isRunning = true;
 
     // Load settings
@@ -68,7 +66,6 @@ class BlogAutomationService {
       this.setupAutoModerationListener();
     }
 
-    console.log('[BlogAutomation] Service started successfully');
   }
 
   /**

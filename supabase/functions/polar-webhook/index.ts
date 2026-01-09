@@ -17,14 +17,12 @@ async function verifyPolarSignature(payload: string, signature: string, secret: 
       false,
       ['sign', 'verify']
     )
-    
     const signatureBytes = Uint8Array.from(atob(signature.replace('sha256=', '')), c => c.charCodeAt(0))
     const dataBytes = encoder.encode(payload)
-    
     return await crypto.subtle.verify('HMAC', key, signatureBytes, dataBytes)
   } catch {
-    // Fallback to simple string comparison for simple webhook secrets
-    return signature === secret
+    // Always fail if verification throws
+    return false
   }
 }
 

@@ -142,8 +142,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(async (currentUser) => {
       setUser(currentUser);
-      setLoading(false);
-      
       if (currentUser) {
         await Promise.all([checkSubscription(), checkBusinessProfile()]);
       } else {
@@ -151,6 +149,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsAdmin(false);
         setHasBusinessProfile(false);
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();

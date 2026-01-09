@@ -50,7 +50,6 @@ class QueryCache {
       return null;
     }
 
-    console.log(`[QueryCache] Cache hit for ${key}`);
     return entry.data as T;
   }
 
@@ -71,7 +70,6 @@ class QueryCache {
       timestamp: Date.now(),
       ttl,
     });
-    console.log(`[QueryCache] Cached ${key}`);
   }
 
   /**
@@ -80,7 +78,6 @@ class QueryCache {
   invalidate(collection: string, queryId?: string): void {
     const key = this.generateKey(collection, queryId);
     this.cache.delete(key);
-    console.log(`[QueryCache] Invalidated ${key}`);
   }
 
   /**
@@ -96,7 +93,6 @@ class QueryCache {
     }
     
     keysToDelete.forEach(key => this.cache.delete(key));
-    console.log(`[QueryCache] Invalidated ${keysToDelete.length} entries for ${collection}`);
   }
 
   /**
@@ -104,7 +100,6 @@ class QueryCache {
    */
   clear(): void {
     this.cache.clear();
-    console.log('[QueryCache] Cleared all cache');
   }
 
   /**

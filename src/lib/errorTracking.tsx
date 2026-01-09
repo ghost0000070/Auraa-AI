@@ -23,7 +23,6 @@ class ErrorTracker {
    */
   async init() {
     if (!SENTRY_CONFIG.ENABLED || this.initialized) {
-      console.log('[ErrorTracker] Sentry disabled or already initialized');
       return;
     }
 
@@ -57,7 +56,6 @@ class ErrorTracker {
       });
 
       this.initialized = true;
-      console.log('[ErrorTracker] Sentry initialized');
     } catch (error) {
       console.error('[ErrorTracker] Failed to initialize Sentry:', error);
     }
@@ -95,7 +93,6 @@ class ErrorTracker {
         Sentry.captureMessage(message, level);
       });
     } else {
-      console.log(`[ErrorTracker] ${level.toUpperCase()}:`, message);
     }
   }
 

@@ -324,7 +324,6 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
         throw new Error("Puter.js requires browser environment");
     }
 
-    console.log(`🤖 Using Claude model via Puter.js: ${model}`);
 
     const fullPrompt = `
         System Context: ${systemContext}
@@ -345,7 +344,6 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
 
     const response = await puter.ai.chat(fullPrompt, { model });
     
-    console.log('🔍 Puter response type:', typeof response, response);
     
     // Ensure response is of type PuterChatResponse, not AsyncIterable
     if ((response as AsyncIterable<unknown>)[Symbol.asyncIterator]) {
@@ -373,7 +371,6 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
         content = response;
     }
     
-    console.log('🔍 Extracted content:', content?.substring(0, 100) + '...');
     
     if (!content) throw new Error("Empty response or unexpected format from Puter AI");
     return content;
@@ -384,7 +381,6 @@ async function callPuterAI(prompt: string, systemContext: string, model: string 
  * Fallback when Puter.js is unavailable - routes to agent-run edge function
  */
 async function callVercelAIGateway(prompt: string, systemContext: string, category: string = 'default'): Promise<string> {
-    console.log(`🌐 Using Edge Function fallback for category: ${category}`);
     
     // Get auth token and user ID for edge function
     const { data: { session } } = await supabase.auth.getSession();
@@ -424,7 +420,6 @@ async function callVercelAIGateway(prompt: string, systemContext: string, catego
         throw new Error('Empty response from Vercel AI Gateway');
     }
     
-    console.log(`✅ Vercel AI Gateway response (model: ${result.model}, tokens: ${result.usage?.totalTokens})`);
     return result.text;
 }
 
@@ -434,7 +429,6 @@ async function callVercelAIGateway(prompt: string, systemContext: string, catego
  * Primary AI should always be Puter.js (free Claude access)
  */
 async function callCloudFallback(taskName: string, data: unknown, context?: string): Promise<string> {
-    console.log(`🚨 EMERGENCY: All primary providers unavailable. Using Supabase fallback for ${taskName}`);
     
     // Get current user
     const { data: { user } } = await supabase.auth.getUser();
@@ -593,7 +587,6 @@ async function executeTaskWithTierModel(
     const tier = userTier || await getUserTier();
     const model = getModelForTier(tier);
     
-    console.log(`🎯 Using tier-based model: ${model} for ${tier} tier user`);
     
     const result = await executeTask(taskName, data, context, model);
     return { ...result, model };

@@ -146,7 +146,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
           specificContext: payload
       }, null, 2);
 
-      console.log('Sending to AI with context:', contextString.substring(0, 200) + '...');
 
       // Use client-side AIEngine instead of Cloud Functions
       const result = await AIEngine.generateChatCompletion(
@@ -154,7 +153,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
           contextString // Passing detailed context as 'personality'
       );
       
-      console.log('AI response received:', result.provider);
 
       if (!result?.completion?.text) {
         throw new Error('AI returned empty response');

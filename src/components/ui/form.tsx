@@ -101,9 +101,8 @@ const FormMessage = React.forwardRef<
   const body = error ? String(error?.message) : children
 
   if (!body) {
-    return null
+    return null;
   }
-
   return (
     <p
       ref={ref}
@@ -111,9 +110,9 @@ const FormMessage = React.forwardRef<
       className={cn("text-sm font-medium text-destructive", className)}
       {...props}
     >
-      {body}
+      {error ? <span className="text-destructive">{String(error?.message)}</span> : children}
     </p>
-  )
+  );
 })
 FormMessage.displayName = "FormMessage"
 
