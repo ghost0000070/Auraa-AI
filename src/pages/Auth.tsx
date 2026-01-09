@@ -4,15 +4,17 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Toaster } from '@/components/ui/toaster';
 import { toast } from 'sonner';
-import { supabase, onAuthStateChanged } from '@/supabase';
+import { supabase, onAuthStateChanged, setRememberMe, getRememberMe } from '@/supabase';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMeState] = useState(getRememberMe());
   const navigate = useNavigate();
   const { user, hasBusinessProfile, checkBusinessProfile } = useAuth();
   const [error, setError] = useState<string | null>(null);
@@ -82,6 +84,9 @@ const Auth = () => {
           setIsSignUp(false);
         }
       } else {
+        // Set remember me preference before signing in
+        setRememberMe(rememberMe);
+        
         // Sign in with Supabase
         const { data, error: signInError } = await supabase.auth.signInWithPassword({
           email,
@@ -176,6 +181,21 @@ const Auth = () => {
                   required
                   aria-label='Password'
                 />
+              </div>
+            )}
+            {!isSignUp && (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="remember-me"
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMeState(checked === true)}
+                />
+                <label
+                  htmlFor="remember-me"
+                  className="text-sm text-muted-foreground cursor-pointer select-none"
+                >
+                  Remember me
+                </label>
               </div>
             )}
             {isSignUp && (

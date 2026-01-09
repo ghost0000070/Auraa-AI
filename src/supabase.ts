@@ -12,14 +12,38 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables. Please check your .env file.');
 }
 
+// Remember Me storage key
+const REMEMBER_ME_KEY = 'auraa_remember_me';
+
+// Check if user wants to be remembered
+export const getRememberMe = (): boolean => {
+  return localStorage.getItem(REMEMBER_ME_KEY) === 'true';
+};
+
+// Set remember me preference
+export const setRememberMe = (remember: boolean): void => {
+  if (remember) {
+    localStorage.setItem(REMEMBER_ME_KEY, 'true');
+  } else {
+    localStorage.removeItem(REMEMBER_ME_KEY);
+  }
+};
+
+// Get the appropriate storage based on Remember Me preference
+const getAuthStorage = (): Storage => {
+  return getRememberMe() ? window.localStorage : window.sessionStorage;
+};
+
 // Create Supabase client
-// Using sessionStorage instead of localStorage so users are logged out when browser closes
+// Storage is determined by Remember Me preference:
+// - If Remember Me: localStorage (persists after browser close)
+// - If not: sessionStorage (session ends when browser closes)
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
-    storage: window.sessionStorage, // Session ends when browser/tab closes
+    storage: getAuthStorage(),
   },
   realtime: {
     params: {
