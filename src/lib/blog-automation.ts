@@ -5,7 +5,6 @@
 
 import { supabase } from '@/supabase';
 import { blogAgent, blogService } from './blog-engine';
-import { AURAA_PRODUCT_KNOWLEDGE, CONTENT_STRATEGY } from '@/config/blog-agent-config';
 import type { 
   BlogPost, 
   BlogComment,
@@ -18,6 +17,7 @@ import type {
   LearningInsight
 } from '@/types/blog';
 import { AI_MODELS } from '@/config/constants';
+import { AURAA_PRODUCT_KNOWLEDGE, CONTENT_STRATEGY } from '@/config/blog-agent-config';
 
 // ============================================================================
 // Blog Automation Service

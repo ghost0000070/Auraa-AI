@@ -1037,6 +1037,157 @@ const BlogAdmin: React.FC = () => {
             </Card>
           </TabsContent>
 
+          {/* Automation Tab */}
+          <TabsContent value="automation">
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Automation Status */}
+              <Card className="bg-white/5 border-white/10">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Bot className="w-5 h-5 text-purple-400" />
+                    Automation Status
+                  </CardTitle>
+                  <CardDescription>
+                    Control automatic blog generation and management
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                    <div>
+                      <h3 className="text-white font-medium">Blog Automation</h3>
+                      <p className="text-sm text-gray-400">
+                        {automationRunning 
+                          ? 'Running - Auto-generating ideas, posts, and replies' 
+                          : 'Stopped - Manual mode only'}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${automationRunning ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`} />
+                      <Button
+                        onClick={automationRunning ? handleStopAutomation : handleStartAutomation}
+                        variant={automationRunning ? 'destructive' : 'default'}
+                        className={!automationRunning ? 'bg-gradient-to-r from-purple-600 to-pink-600' : ''}
+                      >
+                        {automationRunning ? 'Stop Automation' : 'Start Automation'}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <Button
+                      onClick={handleGenerateIdeasAuto}
+                      variant="outline"
+                      className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
+                    >
+                      <Lightbulb className="w-4 h-4 mr-2" />
+                      Generate Ideas Now
+                    </Button>
+                    <Button
+                      onClick={handleTriggerLearning}
+                      variant="outline"
+                      className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                    >
+                      <TrendingUp className="w-4 h-4 mr-2" />
+                      Update Learning
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Idea Queue */}
+              <Card className="bg-white/5 border-white/10">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Lightbulb className="w-5 h-5 text-yellow-400" />
+                    Idea Queue
+                    <Badge className="ml-2">{ideaQueue.length} pending</Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 max-h-80 overflow-y-auto">
+                  {ideaQueue.length === 0 ? (
+                    <p className="text-gray-400 text-center py-4">
+                      No pending ideas. Click "Generate Ideas Now" to create some!
+                    </p>
+                  ) : (
+                    ideaQueue.map((idea) => (
+                      <div key={idea.id} className="p-3 bg-white/5 rounded-lg">
+                        <h4 className="text-white font-medium text-sm">{idea.title}</h4>
+                        <p className="text-gray-400 text-xs mt-1">{idea.brief_description}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Badge variant="outline" className="text-xs">
+                            {idea.topic}
+                          </Badge>
+                          <Badge className={`text-xs ${
+                            idea.priority_score >= 8 ? 'bg-green-500' :
+                            idea.priority_score >= 5 ? 'bg-yellow-500' : 'bg-gray-500'
+                          }`}>
+                            Score: {idea.priority_score.toFixed(1)}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Recent Automation Runs */}
+              <Card className="bg-white/5 border-white/10 md:col-span-2">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <RefreshCw className="w-5 h-5 text-blue-400" />
+                    Recent Automation Runs
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {automationRuns.length === 0 ? (
+                    <p className="text-gray-400 text-center py-4">
+                      No automation runs yet. Start automation to see activity here.
+                    </p>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-gray-400 border-b border-white/10">
+                            <th className="text-left p-2">Type</th>
+                            <th className="text-left p-2">Status</th>
+                            <th className="text-left p-2">Processed</th>
+                            <th className="text-left p-2">Duration</th>
+                            <th className="text-left p-2">Time</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {automationRuns.map((run) => (
+                            <tr key={run.id} className="border-b border-white/5">
+                              <td className="p-2 text-white">{run.run_type.replace(/_/g, ' ')}</td>
+                              <td className="p-2">
+                                <Badge className={
+                                  run.status === 'completed' ? 'bg-green-500' :
+                                  run.status === 'failed' ? 'bg-red-500' :
+                                  run.status === 'running' ? 'bg-blue-500' : 'bg-yellow-500'
+                                }>
+                                  {run.status}
+                                </Badge>
+                              </td>
+                              <td className="p-2 text-gray-300">
+                                {run.items_succeeded}/{run.items_processed}
+                              </td>
+                              <td className="p-2 text-gray-300">
+                                {run.duration_ms ? `${(run.duration_ms / 1000).toFixed(1)}s` : '-'}
+                              </td>
+                              <td className="p-2 text-gray-400 text-xs">
+                                {new Date(run.started_at).toLocaleString()}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
           {/* Settings Tab */}
           <TabsContent value="settings">
             <Card className="bg-white/5 border-white/10">
