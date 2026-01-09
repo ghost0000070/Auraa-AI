@@ -1,11 +1,11 @@
 /**
  * Vercel Cron Handler - Triggers Autonomous Loop
  * 
- * This API route is called by Vercel Cron every 5 minutes.
+ * This API route is called by Vercel Cron daily.
  * It triggers the Supabase Edge Function that processes all active employees.
  * 
  * Endpoint: GET /api/autonomous-loop
- * Schedule: Every 5 minutes (*/5 * * * *)
+ * Schedule: Daily at midnight (0 0 * * *)
  */
 
 export const config = {
