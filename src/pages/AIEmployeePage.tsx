@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +25,7 @@ interface DeployedEmployee {
 const AIEmployeePage: React.FC = () => {
   const { id: employeeId } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
 
   const [deployedEmployee, setDeployedEmployee] = useState<DeployedEmployee | null>(null);
@@ -74,6 +75,11 @@ const AIEmployeePage: React.FC = () => {
         }
 
         setConfigDraft(JSON.stringify(employeeData.configuration || {}, null, 2));
+        
+        // Check if chat should be opened
+        if (searchParams.get('chat') === 'true') {
+          setShowChat(true);
+        }
       } catch (error) {
         console.error("Error fetching employee:", error);
         toast.error("Error", { description: "Failed to fetch AI employee data." });
@@ -84,7 +90,7 @@ const AIEmployeePage: React.FC = () => {
     };
 
     fetchEmployee();
-  }, [employeeId, user, navigate]);
+  }, [employeeId, user, navigate, searchParams]);
 
   const handleSaveSettings = async () => {
     if (!deployedEmployee) return;

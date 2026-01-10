@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/supabase';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Activity, Brain, Lightbulb, Clock, Zap } from 'lucide-react';
@@ -21,6 +23,7 @@ interface EmployeeActivity {
 
 interface BusinessInsight {
   id: string;
+  employee_id?: string;
   employee_name: string;
   category: string;
   title: string;
@@ -32,6 +35,7 @@ interface BusinessInsight {
 
 interface AutonomousAction {
   id: string;
+  employee_id?: string;
   employee_name: string;
   action_type: string;
   action_title: string;
@@ -42,10 +46,12 @@ interface AutonomousAction {
 
 export function EmployeeActivityDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [activities, setActivities] = useState<EmployeeActivity[]>([]);
   const [insights, setInsights] = useState<BusinessInsight[]>([]);
   const [actions, setActions] = useState<AutonomousAction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedAction, setExpandedAction] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -60,13 +66,65 @@ export function EmployeeActivityDashboard() {
 
         // Fetch recent insights
         const { data: insightsData } = await supabase
-          .rpc('get_recent_business_insights', { p_limit: 10 });
-        setInsights(insightsData || []);
+          .from('business_insights')
+          .select(`
+            id,
+            employee_id,
+            category,
+            title,
+            insight,
+            recommended_action,
+            is_actionable,
+            created_at,
+            deployed_employees!inner(name)
+          `)
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(10);
+        
+        const formattedInsights = insightsData?.map(item => ({
+          id: item.id,
+          employee_id: item.employee_id,
+          employee_name: item.deployed_employees.name,
+          category: item.category,
+          title: item.title,
+          insight: item.insight,
+          recommended_action: item.recommended_action,
+          is_actionable: item.is_actionable,
+          created_at: item.created_at,
+        })) || [];
+        
+        setInsights(formattedInsights);
 
         // Fetch recent actions
         const { data: actionsData } = await supabase
-          .rpc('get_recent_autonomous_actions', { p_limit: 20 });
-        setActions(actionsData || []);
+          .from('autonomous_actions')
+          .select(`
+            id,
+            employee_id,
+            action_type,
+            action_title,
+            status,
+            result,
+            created_at,
+            deployed_employees!inner(name)
+          `)
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(20);
+        
+        const formattedActions = actionsData?.map(item => ({
+          id: item.id,
+          employee_id: item.employee_id,
+          employee_name: item.deployed_employees.name,
+          action_type: item.action_type,
+          action_title: item.action_title,
+          status: item.status,
+          result: item.result,
+          created_at: item.created_at,
+        })) || [];
+        
+        setActions(formattedActions);
       } catch (error) {
         console.error('Failed to fetch employee activity:', error);
       } finally {
@@ -242,7 +300,8 @@ export function EmployeeActivityDashboard() {
                 {insights.map((insight) => (
                   <div
                     key={insight.id}
-                    className="p-4 rounded-lg border bg-card"
+                    className="p-4 rounded-lg border bg-card cursor-pointer hover:bg-accent/50 transition-colors"
+                    onClick={() => insight.employee_id && navigate(`/employee/${insight.employee_id}?chat=true`)}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
@@ -291,32 +350,64 @@ export function EmployeeActivityDashboard() {
                 {actions.map((action) => (
                   <div
                     key={action.id}
-                    className="flex items-start gap-3 p-3 rounded-lg border bg-card"
+                    className="border rounded-lg bg-card"
                   >
-                    <div className="mt-0.5 p-2 rounded-full bg-primary/10">
-                      {getActionTypeIcon(action.action_type)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm">
-                          {action.employee_name}
-                        </span>
-                        <Badge variant="outline" className="text-xs">
-                          {action.action_type}
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">
-                          {formatTimeAgo(action.created_at)}
-                        </span>
+                    <div
+                      className="flex items-start gap-3 p-3 cursor-pointer hover:bg-accent/50 transition-colors"
+                      onClick={() => setExpandedAction(expandedAction === action.id ? null : action.id)}
+                    >
+                      <div className="mt-0.5 p-2 rounded-full bg-primary/10">
+                        {getActionTypeIcon(action.action_type)}
                       </div>
-                      <p className="text-sm font-medium mt-1">
-                        {action.action_title}
-                      </p>
-                      {action.result && (
-                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                          {action.result}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm">
+                            {action.employee_name}
+                          </span>
+                          <Badge variant="outline" className="text-xs">
+                            {action.action_type}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {formatTimeAgo(action.created_at)}
+                          </span>
+                        </div>
+                        <p className="text-sm font-medium mt-1">
+                          {action.action_title}
                         </p>
-                      )}
+                        {action.result && (
+                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                            {action.result}
+                          </p>
+                        )}
+                      </div>
                     </div>
+                    {expandedAction === action.id && (
+                      <div className="px-3 pb-3 border-t bg-accent/20">
+                        <div className="pt-3 space-y-3">
+                          <div className="text-sm">
+                            <p className="font-medium">Action Details:</p>
+                            <p className="text-muted-foreground mt-1">{action.result || 'No additional details available.'}</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => action.employee_id && navigate(`/employee/${action.employee_id}?chat=true&context=${encodeURIComponent(`Review this action: ${action.action_title}`)}`)}
+                            >
+                              Discuss with {action.employee_name}
+                            </Button>
+                            <Button size="sm" variant="outline">
+                              Mark as Reviewed
+                            </Button>
+                            {action.status === 'pending' && (
+                              <Button size="sm" variant="default">
+                                Approve Action
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

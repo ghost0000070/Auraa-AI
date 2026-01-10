@@ -93,6 +93,7 @@ class ErrorTracker {
         Sentry.captureMessage(message, level);
       });
     } else {
+      // Sentry not enabled or not initialized
     }
   }
 
