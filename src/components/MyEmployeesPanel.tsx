@@ -165,13 +165,15 @@ export const MyEmployeesPanel: React.FC = () => {
     );
   }
 
+  const activeEmployees = employees.filter(e => e.status === 'active' || e.status === 'idle').length;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">My Employees</h2>
           <p className="text-muted-foreground">
-            {employees.length} employee{employees.length !== 1 ? 's' : ''} on your team
+            {activeEmployees} active, {employees.length} total employee{employees.length !== 1 ? 's' : ''} on your team
           </p>
         </div>
         <Button onClick={() => navigate('/marketplace')}>

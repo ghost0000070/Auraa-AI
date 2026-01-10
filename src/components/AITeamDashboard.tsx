@@ -7,7 +7,7 @@ import { useAgentMetrics } from '@/hooks/useAgentMetrics';
 import { toast } from "sonner";
 import { formatDistanceToNow } from 'date-fns';
 import { 
-  Activity, Code, ChevronDown, ChevronUp, AlertCircle, ArrowRight, CheckCircle, Clock, MessageSquare, Loader2, Rocket, Bot, TrendingUp
+  Activity, Code, ChevronDown, ChevronUp, AlertCircle, ArrowRight, CheckCircle, Clock, MessageSquare, Loader2, Rocket, Bot, TrendingUp, Plus
 } from 'lucide-react';
 import {
   Collapsible,
@@ -18,6 +18,9 @@ import { Button } from '@/components/ui/button';
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface AgentTask {
   id: string;
@@ -81,6 +84,13 @@ const AITeamDashboard: React.FC = () => {
   const [loading, setLoading] = useState<Record<string, boolean>>({
     tasks: true, comms: true, employees: true
   });
+  const [showWorkflowDialog, setShowWorkflowDialog] = useState(false);
+  const [workflowForm, setWorkflowForm] = useState({
+    name: '',
+    description: '',
+    steps: [] as string[]
+  });
+  const [isCreatingWorkflow, setIsCreatingWorkflow] = useState(false);
 
   const handleLoading = (section: string, status: boolean) => {
     setLoading(prev => ({...prev, [section]: status}));
@@ -329,6 +339,60 @@ const AITeamDashboard: React.FC = () => {
     return colors[status] || colors.default;
   };
   
+  const createWorkflow = async () => {
+    if (!user || !workflowForm.name.trim()) {
+      toast.error('Please enter a workflow name');
+      return;
+    }
+
+    setIsCreatingWorkflow(true);
+    try {
+      const { error } = await supabase
+        .from('ai_team_executions')
+        .insert({
+          user_id: user.id,
+          workflow_name: workflowForm.name,
+          status: 'pending',
+          steps: workflowForm.steps.filter(step => step.trim()),
+          results: null,
+          started_at: null,
+          completed_at: null
+        });
+
+      if (error) throw error;
+
+      toast.success('Workflow created successfully!');
+      setShowWorkflowDialog(false);
+      setWorkflowForm({ name: '', description: '', steps: [] });
+    } catch (error) {
+      console.error('Error creating workflow:', error);
+      toast.error('Failed to create workflow');
+    } finally {
+      setIsCreatingWorkflow(false);
+    }
+  };
+
+  const addWorkflowStep = () => {
+    setWorkflowForm(prev => ({
+      ...prev,
+      steps: [...prev.steps, '']
+    }));
+  };
+
+  const updateWorkflowStep = (index: number, value: string) => {
+    setWorkflowForm(prev => ({
+      ...prev,
+      steps: prev.steps.map((step, i) => i === index ? value : step)
+    }));
+  };
+
+  const removeWorkflowStep = (index: number) => {
+    setWorkflowForm(prev => ({
+      ...prev,
+      steps: prev.steps.filter((_, i) => i !== index)
+    }));
+  };
+  
   const getIconForAction = (action: string) => {
     const icons: Record<string, React.ReactNode> = {
       'scrape_dashboard': <Activity className="h-5 w-5 mr-2" />,
@@ -361,8 +425,88 @@ const AITeamDashboard: React.FC = () => {
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
       <Card className="lg:col-span-2">
         <CardHeader>
-          <CardTitle>Team Overview</CardTitle>
-          <CardDescription>Your deployed AI workforce</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Team Overview</CardTitle>
+              <CardDescription>{performanceMetrics.activeEmployees} active employee{performanceMetrics.activeEmployees !== 1 ? 's' : ''} in your AI workforce</CardDescription>
+            </div>
+            <Dialog open={showWorkflowDialog} onOpenChange={setShowWorkflowDialog}>
+              <DialogTrigger asChild>
+                <Button size="sm" className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Create Workflow
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Create New Workflow</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Workflow Name</label>
+                    <Input
+                      value={workflowForm.name}
+                      onChange={(e) => setWorkflowForm(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Enter workflow name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Description (Optional)</label>
+                    <Textarea
+                      value={workflowForm.description}
+                      onChange={(e) => setWorkflowForm(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="Describe what this workflow does"
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-sm font-medium">Workflow Steps</label>
+                      <Button type="button" variant="outline" size="sm" onClick={addWorkflowStep}>
+                        <Plus className="w-4 h-4 mr-1" />
+                        Add Step
+                      </Button>
+                    </div>
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {workflowForm.steps.map((step, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground w-6">{index + 1}.</span>
+                          <Input
+                            value={step}
+                            onChange={(e) => updateWorkflowStep(index, e.target.value)}
+                            placeholder={`Step ${index + 1}`}
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeWorkflowStep(index)}
+                          >
+                            ×
+                          </Button>
+                        </div>
+                      ))}
+                      {workflowForm.steps.length === 0 && (
+                        <p className="text-sm text-muted-foreground text-center py-4">
+                          No steps added yet. Click "Add Step" to get started.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex justify-end space-x-2">
+                    <Button variant="outline" onClick={() => setShowWorkflowDialog(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={createWorkflow} disabled={isCreatingWorkflow || !workflowForm.name.trim()}>
+                      {isCreatingWorkflow ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                      Create Workflow
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

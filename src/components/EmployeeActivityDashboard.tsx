@@ -52,6 +52,7 @@ export function EmployeeActivityDashboard() {
   const [actions, setActions] = useState<AutonomousAction[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedAction, setExpandedAction] = useState<string | null>(null);
+  const [activeEmployees, setActiveEmployees] = useState(0);
 
   useEffect(() => {
     if (!user) return;
@@ -125,6 +126,16 @@ export function EmployeeActivityDashboard() {
         })) || [];
         
         setActions(formattedActions);
+
+        // Fetch active employees count
+        const { data: employeesData } = await supabase
+          .from('deployed_employees')
+          .select('status')
+          .eq('user_id', user.id);
+
+        const activeCount = employeesData?.filter(e => e.status === 'active' || e.status === 'idle').length || 0;
+        setActiveEmployees(activeCount);
+
       } catch (error) {
         console.error('Failed to fetch employee activity:', error);
       } finally {
@@ -236,7 +247,7 @@ export function EmployeeActivityDashboard() {
           Employee Activity
         </CardTitle>
         <CardDescription>
-          Your AI employees work autonomously every 5 minutes
+          {activeEmployees} active employee{activeEmployees !== 1 ? 's' : ''} working autonomously every 5 minutes
         </CardDescription>
       </CardHeader>
       <CardContent>

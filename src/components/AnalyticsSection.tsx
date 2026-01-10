@@ -35,27 +35,36 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ isDashboard 
 
       try {
         if (isDashboard && user) {
-          const { data, error } = await supabase
-            .from('user_analytics')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .single();
+          // Calculate analytics from actual data instead of relying on user_analytics table
+          const [tasksResult, employeesResult] = await Promise.all([
+            supabase
+              .from('agent_tasks')
+              .select('status, created_at')
+              .eq('user_id', user.id),
+            supabase
+              .from('deployed_employees')
+              .select('id, status')
+              .eq('user_id', user.id)
+          ]);
 
-          if (data && !error) {
-            setMetrics(isDashboard ? [
-                { value: data.tasks_completed?.toString() || "0", label: "tasks completed", color: "text-primary" },
-                { value: data.active_employees?.toString() || "0", label: "active employees", color: "text-accent" },
-                { value: `$${data.cost_saved || 0}`, label: "est. cost saved", color: "text-success" }
-              ] : [
-                { value: `$${data.gmv || '32B+'}`, label: "in GMV analyzed", color: "text-accent" },
-                { value: data.orders || '44M+', label: "orders processed", color: "text-primary" },
-                { value: data.customers || '19M+', label: "customers served", color: "text-success" }
-              ]);
-          } else {
-            setMetrics(defaultMetrics);
-          }
+          // Calculate tasks completed (successful tasks)
+          const tasksCompleted = tasksResult.data?.filter(task => 
+            task.status === 'completed' || task.status === 'success'
+          ).length || 0;
+
+          // Calculate active employees
+          const activeEmployees = employeesResult.data?.filter(employee => 
+            employee.status === 'active' || employee.status === 'idle'
+          ).length || 0;
+
+          // Calculate cost saved (rough estimate: $50/hour * 2 hours/task * completed tasks)
+          const costSaved = tasksCompleted * 100; // $100 estimated savings per task
+
+          setMetrics([
+              { value: tasksCompleted.toString(), label: "tasks completed", color: "text-primary" },
+              { value: activeEmployees.toString(), label: "active employees", color: "text-accent" },
+              { value: `$${costSaved}`, label: "est. cost saved", color: "text-success" }
+            ]);
         } else {
           // Platform-wide stats for admins
           if (!user) {

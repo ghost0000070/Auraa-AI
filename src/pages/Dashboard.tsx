@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -16,9 +16,33 @@ import { useAutonomousLoopPuter } from '@/hooks/useAutonomousLoopPuter';
 export default function Dashboard() {
   const { user, loading, signOut } = useAuth();
   const [isManagingSubscription, setIsManagingSubscription] = useState(false);
+  const [activeEmployees, setActiveEmployees] = useState(0);
 
   // Run autonomous employee loop using Puter AI (free, client-side)
   useAutonomousLoopPuter();
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    const fetchActiveEmployees = async () => {
+      const { data, error } = await supabase
+        .from('deployed_employees')
+        .select('status')
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error fetching active employees:', error);
+        return;
+      }
+
+      const activeCount = data?.filter(e => e.status === 'active' || e.status === 'idle').length || 0;
+      setActiveEmployees(activeCount);
+    };
+
+    fetchActiveEmployees();
+  }, [user]);
 
   const handleManageSubscription = async () => {
     if (!user) {
@@ -88,7 +112,10 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <header className="flex items-center justify-between p-4 bg-card border-b border-border">
-        <h1 className="text-2xl font-bold">Auraa Dashboard</h1>
+        <div>
+          <h1 className="text-2xl font-bold">Auraa Dashboard</h1>
+          <p className="text-sm text-muted-foreground">{activeEmployees} active employee{activeEmployees !== 1 ? 's' : ''}</p>
+        </div>
         <div className="flex items-center space-x-4">
           <Button onClick={handleManageSubscription} disabled={isManagingSubscription}>
             {isManagingSubscription ? "Loading..." : "Manage Subscription"}

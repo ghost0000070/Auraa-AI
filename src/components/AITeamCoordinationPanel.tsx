@@ -35,9 +35,6 @@ interface TeamCommunication {
 }
 
 interface TeamExecution {
-  workflow_id: any;
-  current_step: React.ReactNode;
-  type: React.JSX.Element;
   id: string;
   workflow_name: string | null;
   status: string;
@@ -64,6 +61,7 @@ export const AITeamCoordinationPanel: React.FC<AITeamCoordinationPanelProps> = (
   const [communications, setCommunications] = useState<TeamCommunication[]>([]);
   const [executions, setExecutions] = useState<TeamExecution[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeEmployees, setActiveEmployees] = useState(0);
   const [showMessageDialog, setShowMessageDialog] = useState(false);
   const [filter, setFilter] = useState('all');
   const [newMessage, setNewMessage] = useState({
@@ -126,6 +124,15 @@ export const AITeamCoordinationPanel: React.FC<AITeamCoordinationPanelProps> = (
         if (execData) {
           setExecutions(execData as any[]);
         }
+
+        // Fetch active employees count
+        const { data: employeesData } = await supabase
+          .from('deployed_employees')
+          .select('status')
+          .eq('user_id', user.id);
+
+        const activeCount = employeesData?.filter(e => e.status === 'active' || e.status === 'idle').length || 0;
+        setActiveEmployees(activeCount);
 
         setLoading(false);
 
@@ -271,7 +278,7 @@ export const AITeamCoordinationPanel: React.FC<AITeamCoordinationPanelProps> = (
       <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 className="text-2xl font-bold">AI Team Coordination</h2>
-          <p className="text-muted-foreground">Monitor communications and workflows in real-time</p>
+          <p className="text-muted-foreground">Monitor {activeEmployees} active employee{activeEmployees !== 1 ? 's' : ''} and workflows in real-time</p>
         </div>
         <Dialog open={showMessageDialog} onOpenChange={setShowMessageDialog}>
           <DialogTrigger asChild>
@@ -436,24 +443,24 @@ export const AITeamCoordinationPanel: React.FC<AITeamCoordinationPanelProps> = (
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center space-x-2">
                         {getStatusIcon(execution.status)}
-                        <span className="text-sm font-medium">Workflow {execution.workflow_id?.slice(0, 8) || 'Unknown'}...</span>
+                        <span className="text-sm font-medium">{execution.workflow_name || `Workflow ${execution.id.slice(0, 8)}...`}</span>
                       </div>
                       <Badge variant={getStatusBadge(execution.status)}>
                         {execution.status}
                       </Badge>
                     </div>
                     <div className="text-xs text-muted-foreground mb-2">
-                      Step {execution.current_step}
+                      Steps: {Array.isArray(execution.steps) ? execution.steps.length : 0}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      Started: {new Date(execution.created_at).toLocaleString()}
+                      Started: {execution.started_at ? new Date(execution.started_at).toLocaleString() : new Date(execution.created_at).toLocaleString()}
                     </div>
                     <div className="text-xs text-muted-foreground">
                       Updated: {new Date(execution.updated_at).toLocaleString()}
                     </div>
-                    {execution.type && (
-                      <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-600">
-                        Type: {execution.type}
+                    {execution.completed_at && (
+                      <div className="text-xs text-muted-foreground">
+                        Completed: {new Date(execution.completed_at).toLocaleString()}
                       </div>
                     )}
                   </Card>
