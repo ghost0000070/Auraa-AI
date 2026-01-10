@@ -35,6 +35,7 @@ const AIEmployeePage: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [configDraft, setConfigDraft] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [initialMessage, setInitialMessage] = useState<string>('');
 
   useEffect(() => {
     if (!user) {
@@ -79,6 +80,10 @@ const AIEmployeePage: React.FC = () => {
         // Check if chat should be opened
         if (searchParams.get('chat') === 'true') {
           setShowChat(true);
+          const context = searchParams.get('context');
+          if (context) {
+            setInitialMessage(decodeURIComponent(context));
+          }
         }
       } catch (error) {
         console.error("Error fetching employee:", error);
@@ -137,6 +142,7 @@ const AIEmployeePage: React.FC = () => {
           employeeType={staticData.id}
           employeeName={deployedEmployee.name}
           businessContext={JSON.stringify(deployedEmployee.configuration || {})}
+          initialMessage={initialMessage}
           onClose={() => setShowChat(false)}
         />
       </div>

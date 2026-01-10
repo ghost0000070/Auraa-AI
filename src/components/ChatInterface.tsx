@@ -69,6 +69,7 @@ interface ChatInterfaceProps {
   employeeType: string;
   employeeName?: string;
   businessContext?: string;
+  initialMessage?: string;
   onClose: () => void;
 }
 
@@ -77,7 +78,7 @@ interface Message {
   text: string;
 }
 
-export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, employeeName, businessContext, onClose }) => {
+export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, employeeName, businessContext, initialMessage, onClose }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -99,8 +100,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ employeeType, empl
     const category = template?.category || 'general';
     const welcomeMessage = `Hello! I'm ${name}, your ${category} expert. How can I assist you with your business goals today?`;
     
-    setMessages([{ sender: 'ai', text: welcomeMessage }]);
-  }, [employeeType, template, employeeName]);
+    const initialMessages: Message[] = [{ sender: 'ai', text: welcomeMessage }];
+    
+    if (initialMessage) {
+      initialMessages.push({ sender: 'user', text: initialMessage });
+    }
+    
+    setMessages(initialMessages);
+  }, [employeeType, template, employeeName, initialMessage]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

@@ -301,7 +301,7 @@ export function EmployeeActivityDashboard() {
                   <div
                     key={insight.id}
                     className="p-4 rounded-lg border bg-card cursor-pointer hover:bg-accent/50 transition-colors"
-                    onClick={() => insight.employee_id && navigate(`/employee/${insight.employee_id}?chat=true`)}
+                    onClick={() => insight.employee_id && navigate(`/ai-employees/${insight.employee_id}?chat=true`)}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
@@ -392,7 +392,7 @@ export function EmployeeActivityDashboard() {
                             <Button 
                               size="sm" 
                               variant="outline"
-                              onClick={() => action.employee_id && navigate(`/employee/${action.employee_id}?chat=true&context=${encodeURIComponent(`Review this action: ${action.action_title}`)}`)}
+                              onClick={() => action.employee_id && navigate(`/ai-employees/${action.employee_id}?chat=true&context=${encodeURIComponent(`Review this action: ${action.action_title}`)}`)}
                             >
                               Discuss with {action.employee_name}
                             </Button>
