@@ -298,7 +298,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-violet-500",
     skills: ["Content strategy", "SEO optimization", "Editorial planning"],
     personality: "Creative storyteller who crafts compelling narratives that resonate.",
-    monthlyCost: 109,
+    monthlyCost: 105,
     isPremium: false,
     exampleTasks: [
       "Write a blog post about industry trends",
@@ -329,7 +329,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-cyan-500",
     skills: ["ETL development", "Data modeling", "Pipeline orchestration"],
     personality: "Methodical architect who ensures data flows smoothly and reliably.",
-    monthlyCost: 139,
+    monthlyCost: 135,
     isPremium: true,
     exampleTasks: [
       "Design a data pipeline for customer analytics",
@@ -360,7 +360,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-red-600",
     skills: ["Contract review", "Compliance monitoring", "Risk assessment"],
     personality: "Thorough legal expert who prioritizes compliance and risk mitigation.",
-    monthlyCost: 169,
+    monthlyCost: 155,
     isPremium: true,
     exampleTasks: [
       "Review terms of service for legal compliance",
@@ -391,7 +391,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-emerald-600",
     skills: ["Talent acquisition", "Employee development", "Culture management"],
     personality: "Empathetic leader who fosters growth and maintains positive workplace dynamics.",
-    monthlyCost: 119,
+    monthlyCost: 110,
     isPremium: false,
     exampleTasks: [
       "Create job descriptions for open positions",
@@ -422,7 +422,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-emerald-600",
     skills: ["E-commerce optimization", "Product management", "Conversion rate optimization"],
     personality: "Data-driven optimizer who maximizes online revenue potential.",
-    monthlyCost: 119,
+    monthlyCost: 115,
     isPremium: false,
     exampleTasks: [
       "Optimize product page layouts for better conversion",
@@ -453,7 +453,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-purple-500",
     skills: ["Social media strategy", "Content creation", "Community management"],
     personality: "Trend-savvy creator who understands viral mechanics and audience psychology.",
-    monthlyCost: 99,
+    monthlyCost: 95,
     isPremium: false,
     exampleTasks: [
       "Create a social media content calendar for next month",
@@ -484,7 +484,7 @@ export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
     colorClass: "bg-amber-500",
     skills: ["Account management", "Retention strategies", "Customer advocacy"],
     personality: "Empathetic relationship builder who turns customers into advocates.",
-    monthlyCost: 129,
+    monthlyCost: 125,
     isPremium: true,
     exampleTasks: [
       "Create personalized onboarding plans for new customers",
