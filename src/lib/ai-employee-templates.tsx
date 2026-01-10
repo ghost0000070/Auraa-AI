@@ -32,11 +32,6 @@ export interface AIEmployeeTemplate {
   decisionPrompt: string;
 }
 
-const image = (keyword: string) =>
-  `https://images.unsplash.com/` +
-  keyword +
-  `?auto=format&fit=crop&w=900&q=80`;
-
 export const aiEmployeeTemplates: AIEmployeeTemplate[] = [
   {
     id: "marketing-pro",
