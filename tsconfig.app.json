@@ -20,7 +20,8 @@
     "noImplicitAny": true,
     "noFallthroughCasesInSwitch": true,
 
-    "baseUrl": ".",
+    // Silence deprecation warnings from TypeScript 6 regarding 'baseUrl'
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@/*": ["./src/*"]
     }

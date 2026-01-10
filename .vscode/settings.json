@@ -51,5 +51,22 @@
     "claudeCode.preferredLocation": "sidebar",
     "claudeCode.initialPermissionMode": "bypassPermissions",
     "claudeCode.allowDangerouslySkipPermissions": true,
-    "claudeCodeChat.permissions.yoloMode": true
+    "claudeCodeChat.permissions.yoloMode": true,
+    "sqltools.connections": [
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": true
+                }
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": " db.iupgzyloawweklvbyjlx.supabase.co",
+            "port": 5432,
+            "driver": "CockroachDB",
+            "name": "Auraa AI Supabase",
+            "database": "postgres",
+            "username": "postgres"
+        }
+    ]
 }
